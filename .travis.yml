@@ -1,0 +1,13 @@
+os: osx
+osx_image: xcode10.1
+branches:
+  only:
+    - master
+
+env:
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+
+script:
+  - ./Tools/ci.sh

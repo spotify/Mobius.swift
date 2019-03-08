@@ -1,0 +1,37 @@
+# Rule configurations
+--allman false
+--binarygrouping 4,8
+--commas always
+--comments indent
+--decimalgrouping 3,5
+--elseposition same-line
+--empty void
+--exponentcase lowercase
+--exponentgrouping disabled
+--fractiongrouping enabled
+--header "// Copyright (c) 2019 Spotify AB.\n//\n// Licensed to the Apache Software Foundation (ASF) under one\n// or more contributor license agreements.  See the NOTICE file\n// distributed with this work for additional information\n// regarding copyright ownership.  The ASF licenses this file\n// to you under the Apache License, Version 2.0 (the\n// \"License\"); you may not use this file except in compliance\n// with the License.  You may obtain a copy of the License at\n//\n// http://www.apache.org/licenses/LICENSE-2.0\n//\n// Unless required by applicable law or agreed to in writing,\n// software distributed under the License is distributed on an\n// \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n// KIND, either express or implied.  See the License for the\n// specific language governing permissions and limitations\n// under the License."
+--hexgrouping none
+--hexliteralcase lowercase
+--ifdef noindent
+--indent 4
+--indentcase false
+--linebreaks lf
+--octalgrouping 4,8
+--operatorfunc spaced
+--patternlet hoist
+--ranges nospace
+--self remove
+--semicolons inline
+--stripunusedargs closure-only
+--trimwhitespace always
+--wraparguments beforefirst
+--wrapcollections beforefirst
+
+# Disabled rules
+--disable numberFormatting
+
+# Tool options
+--symlinks ignore
+
+# Excluded directories
+--exclude Carthage

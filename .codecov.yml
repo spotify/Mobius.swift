@@ -1,0 +1,5 @@
+codecov:
+  strict_yaml_branch: master
+
+ignore:
+  - "*/Test/**/*"
