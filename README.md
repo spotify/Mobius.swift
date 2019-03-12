@@ -1,4 +1,4 @@
-![mobius-logo](https://github.com/spotify/mobius/wiki/mobius-logo.png)
+![mobius-logo](https://github.com/spotify/mobius.swift/wiki/mobius-logo.png)
 
 # Mobius.swift
 Mobius is a functional reactive framework for managing state evolution and side-effects. It
