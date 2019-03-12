@@ -1,3 +1,5 @@
+![mobius-logo](https://github.com/spotify/mobius/wiki/mobius-logo.png)
+
 # Mobius.swift
 Mobius is a functional reactive framework for managing state evolution and side-effects. It
 emphasizes separation of concerns, testability, and isolating stateful parts of the code.
