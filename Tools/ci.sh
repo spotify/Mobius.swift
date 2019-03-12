@@ -35,14 +35,16 @@ heading "Building for Device"
 xcb build \
   -scheme ZZZ_MOBIUS_ALL \
   -destination generic/platform=iOS \
-  -configuration Release || \
+  -configuration Release \
+  -derivedDataPath build/DD/Build || \
   fail "Build for Device Failed"
 
-heading "Building for Release"
+heading "Building for Simulator"
 xcb build \
   -scheme ZZZ_MOBIUS_ALL \
   -sdk iphonesimulator \
-  -configuration Release || \
+  -configuration Release \
+  -derivedDataPath build/DD/Build || \
   fail "Build for Simulator Failed"
 
 #
@@ -57,10 +59,10 @@ rm -rf build/TestBundle
 
 xcb test \
   -scheme ZZZ_MOBIUS_ALL \
-  -sdk iphonesimulator \
   -configuration Debug \
   -enableCodeCoverage YES \
   -resultBundlePath build/TestBundle \
+  -derivedDataPath build/DD/Test \
   -destination "platform=iOS Simulator,name=$SIM_DEVICE,OS=$SIM_OS" || \
   fail "Test Run Failed"
 
@@ -69,17 +71,18 @@ xcb test \
 #
 heading "Pushing Coverage to Codecov"
 
-if [ "$SKIP_COVERAGE" == "1" ]; then
+if [[ "$SKIP_COVERAGE" == "1" ]]; then
   echo "Skipping (SKIP_COVERAGE == 1)"
   exit 0
 fi
 
-curl -s https://codecov.io/bash > build/codecov.sh
-chmod +x build/codecov.sh
 if [ -z "$TRAVIS_BUILD_ID" ]; then
-  CODECOV_EXTRA="-d"  # dry-run
+  CODECOV_EXTRA="-d"  # dry-run if not running in travis
 fi
 
-# Silently fail
-build/codecov.sh -D build/DerivedData -X xcodellvm $CODECOV_EXTRA
+# Download bash script
+curl -s https://codecov.io/bash > build/codecov.sh
+chmod +x build/codecov.sh
 
+# Silently fail
+build/codecov.sh -D build/DD/Test -X xcodellvm -y codecov.yml $CODECOV_EXTRA

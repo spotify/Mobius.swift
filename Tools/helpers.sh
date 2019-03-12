@@ -21,7 +21,6 @@ xcb() {
   export NSUnbufferedIO=YES
   set -o pipefail && xcodebuild \
     -UseSanitizedBuildSystemEnvironment=YES \
-    -derivedDataPath build/DerivedData \
     CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
     "$@" | xcpretty
 }
