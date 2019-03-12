@@ -1,3 +1,8 @@
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Build Status](https://travis-ci.org/spotify/Mobius.swift.svg?branch=master)](https://travis-ci.org/spotify/Mobius.swift)
+[![codecov](https://codecov.io/gh/spotify/Mobius.swift/branch/master/graph/badge.svg)](https://codecov.io/gh/spotify/Mobius.swift)
+[![License](https://img.shields.io/github/license/spotify/Mobius.swift.svg)](LICENSE)
+
 ![mobius-logo](https://github.com/spotify/mobius.swift/wiki/mobius-logo.png)
 
 # Mobius.swift
