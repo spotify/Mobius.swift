@@ -1,5 +1,6 @@
 codecov:
   strict_yaml_branch: master
 
-ignore:
+coverage:
+  ignore:
   - "*/Test/**"
