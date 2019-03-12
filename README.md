@@ -21,7 +21,7 @@ Build the project and link with the frameworks.
 
 ## Status
 
-Mobius.swift is in alpha status. We are beginning to use the framework internally and may still make breaking API changes. The abstractions for threading are the main thing we want to revisit before we feel confident in a 1.0 release. The core concepts of an `update` function with `Model`s, `Event`s, and `Effect`s are not going going to change. Please note that this project is likely to moved into the [Mobius Java repository](https://github.com/spotify/mobius) as a part of the 1.0 release.
+Mobius.swift is in alpha status. We are beginning to use the framework internally and may still make breaking API changes. The abstractions for threading are the main thing we want to revisit before we feel confident in a 1.0 release. The core concepts of an `update` function with `Model`s, `Event`s, and `Effect`s are not going to change. Please note that this project may be combined with the [Mobius Java repository](https://github.com/spotify/mobius) in the near future.
 
 ## Development
 1. Clone
