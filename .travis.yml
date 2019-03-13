@@ -1,8 +1,15 @@
 os: osx
 osx_image: xcode10.1
+language: swift
+
 branches:
   only:
     - master
+
+cache:
+  directories:
+    - $HOME/Library/Caches/org.carthage.CarthageKit/dependencies
+    - Carthage/Build
 
 env:
   global:
