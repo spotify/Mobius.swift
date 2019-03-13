@@ -20,10 +20,99 @@ This repository contains the core Mobius framework and add-ons for common develo
 | 🛠 Xcode    | 10.1+       |
 | 🐦 Language | Swift 4.2  |
 
-## Usage
+## Usage in your project
 Pull in Mobius.swift as a dependency. Either as a submodule or using [Carthage](https://github.com/Carthage/Carthage).
 
 Build the project and link with the frameworks.
+
+## Mobius in action - Building a Counter
+
+The goal of Mobius is to you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application.In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
+
+The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
+
+```swift
+typealias MyModel = Int
+```
+
+Mobius does not let you manipulate the state directly. In order to change the state, you have to send the framework messages saying what you want to do. We call these messages *Events*. In our case, we'll want to be able to increment and decrement our counter. Let's use an `enum` to define these cases:
+```swift
+enum MyEvent {
+    case increment
+    case decrement
+}
+```
+
+Now that we have a *Model* and some *Event*s, we'll need to give Mobius a set of rules which it can use to update the state on our behalf. We do this by giving the framework a function which it can call with its latest *Model* and any incomming *Event*, in order to generate a new *Model*:
+```swift
+func update(model: MyModel, event: MyEvent) -> MyModel {
+    switch event {
+    case .increment: return model + 1
+    case .decrement: return model - 1
+    }
+}
+```
+
+With these building blocks, we can start to think about our applications as transitions between discrete states in response to events. But we believe there is one piece still missing from the puzzle - namely the side-effects which are associated with moving between states. For instance, pressing a "refresh button" might put our application into a "loading" state, with the side-effect of also fetching the latest data from our backend.
+
+In Mobius, we aptly call these side-effects *Effect*s. In the case of our counter, let's say that when the user tries to decrement below 0, we play a sound effect instead. Let's create an `enum` for this:
+```swift
+enum MyEffect {
+    case playSound
+}
+```
+
+We'll now need to augment our `update` function to also return a set of effects associated with certain state transitions. This looks like:
+
+```swift
+func update(model: MyModel, event: MyEvent) -> Next<MyModel, MyEffect> {
+    switch event {
+    case .increment: return .next(model + 1)
+    case .decrement:
+        if model == 0 {
+            return .dispatchEffects([.playSound])
+        } else {
+            return .next(model - 1)
+        }
+    }
+}
+```
+
+Mobius takes sends each of the effects you return in any state transition to something called an *Effect Handler*. Let's make one of those now:
+```swift
+import AVFoundation
+import MobiusExtras
+class PlaySoundEffectHandler: ConnectableClass<MyEffect, MyEvent> {
+    override func handle(_ input: MyEffect) {
+        AudioServicesPlayAlertSound(SystemSoundID(1322))
+    }
+    override func onDispose() {}
+}
+```
+
+Now that we have all the pieces in place, let's tie it all together:
+```swift
+// For convenience, we put all our types in one enum
+enum MyLoopTypes: LoopTypes {
+    typealias Event = MyEvent
+    typealias Effect = MyEffect
+    typealias Model = MyModel
+}
+// And build a Mobius Loop!
+let application: MobiusLoop<MyLoopTypes> = Mobius
+    .loop(update: update, effectHandler: PlaySoundEffectHandler())
+    .start(from: 0)
+```
+
+
+Let's start using our counter:
+```swift
+application.dispatchEvent(.increment) // Model is now 1
+application.dispatchEvent(.decrement) // Model is now 0
+application.dispatchEvent(.decrement) // Sound effect plays! Model is still 0
+```
+
+This covers the fundamentals of Mobius. To learn more, head on over to our [wiki](/../../wiki).
 
 ## Status
 
