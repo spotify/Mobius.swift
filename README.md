@@ -20,14 +20,14 @@ This repository contains the core Mobius framework and add-ons for common develo
 | 🛠 Xcode    | 10.1+       |
 | 🐦 Language | Swift 4.2  |
 
-## Usage in your project
+## Usage in Your Project
 Pull in Mobius.swift as a dependency. Either as a submodule or using [Carthage](https://github.com/Carthage/Carthage).
 
 Build the project and link with the frameworks.
 
-## Mobius in action - Building a Counter
+## Mobius in Action - Building a Counter
 
-The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application.In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
+The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application. In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
 
 The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
 
@@ -67,7 +67,8 @@ We'll now need to augment our `update` function to also return a set of effects 
 ```swift
 func update(model: CounterModel, event: CounterEvent) -> Next<CounterModel, CounterEffect> {
     switch event {
-    case .increment: return .next(model + 1)
+    case .increment: 
+        return .next(model + 1)
     case .decrement:
         if model == 0 {
             return .dispatchEffects([.playSound])
@@ -78,10 +79,11 @@ func update(model: CounterModel, event: CounterEvent) -> Next<CounterModel, Coun
 }
 ```
 
-Mobius takes sends each of the effects you return in any state transition to something called an *Effect Handler*. Let's make one of those now:
+Mobius sends each of the effects you return in any state transition to something called an *Effect Handler*. Let's make one of those now:
 ```swift
 import AVFoundation
 import MobiusExtras
+
 class PlaySoundEffectHandler: ConnectableClass<CounterEffect, CounterEvent> {
     override func handle(_ input: CounterEffect) {
         AudioServicesPlayAlertSound(SystemSoundID(1322))
