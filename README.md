@@ -32,12 +32,12 @@ The goal of Mobius is to you better control over your application state. You can
 The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
 
 ```swift
-typealias MyModel = Int
+typealias CounterModel = Int
 ```
 
 Mobius does not let you manipulate the state directly. In order to change the state, you have to send the framework messages saying what you want to do. We call these messages *Events*. In our case, we'll want to be able to increment and decrement our counter. Let's use an `enum` to define these cases:
 ```swift
-enum MyEvent {
+enum CounterEvent {
     case increment
     case decrement
 }
@@ -45,7 +45,7 @@ enum MyEvent {
 
 Now that we have a *Model* and some *Event*s, we'll need to give Mobius a set of rules which it can use to update the state on our behalf. We do this by giving the framework a function which it can call with its latest *Model* and any incomming *Event*, in order to generate a new *Model*:
 ```swift
-func update(model: MyModel, event: MyEvent) -> MyModel {
+func update(model: CounterModel, event: CounterEvent) -> CounterModel {
     switch event {
     case .increment: return model + 1
     case .decrement: return model - 1
@@ -57,7 +57,7 @@ With these building blocks, we can start to think about our applications as tran
 
 In Mobius, we aptly call these side-effects *Effect*s. In the case of our counter, let's say that when the user tries to decrement below 0, we play a sound effect instead. Let's create an `enum` for this:
 ```swift
-enum MyEffect {
+enum CounterEffect {
     case playSound
 }
 ```
@@ -65,7 +65,7 @@ enum MyEffect {
 We'll now need to augment our `update` function to also return a set of effects associated with certain state transitions. This looks like:
 
 ```swift
-func update(model: MyModel, event: MyEvent) -> Next<MyModel, MyEffect> {
+func update(model: CounterModel, event: CounterEvent) -> Next<CounterModel, CounterEffect> {
     switch event {
     case .increment: return .next(model + 1)
     case .decrement:
@@ -82,8 +82,8 @@ Mobius takes sends each of the effects you return in any state transition to som
 ```swift
 import AVFoundation
 import MobiusExtras
-class PlaySoundEffectHandler: ConnectableClass<MyEffect, MyEvent> {
-    override func handle(_ input: MyEffect) {
+class PlaySoundEffectHandler: ConnectableClass<CounterEffect, CounterEvent> {
+    override func handle(_ input: CounterEffect) {
         AudioServicesPlayAlertSound(SystemSoundID(1322))
     }
     override func onDispose() {}
@@ -93,13 +93,13 @@ class PlaySoundEffectHandler: ConnectableClass<MyEffect, MyEvent> {
 Now that we have all the pieces in place, let's tie it all together:
 ```swift
 // For convenience, we put all our types in one enum
-enum MyLoopTypes: LoopTypes {
-    typealias Event = MyEvent
-    typealias Effect = MyEffect
-    typealias Model = MyModel
+enum CounterLoopTypes: LoopTypes {
+    typealias Event = CounterEvent
+    typealias Effect = CounterEffect
+    typealias Model = CounterModel
 }
 // And build a Mobius Loop!
-let application: MobiusLoop<MyLoopTypes> = Mobius
+let application: MobiusLoop<CounterLoopTypes> = Mobius
     .loop(update: update, effectHandler: PlaySoundEffectHandler())
     .start(from: 0)
 ```
