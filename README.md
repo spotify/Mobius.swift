@@ -27,7 +27,7 @@ Build the project and link with the frameworks.
 
 ## Mobius in action - Building a Counter
 
-The goal of Mobius is to you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application.In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
+The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application.In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
 
 The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
 
