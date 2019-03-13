@@ -8,7 +8,6 @@ branches:
 
 cache:
   directories:
-    - $HOME/Library/Caches/org.carthage.CarthageKit/dependencies
     - Carthage/Build
 
 env:
