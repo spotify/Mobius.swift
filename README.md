@@ -29,7 +29,7 @@ Build the project and link with the frameworks.
 
 The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application. In Mobius, we encapsulate all of the state in a data-structure which we call the *Model*.
 
-The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
+The *Model* can be represented by whatever type you like. In this example we'll be building a simple counter, so all of our state can be contained in an `Int`:
 
 ```swift
 typealias CounterModel = Int
@@ -43,7 +43,7 @@ enum CounterEvent {
 }
 ```
 
-Now that we have a *Model* and some *Event*s, we'll need to give Mobius a set of rules which it can use to update the state on our behalf. We do this by giving the framework a function which it can call with its latest *Model* and any incomming *Event*, in order to generate a new *Model*:
+Now that we have a *Model* and some *Event*s, we'll need to give Mobius a set of rules which it can use to update the state on our behalf. We do this by giving the framework a function which will be sequentially called with every incoming *Event* and the most recent *Model*, in order to generate the next *Model*:
 ```swift
 func update(model: CounterModel, event: CounterEvent) -> CounterModel {
     switch event {
@@ -55,7 +55,7 @@ func update(model: CounterModel, event: CounterEvent) -> CounterModel {
 
 With these building blocks, we can start to think about our applications as transitions between discrete states in response to events. But we believe there still one piece missing from the puzzle - namely the side-effects which are associated with moving between states. For instance, pressing a "refresh button" might put our application into a "loading" state, with the side-effect of also fetching the latest data from our backend.
 
-In Mobius, we aptly call these side-effects *Effect*s. In the case of our counter, let's say that when the user tries to decrement below 0, we play a sound effect instead. Let's create an `enum` for this:
+In Mobius, we aptly call these side-effects *Effect*s. In the case of our counter, let's say that when the user tries to decrement below 0, we play a sound effect instead. Let's create an `enum` that represents all the possible effects (which in this case is only one):
 ```swift
 enum CounterEffect {
     case playSound
