@@ -1,8 +1,14 @@
 os: osx
 osx_image: xcode10.1
+language: swift
+
 branches:
   only:
     - master
+
+cache:
+  directories:
+    - Carthage/Build
 
 env:
   global:
