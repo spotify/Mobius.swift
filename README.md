@@ -27,7 +27,7 @@ Build the project and link with the frameworks.
 
 ## Mobius in Action - Building a Counter
 
-The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application. In Mobius, we take encapsulate all of the state in a data-structure which we call the *Model*.
+The goal of Mobius is to give you better control over your application state. You can think of your state as a snapshot of all the current values of the variables in your application. In Mobius, we encapsulate all of the state in a data-structure which we call the *Model*.
 
 The *Model* can be represented by whatever type you like. Since we're building a counter, we'll be able to encapsulate all of our state in an `Int`:
 
@@ -35,7 +35,7 @@ The *Model* can be represented by whatever type you like. Since we're building a
 typealias CounterModel = Int
 ```
 
-Mobius does not let you manipulate the state directly. In order to change the state, you have to send the framework messages saying what you want to do. We call these messages *Events*. In our case, we'll want to be able to increment and decrement our counter. Let's use an `enum` to define these cases:
+Mobius does not let you manipulate the state directly. In order to change the state, you have to send the framework messages saying what you want to do. We call these messages *Events*. In our case, we'll want to increment and decrement our counter. Let's use an `enum` to define these cases:
 ```swift
 enum CounterEvent {
     case increment
@@ -53,7 +53,7 @@ func update(model: CounterModel, event: CounterEvent) -> CounterModel {
 }
 ```
 
-With these building blocks, we can start to think about our applications as transitions between discrete states in response to events. But we believe there is one piece still missing from the puzzle - namely the side-effects which are associated with moving between states. For instance, pressing a "refresh button" might put our application into a "loading" state, with the side-effect of also fetching the latest data from our backend.
+With these building blocks, we can start to think about our applications as transitions between discrete states in response to events. But we believe there still one piece missing from the puzzle - namely the side-effects which are associated with moving between states. For instance, pressing a "refresh button" might put our application into a "loading" state, with the side-effect of also fetching the latest data from our backend.
 
 In Mobius, we aptly call these side-effects *Effect*s. In the case of our counter, let's say that when the user tries to decrement below 0, we play a sound effect instead. Let's create an `enum` for this:
 ```swift
