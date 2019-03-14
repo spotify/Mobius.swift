@@ -21,10 +21,36 @@ This repository contains the core Mobius framework and add-ons for common develo
 | 🛠 Xcode    | 10.1+       |
 | 🐦 Language | Swift 4.2  |
 
-## Usage in Your Project
-Pull in Mobius.swift as a dependency. Either as a submodule or using [Carthage](https://github.com/Carthage/Carthage).
+## Installation
 
-Build the project and link with the frameworks.
+Mobius.swift supports most popular dependency managers. Choose your preferred method to see the instructions:
+
+<details><summary>CocoaPods</summary>
+
+Add the following entry in your `Podfile`:
+```ruby
+pod 'Mobius.swift'
+```
+</details>
+
+<details><summary>Carthage</summary>
+
+Add the following entry in your `Cartfile`:
+```
+github "spotify/Mobius.swift"
+```
+
+There are some additional steps to take as explained in the [Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
+>NOTE: At this moment Carthage doesn't have a way to specify subspecs in a single repo. For this reason, Carthage will automatically pull our dependencies used to provide test helpers in `MobiusNimble`. You can simply choose not to link this library in your project if you don't plan to use it.
+</details>
+
+<details><summary>Swift Package Manager</summary>
+
+Add the following entry to your `Package.swift`:
+```swift
+.package(url: "https://github.com/spotify/Mobius.swift.git", .upToNextMajor(from: "0.1.0-alpha"))
+```
+</details>
 
 ## Mobius in Action - Building a Counter
 
