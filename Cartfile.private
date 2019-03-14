@@ -1,0 +1,2 @@
+github "Quick/Quick" ~> 1.2
+github "jspahrsummers/xcconfigs" == 0.12
