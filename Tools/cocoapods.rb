@@ -23,7 +23,7 @@ end
 SWIFT_VERSION = '4.2'
 IOS_DEPLOYMENT_TARGET = '10.0'
 NIMBLE_VERSION = begin
-  ver = `cat Cartfile.private | grep Nimble | grep -o '~.*'`.strip
+  ver = `cat Cartfile | grep Nimble | grep -o '~.*'`.strip
   if !$?.success? || ver.empty?
     raise Exception.new('could not parse nimble version from Cartfile')
   end
@@ -129,7 +129,7 @@ def generate_podspec(name:, source_files:, summary:, dependencies: [], framework
     },
     'source' => {
       'git' => 'https://github.com/spotify/Mobius.swift.git',
-      'tag' => "v#{VERSION}",
+      'tag' => VERSION,
     },
     'platforms' => {
       'ios' => IOS_DEPLOYMENT_TARGET,
