@@ -1,6 +1,2 @@
-# Build system configs
-github "jspahrsummers/xcconfigs" == 0.12
-
-# Testing tools
-github "Quick/Nimble" ~> 7.0
 github "Quick/Quick" ~> 1.2
+github "jspahrsummers/xcconfigs" == 0.12
