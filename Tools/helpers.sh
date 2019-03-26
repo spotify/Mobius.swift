@@ -18,11 +18,9 @@ has_command() {
 }
 
 xcb() {
-  # TODO: use new build system in Xcode 10.2+
   export NSUnbufferedIO=YES
   set -o pipefail && xcodebuild \
     -UseSanitizedBuildSystemEnvironment=YES \
-    -UseNewBuildSystem=NO \
     CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
     "$@" | xcpretty
 }
