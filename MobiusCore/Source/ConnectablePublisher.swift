@@ -23,54 +23,71 @@ import Foundation
 /// will broadcast posted values to all connections. It also retains a current value, and will post that value to new
 /// connections.
 class ConnectablePublisher<ValueType>: Disposable {
+    private let lock = DispatchQueue(label: "Mobius.ConnectablePublisher")
     private var connections = [UUID: Connection<ValueType>]()
     private var currentValue: ValueType?
+    private var disposed = false
 
-    // AtomicBool is used here to ensure coherence in the event that dispose and dispatchEvent are
-    // called on different threads.
-    private var disposed = AtomicBool(false)
     var isDisposed: Bool {
-        return disposed.value
+        return lock.sync { disposed }
     }
 
     func post(_ value: ValueType) {
-        guard !disposed.value else {
-            // Callers are responsible for ensuring post is never entered after dispose.
-            MobiusHooks.onError("cannot accept values when disposed")
-            return
+        let connections: [Connection<ValueType>] = lock.sync {
+            guard !disposed else {
+                // Callers are responsible for ensuring post is never entered after dispose.
+                MobiusHooks.onError("cannot accept values when disposed")
+                return []
+            }
+
+            currentValue = value
+
+            return Array(self.connections.values)
         }
 
-        currentValue = value
-
-        connections.values.forEach({ $0.accept(value) })
+        // Note that we froze the list of connections in the sync block, but dispatch accept here to avoid any
+        // risk of recursion.
+        connections.forEach { $0.accept(value) }
     }
 
     @discardableResult
     func connect(to outputConsumer: @escaping Consumer<ValueType>) -> Connection<ValueType> {
-        guard !disposed.value else {
-            // Callers are responsible for ensuring connect is never entered after dispose.
-            MobiusHooks.onError("cannot add connections when disposed")
-            return BrokenConnection<ValueType>.connection()
+        return lock.sync { () -> Connection<ValueType> in
+            guard !disposed else {
+                // Callers are responsible for ensuring connect is never entered after dispose.
+                MobiusHooks.onError("cannot add connections when disposed")
+                return BrokenConnection<ValueType>.connection()
+            }
+
+            let uuid = UUID()
+            let connection = Connection(acceptClosure: outputConsumer, disposeClosure: { [weak self] in self?.removeConnection(for: uuid) })
+
+            self.connections[uuid] = connection
+
+            if let value = currentValue {
+                outputConsumer(value)
+            }
+
+            return connection
         }
-
-        let uuid = UUID()
-        let connection = Connection(acceptClosure: outputConsumer, disposeClosure: { [weak self] in self?.connections[uuid] = nil })
-
-        connections[uuid] = connection
-
-        if let value = currentValue {
-            outputConsumer(value)
-        }
-
-        return connection
     }
 
     func dispose() {
-        let alreadyDisposed = disposed.getAndSet(value: true)
+        let connections: [Connection<ValueType>] = lock.sync {
+            guard !disposed else { return [] }
 
-        if !alreadyDisposed {
-            connections.values.forEach({ $0.dispose() })
-            connections.removeAll()
+            disposed = true
+            return Array(self.connections.values)
+        }
+
+        // Again, this has to be outside the sync block to avoid recursive locking – in this case, recursion into
+        // removeConnection().
+        connections.forEach { $0.dispose() }
+    }
+
+    private func removeConnection(for uuid: UUID) {
+        lock.sync {
+            self.connections[uuid] = nil
         }
     }
 }
