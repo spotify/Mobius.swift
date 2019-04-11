@@ -29,14 +29,14 @@ Mobius.swift supports most popular dependency managers. Choose your preferred me
 
 Add the following entry in your `Podfile`:
 ```ruby
-pod 'MobiusCore', '0.1.1'
+pod 'MobiusCore', '0.1.2'
 ```
 
 Optionally, you can also choose to integrate `MobiusExtras`, `MobiusNimble` or `MobiusTest`:
 ```ruby
-pod 'MobiusExtras', '0.1.1'
-pod 'MobiusNimble', '0.1.1'
-pod 'MobiusTest', '0.1.1'
+pod 'MobiusExtras', '0.1.2'
+pod 'MobiusNimble', '0.1.2'
+pod 'MobiusTest', '0.1.2'
 ```
 </details>
 
@@ -44,7 +44,7 @@ pod 'MobiusTest', '0.1.1'
 
 Add the following entry in your `Cartfile`:
 ```
-github "spotify/Mobius.swift" "0.1.1"
+github "spotify/Mobius.swift" "0.1.2"
 ```
 
 There are some additional steps to take as explained in the [Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
