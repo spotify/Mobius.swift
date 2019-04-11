@@ -11,7 +11,7 @@
   },
   "source": {
     "git": "https://github.com/spotify/Mobius.swift.git",
-    "tag": "0.1.1"
+    "tag": "0.1.2"
   },
   "platforms": {
     "ios": "10.0"
@@ -24,13 +24,13 @@
   ],
   "dependencies": {
     "MobiusCore": [
-      "0.1.1"
+      "0.1.2"
     ],
     "MobiusTest": [
-      "0.1.1"
+      "0.1.2"
     ],
     "Nimble": [
-      "~> 7.0"
+      "~> 8.0"
     ]
   }
 }
