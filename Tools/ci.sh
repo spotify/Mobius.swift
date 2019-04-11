@@ -3,6 +3,10 @@
 # Source Helper Functions
 source "$(dirname "$0")/helpers.sh"
 
+# Copy umbrella scheme to the xcschemes directory. 
+# We don't want to check it in otherwise Carthage also builds it needlessly.
+cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodeproj/xcshareddata/xcschemes"
+
 # Only install tools when running on travis
 if [ -n "$TRAVIS_BUILD_ID" ]; then
   heading "Installing Tools"
