@@ -1,6 +1,6 @@
 {
   "name": "MobiusExtras",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "summary": "A functional reactive framework for managing state evolution and side-effects: Extra Helpers",
   "authors": "Spotify AB",
   "homepage": "https://github.com/spotify/Mobius.swift/tree/master/MobiusExtras",
