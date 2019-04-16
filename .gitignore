@@ -42,6 +42,8 @@ Package.resolved
 .build/
 
 # Carthage
+Carthage/Checkouts/*
+!Carthage/Checkouts/xcconfigs
 Carthage/Build
 
 # Codecov
