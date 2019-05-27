@@ -21,6 +21,7 @@ import Foundation
 
 /// A `MergedEventSource` holds onto the provided event sources and subscribes consumers to all of them once its
 /// `subscribe` method is called.
+@available(*, deprecated, message: "use CompositeEventSourceBuilder instead")
 public final class MergedEventSource<Event>: EventSource {
     private let eventSources: [AnyEventSource<Event>]
 
