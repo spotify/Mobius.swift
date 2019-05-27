@@ -10,6 +10,8 @@
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
 		2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
+		2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */; };
+		2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */; };
 		2DF4C2FC20DBDD5800A4B6DE /* Next.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287B5209995410043B530 /* Next.swift */; };
 		2DF4C2FD20DBDD5800A4B6DE /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287B6209995410043B530 /* Connection.swift */; };
 		2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B237EB9209C4F3C00764576 /* Connectable.swift */; };
@@ -258,6 +260,7 @@
 /* Begin PBXFileReference section */
 		2D2FE60F20625E76002DFD69 /* Mobius.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Mobius.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
+		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
 		2DF4C2F520DBDD4700A4B6DE /* libMobiusCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF4C41D20DBDEFA00A4B6DE /* libMobiusExtras.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusExtras.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DF4C53320DBE03900A4B6DE /* libMobiusTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusTest.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -547,6 +550,7 @@
 			isa = PBXGroup;
 			children = (
 				5B4A369921107D2600279C7D /* AnyEventSource.swift */,
+				2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */,
 				5BB287C0209995410043B530 /* EventSource.swift */,
 				5B4A36952110783100279C7D /* MergedEventSource.swift */,
 			);
@@ -1198,6 +1202,7 @@
 				2DF4C30720DBDD5C00A4B6DE /* EventSource.swift in Sources */,
 				2DF4C2FD20DBDD5800A4B6DE /* Connection.swift in Sources */,
 				5B7095992109E89C0099298B /* EffectRouterBuilder.swift in Sources */,
+				2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
@@ -1256,6 +1261,7 @@
 				5BB288172099957D0043B530 /* Next.swift in Sources */,
 				5BB28827209995810043B530 /* MobiusLogger.swift in Sources */,
 				5BB28823209995810043B530 /* NoEffect.swift in Sources */,
+				2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				5B1F103F210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1043210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
