@@ -26,7 +26,14 @@ import Foundation
 ///         conformance is just to allow the type to be used where required. Such as with the `First` and `Next` data
 ///         structures.
 public enum NoEffect: Equatable, Hashable {
-    public static func == (lhs: NoEffect, rhs: NoEffect) -> Bool { return true }
+    public static func == (lhs: NoEffect, rhs: NoEffect) -> Bool {
+        #if compiler(>=5.1)
+        // #if compiler(<5.1) doesn’t work in the Xcode 10.1 toolchain
+        #else
+        // This is required in earlier compiler versions, but a warning in newer ones
+        return true
+        #endif
+    }
     public var hashValue: Int { return 0 }
     public func hash(into hasher: inout Hasher) {}
 }
