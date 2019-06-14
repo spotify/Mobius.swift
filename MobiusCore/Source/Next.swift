@@ -72,13 +72,11 @@ public extension Next {
     var hasEffects: Bool { return !effects.isEmpty }
 }
 
-#if swift(>=4.1)
 extension Next: Equatable where Model: Equatable {
     public static func == (lhs: Next<Model, Effect>, rhs: Next<Model, Effect>) -> Bool {
         return lhs.model == rhs.model && lhs.effects == rhs.effects
     }
 }
-#endif
 
 extension Next: CustomDebugStringConvertible {
     public var debugDescription: String {
