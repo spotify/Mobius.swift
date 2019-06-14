@@ -20,10 +20,10 @@
 import Foundation
 import MobiusCore
 
-public class ConsoleLogger<T: LoopTypes>: MobiusLogger {
-    public typealias Model = T.Model
-    public typealias Event = T.Event
-    public typealias Effect = T.Effect
+public class ConsoleLogger<Types: LoopTypes>: MobiusLogger {
+    public typealias Model = Types.Model
+    public typealias Event = Types.Event
+    public typealias Effect = Types.Effect
 
     private let prefix: String
 
@@ -31,28 +31,28 @@ public class ConsoleLogger<T: LoopTypes>: MobiusLogger {
         prefix = tag + ": "
     }
 
-    public func willInitiate(model: T.Model) {
+    public func willInitiate(model: Model) {
         print(prefix + "Initializing loop")
     }
 
-    public func didInitiate(model: T.Model, first: First<T.Model, T.Effect>) {
+    public func didInitiate(model: Model, first: First<Model, Effect>) {
         print(prefix + "Loop initialized, starting from model: \(first.model)")
 
-        first.effects.forEach { (effect: T.Effect) in
+        first.effects.forEach { (effect: Effect) in
             print(prefix + "Effect dispatched: \(effect)")
         }
     }
 
-    public func willUpdate(model: T.Model, event: T.Event) {
+    public func willUpdate(model: Model, event: Event) {
         print(prefix + "Event received: \(event)")
     }
 
-    public func didUpdate(model: T.Model, event: T.Event, next: Next<T.Model, T.Effect>) {
+    public func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {
         if let nextModel = next.model {
             print(prefix + "Model updated: \(nextModel)")
         }
 
-        next.effects.forEach { (effect: T.Effect) in
+        next.effects.forEach { (effect: Effect) in
             print(prefix + "Effect dispatched: \(effect)")
         }
     }

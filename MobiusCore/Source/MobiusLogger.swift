@@ -61,33 +61,33 @@ public protocol MobiusLogger: LoopTypes {
     func didUpdate(model: Model, event: Event, next: Next<Model, Effect>)
 }
 
-class NoopLogger<T: LoopTypes>: MobiusLogger {
-    typealias Model = T.Model
-    typealias Event = T.Event
-    typealias Effect = T.Effect
+class NoopLogger<Types: LoopTypes>: MobiusLogger {
+    typealias Model = Types.Model
+    typealias Event = Types.Event
+    typealias Effect = Types.Effect
 
-    func willInitiate(model: T.Model) {
+    func willInitiate(model: Model) {
         // empty
     }
 
-    func didInitiate(model: T.Model, first: First<T.Model, T.Effect>) {
+    func didInitiate(model: Model, first: First<Model, Effect>) {
         // empty
     }
 
-    func willUpdate(model: T.Model, event: T.Event) {
+    func willUpdate(model: Model, event: Event) {
         // empty
     }
 
-    func didUpdate(model: T.Model, event: T.Event, next: Next<T.Model, T.Effect>) {
+    func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {
         // empty
     }
 }
 
 /// Type-erased `MobiusLogger`.
-public class AnyMobiusLogger<T: LoopTypes>: MobiusLogger {
-    public typealias Model = T.Model
-    public typealias Event = T.Event
-    public typealias Effect = T.Effect
+public class AnyMobiusLogger<Types: LoopTypes>: MobiusLogger {
+    public typealias Model = Types.Model
+    public typealias Event = Types.Event
+    public typealias Effect = Types.Effect
 
     private let willInitiateClosure: (Model) -> Void
     private let didInitiateClosure: (Model, First<Model, Effect>) -> Void
@@ -101,19 +101,19 @@ public class AnyMobiusLogger<T: LoopTypes>: MobiusLogger {
         didUpdateClosure = base.didUpdate
     }
 
-    public func willInitiate(model: T.Model) {
+    public func willInitiate(model: Model) {
         willInitiateClosure(model)
     }
 
-    public func didInitiate(model: T.Model, first: First<T.Model, T.Effect>) {
+    public func didInitiate(model: Model, first: First<Model, Effect>) {
         didInitiateClosure(model, first)
     }
 
-    public func willUpdate(model: T.Model, event: T.Event) {
+    public func willUpdate(model: Model, event: Event) {
         willUpdateClosure(model, event)
     }
 
-    public func didUpdate(model: T.Model, event: T.Event, next: Next<T.Model, T.Effect>) {
+    public func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {
         didUpdateClosure(model, event, next)
     }
 }

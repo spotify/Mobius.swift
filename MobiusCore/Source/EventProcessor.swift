@@ -21,14 +21,14 @@ import Foundation
 
 /// Internal class that manages the atomic state updates and notifications of model changes when processing of events via
 /// the Update function.
-class EventProcessor<T: LoopTypes>: Disposable, CustomDebugStringConvertible {
-    let update: Update<T>
-    let publisher: ConnectablePublisher<Next<T.Model, T.Effect>>
+class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible {
+    let update: Update<Types>
+    let publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>
 
     private let queue: DispatchQueue
 
-    private var currentModel: T.Model?
-    private var queuedEvents = [T.Event]()
+    private var currentModel: Types.Model?
+    private var queuedEvents = [Types.Event]()
 
     public var debugDescription: String {
         let modelDescription: String
@@ -41,8 +41,8 @@ class EventProcessor<T: LoopTypes>: Disposable, CustomDebugStringConvertible {
     }
 
     init(
-        update: @escaping Update<T>,
-        publisher: ConnectablePublisher<Next<T.Model, T.Effect>>,
+        update: @escaping Update<Types>,
+        publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>,
         queue: DispatchQueue
     ) {
         self.update = update
@@ -50,7 +50,7 @@ class EventProcessor<T: LoopTypes>: Disposable, CustomDebugStringConvertible {
         self.queue = queue
     }
 
-    func start(from first: First<T.Model, T.Effect>) {
+    func start(from first: First<Types.Model, Types.Effect>) {
         queue.sync(flags: .barrier) {
             currentModel = first.model
 
@@ -64,7 +64,7 @@ class EventProcessor<T: LoopTypes>: Disposable, CustomDebugStringConvertible {
         }
     }
 
-    func accept(_ event: T.Event) {
+    func accept(_ event: Types.Event) {
         queue.async(flags: .barrier) {
             if let current = self.currentModel {
                 let next = self.update(current, event)
@@ -84,7 +84,7 @@ class EventProcessor<T: LoopTypes>: Disposable, CustomDebugStringConvertible {
         publisher.dispose()
     }
 
-    func readCurrentModel() -> T.Model? {
+    func readCurrentModel() -> Types.Model? {
         return queue.sync { currentModel }
     }
 }

@@ -28,8 +28,8 @@ public final class MergedEventSource<Event>: EventSource {
     /// Initialises a MergedEventSource
     ///
     /// - Parameter eventSources: an array of `EventSource` with matching `Events`
-    public init<ES: EventSource>(eventSources: [ES]) where ES.Event == Event {
-        self.eventSources = eventSources.map({ (eventSource: ES) -> AnyEventSource<Event> in
+    public init<Source: EventSource>(eventSources: [Source]) where Source.Event == Event {
+        self.eventSources = eventSources.map({ (eventSource: Source) -> AnyEventSource<Event> in
             AnyEventSource<Event>(eventSource)
         })
     }
