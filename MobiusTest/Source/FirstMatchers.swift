@@ -21,17 +21,17 @@ import Foundation
 import MobiusCore
 import XCTest
 
-public typealias FirstPredicate<M, E: Hashable> = Predicate<First<M, E>>
+public typealias FirstPredicate<Model, Effect: Hashable> = Predicate<First<Model, Effect>>
 
 /// Function to produce an `AssertFirst` function to be used with the `InitSpec`
 ///
 /// - Parameter predicates: Nimble `Predicate` that verifies a first. Can be produced through `FirstMatchers`
 /// - Returns: An `AssertFirst` function to be used with the `InitSpec`
-public func assertThatFirst<M, E>(
-    _ predicates: FirstPredicate<M, E>...,
+public func assertThatFirst<Model, Effect>(
+    _ predicates: FirstPredicate<Model, Effect>...,
     failFunction: @escaping AssertionFailure = XCTFail
-) -> AssertFirst<M, E> {
-    return { (result: First<M, E>) in
+) -> AssertFirst<Model, Effect> {
+    return { (result: First<Model, Effect>) in
         predicates.forEach({ predicate in
             let predicateResult = predicate(result)
             if case let .failure(message, file, line) = predicateResult {
@@ -45,12 +45,12 @@ public func assertThatFirst<M, E>(
 ///
 /// - Parameter expected: the expected M
 /// - Returns: a `Predicate` determening if a `First` contains the expected M
-public func hasModel<M: Equatable, E>(
-    _ expected: M,
+public func hasModel<Model: Equatable, Effect>(
+    _ expected: Model,
     file: StaticString = #file,
     line: UInt = #line
-) -> FirstPredicate<M, E> {
-    return { (first: First<M, E>) in
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
         if first.model != expected {
             return .failure(
                 message: "Expected model to be <\(expected)>, got <\(first.model)>",
@@ -65,11 +65,11 @@ public func hasModel<M: Equatable, E>(
 /// Returns a `Predicate` that matches `First` instances with no Es.
 ///
 /// - Returns: a `Predicate` determening if a `First` contains no Es
-public func hasNoEffects<M, E>(
+public func hasNoEffects<Model, Effect>(
     file: StaticString = #file,
     line: UInt = #line
-) -> FirstPredicate<M, E> {
-    return { (first: First<M, E>) in
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
         if first.hasEffects {
             return .failure(
                 message: "Expected no effects, got <\(first.effects)>",
@@ -86,12 +86,12 @@ public func hasNoEffects<M, E>(
 ///
 /// - Parameter Es: the Es to match (possibly empty)
 /// - Returns: a `Predicate` that matches `First` instances that include all the supplied Es
-public func hasEffects<M, E: Equatable>(
-    _ expected: [E],
+public func hasEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
     file: StaticString = #file,
     line: UInt = #line
-) -> FirstPredicate<M, E> {
-    return { (first: First<M, E>) in
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
         if !first.effects.isSuperset(of: expected) {
             return .failure(
                 message: "Expected effects <\(first.effects)> to contain <\(expected)>",

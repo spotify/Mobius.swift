@@ -20,20 +20,20 @@
 import Foundation
 
 /// The `AnyEventSource` class implements a `EventSource` type that sends events to subscribers.
-public class AnyEventSource<E>: EventSource {
-    public typealias Event = E
+public class AnyEventSource<AnEvent>: EventSource {
+    public typealias Event = AnEvent
 
-    private let subscribeClosure: (@escaping Consumer<E>) -> Disposable
+    private let subscribeClosure: (@escaping Consumer<Event>) -> Disposable
 
-    public init<ES: EventSource>(_ base: ES) where ES.Event == E {
+    public init<Source: EventSource>(_ base: Source) where Source.Event == Event {
         subscribeClosure = base.subscribe
     }
 
-    public init(_ closure: @escaping (@escaping Consumer<E>) -> Disposable) {
+    public init(_ closure: @escaping (@escaping Consumer<Event>) -> Disposable) {
         subscribeClosure = closure
     }
 
-    public func subscribe(consumer eventConsumer: @escaping Consumer<E>) -> Disposable {
+    public func subscribe(consumer eventConsumer: @escaping Consumer<Event>) -> Disposable {
         return subscribeClosure(eventConsumer)
     }
 }

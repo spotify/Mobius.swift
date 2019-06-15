@@ -28,11 +28,11 @@ public typealias NextPredicate<Model, Effect: Hashable> = Predicate<Next<Model, 
 ///   - predicate: a list of predicates to test
 ///   - failFunction: a function which is called when the predicate fails. Defaults to XCTFail
 /// - Returns: An `UpdateSpec` `Assert` that uses the assert to verify the result passed in to the `Assert`
-public func assertThatNext<T: LoopTypes>(
-    _ predicates: NextPredicate<T.Model, T.Effect>...,
+public func assertThatNext<Types: LoopTypes>(
+    _ predicates: NextPredicate<Types.Model, Types.Effect>...,
     failFunction: @escaping AssertionFailure = XCTFail
-) -> UpdateSpec<T>.Assert {
-    return { (result: UpdateSpec<T>.Result) in
+) -> UpdateSpec<Types>.Assert {
+    return { (result: UpdateSpec<Types>.Result) in
         predicates.forEach({ predicate in
             let assertionResult = predicate(result.lastNext)
             if case let .failure(message, file, line) = assertionResult {
@@ -43,8 +43,8 @@ public func assertThatNext<T: LoopTypes>(
 }
 
 /// - Returns: a `Predicate` that matches `Next` instances with no model and no effects.
-public func hasNothing<M, E>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+public func hasNothing<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         let noModelResult = hasNoModel(file: file, line: line)(next)
         if case .success = noModelResult {
             return hasNoEffects(file: file, line: line)(next)
@@ -54,8 +54,8 @@ public func hasNothing<M, E>(file: StaticString = #file, line: UInt = #line) -> 
 }
 
 /// - Returns: a `Predicate` that matches `Next` instances without a model.
-public func hasNoModel<M, E>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+public func hasNoModel<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         let model = next.model
         if model != nil {
             return .failure(
@@ -69,8 +69,8 @@ public func hasNoModel<M, E>(file: StaticString = #file, line: UInt = #line) -> 
 }
 
 /// - Returns:  a `Predicate` that matches `Next` instances with a model.
-public func hasModel<M, E>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+public func hasModel<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         let model = next.model
         if model == nil {
             return .failure(
@@ -85,8 +85,8 @@ public func hasModel<M, E>(file: StaticString = #file, line: UInt = #line) -> Ne
 
 /// - Parameter expected: the expected model
 /// - Returns: a `Predicate` that matches `Next` instances with a model that is equal to the supplied one.
-public func hasModel<M: Equatable, E>(_ expected: M, file: StaticString = #file, line: UInt = #line) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+public func hasModel<Model: Equatable, Effect>(_ expected: Model, file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         let actual = next.model
         if actual != expected {
             return .failure(
@@ -100,8 +100,8 @@ public func hasModel<M: Equatable, E>(_ expected: M, file: StaticString = #file,
 }
 
 /// - Returns: a `Predicate` that matches `Next` instances with no effects.
-public func hasNoEffects<M, E>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+public func hasNoEffects<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         if next.hasEffects {
             return .failure(
                 message: "Expected no effects. Got: <\(next.effects)>",
@@ -118,12 +118,12 @@ public func hasNoEffects<M, E>(file: StaticString = #file, line: UInt = #line) -
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
-public func hasEffects<M, E>(
-    _ expected: Set<E>,
+public func hasEffects<Model, Effect>(
+    _ expected: Set<Effect>,
     file: StaticString = #file,
     line: UInt = #line
-) -> NextPredicate<M, E> {
-    return { (next: Next<M, E>) in
+) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
         let actual = next.effects
         if !actual.isSuperset(of: expected) {
             return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
