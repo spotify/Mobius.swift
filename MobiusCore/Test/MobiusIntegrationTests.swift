@@ -26,6 +26,48 @@ import Quick
 class MobiusIntegrationTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
+        describe("Running the loop synchronously") {
+            enum TestTypes: LoopTypes {
+                typealias Model = String
+                typealias Event = String
+                typealias Effect = String
+            }
+            var loop: MobiusLoop<TestTypes>?
+            var queue: DispatchQueue!
+
+            beforeEach {
+                // Run the builder on the same Dispatch Queue as the event and effect queues.
+                // This should not cause a deadlock
+                queue = DispatchQueue.testQueue("test event queue")
+                waitUntil(timeout: 2) { done in
+                    queue.async {
+                        loop = Mobius
+                            .loop(
+                                update: { _, event in .next(event) },
+                                effectHandler: IntegrationTestEffectHandler()
+                            )
+                            .withEventQueue(queue)
+                            .withEffectQueue(queue)
+                            .start(from: "start")
+                        done()
+                    }
+                }
+            }
+
+            it("should be possible to dispatch events") {
+                expect(loop).toNot(beNil())
+                if let loop = loop {
+                    loop.dispatchEvent("a")
+
+                    var model: String?
+                    loop.addObserver { newModel in
+                        model = newModel
+                    }
+
+                    expect(model).toEventually(equal("a"))
+                }
+            }
+        }
         describe("Mobius integration tests") {
             struct TestLogic: LoopTypes {
                 typealias Model = String

@@ -26,6 +26,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     let publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>
 
     private let queue: DispatchQueue
+    private let lock = NSRecursiveLock()
 
     private var currentModel: Types.Model?
     private var queuedEvents = [Types.Event]()
@@ -51,7 +52,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     }
 
     func start(from first: First<Types.Model, Types.Effect>) {
-        queue.sync(flags: .barrier) {
+        lock.synchronized {
             currentModel = first.model
 
             publisher.post(Next.next(first.model, effects: first.effects))
@@ -65,7 +66,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     }
 
     func accept(_ event: Types.Event) {
-        queue.async(flags: .barrier) {
+        lock.synchronized {
             if let current = self.currentModel {
                 let next = self.update(current, event)
 
