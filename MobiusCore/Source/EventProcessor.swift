@@ -25,7 +25,6 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     let update: Update<Types>
     let publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>
 
-    private let queue: DispatchQueue
     private let lock = NSRecursiveLock()
 
     private var currentModel: Types.Model?
@@ -43,12 +42,10 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
 
     init(
         update: @escaping Update<Types>,
-        publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>,
-        queue: DispatchQueue
+        publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>
     ) {
         self.update = update
         self.publisher = publisher
-        self.queue = queue
     }
 
     func start(from first: First<Types.Model, Types.Effect>) {
@@ -86,6 +83,8 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     }
 
     func readCurrentModel() -> Types.Model? {
-        return queue.sync { currentModel }
+        return lock.synchronized {
+            currentModel
+        }
     }
 }
