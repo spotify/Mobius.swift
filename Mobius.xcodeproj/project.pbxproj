@@ -109,9 +109,7 @@
 		5BB28829209995860043B530 /* Disposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BD209995410043B530 /* Disposable.swift */; };
 		5BB2882A209995860043B530 /* CompositeDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BE209995410043B530 /* CompositeDisposable.swift */; };
 		5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BF209995410043B530 /* AnonymousDisposable.swift */; };
-		5BB288322099964F0043B530 /* MobiusCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB2882F2099964F0043B530 /* MobiusCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB28845209997BF0043B530 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
-		5BB28846209998430043B530 /* MobiusExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB287E5209995420043B530 /* MobiusExtras.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */; };
 		5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */; };
 		5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */; };
@@ -128,7 +126,6 @@
 		5BB2887B20999AD60043B530 /* ConnectablePublisherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885920999ACE0043B530 /* ConnectablePublisherTests.swift */; };
 		5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885A20999ACE0043B530 /* LoggingUpdateTests.swift */; };
 		5BB2889320999B2E0043B530 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
-		5BB288AE20999B750043B530 /* MobiusTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB288A820999B750043B530 /* MobiusTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BB288B020999C3D0043B530 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5BB288B120999D130043B530 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		5BB288B220999D1E0043B530 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
@@ -296,7 +293,6 @@
 		5B80EDD72125A18800F87129 /* MobiusNimbleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusNimbleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B80EDE72125A2E000F87129 /* MobiusNimbleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MobiusNimbleTests-Info.plist"; sourceTree = "<group>"; };
 		5B80EDE82125A2E000F87129 /* MobiusNimble-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MobiusNimble-Info.plist"; sourceTree = "<group>"; };
-		5B80EDE92125A2E000F87129 /* MobiusNimble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobiusNimble.h; sourceTree = "<group>"; };
 		5B80EDEB2125A2E000F87129 /* NimbleFirstMatchersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NimbleFirstMatchersTests.swift; sourceTree = "<group>"; };
 		5B80EDED2125A2E000F87129 /* NimbleNextMatchersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NimbleNextMatchersTests.swift; sourceTree = "<group>"; };
 		5B80EDEF2125A2E000F87129 /* NimbleNextMatchers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NimbleNextMatchers.swift; sourceTree = "<group>"; };
@@ -327,12 +323,10 @@
 		5BB287C8209995410043B530 /* MobiusController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusController.swift; sourceTree = "<group>"; };
 		5BB287C9209995410043B530 /* MobiusLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusLogger.swift; sourceTree = "<group>"; };
 		5BB287CA209995410043B530 /* Locking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Locking.swift; sourceTree = "<group>"; };
-		5BB287E5209995420043B530 /* MobiusExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobiusExtras.h; sourceTree = "<group>"; };
 		5BB287E6209995420043B530 /* MobiusExtras-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusExtras-Info.plist"; sourceTree = "<group>"; };
 		5BB287E8209995420043B530 /* ConsoleLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleLogger.swift; sourceTree = "<group>"; };
 		5BB2882D2099964F0043B530 /* MobiusCore-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusCore-Info.plist"; sourceTree = "<group>"; };
 		5BB2882E2099964F0043B530 /* MobiusCoreTests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusCoreTests-Info.plist"; sourceTree = "<group>"; };
-		5BB2882F2099964F0043B530 /* MobiusCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobiusCore.h; sourceTree = "<group>"; };
 		5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyMobiusLoggerTests.swift; sourceTree = "<group>"; };
 		5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusControllerTests.swift; sourceTree = "<group>"; };
 		5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusIntegrationTests.swift; sourceTree = "<group>"; };
@@ -353,7 +347,6 @@
 		5BB288A420999B750043B530 /* UpdateSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSpec.swift; sourceTree = "<group>"; };
 		5BB288A620999B750043B530 /* MobiusTest-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusTest-Info.plist"; sourceTree = "<group>"; };
 		5BB288A720999B750043B530 /* MobiusTestTests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusTestTests-Info.plist"; sourceTree = "<group>"; };
-		5BB288A820999B750043B530 /* MobiusTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobiusTest.h; sourceTree = "<group>"; };
 		5BB288AA20999B750043B530 /* UpdateSpecTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateSpecTests.swift; sourceTree = "<group>"; };
 		5BB9346320D2A46A00A1FE3A /* EffectRouterBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterBuilder.swift; sourceTree = "<group>"; };
 		5BB9346520D3CAA600A1FE3A /* EffectRouterBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterBuilderTests.swift; sourceTree = "<group>"; };
@@ -584,7 +577,6 @@
 			children = (
 				5B80EDE72125A2E000F87129 /* MobiusNimbleTests-Info.plist */,
 				5B80EDE82125A2E000F87129 /* MobiusNimble-Info.plist */,
-				5B80EDE92125A2E000F87129 /* MobiusNimble.h */,
 			);
 			path = BuildSystem;
 			sourceTree = "<group>";
@@ -668,7 +660,6 @@
 		5BB287E4209995420043B530 /* BuildSystem */ = {
 			isa = PBXGroup;
 			children = (
-				5BB287E5209995420043B530 /* MobiusExtras.h */,
 				5BB287E6209995420043B530 /* MobiusExtras-Info.plist */,
 			);
 			path = BuildSystem;
@@ -691,7 +682,6 @@
 			children = (
 				5BB2882D2099964F0043B530 /* MobiusCore-Info.plist */,
 				5BB2882E2099964F0043B530 /* MobiusCoreTests-Info.plist */,
-				5BB2882F2099964F0043B530 /* MobiusCore.h */,
 			);
 			path = BuildSystem;
 			sourceTree = "<group>";
@@ -749,7 +739,6 @@
 			children = (
 				5BB288A620999B750043B530 /* MobiusTest-Info.plist */,
 				5BB288A720999B750043B530 /* MobiusTestTests-Info.plist */,
-				5BB288A820999B750043B530 /* MobiusTest.h */,
 			);
 			path = BuildSystem;
 			sourceTree = "<group>";
@@ -795,7 +784,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB288322099964F0043B530 /* MobiusCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -803,7 +791,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB28846209998430043B530 /* MobiusExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,7 +805,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB288AE20999B750043B530 /* MobiusTest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1445,6 +1431,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -1459,6 +1446,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
@@ -1524,6 +1512,7 @@
 			baseConfigurationReference = 69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1540,6 +1529,7 @@
 			baseConfigurationReference = 69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1586,6 +1576,7 @@
 			baseConfigurationReference = 69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1602,6 +1593,7 @@
 			baseConfigurationReference = 69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */;
 			buildSettings = {
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1619,6 +1611,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1642,6 +1635,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1717,6 +1711,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1741,6 +1736,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
