@@ -20,7 +20,7 @@ VERSION = begin
 end
 
 # Common Settings
-SWIFT_VERSION = '4.2'
+SWIFT_VERSION = '5.0'
 IOS_DEPLOYMENT_TARGET = '10.0'
 NIMBLE_VERSION = begin
   ver = `cat Cartfile | grep Nimble | grep -o '~.*'`.strip
