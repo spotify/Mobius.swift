@@ -1,5 +1,4 @@
-// swift-tools-version:5.0
-
+// swift-tools-version:4.2
 import PackageDescription
 
 let package = Package(
@@ -11,8 +10,8 @@ let package = Package(
         .library(name: "MobiusTest", targets: ["MobiusTest"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Nimble", from: "8.0.0"),
-        .package(url: "https://github.com/Quick/Quick", from: "2.1.0"),
+        .package(url: "https://github.com/Quick/Nimble", .upToNextMajor(from: "7.0.0")),
+        .package(url: "https://github.com/Quick/Quick", .upToNextMinor(from: "1.2.0")),
     ],
     targets: [
         .target(name: "MobiusCore", path: "MobiusCore/Source"),
@@ -25,5 +24,5 @@ let package = Package(
         .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", "Quick"], path: "MobiusNimble/Test"),
         .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick"], path: "MobiusTest/Test"),
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageVersions: [.v4_2]
 )
