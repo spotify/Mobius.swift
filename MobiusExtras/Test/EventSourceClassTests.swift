@@ -70,11 +70,11 @@ class EventSourceClassTests: QuickSpec {
 
                 context("when consumer is set") {
                     it("should be called") {
-                        var data:String? = nil
+                        var data: String?
                         consumer = { consumerData in
                             data = consumerData
                         }
-                        let _ = sut.subscribe(consumer: consumer)
+                        _ = sut.subscribe(consumer: consumer)
                         sut.send("Something")
                         expect(data).to(equal("Something"))
                     }
@@ -98,7 +98,7 @@ class EventSourceClassTests: QuickSpec {
 
                 context("when subscribe") {
                     it("should call on subscribe") {
-                        let _ = sut.subscribe(consumer: { _ in })
+                        _ = sut.subscribe(consumer: { _ in })
                         expect(sut.subscribeCounter).to(equal(1))
                     }
                 }
