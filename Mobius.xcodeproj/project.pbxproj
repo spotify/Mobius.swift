@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
+		28A030FD23156E0D0011F000 /* EventSourceClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A030FC23156E0D0011F000 /* EventSourceClass.swift */; };
+		28A030FE23156E130011F000 /* EventSourceClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A030FC23156E0D0011F000 /* EventSourceClass.swift */; };
+		28A03100231662560011F000 /* EventSourceClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A030FF231662560011F000 /* EventSourceClassTests.swift */; };
 		2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
 		2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
 		2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */; };
@@ -256,6 +259,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		28A030FC23156E0D0011F000 /* EventSourceClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSourceClass.swift; sourceTree = "<group>"; };
+		28A030FF231662560011F000 /* EventSourceClassTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSourceClassTests.swift; sourceTree = "<group>"; };
 		2D2FE60F20625E76002DFD69 /* Mobius.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Mobius.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
 		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
@@ -673,6 +678,7 @@
 				5BB287E8209995420043B530 /* ConsoleLogger.swift */,
 				DD748322212DB525008EEECD /* Copyable.swift */,
 				5B1F104C21105CAD0067193C /* EventSource+Extensions.swift */,
+				28A030FC23156E0D0011F000 /* EventSourceClass.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -762,6 +768,7 @@
 				5B9CE80621199D4400DB79A7 /* ConnectableContramapTests.swift */,
 				DD748324212DEEC1008EEECD /* CopyableTests.swift */,
 				5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */,
+				28A030FF231662560011F000 /* EventSourceClassTests.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -1216,6 +1223,7 @@
 			files = (
 				DD748326212DEEC6008EEECD /* Copyable.swift in Sources */,
 				3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */,
+				28A030FE23156E130011F000 /* EventSourceClass.swift in Sources */,
 				2DF4C42420DBDF1B00A4B6DE /* ConsoleLogger.swift in Sources */,
 				02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */,
 				5B1F104E21105CB10067193C /* EventSource+Extensions.swift in Sources */,
@@ -1304,6 +1312,7 @@
 			files = (
 				DD748323212DB525008EEECD /* Copyable.swift in Sources */,
 				5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */,
+				28A030FD23156E0D0011F000 /* EventSourceClass.swift in Sources */,
 				5B1F104D21105CAD0067193C /* EventSource+Extensions.swift in Sources */,
 				DDA64A6720A0AD2D00150355 /* ConsoleLogger.swift in Sources */,
 				5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */,
@@ -1366,6 +1375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28A03100231662560011F000 /* EventSourceClassTests.swift in Sources */,
 				DD748325212DEEC1008EEECD /* CopyableTests.swift in Sources */,
 				5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */,
 				5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */,
