@@ -138,6 +138,9 @@
 		69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
+		DA9442F3231946D3006B11D9 /* EffectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9442F2231946D3006B11D9 /* EffectAction.swift */; };
+		DA9442F623194A68006B11D9 /* EffectActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9442F423194A46006B11D9 /* EffectActionTests.swift */; };
+		DA9442F723194D45006B11D9 /* EffectAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9442F2231946D3006B11D9 /* EffectAction.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
@@ -356,6 +359,8 @@
 		69C12F77222F223700DC4F9E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Carthage/Checkouts/xcconfigs/Base/Configurations/Release.xcconfig; sourceTree = "<group>"; };
 		69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-Framework.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-Framework.xcconfig"; sourceTree = "<group>"; };
 		69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-StaticLibrary.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
+		DA9442F2231946D3006B11D9 /* EffectAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectAction.swift; sourceTree = "<group>"; };
+		DA9442F423194A46006B11D9 /* EffectActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectActionTests.swift; sourceTree = "<group>"; };
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
@@ -673,6 +678,7 @@
 				5BB287E8209995420043B530 /* ConsoleLogger.swift */,
 				DD748322212DB525008EEECD /* Copyable.swift */,
 				5B1F104C21105CAD0067193C /* EventSource+Extensions.swift */,
+				DA9442F2231946D3006B11D9 /* EffectAction.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -762,6 +768,7 @@
 				5B9CE80621199D4400DB79A7 /* ConnectableContramapTests.swift */,
 				DD748324212DEEC1008EEECD /* CopyableTests.swift */,
 				5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */,
+				DA9442F423194A46006B11D9 /* EffectActionTests.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -1214,6 +1221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA9442F723194D45006B11D9 /* EffectAction.swift in Sources */,
 				DD748326212DEEC6008EEECD /* Copyable.swift in Sources */,
 				3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */,
 				2DF4C42420DBDF1B00A4B6DE /* ConsoleLogger.swift in Sources */,
@@ -1302,6 +1310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA9442F3231946D3006B11D9 /* EffectAction.swift in Sources */,
 				DD748323212DB525008EEECD /* Copyable.swift in Sources */,
 				5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */,
 				5B1F104D21105CAD0067193C /* EventSource+Extensions.swift in Sources */,
@@ -1370,6 +1379,7 @@
 				5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */,
 				5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */,
 				5B9CE80721199D4400DB79A7 /* ConnectableContramapTests.swift in Sources */,
+				DA9442F623194A68006B11D9 /* EffectActionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
