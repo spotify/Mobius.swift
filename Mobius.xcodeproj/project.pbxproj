@@ -138,6 +138,11 @@
 		69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
+		BE9E703D231EB17000371966 /* CompositeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E7035231EAED800371966 /* CompositeLogger.swift */; };
+		BE9E703E231EB17000371966 /* CompositeLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E7035231EAED800371966 /* CompositeLogger.swift */; };
+		BE9E703F231EB17000371966 /* CompositeLoggerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E7037231EAEF500371966 /* CompositeLoggerBuilder.swift */; };
+		BE9E7040231EB17000371966 /* CompositeLoggerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E7037231EAEF500371966 /* CompositeLoggerBuilder.swift */; };
+		BE9E7041231EB18700371966 /* CompositeLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E7039231EAFDE00371966 /* CompositeLoggerTests.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
@@ -356,6 +361,9 @@
 		69C12F77222F223700DC4F9E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Carthage/Checkouts/xcconfigs/Base/Configurations/Release.xcconfig; sourceTree = "<group>"; };
 		69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-Framework.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-Framework.xcconfig"; sourceTree = "<group>"; };
 		69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-StaticLibrary.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
+		BE9E7035231EAED800371966 /* CompositeLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeLogger.swift; sourceTree = "<group>"; };
+		BE9E7037231EAEF500371966 /* CompositeLoggerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeLoggerBuilder.swift; sourceTree = "<group>"; };
+		BE9E7039231EAFDE00371966 /* CompositeLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeLoggerTests.swift; sourceTree = "<group>"; };
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
@@ -617,6 +625,8 @@
 				5BB287BC209995410043B530 /* Disposables */,
 				5B4A369821107D0E00279C7D /* EventSources */,
 				5BB287C1209995410043B530 /* BrokenConnection.swift */,
+				BE9E7035231EAED800371966 /* CompositeLogger.swift */,
+				BE9E7037231EAEF500371966 /* CompositeLoggerBuilder.swift */,
 				5B237EB9209C4F3C00764576 /* Connectable.swift */,
 				5BB287BA209995410043B530 /* ConnectablePublisher.swift */,
 				5BB287B6209995410043B530 /* Connection.swift */,
@@ -695,6 +705,7 @@
 				5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */,
 				5BB2885120999ACE0043B530 /* BrokenConnectionTests.swift */,
 				5BB2885720999ACE0043B530 /* CompositeDisposableTests.swift */,
+				BE9E7039231EAFDE00371966 /* CompositeLoggerTests.swift */,
 				5BB2885920999ACE0043B530 /* ConnectablePublisherTests.swift */,
 				5BB9346520D3CAA600A1FE3A /* EffectRouterBuilderTests.swift */,
 				5BB2885020999ACE0043B530 /* EventProcessorTests.swift */,
@@ -1180,6 +1191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */,
+				BE9E703F231EB17000371966 /* CompositeLoggerBuilder.swift in Sources */,
 				2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */,
 				2DF4C30120DBDD5800A4B6DE /* MobiusHooks.swift in Sources */,
 				5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */,
@@ -1197,6 +1209,7 @@
 				2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
+				BE9E703D231EB17000371966 /* CompositeLogger.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
 				2DF4C30620DBDD5C00A4B6DE /* AnonymousDisposable.swift in Sources */,
 				5B1F103D210F5EBC0067193C /* ActionConnectable.swift in Sources */,
@@ -1239,6 +1252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */,
+				BE9E7040231EB17000371966 /* CompositeLoggerBuilder.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
@@ -1256,6 +1270,7 @@
 				2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				5B1F103F210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1043210F5F590067193C /* ClosureConnectable.swift in Sources */,
+				BE9E703E231EB17000371966 /* CompositeLogger.swift in Sources */,
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
 				5BB9346420D2A46A00A1FE3A /* EffectRouterBuilder.swift in Sources */,
@@ -1290,6 +1305,7 @@
 				5B4A369E21107F3200279C7D /* MergedEventSourceTests.swift in Sources */,
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
 				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
+				BE9E7041231EB18700371966 /* CompositeLoggerTests.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
