@@ -8,10 +8,11 @@ source "$(dirname "$0")/helpers.sh"
 cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodeproj/xcshareddata/xcschemes"
 
 # Only install tools when running on travis
-if [ -n "$TRAVIS_BUILD_ID" ]; then
+if [[ -n "$TRAVIS_BUILD_ID" || -n "$GITHUB_WORKFLOW" ]]; then
   heading "Installing Tools"
   brew install carthage swiftlint
   gem install xcpretty
+  export IS_CI=1
 fi
 
 has_command carthage || fail "Carthage must be installed"
@@ -71,22 +72,24 @@ xcb test \
   fail "Test Run Failed"
 
 #
-# Collect Code Coverage
+# CODECOV
 #
-heading "Pushing Coverage to Codecov"
 
-if [[ "$SKIP_COVERAGE" == "1" ]]; then
-  echo "Skipping (SKIP_COVERAGE == 1)"
-  exit 0
+# output a bunch of stuff that codecov might recognize
+if [[ -n "$GITHUB_WORKFLOW" ]]; then
+  PR_CANDIDATE=`echo "$GITHUB_REF" | egrep -o "pull/\d+" | egrep -o "\d+"`
+  [[ -n "$PR_CANDIDATE" ]] && export VCS_PULL_REQUEST="$PR_CANDIDATE"
+  export CI_BUILD_ID="$RUNNER_TRACKING_ID"
+  export CI_JOB_ID="$RUNNER_TRACKING_ID"
+  export CODECOV_SLUG="$GITHUB_REPOSITORY"
+  export GIT_BRANCH="$GITHUB_REF"
+  export GIT_COMMIT="$GITHUB_SHA"
+  export VCS_BRANCH_NAME="$GITHUB_REF"
+  export VCS_COMMIT_ID="$GITHUB_SHA"
+  export VCS_SLUG="$GITHUB_REPOSITORY"
 fi
 
-if [ -z "$TRAVIS_BUILD_ID" ]; then
-  CODECOV_EXTRA="-d"  # dry-run if not running in travis
-fi
-
-# Download bash script
-curl -s https://codecov.io/bash > build/codecov.sh
+curl -sfL https://codecov.io/bash > build/codecov.sh
 chmod +x build/codecov.sh
-
-# Silently fail
-build/codecov.sh -D build/DD/Test -X xcodellvm -y codecov.yml $CODECOV_EXTRA
+[[ "$IS_CI" == "1" ]] || CODECOV_EXTRA="-d"
+build/codecov.sh -D build/DD/Test -X xcodellvm $CODECOV_EXTRA
