@@ -19,26 +19,35 @@
 
 import MobiusCore
 
-/// A general implementation of the `ActionWithPredicate` protocol that takes an effect and a closure
-/// and triggers the closure when the effect is accepted and the action runs.
-public class EffectAction<EffectType>: ActionWithPredicate where EffectType: Equatable {
-    public typealias Effect = EffectType
+/// A general implementation of the `ActionWithPredicate` protocol that takes a closure and triggers it when
+/// the provided effect or precidate is accepted and the action runs.
+public class EffectAction<Effect>: ActionWithPredicate where Effect: Equatable {
+    public typealias Predicate = (Effect) -> (Bool)
 
-    private let acceptedEffect: Effect
+    private let predicate: Predicate
     private let action: () -> Void
 
-    /// Initializes an EffectAction
+    /// Initializes an EffectAction with a predicate.
+    ///
+    /// - Parameters:
+    ///   - predicate: a predicate whose accepting inputs the EffectAction accepts.
+    ///   - action: a closure that gets triggered on the action run when the effect is accepted.
+    public init(predicate: @escaping Predicate, action: @escaping () -> Void) {
+        self.predicate = predicate
+        self.action = action
+    }
+
+    /// Initializes an EffectAction with an accepted effect.
     ///
     /// - Parameters:
     ///   - acceptedEffect: en effect that the EffectAction accepts.
     ///   - action: a closure that gets triggered on the action run when the effect is accepted.
-    public init(_ acceptedEffect: Effect, action: @escaping () -> Void) {
-        self.acceptedEffect = acceptedEffect
-        self.action = action
+    public convenience init(_ acceptedEffect: Effect, action: @escaping () -> Void) {
+        self.init(predicate: { effect in effect == acceptedEffect }, action: action)
     }
 
     public func canAccept(_ effect: Effect) -> Bool {
-        return effect == acceptedEffect
+        return predicate(effect)
     }
 
     public func run() {

@@ -25,9 +25,10 @@ import Quick
 class EffectActionTests: QuickSpec {
     override func spec() {
         describe("EffectAction") {
-            enum Effect {
+            enum Effect: Equatable {
                 case accepted
                 case rejected
+                case acceptedWith(associatedValue: Bool)
             }
 
             var effectAction: EffectAction<Effect>!
@@ -36,28 +37,64 @@ class EffectActionTests: QuickSpec {
                 actionCalled = true
             }
 
-            beforeEach {
-                effectAction = EffectAction(.accepted, action: actionClosure)
-            }
+            context("when initializing with accepted effect") {
+                beforeEach {
+                    effectAction = EffectAction(.accepted, action: actionClosure)
+                    actionCalled = false
+                }
 
-            context("when asking for effect acceptance on acceptable effect") {
-                it("is accepted") {
-                    expect(effectAction.canAccept(.accepted)).to(beTrue())
-                    expect(actionCalled).to(beFalse())
+                context("when asking for effect acceptance on acceptable effect") {
+                    it("is accepted") {
+                        expect(effectAction.canAccept(.accepted)).to(beTrue())
+                        expect(actionCalled).to(beFalse())
+                    }
+                }
+
+                context("when asking for effect acceptance on non acceptable effect") {
+                    it("is not accepted") {
+                        expect(effectAction.canAccept(.rejected)).to(beFalse())
+                        expect(actionCalled).to(beFalse())
+                    }
+                }
+
+                context("when running the action") {
+                    it("calls the action closure") {
+                        effectAction.run()
+                        expect(actionCalled).to(beTrue())
+                    }
                 }
             }
 
-            context("when asking for effect acceptance on non acceptable effect") {
-                it("is not accepted") {
-                    expect(effectAction.canAccept(.rejected)).to(beFalse())
-                    expect(actionCalled).to(beFalse())
+            context("when initializing with predicate") {
+                beforeEach {
+                    effectAction = EffectAction(predicate: { effect in
+                        if case .acceptedWith = effect {
+                            return true
+                        }
+                        return false
+                    }, action: actionClosure)
+                    actionCalled = false
                 }
-            }
 
-            context("when running the action") {
-                it("calls the action closure") {
-                    effectAction.run()
-                    expect(actionCalled).to(beTrue())
+                context("when asking for effect acceptance on acceptable effect") {
+                    it("is accepted") {
+                        expect(effectAction.canAccept(.acceptedWith(associatedValue: false))).to(beTrue())
+                        expect(actionCalled).to(beFalse())
+                    }
+                }
+
+                context("when asking for effect acceptance on non acceptable effect") {
+                    it("is not accepted") {
+                        expect(effectAction.canAccept(.rejected)).to(beFalse())
+                        expect(actionCalled).to(beFalse())
+                    }
+                }
+
+                context("when running the action") {
+                    it("calls the action closure") {
+                        effectAction.run()
+                        expect(actionCalled).to(beTrue())
+                    }
                 }
             }
         }
