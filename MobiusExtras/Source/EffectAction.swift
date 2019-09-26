@@ -20,7 +20,7 @@
 import MobiusCore
 
 /// A general implementation of the `ActionWithPredicate` protocol that takes a closure and triggers it when
-/// the provided effect or precidate is accepted and the action runs.
+/// the provided effect or predicate is accepted and the action runs.
 public class EffectAction<Effect>: ActionWithPredicate where Effect: Equatable {
     public typealias Predicate = (Effect) -> (Bool)
 
@@ -30,8 +30,8 @@ public class EffectAction<Effect>: ActionWithPredicate where Effect: Equatable {
     /// Initializes an EffectAction with a predicate.
     ///
     /// - Parameters:
-    ///   - predicate: a predicate whose accepting inputs the EffectAction accepts.
-    ///   - action: a closure that gets triggered on the action run when the effect is accepted.
+    ///   - predicate: a predicate selecting which Effects the EffectAction accepts.
+    ///   - action: a closure that gets executed when the EffectAction runs.
     public init(predicate: @escaping Predicate, action: @escaping () -> Void) {
         self.predicate = predicate
         self.action = action
@@ -41,7 +41,7 @@ public class EffectAction<Effect>: ActionWithPredicate where Effect: Equatable {
     ///
     /// - Parameters:
     ///   - acceptedEffect: en effect that the EffectAction accepts.
-    ///   - action: a closure that gets triggered on the action run when the effect is accepted.
+    ///   - action: a closure that gets executed when the EffectAction runs.
     public convenience init(_ acceptedEffect: Effect, action: @escaping () -> Void) {
         self.init(predicate: { effect in effect == acceptedEffect }, action: action)
     }
