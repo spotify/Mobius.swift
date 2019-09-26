@@ -23,6 +23,7 @@ import Nimble
 import Quick
 
 class EffectActionTests: QuickSpec {
+    // swiftlint:disable function_body_length
     override func spec() {
         describe("EffectAction") {
             enum Effect: Equatable {
@@ -67,12 +68,14 @@ class EffectActionTests: QuickSpec {
 
             context("when initializing with predicate") {
                 beforeEach {
-                    effectAction = EffectAction(predicate: { effect in
-                        if case .acceptedWith = effect {
-                            return true
-                        }
-                        return false
-                    }, action: actionClosure)
+                    effectAction = EffectAction(
+                        predicate: { effect in
+                            if case .acceptedWith = effect {
+                                return true
+                            }
+                            return false
+                        },
+                        action: actionClosure)
                     actionCalled = false
                 }
 
