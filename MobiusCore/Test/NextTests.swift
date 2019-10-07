@@ -116,7 +116,7 @@ class NextTests: QuickSpec {
 
                 describe("noChange") {
                     it("should not have a model") {
-                        expect(Next<Int, NoEffect>.noChange.model).to(beNil())
+                        expect(Next<Int, Never>.noChange.model).to(beNil())
                     }
 
                     it("should not have any effects") {
@@ -161,7 +161,6 @@ class NextTests: QuickSpec {
                 }
             }
 
-            #if swift(>=4.1)
             describe("Equatable") {
                 context("when the model type is equatable") {
                     let model1 = "some text"
@@ -198,7 +197,6 @@ class NextTests: QuickSpec {
                     }
                 }
             }
-            #endif
 
             describe("debug description") {
                 context("when containing a model") {
