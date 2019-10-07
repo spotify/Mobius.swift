@@ -56,11 +56,8 @@
 		5B3AA33C20975248003F35C3 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5B3AA3C120975635003F35C3 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		5B3AA3C5209757AC003F35C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
-		5B4A36962110783100279C7D /* MergedEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A36952110783100279C7D /* MergedEventSource.swift */; };
-		5B4A36972110783100279C7D /* MergedEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A36952110783100279C7D /* MergedEventSource.swift */; };
 		5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
 		5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
-		5B4A369E21107F3200279C7D /* MergedEventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369D21107F3200279C7D /* MergedEventSourceTests.swift */; };
 		5B57E8BC2125AB16001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5B57E8BE2125AD09001AFC71 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E8BD2125AD09001AFC71 /* TestUtil.swift */; };
 		5B57E8C72126FFDD001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
@@ -282,9 +279,7 @@
 		5B3AA3BB2097551D003F35C3 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
 		5B3AA3C4209757AC003F35C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		5B3AA3CF20975802003F35C3 /* MobiusExtras.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MobiusExtras.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B4A36952110783100279C7D /* MergedEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergedEventSource.swift; sourceTree = "<group>"; };
 		5B4A369921107D2600279C7D /* AnyEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEventSource.swift; sourceTree = "<group>"; };
-		5B4A369D21107F3200279C7D /* MergedEventSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergedEventSourceTests.swift; sourceTree = "<group>"; };
 		5B57E8BD2125AD09001AFC71 /* TestUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtil.swift; sourceTree = "<group>"; };
 		5B5F11B7213805C000911A57 /* FirstMatchers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstMatchers.swift; sourceTree = "<group>"; };
 		5B5F11B8213805C000911A57 /* MatcherUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatcherUtils.swift; sourceTree = "<group>"; };
@@ -547,7 +542,6 @@
 				5B4A369921107D2600279C7D /* AnyEventSource.swift */,
 				2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */,
 				5BB287C0209995410043B530 /* EventSource.swift */,
-				5B4A36952110783100279C7D /* MergedEventSource.swift */,
 			);
 			path = EventSources;
 			sourceTree = "<group>";
@@ -557,7 +551,6 @@
 			children = (
 				5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */,
 				2DDF54C2229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift */,
-				5B4A369D21107F3200279C7D /* MergedEventSourceTests.swift */,
 			);
 			path = EventSources;
 			sourceTree = "<group>";
@@ -1204,7 +1197,6 @@
 				5B1F1041210F5EEB0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				2DF4C30420DBDD5C00A4B6DE /* Disposable.swift in Sources */,
 				2DF4C30920DBDD5C00A4B6DE /* Mobius.swift in Sources */,
-				5B4A36972110783100279C7D /* MergedEventSource.swift in Sources */,
 				2DF4C30320DBDD5800A4B6DE /* First.swift in Sources */,
 				2DF4C30E20DBDD5C00A4B6DE /* Locking.swift in Sources */,
 			);
@@ -1263,7 +1255,6 @@
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
 				5BB2881C2099957D0043B530 /* ConnectablePublisher.swift in Sources */,
-				5B4A36962110783100279C7D /* MergedEventSource.swift in Sources */,
 				5BB2881E209995810043B530 /* EventSource.swift in Sources */,
 				5B237EBA209C4F3C00764576 /* Connectable.swift in Sources */,
 			);
@@ -1287,7 +1278,6 @@
 				5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */,
 				5BB2887B20999AD60043B530 /* ConnectablePublisherTests.swift in Sources */,
 				5BB2887620999AD60043B530 /* NextTests.swift in Sources */,
-				5B4A369E21107F3200279C7D /* MergedEventSourceTests.swift in Sources */,
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
 				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
@@ -1557,7 +1547,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Debug;
 		};
@@ -1572,7 +1561,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Release;
 		};
