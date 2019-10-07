@@ -20,20 +20,5 @@
 import Foundation
 
 /// The `NoEffect` type can be used to signal that some data passing through a Mobius loop cannot have any effects.
-/// This is checked by the type system since the `NoEffect` enum does not have any cases.
-///
-/// - Note: The `Equatable` and `Hashable` implementations always returns `true` and `0`, respectively. The
-///         conformance is just to allow the type to be used where required. Such as with the `First` and `Next` data
-///         structures.
-public enum NoEffect: Equatable, Hashable {
-    public static func == (lhs: NoEffect, rhs: NoEffect) -> Bool {
-        #if compiler(>=5.1)
-        // #if compiler(<5.1) doesn’t work in the Xcode 10.1 toolchain
-        #else
-        // This is required in earlier compiler versions, but a warning in newer ones
-        return true
-        #endif
-    }
-    public var hashValue: Int { return 0 }
-    public func hash(into hasher: inout Hasher) {}
-}
+@available(*, deprecated, message: "use Never instead")
+typealias NoEffect = Never

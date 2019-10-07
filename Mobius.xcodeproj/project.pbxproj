@@ -1056,6 +1056,7 @@
 					};
 					5B3AA33A20975248003F35C3 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					5B3AA3CE20975802003F35C3 = {
@@ -1064,10 +1065,12 @@
 					};
 					5B80EDCE2125A18800F87129 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					5B80EDD62125A18800F87129 = {
 						CreatedOnToolsVersion = 9.4.1;
+						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 					};
 					5B80EDF42125A32200F87129 = {
@@ -1435,7 +1438,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1450,7 +1453,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -1522,7 +1525,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusCore/BuildSystem/MobiusCore-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1540,7 +1542,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusCore/BuildSystem/MobiusCore-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1730,7 +1731,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTest;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1756,7 +1756,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTest;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1773,7 +1772,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1788,7 +1786,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
