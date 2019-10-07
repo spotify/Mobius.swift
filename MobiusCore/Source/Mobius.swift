@@ -144,11 +144,6 @@ public extension Mobius {
             )
         }
 
-        @available(*, deprecated, message: "use withLogger instead")
-        public func logger<L: MobiusLogger>(_ logger: L) -> Builder<Types> where L.Model == Types.Model, L.Event == Types.Event, L.Effect == Types.Effect {
-            return withLogger(logger)
-        }
-
         public func start(from initialModel: Types.Model) -> MobiusLoop<Types> {
             return MobiusLoop.createLoop(
                 update: update,
