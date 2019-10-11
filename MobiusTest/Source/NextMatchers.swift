@@ -125,7 +125,7 @@ public func hasEffects<Model, Effect>(
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.effects
-        if !actual.isSuperset(of: expected) {
+        if !expected.allSatisfy(actual.contains) {
             return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
         }
         return .success

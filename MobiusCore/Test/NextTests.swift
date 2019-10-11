@@ -201,7 +201,7 @@ class NextTests: QuickSpec {
             describe("debug description") {
                 context("when containing a model") {
                     it("should produce the appropriate description") {
-                        let next = Next<Int, Int>(model: 3, effects: Set([1]))
+                        let next = Next<Int, Int>(model: 3, effects: [1])
                         let description = String(describing: next)
                         expect(description).to(equal("(3, [1])"))
                     }
@@ -209,7 +209,7 @@ class NextTests: QuickSpec {
 
                 context("when no model") {
                     it("should produce the appropriate description") {
-                        let next = Next<Int, Int>(model: nil, effects: Set([1]))
+                        let next = Next<Int, Int>(model: nil, effects: [1])
                         let description = String(describing: next)
                         expect(description).to(equal("(nil, [1])"))
                     }

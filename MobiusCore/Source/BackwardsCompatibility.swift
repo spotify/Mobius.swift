@@ -24,3 +24,15 @@ public extension First where Effect: Hashable {
         self.effects = Array(effects)
     }
 }
+
+public extension Next where Effect: Hashable {
+    @available(*, deprecated, message: "use array of effects instead")
+    static func next(_ model: Model, effects: Set<Effect>) -> Next<Model, Effect> {
+        return .next(model, effects: Array(effects))
+    }
+
+    @available(*, deprecated, message: "use array of effects instead")
+    static func dispatchEffects(_ effects: Set<Effect>) -> Next<Model, Effect> {
+        return .dispatchEffects(Array(effects))
+    }
+}
