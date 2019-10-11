@@ -17,33 +17,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import MobiusCore
-
-public typealias AssertFirst<Model, Effect> = (First<Model, Effect>) -> Void
-
-public final class InitSpec<Types: LoopTypes> {
-    let initiator: Initiator<Types>
-
-    public init(_ initiator: @escaping Initiator<Types>) {
-        self.initiator = initiator
-    }
-
-    public func when(_ model: Types.Model) -> Then {
-        return Then(model, initiator: initiator)
-    }
-
-    public struct Then {
-        let model: Types.Model
-        let initiator: Initiator<Types>
-
-        public init(_ model: Types.Model, initiator: @escaping Initiator<Types>) {
-            self.model = model
-            self.initiator = initiator
-        }
-
-        public func then(_ assertion: AssertFirst<Types.Model, Types.Effect>) {
-            let first = initiator(model)
-            assertion(first)
-        }
+public extension First where Effect: Hashable {
+    @available(*, deprecated, message: "use array of effects instead")
+    init(model: Model, effects: Set<Effect>) {
+        self.model = model
+        self.effects = Array(effects)
     }
 }

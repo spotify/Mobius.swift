@@ -30,12 +30,12 @@ class InitSpecTests: QuickSpec {
                 var initiator: Initiator<AllStrings>!
                 var spec: InitSpec<AllStrings>!
                 var testModel: String!
-                var testEffects: Set<String>!
+                var testEffects: [String]!
                 var assertionClosureCalled = false
 
                 beforeEach {
                     testModel = UUID().uuidString
-                    testEffects = Set(["1", "2", "3"])
+                    testEffects = ["1", "2", "3"]
                     initiator = { (model: String) in
                         First<String, String>(model: model + model, effects: testEffects)
                     }

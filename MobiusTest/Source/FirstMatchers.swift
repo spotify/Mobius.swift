@@ -92,7 +92,7 @@ public func hasEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        if !first.effects.isSuperset(of: expected) {
+        if !expected.allSatisfy(first.effects.contains) {
             return .failure(
                 message: "Expected effects <\(first.effects)> to contain <\(expected)>",
                 file: file,

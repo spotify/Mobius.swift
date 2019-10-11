@@ -54,7 +54,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
         queue.sync(flags: .barrier) {
             currentModel = first.model
 
-            publisher.post(Next.next(first.model, effects: first.effects))
+            publisher.post(Next.next(first.model, effects: Set(first.effects)))
 
             for event in queuedEvents {
                 accept(event)
