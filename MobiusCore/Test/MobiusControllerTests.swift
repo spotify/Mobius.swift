@@ -42,8 +42,10 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
+                /* FIXME
                     .withEventQueue(self.serialEventQueue)
                     .withEffectQueue(self.serialEffectQueue)
+                */
                     .makeController(from: "S")
 
                 errorThrown = false

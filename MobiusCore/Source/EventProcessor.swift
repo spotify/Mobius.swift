@@ -24,34 +24,35 @@ import Foundation
 class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
     let update: Update<Model, Event, Effect>
     let publisher: ConnectablePublisher<Next<Model, Effect>>
-
-    private let queue: DispatchQueue
+    let access: SequentialAccessGuard
 
     private var currentModel: Model?
     private var queuedEvents = [Event]()
 
     public var debugDescription: String {
-        let modelDescription: String
-        if let currentModel = currentModel {
-            modelDescription = String(reflecting: currentModel)
-        } else {
-            modelDescription = "nil"
+        return access.guard {
+            let modelDescription: String
+            if let currentModel = currentModel {
+                modelDescription = String(reflecting: currentModel)
+            } else {
+                modelDescription = "nil"
+            }
+            return "<\(modelDescription), \(queuedEvents)>"
         }
-        return "<\(modelDescription), \(queuedEvents)>"
     }
 
     init(
         update: @escaping Update<Model, Event, Effect>,
         publisher: ConnectablePublisher<Next<Model, Effect>>,
-        queue: DispatchQueue
+        accessGuard: SequentialAccessGuard = SequentialAccessGuard()
     ) {
         self.update = update
         self.publisher = publisher
-        self.queue = queue
+        access = accessGuard
     }
 
     func start(from first: First<Model, Effect>) {
-        queue.sync(flags: .barrier) {
+        access.guard {
             currentModel = first.model
 
             publisher.post(Next.next(first.model, effects: first.effects))
@@ -65,7 +66,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
     }
 
     func accept(_ event: Event) {
-        queue.async(flags: .barrier) {
+        access.guard {
             if let current = self.currentModel {
                 let next = self.update(current, event)
 
@@ -81,11 +82,13 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
     }
 
     func dispose() {
-        publisher.dispose()
+        access.guard {
+            publisher.dispose()
+        }
     }
 
     func readCurrentModel() -> Model? {
-        return queue.sync { currentModel }
+        return access.guard { currentModel }
     }
 
     var latestModel: Model {

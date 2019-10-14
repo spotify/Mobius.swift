@@ -24,26 +24,28 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     private let eventProcessor: EventProcessor<Model, Event, Effect>
     private let modelPublisher: ConnectablePublisher<Model>
     private let disposable: Disposable
-
-    // AtomicBool is used here to ensure coherence in the event that dispose and dispatchEvent are
-    // called on different threads.
-    private var disposed = AtomicBool(false)
+    private var disposed = false
+    private var access: SequentialAccessGuard
 
     public var debugDescription: String {
-        if disposed.value {
-            return "disposed loop!"
+        return access.guard {
+            if disposed {
+                return "disposed loop!"
+            }
+            return "\(type(of: self)) \(eventProcessor)"
         }
-        return "\(type(of: self)) \(eventProcessor)"
     }
 
     init(
         eventProcessor: EventProcessor<Model, Event, Effect>,
         modelPublisher: ConnectablePublisher<Model>,
-        disposable: Disposable
+        disposable: Disposable,
+        accessGuard: SequentialAccessGuard = SequentialAccessGuard()
     ) {
         self.eventProcessor = eventProcessor
         self.modelPublisher = modelPublisher
         self.disposable = disposable
+        access = accessGuard
     }
 
     /// Add an observer of model changes to this loop. If `getMostRecentModel()` is non-nil,
@@ -55,16 +57,19 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     /// - Returns: a `Disposable` that can be used to stop further notifications to the observer
     @discardableResult
     public func addObserver(_ consumer: @escaping Consumer<Model>) -> Disposable {
-        return modelPublisher.connect(to: consumer)
+        return access.guard {
+            return modelPublisher.connect(to: consumer)
+        }
     }
 
     public func dispose() {
-        let alreadyDisposed = disposed.getAndSet(value: true)
-
-        if !alreadyDisposed {
-            modelPublisher.dispose()
-            eventProcessor.dispose()
-            disposable.dispose()
+        return access.guard {
+            if !disposed {
+                modelPublisher.dispose()
+                eventProcessor.dispose()
+                disposable.dispose()
+                disposed = true
+            }
         }
     }
 
@@ -73,17 +78,19 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     }
 
     public var latestModel: Model {
-        return eventProcessor.latestModel
+        return access.guard { eventProcessor.latestModel }
     }
 
     public func dispatchEvent(_ event: Event) {
-        guard !disposed.value else {
-            // Callers are responsible for ensuring dispatchEvent is never entered after dispose.
-            MobiusHooks.onError("event submitted after dispose")
-            return
-        }
+        return access.guard {
+            guard !disposed else {
+                // Callers are responsible for ensuring dispatchEvent is never entered after dispose.
+                MobiusHooks.onError("event submitted after dispose")
+                return
+            }
 
-        eventProcessor.accept(event)
+            eventProcessor.accept(event)
+        }
     }
 
     // swiftlint:disable:next function_parameter_count
@@ -93,19 +100,22 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         initialModel: Model,
         initiator: @escaping Initiator<Model, Effect>,
         eventSource: AnyEventSource<Event>,
-        eventQueue: DispatchQueue,
-        effectQueue: DispatchQueue,
         logger: AnyMobiusLogger<Model, Event, Effect>
-    ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
-        let loggingInitiator = LoggingInitiator(initiator, logger)
-        let loggingUpdate = LoggingUpdate(update, logger)
+    ) -> MobiusLoop<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+        let accessGuard = SequentialAccessGuard()
+        let loggingInitiator = LoggingInitiator<Model, Effect>(initiator, logger)
+        let loggingUpdate = LoggingUpdate<Model, Event, Effect>(update, logger)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
         // dispatch models and effects to the right places
-        let nextPublisher = ConnectablePublisher<Next<Model, Effect>>()
+        let nextPublisher = ConnectablePublisher<Next<Model, Effect>>(accessGuard: accessGuard)
 
         // event processor: process events, publish Next:s, retain current model
-        let eventProcessor = EventProcessor(update: loggingUpdate.update, publisher: nextPublisher, queue: eventQueue)
+        let eventProcessor = EventProcessor<Model, Event, Effect>(
+            update: loggingUpdate.update,
+            publisher: nextPublisher,
+            accessGuard: accessGuard
+        )
 
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(eventProcessor.accept)
@@ -122,9 +132,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             }
 
             next.effects.forEach({ (effect: Effect) in
-                effectQueue.async {
-                    effectHandlerConnection.accept(effect)
-                }
+                effectHandlerConnection.accept(effect)
             })
         }
         let nextConnection = nextPublisher.connect(to: nextConsumer)
@@ -135,7 +143,8 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         return MobiusLoop(
             eventProcessor: eventProcessor,
             modelPublisher: modelPublisher,
-            disposable: CompositeDisposable(disposables: [eventSourceDisposable, nextConnection, effectHandlerConnection])
+            disposable: CompositeDisposable(disposables: [eventSourceDisposable, nextConnection, effectHandlerConnection]),
+            accessGuard: accessGuard
         )
     }
 }

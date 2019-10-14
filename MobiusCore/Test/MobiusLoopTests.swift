@@ -30,7 +30,6 @@ class MobiusLoopTests: QuickSpec {
             var loop: MobiusLoop<String, String, String>!
             var receivedModels: [String]!
             var effectHandler: SimpleTestConnectable!
-            var queue: DispatchQueue!
             var modelObserver: Consumer<String>!
 
             beforeEach {
@@ -42,9 +41,7 @@ class MobiusLoopTests: QuickSpec {
 
                 effectHandler = SimpleTestConnectable()
 
-                queue = DispatchQueue.testQueue("test event queue")
                 builder = Mobius.loop(update: update, effectHandler: effectHandler)
-                    .withEventQueue(queue)
             }
 
             describe("addObservers") {
@@ -55,7 +52,6 @@ class MobiusLoopTests: QuickSpec {
                 it("should emit the first model if you observe after start") {
                     loop.addObserver(modelObserver)
 
-                    queue.waitForOutstandingTasks()
                     expect(receivedModels).to(equal(["the first model"]))
                 }
 
@@ -63,12 +59,10 @@ class MobiusLoopTests: QuickSpec {
                     let subscription = loop.addObserver(modelObserver)
 
                     loop.dispatchEvent("pre unsubscribe")
-                    queue.waitForOutstandingTasks()
 
                     subscription.dispose()
                     loop.dispatchEvent("post unsubscribe")
 
-                    queue.waitForOutstandingTasks()
                     expect(receivedModels).to(equal(["the first model", "pre unsubscribe"]))
                 }
 
@@ -79,12 +73,10 @@ class MobiusLoopTests: QuickSpec {
                     let subscription = loop.addObserver({ model in secondModelSet.append(model) })
 
                     loop.dispatchEvent("floopity")
-                    queue.waitForOutstandingTasks()
 
                     subscription.dispose()
                     loop.dispatchEvent("floopity floop")
 
-                    queue.waitForOutstandingTasks()
                     expect(receivedModels).to(equal(["the first model", "floopity", "floopity floop"]))
                     expect(secondModelSet).to(equal(["the first model", "floopity"]))
                 }
@@ -99,16 +91,12 @@ class MobiusLoopTests: QuickSpec {
                     loop.dispatchEvent("two")
                     loop.dispatchEvent("three")
 
-                    queue.waitForOutstandingTasks()
                     expect(receivedModels).to(equal(["the beginning", "one", "two", "three"]))
                 }
 
                 it("should queue up events dispatched before start to support racy initialisations") {
                     loop = Mobius.loop(update: { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
-                        .withEventQueue(queue)
                         .start(from: "the beginning")
-
-                    queue.waitForOutstandingTasks()
 
                     loop.addObserver(modelObserver)
 
@@ -124,7 +112,6 @@ class MobiusLoopTests: QuickSpec {
 
                     loop.dispatchEvent("two")
 
-                    queue.waitForOutstandingTasks()
                     expect(loop.latestModel).to(equal("two"))
                 }
             }
@@ -165,8 +152,7 @@ class MobiusLoopTests: QuickSpec {
                 beforeEach {
                     eventProcessor = TestEventProcessor(
                         update: { _, _ in .noChange },
-                        publisher: ConnectablePublisher(),
-                        queue: DispatchQueue(label: "dispose test queue")
+                        publisher: ConnectablePublisher()
                     )
                     modelPublisher = ConnectablePublisher<String>()
                     disposable = ConnectablePublisher<String>()
@@ -245,8 +231,7 @@ class MobiusLoopTests: QuickSpec {
                     let publisher = ConnectablePublisher<String>()
                     let eventProcessor = TestEventProcessor<String, String, String>(
                         update: { _, _ in .noChange },
-                        publisher: ConnectablePublisher<Next<String, String>>(),
-                        queue: DispatchQueue(label: "dispose test queue")
+                        publisher: ConnectablePublisher<Next<String, String>>()
                     )
                     eventProcessor.desiredDebugDescription = eventProcessorDebugDescription
 
