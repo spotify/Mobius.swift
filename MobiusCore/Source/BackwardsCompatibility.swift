@@ -39,6 +39,18 @@ public extension Next where Effect: Hashable {
     }
 }
 
+public extension Mobius.Builder {
+    @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
+    func withEventQueue(_ eventQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
+        return self
+    }
+
+    @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
+    func withEffectQueue(_ effectQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
+        return self
+    }
+}
+
 public extension MobiusLoop {
     @available(*, deprecated, message: "use latestModel instead")
     func getMostRecentModel() -> Model? {
