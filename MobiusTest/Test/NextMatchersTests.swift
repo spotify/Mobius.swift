@@ -266,7 +266,7 @@ class XCTestNextMatchersTests: QuickSpec {
                 var sut: NextPredicate<String, Int>!
 
                 beforeEach {
-                    sut = hasEffects(Set(expected))
+                    sut = hasEffects(expected)
                 }
 
                 context("when the effects are the same") {
@@ -312,7 +312,7 @@ class XCTestNextMatchersTests: QuickSpec {
                     let expected = [3]
                     beforeEach {
                         let next = Next<String, Int>.dispatchEffects(actual)
-                        sut = hasEffects(Set(expected))
+                        sut = hasEffects(expected)
                         result = sut(next)
                     }
 
@@ -338,7 +338,7 @@ class XCTestNextMatchersTests: QuickSpec {
                         let expected = [88]
                         beforeEach {
                             let next = Next<String, Int>.noChange
-                            sut = hasEffects(Set(expected))
+                            sut = hasEffects(expected)
                             result = sut(next)
                         }
 

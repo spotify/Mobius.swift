@@ -21,7 +21,7 @@ import Foundation
 import MobiusCore
 import XCTest
 
-public typealias FirstPredicate<Model, Effect: Hashable> = Predicate<First<Model, Effect>>
+public typealias FirstPredicate<Model, Effect> = Predicate<First<Model, Effect>>
 
 /// Function to produce an `AssertFirst` function to be used with the `InitSpec`
 ///
