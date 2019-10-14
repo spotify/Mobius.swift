@@ -40,14 +40,15 @@ public extension Mobius {
     ///   - update: the `Update` function of the loop
     ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, C: Connectable>(update: @escaping Update<Model, Event, Effect>, effectHandler: C) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+    static func loop<Model, Event, Effect, C: Connectable>(
+        update: @escaping Update<Model, Event, Effect>,
+        effectHandler: C
+    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
         return Builder(
             update: update,
             effectHandler: effectHandler,
             initiator: { First(model: $0) },
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
-            eventQueue: DispatchQueue(label: "event processor"),
-            effectQueue: DispatchQueue(label: "effect processor", attributes: .concurrent),
             logger: AnyMobiusLogger(NoopLogger())
         )
     }
@@ -57,8 +58,6 @@ public extension Mobius {
         private let effectHandler: AnyConnectable<Effect, Event>
         private let initiator: Initiator<Model, Effect>
         private let eventSource: AnyEventSource<Event>
-        private let eventQueue: DispatchQueue
-        private let effectQueue: DispatchQueue
         private let logger: AnyMobiusLogger<Model, Event, Effect>
 
         fileprivate init<C: Connectable>(
@@ -66,16 +65,12 @@ public extension Mobius {
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
             eventSource: AnyEventSource<Event>,
-            eventQueue: DispatchQueue,
-            effectQueue: DispatchQueue,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where C.InputType == Effect, C.OutputType == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
             self.initiator = initiator
             self.eventSource = eventSource
-            self.eventQueue = eventQueue
-            self.effectQueue = effectQueue
             self.logger = logger
         }
 
@@ -85,8 +80,6 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: AnyEventSource(eventSource),
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
                 logger: logger
             )
         }
@@ -97,32 +90,6 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
-                logger: logger
-            )
-        }
-
-        public func withEventQueue(_ eventQueue: DispatchQueue) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiator: initiator,
-                eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
-                logger: logger
-            )
-        }
-
-        public func withEffectQueue(_ effectQueue: DispatchQueue) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiator: initiator,
-                eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
                 logger: logger
             )
         }
@@ -133,8 +100,6 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
                 logger: AnyMobiusLogger(logger)
             )
         }
@@ -146,8 +111,6 @@ public extension Mobius {
                 initialModel: initialModel,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
                 logger: logger
             )
         }
