@@ -129,7 +129,7 @@ private func createConnections<Input, Output>(_ connectables: [PredicatedConnect
 }
 
 private func mergedConnections<Input>(_ connections: [PredicatedConnection<Input>]) -> Connection<Input> {
-    let lock = NSRecursiveLock()
+    let lock = Lock()
 
     let connection = Connection<Input>(
         acceptClosure: { (input: Input) in
