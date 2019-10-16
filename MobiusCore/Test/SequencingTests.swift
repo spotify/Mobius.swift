@@ -33,64 +33,66 @@ import Quick
  */
 
 class SequencingTests: QuickSpec {
-    private enum Types: LoopTypes {
-        typealias Model = Void
+    private typealias Model = Void
 
-        // In Swift 5.2, we can remove `Int` and the explicit implementation of <
-        enum Event: Int, Comparable {
-            case event1
-            case event2
-            case event3
+    // In Swift 5.2, we can remove `Int` and the explicit implementation of <
+    private enum Event: Int, Comparable {
+        case event1
+        case event2
+        case event3
 
-            static func < (lhs: Event, rhs: Event) -> Bool {
-                return lhs.rawValue < rhs.rawValue
-            }
+        static func < (lhs: Event, rhs: Event) -> Bool {
+            return lhs.rawValue < rhs.rawValue
+        }
+    }
+
+    // Our effect is an arbitrary integer tagged with the event it originated from.
+    private struct Effect: Equatable, CustomStringConvertible {
+        let event: Event
+        let value: Int
+
+        var description: String {
+            return "(.\(event), \(value))"
+        }
+    }
+
+    private static func update(_: (), event: Event) -> Next<Model, Effect> {
+        // Dispatch any number of values tagged with the current event.
+        func dispatch(values: Int...) -> Next<Model, Effect> {
+            return .dispatchEffects(values.map { Effect(event: event, value: $0) })
         }
 
-        // Our effect is an arbitrary integer tagged with the event it originated from.
-        struct Effect: Equatable, CustomStringConvertible {
-            let event: Event
-            let value: Int
-
-            var description: String {
-                return "(.\(event), \(value))"
-            }
-        }
-
-        static func update(_: (), event: Types.Event) -> Next<Void, Types.Effect> {
-            // Dispatch any number of values tagged with the current event.
-            func dispatch(values: Int...) -> Next<Void, Types.Effect> {
-                return .dispatchEffects(values.map { Types.Effect(event: event, value: $0) })
-            }
-
-            switch event {
-            case .event1:
-                return dispatch(values: 1)
-            case .event2:
-                return dispatch(values: 1, 2, 3)
-            case .event3:
-                return dispatch(values: 1, 2)
-            }
+        switch event {
+        case .event1:
+            return dispatch(values: 1)
+        case .event2:
+            return dispatch(values: 1, 2, 3)
+        case .event3:
+            return dispatch(values: 1, 2)
         }
     }
 
     private class EffectHandler: Connectable {
-        typealias InputType = Types.Effect
-        typealias OutputType = Types.Event
+        typealias InputType = Effect
+        typealias OutputType = Event
 
-        private (set) var recievedEffects = [Types.Effect]()
+        private (set) var recievedEffects = [Effect]()
 
-        func connect(_ consumer: @escaping (Types.Event) -> Void) -> Connection<Types.Effect> {
+        func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
             var dispatchedEvent2 = false
             var dispatchedEvent3 = false
 
-            let accept = { (effect: Types.Effect) in
+            let accept = { (effect: Effect) in
                 self.recievedEffects.append(effect)
 
                 // The first encountered effect from a given event triggers the next event.
                 switch effect.event {
                 case .event1 where !dispatchedEvent2:
                     consumer(.event2)
+                    // Note that dispatchedEvent2 is set _after_ calling the event consumers. This can cause surprising
+                    // reentrancy problems if the consumer dispatches events greedily. We want to avoid such surprises
+                    // in single-threaded Mobius usage, so the test will fail if that happens because there will be
+                    // excess effects.
                     dispatchedEvent2 = true
                 case .event2 where !dispatchedEvent3:
                     consumer(.event3)
@@ -107,16 +109,16 @@ class SequencingTests: QuickSpec {
 
     override func spec() {
         describe("MobiusLoop") {
-            var loop: MobiusLoop<Types>!
+            var loop: MobiusLoop<Model, Event, Effect>!
             var handler: EffectHandler!
-            var dispatchedEffects: [Types.Effect] {
+            var dispatchedEffects: [Effect] {
                 return handler.recievedEffects
             }
 
             beforeEach {
                 handler = EffectHandler()
 
-                loop = Mobius.loop(update: Types.update, effectHandler: handler)
+                loop = Mobius.loop(update: SequencingTests.update, effectHandler: handler)
                     .start(from: ())
             }
 
@@ -127,12 +129,12 @@ class SequencingTests: QuickSpec {
 
                 it("produces all expected expects (and nothing else)") {
                     let expectedEffects = [
-                        Types.Effect(event: .event1, value: 1),
-                        Types.Effect(event: .event2, value: 1),
-                        Types.Effect(event: .event2, value: 2),
-                        Types.Effect(event: .event2, value: 3),
-                        Types.Effect(event: .event3, value: 1),
-                        Types.Effect(event: .event3, value: 2),
+                        Effect(event: .event1, value: 1),
+                        Effect(event: .event2, value: 1),
+                        Effect(event: .event2, value: 2),
+                        Effect(event: .event2, value: 3),
+                        Effect(event: .event3, value: 1),
+                        Effect(event: .event3, value: 2),
                     ]
 
                     expect(dispatchedEffects).to(contain(expectedEffects))
