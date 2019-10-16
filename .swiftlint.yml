@@ -1,9 +1,8 @@
 disabled_rules:
   - empty_enum_arguments        # It warns about an explicit pattern we use.
   - superfluous_disable_command # Disabled since we disable some rules pre-emptively to avoid issues in the future
-  - trailing_comma              # Disabled since having a trailing comma reduces diff sizes.
   - todo                        # Disabled while we are filling out the framework; re-enable when we get closer to completion
-  - legacy_hashing              # until we're building with Xcode 10.2 at a minimum
+  - nesting                     # Does not make sense anymore since Swift 4 uses nested `CodingKeys` enums for example
 opt_in_rules:
   - anyobject_protocol
   - attributes
@@ -82,7 +81,7 @@ redundant_nil_coalescing: error
 trailing_comma:
   mandatory_comma: true
 vertical_whitespace:
-  max_empty_lines: 1
+  max_empty_lines: 2
 weak_delegate: warning
 
 reporter:
