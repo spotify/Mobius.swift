@@ -22,6 +22,24 @@ import Foundation
 import Nimble
 import Quick
 
+extension MobiusLoop {
+    convenience init(
+        eventProcessor: EventProcessor<Model, Event, Effect>,
+        modelPublisher: ConnectablePublisher<Model>,
+        disposable: Disposable,
+        accessGuard: SequentialAccessGuard = SequentialAccessGuard(),
+        workQueue: WorkQueue? = nil
+    ) {
+        self.init(
+            eventProcessor: eventProcessor,
+            modelPublisher: modelPublisher,
+            disposable: disposable,
+            accessGuard: accessGuard,
+            workQueue: workQueue ?? WorkQueue(accessGuard: accessGuard)
+        )
+    }
+}
+
 class MobiusLoopTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
