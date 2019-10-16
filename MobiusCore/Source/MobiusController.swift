@@ -25,7 +25,7 @@ import Foundation
 /// one left off.
 public class MobiusController<Types: LoopTypes> {
     private let loopFactory: (Types.Model) -> MobiusLoop<Types>
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
 
     private var viewConnectable: ConnectClosure<Types.Model, Types.Event>?
     private var viewConnection: Connection<Types.Model>?

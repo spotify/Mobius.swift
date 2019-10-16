@@ -26,7 +26,7 @@ class ClosureConnectable<Input, Output>: Connectable {
     private var queue: DispatchQueue?
     private var output: Consumer<OutputType>?
     private let closure: (Input) -> Output?
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
 
     // If the closure produces output, it will be passed to the consumer. If it doesnt, it wont (see `connect`).
     init(_ closure: @escaping (Input) -> Output?, queue: DispatchQueue? = nil) {

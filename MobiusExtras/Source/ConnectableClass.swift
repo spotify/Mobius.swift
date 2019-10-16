@@ -36,7 +36,7 @@ import MobiusCore
 open class ConnectableClass<InputType, OutputType>: Connectable {
     private var consumer: Consumer<OutputType>?
 
-    private let lock = NSRecursiveLock()
+    private let lock = Lock()
     var handleError = { (message: String) -> Void in
         fatalError(message)
     }
