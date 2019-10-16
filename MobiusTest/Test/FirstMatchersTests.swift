@@ -30,7 +30,7 @@ class FirstMatchersTests: QuickSpec {
             let model = "3"
 
             func testInitiator(model: String) -> First<String, String> {
-                return First<String, String>(model: model, effects: Set(["2", "4"]))
+                return First<String, String>(model: model, effects: ["2", "4"])
             }
 
             func failureDetector(message: String, file: StaticString, line: UInt) {
@@ -110,7 +110,7 @@ class FirstMatchersTests: QuickSpec {
                 context("when the First has effects") {
                     let effects = [4]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(effects))
+                        let first = First<Int, Int>(model: 3, effects: effects)
                         let sut: FirstPredicate<Int, Int> = hasNoEffects()
                         result = sut(first)
                     }
@@ -125,7 +125,7 @@ class FirstMatchersTests: QuickSpec {
                 context("when the First has those effects") {
                     let expectedEffects = [4, 7, 0]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(expectedEffects))
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
                         let sut: FirstPredicate<Int, Int> = hasEffects(expectedEffects)
                         result = sut(first)
                     }
@@ -139,7 +139,7 @@ class FirstMatchersTests: QuickSpec {
                     let expectedEffects = [4, 7, 0]
                     let actualEffects = [1, 4, 7, 0]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(actualEffects))
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
                         let sut: FirstPredicate<Int, Int> = hasEffects(expectedEffects)
                         result = sut(first)
                     }
@@ -153,7 +153,7 @@ class FirstMatchersTests: QuickSpec {
                     let expectedEffects = [10]
                     let actualEffects = [4]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(actualEffects))
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
                         let sut: FirstPredicate<Int, Int> = hasEffects(expectedEffects)
                         result = sut(first)
                     }

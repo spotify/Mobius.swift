@@ -200,7 +200,7 @@ class MobiusLoopTests: QuickSpec {
                 }
 
                 it("should log startup") {
-                    expect(logger.logMessages).toEventually(equal(["willInitiate(begin)", "didInitiate(begin, First<String, String>(model: \"begin\", effects: Set([])))"]))
+                    expect(logger.logMessages).toEventually(equal(["willInitiate(begin)", "didInitiate(begin, First<String, String>(model: \"begin\", effects: []))"]))
                 }
 
                 it("should log updates") {

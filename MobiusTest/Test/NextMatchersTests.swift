@@ -43,7 +43,7 @@ class XCTestNextMatchersTests: QuickSpec {
             }
 
             func testUpdate(model: String, event: String) -> Next<String, String> {
-                return .next("some model", effects: Set(["some effect"]))
+                return .next("some model", effects: ["some effect"])
             }
 
             // Testing through proxy: UpdateSpec
@@ -101,7 +101,7 @@ class XCTestNextMatchersTests: QuickSpec {
 
                 context("when matching a Next that has effects but no model") {
                     beforeEach {
-                        let next = Next<String, String>.dispatchEffects(Set(effects))
+                        let next = Next<String, String>.dispatchEffects(effects)
                         result = sut(next)
                     }
 
@@ -112,7 +112,7 @@ class XCTestNextMatchersTests: QuickSpec {
 
                 context("when matching a Next that has model and effects") {
                     beforeEach {
-                        let next = Next<String, String>.next(model, effects: Set(effects))
+                        let next = Next<String, String>.next(model, effects: effects)
                         result = sut(next)
                     }
 
@@ -251,7 +251,7 @@ class XCTestNextMatchersTests: QuickSpec {
                 context("when matching a Next that has effects") {
                     let actual = ["grapefruit"]
                     beforeEach {
-                        let next = Next<String, String>.dispatchEffects(Set(actual))
+                        let next = Next<String, String>.dispatchEffects(actual)
                         result = sut(next)
                     }
 
@@ -266,13 +266,13 @@ class XCTestNextMatchersTests: QuickSpec {
                 var sut: NextPredicate<String, Int>!
 
                 beforeEach {
-                    sut = hasEffects(Set(expected))
+                    sut = hasEffects(expected)
                 }
 
                 context("when the effects are the same") {
                     context("when the effects are in order") {
                         beforeEach {
-                            let next = Next<String, Int>.dispatchEffects(Set(expected))
+                            let next = Next<String, Int>.dispatchEffects(expected)
                             result = sut(next)
                         }
 
@@ -285,7 +285,7 @@ class XCTestNextMatchersTests: QuickSpec {
                         beforeEach {
                             var actual = expected
                             actual.append(actual.removeFirst())
-                            let next = Next<String, Int>.dispatchEffects(Set(actual))
+                            let next = Next<String, Int>.dispatchEffects(actual)
                             result = sut(next)
                         }
 
@@ -298,7 +298,7 @@ class XCTestNextMatchersTests: QuickSpec {
                 context("when the Next contains the expected effects and a few more") {
                     let actual = [1, 2, 3, 4, 5, 0]
                     beforeEach {
-                        let next = Next<String, Int>.dispatchEffects(Set(actual))
+                        let next = Next<String, Int>.dispatchEffects(actual)
                         result = sut(next)
                     }
 
@@ -311,8 +311,8 @@ class XCTestNextMatchersTests: QuickSpec {
                     let actual = [1]
                     let expected = [3]
                     beforeEach {
-                        let next = Next<String, Int>.dispatchEffects(Set(actual))
-                        sut = hasEffects(Set(expected))
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        sut = hasEffects(expected)
                         result = sut(next)
                     }
 
@@ -338,7 +338,7 @@ class XCTestNextMatchersTests: QuickSpec {
                         let expected = [88]
                         beforeEach {
                             let next = Next<String, Int>.noChange
-                            sut = hasEffects(Set(expected))
+                            sut = hasEffects(expected)
                             result = sut(next)
                         }
 

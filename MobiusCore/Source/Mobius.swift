@@ -22,7 +22,7 @@ import Foundation
 public protocol LoopTypes {
     associatedtype Model
     associatedtype Event
-    associatedtype Effect: Hashable
+    associatedtype Effect
 }
 
 public typealias Update<T: LoopTypes> = (T.Model, T.Event) -> Next<T.Model, T.Effect>

@@ -42,7 +42,7 @@ class AnyMobiusLoggerTests: QuickSpec {
                 logger.didInitiate(model: "did start it", first: First(model: "the first model"))
 
                 expect(delegate.logMessages).to(equal([
-                    "didInitiate(did start it, First<String, String>(model: \"the first model\", effects: Set([])))",
+                    "didInitiate(did start it, First<String, String>(model: \"the first model\", effects: []))",
                 ]))
             }
 

@@ -49,7 +49,7 @@ class NimbleNextMatchersTests: QuickSpec {
             }
 
             func testUpdate(model: String, event: String) -> Next<String, String> {
-                return .next("some model", effects: Set(["some effect"]))
+                return .next("some model", effects: ["some effect"])
             }
 
             // Testing through proxy: UpdateSpec
@@ -108,7 +108,7 @@ class NimbleNextMatchersTests: QuickSpec {
 
                 context("when matching a Next that has effects but no model") {
                     beforeEach {
-                        let next = Next<Int, Int>.dispatchEffects(Set(effects))
+                        let next = Next<Int, Int>.dispatchEffects(effects)
                         expect(next).to(haveNothing())
                     }
 
@@ -119,7 +119,7 @@ class NimbleNextMatchersTests: QuickSpec {
 
                 context("when matching a Next that has model and effects") {
                     beforeEach {
-                        let next = Next<Int, Int>.next(model, effects: Set(effects))
+                        let next = Next<Int, Int>.next(model, effects: effects)
                         expect(next).to(haveNothing())
                     }
 
@@ -338,9 +338,9 @@ class NimbleNextMatchersTests: QuickSpec {
             }
 
             context("when creating a matcher verifying that a Next has specific effects") {
-                var expected: Set<Int>!
+                var expected: [Int]!
                 beforeEach {
-                    expected = Set([4])
+                    expected = [4]
                 }
                 context("when the effects are the same") {
                     beforeEach {
@@ -356,7 +356,7 @@ class NimbleNextMatchersTests: QuickSpec {
                 context("when the Next contains the expected effects and a few more") {
                     let actual = [1, 2, 3, 4, 5, 0]
                     beforeEach {
-                        let next = Next<String, Int>.dispatchEffects(Set(actual))
+                        let next = Next<String, Int>.dispatchEffects(actual)
                         expect(next).to(haveEffects(expected))
                     }
 
@@ -366,10 +366,10 @@ class NimbleNextMatchersTests: QuickSpec {
                 }
 
                 context("when the Next does not contain one or more of the expected effects") {
-                    var actual: Set<Int>!
+                    var actual: [Int]!
                     beforeEach {
-                        actual = Set([1])
-                        let next = Next<String, Int>.dispatchEffects(Set(actual))
+                        actual = [1]
+                        let next = Next<String, Int>.dispatchEffects(actual)
                         expect(next).to(haveEffects(expected))
                     }
 
@@ -386,7 +386,7 @@ class NimbleNextMatchersTests: QuickSpec {
                     context("when not expecting effects") {
                         beforeEach {
                             let next = Next<String, Int>.noChange
-                            expect(next).to(haveEffects(Set<Int>()))
+                            expect(next).to(haveEffects([]))
                         }
 
                         it("should match") {

@@ -20,7 +20,7 @@
 import MobiusCore
 import XCTest
 
-public typealias NextPredicate<Model, Effect: Hashable> = Predicate<Next<Model, Effect>>
+public typealias NextPredicate<Model, Effect> = Predicate<Next<Model, Effect>>
 
 /// Convenience function to produce `UpdateSpec` `Assert`
 ///
@@ -118,14 +118,14 @@ public func hasNoEffects<Model, Effect>(file: StaticString = #file, line: UInt =
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
-public func hasEffects<Model, Effect>(
-    _ expected: Set<Effect>,
+public func hasEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
     file: StaticString = #file,
     line: UInt = #line
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.effects
-        if !actual.isSuperset(of: expected) {
+        if !expected.allSatisfy(actual.contains) {
             return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
         }
         return .success
