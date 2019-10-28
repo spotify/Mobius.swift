@@ -29,31 +29,25 @@ class EffectRouterBuilderTests: QuickSpec {
     override func spec() {
         describe("EffectRouterBuilder") {
             context("when adding an `EffectHandler`") {
-                func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
-                    dispatch(effect)
-                }
-                // An effect handler which only accepts the number 1. When it gets a 1, it emits a 1 as its event.
-                let effectHandler1 = EffectHandler<Int, Int>.makeEffectHandler(
-                    acceptsEffect: 1,
-                    handleEffect: handleEffect
-                )
-                // An effect handler which only accepts the number 2. When it gets a 2, it emits a 2 as its event.
-                let effectHandler2 = EffectHandler<Int, Int>.makeEffectHandler(
-                    acceptsEffect: 2,
-                    handleEffect: handleEffect
-                )
-                let effectRouter = EffectRouterBuilder<Int, Int>()
-                    .addEffectHandler(effectHandler1)
-                    .addEffectHandler(effectHandler2)
-                    .build()
                 var connection: Connection<Int>!
                 var receivedEvents: [Int]!
 
                 beforeEach {
+                    // An effect handler which only accepts the number 1. When it gets a 1, it emits a 1 as its event.
+                    let effectHandler1 = EffectHandler.makeEffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
+                    // An effect handler which only accepts the number 2. When it gets a 2, it emits a 2 as its event.
+                    let effectHandler2 = EffectHandler.makeEffectHandler(acceptsEffect: 2, handleEffect: handleEffect)
+                    connection = EffectRouterBuilder()
+                        .addEffectHandler(effectHandler1)
+                        .addEffectHandler(effectHandler2)
+                        .build()
+                        .connect { event in
+                            receivedEvents.append(event)
+                        }
                     receivedEvents = []
-                    connection = effectRouter.connect { event in
-                        receivedEvents.append(event)
-                    }
+                }
+                afterEach {
+                    connection.dispose()
                 }
 
                 it("dispatches effects which satisfy the effect handler's `canAccept` function") {
@@ -64,15 +58,44 @@ class EffectRouterBuilderTests: QuickSpec {
 
                 it("crashes if an effect which no EffectHandler can handle is emitted") {
                     var didCrash = false
-                    MobiusHooks.setErrorHandler({ (_, _, _) in
+                    MobiusHooks.setErrorHandler { _, _, _ in
                         didCrash = true
-                    })
+                    }
 
                     connection.accept(3)
 
                     expect(didCrash).to(beTrue())
                 }
             }
+
+            context("when multiple `EffectHandler`s handle the same effect") {
+                var connection: Connection<Int>!
+                beforeEach {
+                    let effectHandler1 = EffectHandler.makeEffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
+                    let effectHandler2 = EffectHandler.makeEffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
+                    connection = EffectRouterBuilder()
+                        .addEffectHandler(effectHandler1)
+                        .addEffectHandler(effectHandler2)
+                        .build()
+                        .connect { _ in }
+                }
+                afterEach {
+                    connection.dispose()
+                }
+
+                it("should crash") {
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler { _, _, _ in
+                        didCrash = true
+                    }
+                    connection.accept(1)
+                    expect(didCrash).to(beTrue())
+                }
+            }
         }
     }
+}
+
+private func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
+    dispatch(effect)
 }
