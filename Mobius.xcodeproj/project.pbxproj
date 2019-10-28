@@ -12,6 +12,7 @@
 		2D3A696E2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
+		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
 		2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
 		2DC2C0A62350CEBE005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
@@ -1220,6 +1221,7 @@
 				2DF4C2FD20DBDD5800A4B6DE /* Connection.swift in Sources */,
 				5B7095992109E89C0099298B /* EffectRouterBuilder.swift in Sources */,
 				2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
+				02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */,
 				5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
