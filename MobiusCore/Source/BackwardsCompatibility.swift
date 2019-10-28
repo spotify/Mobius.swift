@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import Foundation
+
 public extension First where Effect: Hashable {
     @available(*, deprecated, message: "use array of effects instead")
     init(model: Model, effects: Set<Effect>) {
@@ -41,5 +43,69 @@ public extension MobiusLoop {
     @available(*, deprecated, message: "use latestModel of effects instead")
     func getMostRecentModel() -> Model? {
         return latestModel
+    }
+}
+@available(*, deprecated, message: "use `EffectHandler` instead")
+public protocol EffectPredicate {
+    associatedtype Effect
+    func canAccept(_ effect: Effect) -> Bool
+}
+
+@available(*, deprecated, message: "use `EffectHandler` instead")
+public protocol ConnectableWithPredicate: Connectable, EffectPredicate {}
+
+@available(*, deprecated, message: "use `EffectHandler` instead")
+public protocol ConsumerWithPredicate: EffectPredicate {
+    func accept(_ effect: Effect)
+}
+
+@available(*, deprecated, message: "use `EffectHandler` instead")
+public protocol ActionWithPredicate: EffectPredicate {
+    func run()
+}
+
+@available(*, deprecated, message: "use `EffectHandler` instead")
+public protocol FunctionWithPredicate: EffectPredicate {
+    associatedtype Event
+
+    func apply(_ effect: Effect) -> Event
+}
+
+public extension EffectRouterBuilder {
+    /// Add a filtered `Connectable` for handling effects of a given type. The `Connectable` `Connection` will be invoked for
+    /// each incoming effect object that passes its `canAccept` call.
+    ///
+    /// - Parameters:
+    ///   - connectable: The `Connectable` which handles an effect
+    /// - Returns: This builder.
+    @available(*, deprecated, message: "use `addEffectHandler` instead")
+    func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output, C.Effect == Input {
+        return addConnectable(connectable, predicate: connectable.canAccept)
+    }
+
+    // If `function` produces an output that is not nil, it will be passed to the connected consumer. If nil is produced
+    // it will not be passed to the consumer
+    @available(*, deprecated, message: "use `addEffectHandler` instead")
+    func addFunction(_ function: @escaping (Input) -> Output?, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> {
+        let connectable = ClosureConnectable<Input, Output>(function)
+        return addConnectable(connectable, predicate: predicate)
+    }
+
+    @available(*, deprecated, message: "use `addEffectHandler` instead")
+    func addFunction<F: FunctionWithPredicate>(_ function: F, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where F.Effect == Input, F.Event == Output {
+        let connectable = ClosureConnectable<Input, Output>(function.apply, queue: queue)
+        return addConnectable(connectable, predicate: function.canAccept)
+    }
+
+    @available(*, deprecated, message: "use `addEffectHandler` instead")
+    func addConsumer<C: ConsumerWithPredicate>(_ consumer: C, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where C.Effect == Input {
+        let connectable = ClosureConnectable<Input, Output>(consumer.accept, queue: queue)
+        return addConnectable(connectable, predicate: consumer.canAccept)
+    }
+
+    @available(*, deprecated, message: "use `addEffectHandler` instead")
+    func addAction<A: ActionWithPredicate>(_ action: A, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where A.Effect == Input {
+        let connectable = ClosureConnectable<Input, Output>(action.run, queue: queue)
+        return addConnectable(connectable, predicate: action.canAccept)
     }
 }
