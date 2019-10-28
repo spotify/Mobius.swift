@@ -21,4 +21,4 @@ import Foundation
 
 /// The `NoEffect` type can be used to signal that some data passing through a Mobius loop cannot have any effects.
 @available(*, deprecated, message: "use Never instead")
-typealias NoEffect = Never
+public typealias NoEffect = Never
