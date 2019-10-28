@@ -66,6 +66,17 @@ public struct EffectRouterBuilder<Input, Output> {
         self.connectables = connectables
     }
 
+    /// Add an `EffectHandler` which will be connected for each incoming effect object that passes its `canAccept` call.
+    ///
+    /// - Parameters:
+    ///   - effectHandler: The `EffectHandler` which should be added to this builder.
+    /// - Returns: This builder.
+    public func addEffectHandler(
+        _ effectHandler: EffectHandler<Input, Output>
+    ) -> EffectRouterBuilder<Input, Output> {
+        return addConnectable(effectHandler, predicate: effectHandler.canAccept)
+    }
+
     /// Add a filtered `Connectable` for handling effects of a given type. The `Connectable` `Connection` will be invoked for
     /// each incoming effect object that passes its `canAccept` call.
     ///

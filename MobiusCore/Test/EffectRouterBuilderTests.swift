@@ -381,6 +381,52 @@ class EffectRouterBuilderTests: QuickSpec {
                     })
                 }
             }
+
+            context("when adding an `EffectHandler`") {
+                func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
+                    dispatch(effect)
+                }
+                // An effect handler which only accepts the number 1. When it gets a 1, it emits a 1 as its event.
+                let effectHandler1 = EffectHandler<Int, Int>.makeEffectHandler(
+                    acceptsEffect: 1,
+                    handleEffect: handleEffect
+                )
+                // An effect handler which only accepts the number 2. When it gets a 2, it emits a 2 as its event.
+                let effectHandler2 = EffectHandler<Int, Int>.makeEffectHandler(
+                    acceptsEffect: 2,
+                    handleEffect: handleEffect
+                )
+                let effectRouter = EffectRouterBuilder<Int, Int>()
+                    .addEffectHandler(effectHandler1)
+                    .addEffectHandler(effectHandler2)
+                    .build()
+                var connection: Connection<Int>!
+                var receivedEvents: [Int]!
+
+                beforeEach {
+                    receivedEvents = []
+                    connection = effectRouter.connect { event in
+                        receivedEvents.append(event)
+                    }
+                }
+
+                it("dispatches effects which satisfy the effect handler's `canAccept` function") {
+                    connection.accept(1)
+                    connection.accept(2)
+                    expect(receivedEvents).to(equal([1, 2]))
+                }
+
+                it("crashes if an effect which no EffectHandler can handle is emitted") {
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler({ (_, _, _) in
+                        didCrash = true
+                    })
+
+                    connection.accept(3)
+
+                    expect(didCrash).to(beTrue())
+                }
+            }
         }
     }
 }
