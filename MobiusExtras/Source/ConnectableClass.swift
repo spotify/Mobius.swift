@@ -33,6 +33,7 @@ import MobiusCore
 ///
 /// - Attention: Should not be used directly. Instead a subclass should be used which overrides the
 /// `handle` and `disposed` functions
+@available(*, deprecated, message: "use `EffectHandler` instead")
 open class ConnectableClass<InputType, OutputType>: Connectable {
     private var consumer: Consumer<OutputType>?
 

@@ -71,13 +71,3 @@ class ConsumerConnectableTests: QuickSpec {
         }
     }
 }
-
-private class TestFilteredConusmerConnectable: ConsumerConnectable<String, String>, EffectPredicate {
-    typealias Effect = String
-
-    static let acceptedString = "Consumer Connectable"
-
-    func canAccept(_ effect: String) -> Bool {
-        return effect == TestFilteredConusmerConnectable.acceptedString
-    }
-}
