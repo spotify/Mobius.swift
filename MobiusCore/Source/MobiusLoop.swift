@@ -72,8 +72,8 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
         dispose()
     }
 
-    public func getMostRecentModel() -> Types.Model? {
-        return eventProcessor.readCurrentModel()
+    public var latestModel: Types.Model {
+        return eventProcessor.latestModel
     }
 
     public func dispatchEvent(_ event: Types.Event) {

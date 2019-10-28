@@ -36,3 +36,10 @@ public extension Next where Effect: Hashable {
         return .dispatchEffects(Array(effects))
     }
 }
+
+public extension MobiusLoop {
+    @available(*, deprecated, message: "use latestModel of effects instead")
+    func getMostRecentModel() -> Types.Model? {
+        return latestModel
+    }
+}

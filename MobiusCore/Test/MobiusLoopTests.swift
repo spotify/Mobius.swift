@@ -122,12 +122,12 @@ class MobiusLoopTests: QuickSpec {
                 it("should track the most recent model") {
                     loop = builder.start(from: "the first model")
 
-                    expect(loop.getMostRecentModel()).to(equal("the first model"))
+                    expect(loop.latestModel).to(equal("the first model"))
 
                     loop.dispatchEvent("two")
 
                     queue.waitForOutstandingTasks()
-                    expect(loop.getMostRecentModel()).to(equal("two"))
+                    expect(loop.latestModel).to(equal("two"))
                 }
             }
 
