@@ -85,16 +85,6 @@ class EffectHandlerTests: QuickSpec {
 
                     expect(receivedEffects).to(equal([.effect1, .effect1]))
                 }
-
-                it("`canAccept` is true for matching effects") {
-                    expect(effectHandler.canAccept(.innerEffect(.effect1)))
-                        .to(beTrue())
-                }
-
-                it("`canAccept` is false for effects which don't match") {
-                    expect(effectHandler.canAccept(.innerEffect(.effect2)))
-                        .to(beFalse())
-                }
             }
 
             context("`dispose`") {

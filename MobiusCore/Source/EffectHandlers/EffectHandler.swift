@@ -50,7 +50,7 @@ final public class EffectHandler<Effect, Event> {
         }
     }
 
-    public func canAccept(_ effect: Effect) -> Bool {
+    func canAccept(_ effect: Effect) -> Bool {
         return canAcceptEffect(effect)
     }
 
