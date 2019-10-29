@@ -46,7 +46,7 @@ class EffectHandlerTests: QuickSpec {
             func handleEffect(effect: InnerEffect, dispatch: @escaping Consumer<InnerEffect>) {
                 dispatch(effect)
             }
-            let effectHandler: EffectHandler<OuterEffect, InnerEffect> = .makeEffectHandler(
+            let effectHandler = EffectHandler<OuterEffect, InnerEffect>(
                 canAccept: canAccept,
                 handleEffect: handleEffect,
                 onDispose: onDispose

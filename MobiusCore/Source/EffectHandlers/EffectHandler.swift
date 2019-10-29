@@ -28,7 +28,13 @@ final public class EffectHandler<Effect, Event> {
     private let disposeFn: () -> Void
     private var consumer: Consumer<Event>?
 
-    init<AssociatedValueType>(
+    /// Create a handler for effects which satisfy the `canAccept` parameter function.
+    ///
+    /// - Parameter canAccept: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
+    /// effect handler will handle said effect.
+    /// - Parameter handleEffect: Handle effects which satisfy `canAccept`.
+    /// - Parameter onDispose: Tear down any resources being used by this effect handler.
+    public init<AssociatedValueType>(
         canAccept: @escaping (Effect) -> HandleEffect<AssociatedValueType>,
         handleEffect: @escaping (AssociatedValueType, @escaping Consumer<Event>) -> Void,
         onDispose disposable: @escaping () -> Void
@@ -95,38 +101,18 @@ public enum HandleEffect<Type> {
     case ignore
 }
 
-public extension EffectHandler {
-    /// Create a handler for effects which satisfy the `canAccept` parameter function.
-    ///
-    /// - Parameter canAccept: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
-    /// effect handler will handle said effect.
-    /// - Parameter handleEffect: Handle effects which satisfy `canAccept`.
-    /// - Parameter onDispose: Tear down any resources being used by this effect handler.
-    static func makeEffectHandler<AssociatedValue>(
-        canAccept: @escaping (Effect) -> HandleEffect<AssociatedValue>,
-        handleEffect: @escaping (AssociatedValue, @escaping Consumer<Event>) -> Void,
-        onDispose: @escaping () -> Void = {}
-    ) -> EffectHandler<Effect, Event> {
-        return EffectHandler<Effect, Event>(
-            canAccept: canAccept,
-            handleEffect: handleEffect,
-            onDispose: onDispose
-        )
-    }
-}
-
 public extension EffectHandler where Effect: Equatable {
     /// Create a handler for effects which are equal to the `acceptsEffect` parameter.
     ///
     /// - Parameter acceptedEffect: a constant effect which should be handled by this effect handler.
     /// - Parameter handleEffect: handle effects which are equal to `acceptedEffect`.
     /// - Parameter onDispose: Tear down any resources being used by this effect handler
-    static func makeEffectHandler(
+    convenience init(
         acceptsEffect acceptedEffect: Effect,
         handleEffect: @escaping (Effect, @escaping Consumer<Event>) -> Void,
         onDispose: @escaping () -> Void = {}
-    ) -> EffectHandler<Effect, Event> {
-        return EffectHandler<Effect, Event>(
+    ) {
+        self.init(
             canAccept: { effect in
                 if effect == acceptedEffect {
                     return .handle(effect)
