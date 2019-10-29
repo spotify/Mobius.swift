@@ -23,6 +23,17 @@ public enum HandleEffect<Type> {
     case ignore
 }
 
+/// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
+/// An `EffectHandler` decides which effects it can handle based on its `canAccept` function. Multiple `EffectHandler`s can be composed by using an
+/// `EffectRouterBuilder`.
+///
+/// Note: When using an `EffectRouterBuilder` each effect must be handled by exactly one `EffectHandler`.
+/// Note: The `connnect` function is invoked on an `EffectHandler` when it should start handling effects and emitting events. Only one `Connection` at
+/// a time is supported, otherwise it will crash.
+/// Note: It is possible to emit events before `connect` has been called on an `EffectHandler`, and after a `Connection` to an `EffectHandler` has
+/// been disposed. These events can not, and will not be handled by anything. This will therefore cause a crash.
+/// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `onDispose`
+/// parameter is used to specify which resources should be torn down when this happens.
 final public class EffectHandler<Effect, Event> {
     private let lock = NSRecursiveLock()
     private let handleEffect: (Effect, @escaping Consumer<Event>) -> Void
