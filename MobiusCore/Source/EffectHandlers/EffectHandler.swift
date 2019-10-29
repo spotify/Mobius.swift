@@ -46,9 +46,9 @@ final public class EffectHandler<Effect, Event> {
     /// effect handler will handle said effect.
     /// - Parameter handleEffect: Handle effects which satisfy `canAccept`.
     /// - Parameter onDispose: Tear down any resources being used by this effect handler.
-    public init<AssociatedValueType>(
-        canHandle: @escaping (Effect) -> HandleEffect<AssociatedValueType>,
-        handleEffect: @escaping (AssociatedValueType, @escaping Consumer<Event>) -> Void,
+    public init<EffectPayload>(
+        canHandle: @escaping (Effect) -> HandleEffect<EffectPayload>,
+        handleEffect: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
         onDispose disposable: @escaping () -> Void
     ) {
         disposeFn = disposable
