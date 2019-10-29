@@ -20,11 +20,7 @@
 import Foundation
 import MobiusCore
 
-public class ConsoleLogger<Types: LoopTypes>: MobiusLogger {
-    public typealias Model = Types.Model
-    public typealias Event = Types.Event
-    public typealias Effect = Types.Effect
-
+public class ConsoleLogger<Model, Event, Effect>: MobiusLogger {
     private let prefix: String
 
     public init(tag: String = "Mobius") {

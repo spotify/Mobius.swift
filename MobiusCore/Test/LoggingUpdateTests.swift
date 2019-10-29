@@ -25,7 +25,7 @@ class LoggingUpdateTests: QuickSpec {
     override func spec() {
         describe("LoggingUpdate") {
             var logger: TestMobiusLogger!
-            var loggingUpdate: LoggingUpdate<AllStrings>!
+            var loggingUpdate: LoggingUpdate<String, String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()

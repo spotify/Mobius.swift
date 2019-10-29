@@ -39,7 +39,7 @@ public extension Next where Effect: Hashable {
 
 public extension MobiusLoop {
     @available(*, deprecated, message: "use latestModel of effects instead")
-    func getMostRecentModel() -> Types.Model? {
+    func getMostRecentModel() -> Model? {
         return latestModel
     }
 }

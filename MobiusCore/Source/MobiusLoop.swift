@@ -20,9 +20,9 @@
 import Foundation
 
 /// - Callout(Instantiating): Use `Mobius.loop(update:effectHandler:)` to create an instance.
-public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringConvertible {
-    private let eventProcessor: EventProcessor<Types>
-    private let modelPublisher: ConnectablePublisher<Types.Model>
+public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
+    private let eventProcessor: EventProcessor<Model, Event, Effect>
+    private let modelPublisher: ConnectablePublisher<Model>
     private let disposable: Disposable
 
     // AtomicBool is used here to ensure coherence in the event that dispose and dispatchEvent are
@@ -37,8 +37,8 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
     }
 
     init(
-        eventProcessor: EventProcessor<Types>,
-        modelPublisher: ConnectablePublisher<Types.Model>,
+        eventProcessor: EventProcessor<Model, Event, Effect>,
+        modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable
     ) {
         self.eventProcessor = eventProcessor
@@ -54,7 +54,7 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
     /// - Parameter consumer: an observer of model changes
     /// - Returns: a `Disposable` that can be used to stop further notifications to the observer
     @discardableResult
-    public func addObserver(_ consumer: @escaping Consumer<Types.Model>) -> Disposable {
+    public func addObserver(_ consumer: @escaping Consumer<Model>) -> Disposable {
         return modelPublisher.connect(to: consumer)
     }
 
@@ -72,11 +72,11 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
         dispose()
     }
 
-    public var latestModel: Types.Model {
+    public var latestModel: Model {
         return eventProcessor.latestModel
     }
 
-    public func dispatchEvent(_ event: Types.Event) {
+    public func dispatchEvent(_ event: Event) {
         guard !disposed.value else {
             // Callers are responsible for ensuring dispatchEvent is never entered after dispose.
             MobiusHooks.onError("event submitted after dispose")
@@ -88,24 +88,24 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
 
     // swiftlint:disable:next function_parameter_count
     static func createLoop<C: Connectable>(
-        update: @escaping Update<Types>,
+        update: @escaping Update<Model, Event, Effect>,
         effectHandler: C,
-        initialModel: Types.Model,
-        initiator: @escaping Initiator<Types>,
-        eventSource: AnyEventSource<Types.Event>,
+        initialModel: Model,
+        initiator: @escaping Initiator<Model, Effect>,
+        eventSource: AnyEventSource<Event>,
         eventQueue: DispatchQueue,
         effectQueue: DispatchQueue,
-        logger: AnyMobiusLogger<Types>
-    ) -> MobiusLoop<Types> where C.InputType == Types.Effect, C.OutputType == Types.Event {
-        let loggingInitiator = LoggingInitiator<Types>(initiator, logger)
-        let loggingUpdate = LoggingUpdate<Types>(update, logger)
+        logger: AnyMobiusLogger<Model, Event, Effect>
+    ) -> MobiusLoop<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+        let loggingInitiator = LoggingInitiator<Model, Effect>(initiator, logger)
+        let loggingUpdate = LoggingUpdate<Model, Event, Effect>(update, logger)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
         // dispatch models and effects to the right places
-        let nextPublisher = ConnectablePublisher<Next<Types.Model, Types.Effect>>()
+        let nextPublisher = ConnectablePublisher<Next<Model, Effect>>()
 
         // event processor: process events, publish Next:s, retain current model
-        let eventProcessor = EventProcessor<Types>(update: loggingUpdate.update, publisher: nextPublisher, queue: eventQueue)
+        let eventProcessor = EventProcessor<Model, Event, Effect>(update: loggingUpdate.update, publisher: nextPublisher, queue: eventQueue)
 
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(eventProcessor.accept)
@@ -113,15 +113,15 @@ public final class MobiusLoop<Types: LoopTypes>: Disposable, CustomDebugStringCo
         let eventSourceDisposable = eventSource.subscribe(consumer: eventProcessor.accept)
 
         // model observer support
-        let modelPublisher = ConnectablePublisher<Types.Model>()
+        let modelPublisher = ConnectablePublisher<Model>()
 
         // ensure model updates get published and effects dispatched to the effect handler
-        let nextConsumer: Consumer<Next<Types.Model, Types.Effect>> = { (next: Next<Types.Model, Types.Effect>) in
+        let nextConsumer: Consumer<Next<Model, Effect>> = { (next: Next<Model, Effect>) in
             if let model = next.model {
                 modelPublisher.post(model)
             }
 
-            next.effects.forEach({ (effect: Types.Effect) in
+            next.effects.forEach({ (effect: Effect) in
                 effectQueue.async {
                     effectHandlerConnection.accept(effect)
                 }

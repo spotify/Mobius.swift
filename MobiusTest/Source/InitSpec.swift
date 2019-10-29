@@ -21,27 +21,27 @@ import MobiusCore
 
 public typealias AssertFirst<Model, Effect> = (First<Model, Effect>) -> Void
 
-public final class InitSpec<Types: LoopTypes> {
-    let initiator: Initiator<Types>
+public final class InitSpec<Model, Effect> {
+    let initiator: Initiator<Model, Effect>
 
-    public init(_ initiator: @escaping Initiator<Types>) {
+    public init(_ initiator: @escaping Initiator<Model, Effect>) {
         self.initiator = initiator
     }
 
-    public func when(_ model: Types.Model) -> Then {
+    public func when(_ model: Model) -> Then {
         return Then(model, initiator: initiator)
     }
 
     public struct Then {
-        let model: Types.Model
-        let initiator: Initiator<Types>
+        let model: Model
+        let initiator: Initiator<Model, Effect>
 
-        public init(_ model: Types.Model, initiator: @escaping Initiator<Types>) {
+        public init(_ model: Model, initiator: @escaping Initiator<Model, Effect>) {
             self.model = model
             self.initiator = initiator
         }
 
-        public func then(_ assertion: AssertFirst<Types.Model, Types.Effect>) {
+        public func then(_ assertion: AssertFirst<Model, Effect>) {
             let first = initiator(model)
             assertion(first)
         }

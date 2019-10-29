@@ -25,7 +25,7 @@ class AnyMobiusLoggerTests: QuickSpec {
     override func spec() {
         describe("AnyMobiusLogger") {
             var delegate: TestMobiusLogger!
-            var logger: AnyMobiusLogger<AllStrings>!
+            var logger: AnyMobiusLogger<String, String, String>!
 
             beforeEach {
                 delegate = TestMobiusLogger()

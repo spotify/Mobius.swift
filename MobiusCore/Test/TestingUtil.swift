@@ -87,17 +87,7 @@ extension DispatchQueue {
     }
 }
 
-class AllStrings: LoopTypes {
-    typealias Model = String
-    typealias Event = String
-    typealias Effect = String
-}
-
 class TestMobiusLogger: MobiusLogger {
-    typealias Model = String
-    typealias Event = String
-    typealias Effect = String
-
     var logMessages = [String]()
 
     func willInitiate(model: String) {
