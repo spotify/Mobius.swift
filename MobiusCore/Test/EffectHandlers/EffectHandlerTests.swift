@@ -135,6 +135,14 @@ class EffectHandlerTests: QuickSpec {
                     connection.dispose()
                 }
             }
+
+            context("connecting multiple times") {
+                it("should crash if the effect handler is connected to multiple times without disposing in between") {
+                    expect({
+                        _ = effectHandler.connect { _ in }
+                    }()).to(throwAssertion())
+                }
+            }
         }
     }
 }

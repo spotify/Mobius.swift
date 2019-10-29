@@ -18,6 +18,11 @@
 // under the License.
 import Foundation
 
+public enum HandleEffect<Type> {
+    case handle(Type)
+    case ignore
+}
+
 final public class EffectHandler<Effect, Event> {
     private let lock = NSRecursiveLock()
     private let handleEffect: (Effect, @escaping Consumer<Event>) -> Void
@@ -53,19 +58,28 @@ final public class EffectHandler<Effect, Event> {
         }
     }
 
-    func canAccept(_ effect: Effect) -> Bool {
-        return canAcceptEffect(effect)
-    }
-
+    /// Connect to this `EffectHandler` by supplying it with an output for its events.
+    /// This will return a `Connection` which you can use to send effects to this `EffectHandler` and to tear down the connection.
+    ///
+    /// NOTE: Only one connection can be held to this `EffectHandler` at a time.
+    ///
+    /// - Parameter consumer: the output that this `EffectHandler` should send its events to.
     public func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
         lock.lock()
         defer { lock.unlock() }
+        guard self.consumer == nil else {
+            fatalError("An EffectHandler only supports one connection at a time.")
+        }
         self.consumer = consumer
 
         return Connection(
             acceptClosure: self.accept,
             disposeClosure: self.dispose
         )
+    }
+
+    func canAccept(_ effect: Effect) -> Bool {
+        return canAcceptEffect(effect)
     }
 
     private func accept(_ effect: Effect) {
@@ -89,13 +103,6 @@ final public class EffectHandler<Effect, Event> {
 
         consumer = nil
     }
-}
-
-// MARK: - Public API for creating Effect Handlers
-
-public enum HandleEffect<Type> {
-    case handle(Type)
-    case ignore
 }
 
 public extension EffectHandler where Effect: Equatable {
