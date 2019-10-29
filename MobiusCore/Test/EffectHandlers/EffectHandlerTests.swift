@@ -38,7 +38,7 @@ class EffectHandlerTests: QuickSpec {
         describe("EffectHandler tests") {
             var receivedEffects: [InnerEffect]!
             var dispatchEffect: Consumer<OuterEffect>!
-            var dispose: (() -> Void)!
+            var stopHandling: (() -> Void)!
             var isDisposed: Bool!
             var effectHandler: EffectHandler<OuterEffect, InnerEffect>!
             func onDispose() {
@@ -52,33 +52,33 @@ class EffectHandlerTests: QuickSpec {
                 receivedEffects = []
                 effectHandler = EffectHandler<OuterEffect, InnerEffect>(
                     canHandle: canHandle,
-                    handleEffect: handleEffect,
-                    onDispose: onDispose
+                    handle: handleEffect,
+                    stopHandling: onDispose
                 )
                 let connection = effectHandler.connect { effect in
                     receivedEffects.append(effect)
                 }
                 dispatchEffect = connection.accept
-                dispose = connection.dispose
+                stopHandling = connection.dispose
             }
             afterEach {
-                dispose()
+                stopHandling()
             }
 
-            context("`canAccept` unwraps effects with associated values") {
-                it("unwraps and outputs the effect's associated value if it satisfies `canAccept`") {
+            context("`canHandle` unwraps effects with associated values") {
+                it("unwraps and outputs the effect's associated value if it satisfies `canHandle`") {
                     dispatchEffect(.innerEffect(.effect1))
 
                     expect(receivedEffects).to(equal([.effect1]))
                 }
 
-                it("does not unwrap or output the effect's associated value if it does not satisfy `canAccept`") {
+                it("does not unwrap or output the effect's associated value if it does not satisfy `canHandle`") {
                     dispatchEffect(.innerEffect(.effect2))
 
                     expect(receivedEffects).to(equal([]))
                 }
 
-                it("unwraps and outputs only the effects which satisfy `canAccept`") {
+                it("unwraps and outputs only the effects which satisfy `canHandle`") {
                     dispatchEffect(.innerEffect(.effect1))
                     dispatchEffect(.innerEffect(.effect2))
                     dispatchEffect(.innerEffect(.effect1))
@@ -88,32 +88,32 @@ class EffectHandlerTests: QuickSpec {
                 }
             }
 
-            context("`dispose`") {
-                it("The `onDispose` function is called when the connection is disposed") {
-                    dispose()
+            context("`stopHandling`") {
+                it("The `stopHandling` function is called when the connection is disposed") {
+                    stopHandling()
 
                     expect(isDisposed).to(beTrue())
                 }
 
-                it("`dispose` is idempotent") {
-                    dispose()
-                    dispose()
-                    dispose()
+                it("`stopHandling` is idempotent") {
+                    stopHandling()
+                    stopHandling()
+                    stopHandling()
                     expect(isDisposed).to(beTrue())
                 }
 
-                it("crashes if events are dispatched after `dispose`") {
-                    dispose()
+                it("crashes if events are dispatched after `stopHandling` is called") {
+                    stopHandling()
                     expect({
                         dispatchEffect(.innerEffect(.effect1))
                     }()).to(throwAssertion())
                 }
             }
 
-            context("reconnecting after dispose") {
+            context("reconnecting after `stopHandling` is called") {
                 it("is possible to connect again after the effect handler has been disposed") {
                     dispatchEffect(.innerEffect(.effect1))
-                    dispose()
+                    stopHandling()
                     let connection = effectHandler.connect { effect in
                         receivedEffects.append(effect)
                     }

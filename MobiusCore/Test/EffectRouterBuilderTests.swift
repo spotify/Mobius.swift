@@ -390,9 +390,9 @@ class EffectRouterBuilderTests: QuickSpec {
 
                 beforeEach {
                     // An effect handler which only accepts the number 1. When it gets a 1, it emits a 1 as its event.
-                    let effectHandler1 = EffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
+                    let effectHandler1 = EffectHandler(handledEffect: 1, handle: handleEffect)
                     // An effect handler which only accepts the number 2. When it gets a 2, it emits a 2 as its event.
-                    let effectHandler2 = EffectHandler(acceptsEffect: 2, handleEffect: handleEffect)
+                    let effectHandler2 = EffectHandler(handledEffect: 2, handle: handleEffect)
                     connection = EffectRouterBuilder()
                         .addEffectHandler(effectHandler1)
                         .addEffectHandler(effectHandler2)
@@ -427,8 +427,8 @@ class EffectRouterBuilderTests: QuickSpec {
             context("when multiple `EffectHandler`s handle the same effect") {
                 var connection: Connection<Int>!
                 beforeEach {
-                    let effectHandler1 = EffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
-                    let effectHandler2 = EffectHandler(acceptsEffect: 1, handleEffect: handleEffect)
+                    let effectHandler1 = EffectHandler(handledEffect: 1, handle: handleEffect)
+                    let effectHandler2 = EffectHandler(handledEffect: 1, handle: handleEffect)
                     connection = EffectRouterBuilder()
                         .addEffectHandler(effectHandler1)
                         .addEffectHandler(effectHandler2)

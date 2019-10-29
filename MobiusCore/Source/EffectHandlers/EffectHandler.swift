@@ -24,7 +24,7 @@ public enum HandleEffect<Type> {
 }
 
 /// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
-/// An `EffectHandler` decides which effects it can handle based on its `canAccept` function. Multiple `EffectHandler`s can be composed by using an
+/// An `EffectHandler` decides which effects it can handle based on its `canHandle` function. Multiple `EffectHandler`s can be composed by using an
 /// `EffectRouterBuilder`.
 ///
 /// Note: When using an `EffectRouterBuilder` each effect must be handled by exactly one `EffectHandler`.
@@ -32,7 +32,7 @@ public enum HandleEffect<Type> {
 /// a time is supported, otherwise it will crash.
 /// Note: It is possible to emit events before `connect` has been called on an `EffectHandler`, and after a `Connection` to an `EffectHandler` has
 /// been disposed. These events can not, and will not be handled by anything. This will therefore cause a crash.
-/// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `onDispose`
+/// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `stopHandling`
 /// parameter is used to specify which resources should be torn down when this happens.
 final public class EffectHandler<Effect, Event> {
     private let lock = Lock()
@@ -40,23 +40,23 @@ final public class EffectHandler<Effect, Event> {
     private let disposeFn: () -> Void
     private var consumer: Consumer<Event>?
 
-    /// Create a handler for effects which satisfy the `canAccept` parameter function.
+    /// Create a handler for effects which satisfy the `canHandle` parameter function.
     ///
     /// - Parameter canHandle: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
     /// effect handler will handle said effect.
-    /// - Parameter handleEffect: Handle effects which satisfy `canAccept`.
-    /// - Parameter onDispose: Tear down any resources being used by this effect handler.
+    /// - Parameter handleEffect: Handle effects which satisfy `canHandle`.
+    /// - Parameter stopHandling: Tear down any resources being used by this effect handler.
     public init<EffectPayload>(
         canHandle: @escaping (Effect) -> HandleEffect<EffectPayload>,
-        handleEffect: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
-        onDispose disposable: @escaping () -> Void
+        handle: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
+        stopHandling disposable: @escaping () -> Void
     ) {
         disposeFn = disposable
         self.handleEffect = { effect in
             switch canHandle(effect) {
             case .handle(let subEffect):
                 return { dispatch in
-                    handleEffect(subEffect, dispatch)
+                    handle(subEffect, dispatch)
                 }
             case .ignore: return nil
             }
@@ -98,7 +98,7 @@ final public class EffectHandler<Effect, Event> {
     private func dispatch(event: Event) {
         return lock.synchronized {
             guard let consumer = self.consumer else {
-                fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `onDispose`")
+                fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `stopHandling`")
             }
 
             consumer(event)
@@ -117,13 +117,13 @@ final public class EffectHandler<Effect, Event> {
 public extension EffectHandler where Effect: Equatable {
     /// Create a handler for effects which are equal to the `acceptsEffect` parameter.
     ///
-    /// - Parameter acceptedEffect: a constant effect which should be handled by this effect handler.
-    /// - Parameter handleEffect: handle effects which are equal to `acceptedEffect`.
-    /// - Parameter onDispose: Tear down any resources being used by this effect handler
+    /// - Parameter handledEffect: a constant effect which should be handled by this effect handler.
+    /// - Parameter handle: handle effects which are equal to the `handledEffect`.
+    /// - Parameter stopHandling: Tear down any resources being used by this effect handler
     convenience init(
-        acceptsEffect acceptedEffect: Effect,
-        handleEffect: @escaping (Effect, @escaping Consumer<Event>) -> Void,
-        onDispose: @escaping () -> Void = {}
+        handledEffect acceptedEffect: Effect,
+        handle: @escaping (Effect, @escaping Consumer<Event>) -> Void,
+        stopHandling: @escaping () -> Void = {}
     ) {
         self.init(
             canHandle: { effect in
@@ -133,8 +133,8 @@ public extension EffectHandler where Effect: Equatable {
                     return .ignore
                 }
             },
-            handleEffect: handleEffect,
-            onDispose: onDispose
+            handle: handle,
+            stopHandling: stopHandling
         )
     }
 }
