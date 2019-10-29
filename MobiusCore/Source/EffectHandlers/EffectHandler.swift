@@ -80,7 +80,6 @@ final public class EffectHandler<Effect, Event> {
     }
 
     private func dispose() {
-        // Make sure that the `Connection` produced in the `connect` function is never used again
         lock.lock()
         defer { lock.unlock() }
         disposeFn()
