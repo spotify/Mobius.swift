@@ -112,17 +112,17 @@ public class MobiusController<Types: LoopTypes> {
     /// - Attention: fails via `MobiusHooks.onError` if the loop isn't running
     public func stop() {
         lock.synchronized {
-            guard loop != nil else {
+            guard let loop = loop else {
                 MobiusHooks.onError("cannot stop a controller that isn't running")
                 return
             }
 
-            modelToStartFrom = loop!.getMostRecentModel() ?? modelToStartFrom
+            modelToStartFrom = loop.latestModel
 
-            loop!.dispose()
+            loop.dispose()
             viewConnection?.dispose()
 
-            loop = nil
+            self.loop = nil
         }
     }
 
@@ -147,7 +147,7 @@ public class MobiusController<Types: LoopTypes> {
     /// - Returns: a model with the state of the controller
     public func getModel() -> Types.Model {
         return lock.synchronized {
-            loop?.getMostRecentModel() ?? modelToStartFrom
+            loop?.latestModel ?? modelToStartFrom
         }
     }
 }

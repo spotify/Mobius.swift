@@ -87,4 +87,11 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     func readCurrentModel() -> Types.Model? {
         return queue.sync { currentModel }
     }
+
+    var latestModel: Types.Model {
+        guard let model = readCurrentModel() else {
+            preconditionFailure("latestModel may only be invoked after start()")
+        }
+        return model
+    }
 }
