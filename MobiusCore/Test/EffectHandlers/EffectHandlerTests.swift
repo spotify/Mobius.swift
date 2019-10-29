@@ -102,23 +102,11 @@ class EffectHandlerTests: QuickSpec {
                     expect(isDisposed).to(beTrue())
                 }
 
-                it("does not emit events after `dispose`") {
+                it("crashes if events are dispatched after `dispose`") {
                     dispose()
-                    dispatchEffect(.innerEffect(.effect1))
-                    dispatchEffect(.innerEffect(.effect2))
-
-                    expect(receivedEffects).to(equal([]))
-                }
-
-                it("does not crash if effects are dispatched after `dispose`") {
-                    dispose()
-                    let dispatchEffectsAfterDispose = {
+                    expect({
                         dispatchEffect(.innerEffect(.effect1))
-                        dispatchEffect(.innerEffect(.effect2))
-                    }
-                    expect(dispatchEffectsAfterDispose()).toNot(throwError())
-                    expect(dispatchEffectsAfterDispose()).toNot(raiseException())
-                    expect(dispatchEffectsAfterDispose()).toNot(throwAssertion())
+                    }()).to(throwAssertion())
                 }
             }
 

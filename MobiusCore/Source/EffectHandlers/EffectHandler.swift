@@ -95,8 +95,8 @@ final public class EffectHandler<Effect, Event> {
 
     private func accept(_ effect: Effect) {
         if canAccept(effect) {
-            handleEffect(effect) { [unowned self] effect in
-                self.consumer?(effect)
+            handleEffect(effect) { [unowned self] event in
+                self.dispatch(event: event)
             }
         }
     }
@@ -104,7 +104,11 @@ final public class EffectHandler<Effect, Event> {
     private func dispatch(event: Event) {
         lock.lock()
         defer { lock.unlock() }
-        consumer?(event)
+        guard let consumer = self.consumer else {
+            fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `onDispose`")
+        }
+
+        consumer(event)
     }
 
     private func dispose() {
