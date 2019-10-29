@@ -78,8 +78,8 @@ public extension Mobius {
             self.logger = logger
         }
 
-        public func withEventSource<ES: EventSource>(_ eventSource: ES) -> Builder<Model, Event, Effect> where ES.Event == Event {
-            return Builder<Model, Event, Effect>(
+        public func withEventSource<ES: EventSource>(_ eventSource: ES) -> Builder where ES.Event == Event {
+            return Builder(
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,
@@ -90,8 +90,8 @@ public extension Mobius {
             )
         }
 
-        public func withInitiator(_ initiator: @escaping Initiator<Model, Effect>) -> Builder<Model, Event, Effect> {
-            return Builder<Model, Event, Effect>(
+        public func withInitiator(_ initiator: @escaping Initiator<Model, Effect>) -> Builder {
+            return Builder(
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,
@@ -102,8 +102,8 @@ public extension Mobius {
             )
         }
 
-        public func withEventQueue(_ eventQueue: DispatchQueue) -> Builder<Model, Event, Effect> {
-            return Builder<Model, Event, Effect>(
+        public func withEventQueue(_ eventQueue: DispatchQueue) -> Builder {
+            return Builder(
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,
@@ -114,8 +114,8 @@ public extension Mobius {
             )
         }
 
-        public func withEffectQueue(_ effectQueue: DispatchQueue) -> Builder<Model, Event, Effect> {
-            return Builder<Model, Event, Effect>(
+        public func withEffectQueue(_ effectQueue: DispatchQueue) -> Builder {
+            return Builder(
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,
@@ -126,8 +126,8 @@ public extension Mobius {
             )
         }
 
-        public func withLogger<L: MobiusLogger>(_ logger: L) -> Builder<Model, Event, Effect> where L.Model == Model, L.Event == Event, L.Effect == Effect {
-            return Builder<Model, Event, Effect>(
+        public func withLogger<L: MobiusLogger>(_ logger: L) -> Builder where L.Model == Model, L.Event == Event, L.Effect == Effect {
+            return Builder(
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,

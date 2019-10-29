@@ -104,9 +104,7 @@ class MobiusLoopTests: QuickSpec {
                 }
 
                 it("should queue up events dispatched before start to support racy initialisations") {
-                    let update: Update<String, String, String> = { model, event in Next.next(model + "-" + event) }
-
-                    loop = Mobius.loop(update: update, effectHandler: EagerEffectHandler())
+                    loop = Mobius.loop(update: { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
                         .withEventQueue(queue)
                         .start(from: "the beginning")
 
@@ -165,15 +163,15 @@ class MobiusLoopTests: QuickSpec {
                 var disposable: ConnectablePublisher<String>!
 
                 beforeEach {
-                    eventProcessor = TestEventProcessor<String, String, String>(
+                    eventProcessor = TestEventProcessor(
                         update: { _, _ in .noChange },
-                        publisher: ConnectablePublisher<Next<String, String>>(),
+                        publisher: ConnectablePublisher(),
                         queue: DispatchQueue(label: "dispose test queue")
                     )
                     modelPublisher = ConnectablePublisher<String>()
                     disposable = ConnectablePublisher<String>()
 
-                    loop = MobiusLoop<String, String, String>(
+                    loop = MobiusLoop(
                         eventProcessor: eventProcessor,
                         modelPublisher: modelPublisher,
                         disposable: disposable
@@ -252,7 +250,7 @@ class MobiusLoopTests: QuickSpec {
                     )
                     eventProcessor.desiredDebugDescription = eventProcessorDebugDescription
 
-                    loop = MobiusLoop<String, String, String>(eventProcessor: eventProcessor, modelPublisher: publisher, disposable: publisher)
+                    loop = MobiusLoop(eventProcessor: eventProcessor, modelPublisher: publisher, disposable: publisher)
                 }
 
                 context("when not disposed") {

@@ -27,7 +27,7 @@ import Nimble
 /// - Parameter predicates: matchers an array of `Predicate`, all of which must match
 /// - Returns: an `Assert` that applies all the matchers
 public func assertThatNext<Model, Event, Effect>(_ predicates: Nimble.Predicate<Next<Model, Effect>>...) -> UpdateSpec<Model, Event, Effect>.Assert {
-    return { (result: UpdateSpec<Model, Event, Effect>.Result) in
+    return { (result: UpdateSpec.Result) in
         predicates.forEach({ predicate in
             expect(result.lastNext).to(predicate)
         })

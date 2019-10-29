@@ -51,7 +51,7 @@ class NimbleFirstMatchersTests: QuickSpec {
             // Testing through proxy: UpdateSpec
             context("when asserting through predicates that fail") {
                 beforeEach {
-                    InitSpec<String, String>(testInitiator)
+                    InitSpec(testInitiator)
                         .when("a model")
                         .then(assertThatFirst(haveModel(model + "1"), haveNoEffects()))
                 }

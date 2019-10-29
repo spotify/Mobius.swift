@@ -40,7 +40,7 @@ class InitSpecTests: QuickSpec {
                         First<String, String>(model: model + model, effects: testEffects)
                     }
 
-                    spec = InitSpec<String, String>(initiator)
+                    spec = InitSpec(initiator)
                 }
 
                 it("should run the test provided") {

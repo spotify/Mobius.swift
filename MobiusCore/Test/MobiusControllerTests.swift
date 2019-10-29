@@ -40,7 +40,7 @@ class MobiusControllerTests: QuickSpec {
                     .next("\(model)-\(event)")
                 }
 
-                var builder: Mobius.Builder<String, String, String> = Mobius.loop(
+                var builder = Mobius.loop(
                     update: updateFunction,
                     effectHandler: SimpleTestConnectable()
                 )
@@ -124,7 +124,7 @@ class MobiusControllerTests: QuickSpec {
                         modelObserver = MockConnectable()
                         effectObserver = MockConnectable()
                         let builder: Mobius.Builder<String, String, String> = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
-                        controller = MobiusController<String, String, String>(builder: builder, defaultModel: "")
+                        controller = MobiusController(builder: builder, defaultModel: "")
                         controller.connectView(modelObserver)
                         controller.start()
                     }

@@ -96,16 +96,16 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         eventQueue: DispatchQueue,
         effectQueue: DispatchQueue,
         logger: AnyMobiusLogger<Model, Event, Effect>
-    ) -> MobiusLoop<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
-        let loggingInitiator = LoggingInitiator<Model, Effect>(initiator, logger)
-        let loggingUpdate = LoggingUpdate<Model, Event, Effect>(update, logger)
+    ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
+        let loggingInitiator = LoggingInitiator(initiator, logger)
+        let loggingUpdate = LoggingUpdate(update, logger)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
         // dispatch models and effects to the right places
         let nextPublisher = ConnectablePublisher<Next<Model, Effect>>()
 
         // event processor: process events, publish Next:s, retain current model
-        let eventProcessor = EventProcessor<Model, Event, Effect>(update: loggingUpdate.update, publisher: nextPublisher, queue: eventQueue)
+        let eventProcessor = EventProcessor(update: loggingUpdate.update, publisher: nextPublisher, queue: eventQueue)
 
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(eventProcessor.accept)
@@ -116,7 +116,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         let modelPublisher = ConnectablePublisher<Model>()
 
         // ensure model updates get published and effects dispatched to the effect handler
-        let nextConsumer: Consumer<Next<Model, Effect>> = { (next: Next<Model, Effect>) in
+        let nextConsumer: Consumer<Next<Model, Effect>> = { next in
             if let model = next.model {
                 modelPublisher.post(model)
             }
