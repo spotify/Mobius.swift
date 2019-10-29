@@ -19,9 +19,6 @@
 import Foundation
 
 final public class EffectHandler<Effect, Event> {
-    public typealias InputType = Effect
-    public typealias OutputType = Event
-
     private let lock = NSRecursiveLock()
     private let handleEffect: (Effect, @escaping Consumer<Event>) -> Void
     private let canAcceptEffect: (Effect) -> Bool
