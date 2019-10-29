@@ -40,20 +40,21 @@ class EffectHandlerTests: QuickSpec {
             var dispatchEffect: Consumer<OuterEffect>!
             var dispose: (() -> Void)!
             var isDisposed: Bool!
+            var effectHandler: EffectHandler<OuterEffect, InnerEffect>!
             func onDispose() {
                 isDisposed = true
             }
             func handleEffect(effect: InnerEffect, dispatch: @escaping Consumer<InnerEffect>) {
                 dispatch(effect)
             }
-            let effectHandler = EffectHandler<OuterEffect, InnerEffect>(
-                canAccept: canAccept,
-                handleEffect: handleEffect,
-                onDispose: onDispose
-            )
             beforeEach {
                 isDisposed = false
                 receivedEffects = []
+                effectHandler = EffectHandler<OuterEffect, InnerEffect>(
+                    canAccept: canAccept,
+                    handleEffect: handleEffect,
+                    onDispose: onDispose
+                )
                 let connection = effectHandler.connect { effect in
                     receivedEffects.append(effect)
                 }
