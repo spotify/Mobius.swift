@@ -35,36 +35,30 @@ public enum HandleEffect<Type> {
 /// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `onDispose`
 /// parameter is used to specify which resources should be torn down when this happens.
 final public class EffectHandler<Effect, Event> {
-    private let lock = NSRecursiveLock()
-    private let handleEffect: (Effect, @escaping Consumer<Event>) -> Void
-    private let canAcceptEffect: (Effect) -> Bool
+    private let lock = Lock()
+    private let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
     private let disposeFn: () -> Void
     private var consumer: Consumer<Event>?
 
     /// Create a handler for effects which satisfy the `canAccept` parameter function.
     ///
-    /// - Parameter canAccept: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
+    /// - Parameter canHandle: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
     /// effect handler will handle said effect.
     /// - Parameter handleEffect: Handle effects which satisfy `canAccept`.
     /// - Parameter onDispose: Tear down any resources being used by this effect handler.
     public init<AssociatedValueType>(
-        canAccept: @escaping (Effect) -> HandleEffect<AssociatedValueType>,
+        canHandle: @escaping (Effect) -> HandleEffect<AssociatedValueType>,
         handleEffect: @escaping (AssociatedValueType, @escaping Consumer<Event>) -> Void,
         onDispose disposable: @escaping () -> Void
     ) {
         disposeFn = disposable
-        canAcceptEffect = { effect in
-            switch canAccept(effect) {
-            case .handle: return true
-            default: return false
-            }
-        }
-        self.handleEffect = { effect, dispatch in
-            switch canAccept(effect) {
-            case .handle(let subType):
-                handleEffect(subType, dispatch)
-            default:
-                fatalError("ActionEffectHandler's canAccept is implemented incorrectly. This should not be possible")
+        self.handleEffect = { effect in
+            switch canHandle(effect) {
+            case .handle(let subEffect):
+                return { dispatch in
+                    handleEffect(subEffect, dispatch)
+                }
+            case .ignore: return nil
             }
         }
     }
@@ -76,47 +70,47 @@ final public class EffectHandler<Effect, Event> {
     ///
     /// - Parameter consumer: the output that this `EffectHandler` should send its events to.
     public func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
-        lock.lock()
-        defer { lock.unlock() }
-        guard self.consumer == nil else {
-            fatalError("An EffectHandler only supports one connection at a time.")
-        }
-        self.consumer = consumer
+        return lock.synchronized {
+            guard self.consumer == nil else {
+                fatalError("An EffectHandler only supports one connection at a time.")
+            }
+            self.consumer = consumer
 
-        return Connection(
-            acceptClosure: self.accept,
-            disposeClosure: self.dispose
-        )
+            return Connection(
+                acceptClosure: self.accept,
+                disposeClosure: self.dispose
+            )
+        }
     }
 
     func canAccept(_ effect: Effect) -> Bool {
-        return canAcceptEffect(effect)
+        return handleEffect(effect) != nil
     }
 
     private func accept(_ effect: Effect) {
-        if canAccept(effect) {
-            handleEffect(effect) { [unowned self] event in
+        if let performEffect = handleEffect(effect) {
+            performEffect { [unowned self] event in
                 self.dispatch(event: event)
             }
         }
     }
 
     private func dispatch(event: Event) {
-        lock.lock()
-        defer { lock.unlock() }
-        guard let consumer = self.consumer else {
-            fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `onDispose`")
-        }
+        return lock.synchronized {
+            guard let consumer = self.consumer else {
+                fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `onDispose`")
+            }
 
-        consumer(event)
+            consumer(event)
+        }
     }
 
     private func dispose() {
-        lock.lock()
-        defer { lock.unlock() }
-        disposeFn()
+        lock.synchronized {
+            disposeFn()
 
-        consumer = nil
+            consumer = nil
+        }
     }
 }
 
@@ -132,7 +126,7 @@ public extension EffectHandler where Effect: Equatable {
         onDispose: @escaping () -> Void = {}
     ) {
         self.init(
-            canAccept: { effect in
+            canHandle: { effect in
                 if effect == acceptedEffect {
                     return .handle(effect)
                 } else {

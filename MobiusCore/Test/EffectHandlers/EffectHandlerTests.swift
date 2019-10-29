@@ -51,7 +51,7 @@ class EffectHandlerTests: QuickSpec {
                 isDisposed = false
                 receivedEffects = []
                 effectHandler = EffectHandler<OuterEffect, InnerEffect>(
-                    canAccept: canAccept,
+                    canHandle: canHandle,
                     handleEffect: handleEffect,
                     onDispose: onDispose
                 )
@@ -136,7 +136,7 @@ class EffectHandlerTests: QuickSpec {
     }
 }
 
-private func canAccept(effect: OuterEffect) -> HandleEffect<InnerEffect> {
+private func canHandle(effect: OuterEffect) -> HandleEffect<InnerEffect> {
     switch effect {
     case .innerEffect(let effect):
         if effect == .effect1 {
