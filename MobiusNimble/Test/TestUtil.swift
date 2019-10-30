@@ -52,9 +52,3 @@ extension AssertionRecorder {
         XCTAssert(lastMessage.contains(string), errorDescription, file: file, line: line)
     }
 }
-
-class AllStrings: LoopTypes {
-    typealias Model = String
-    typealias Event = String
-    typealias Effect = String
-}

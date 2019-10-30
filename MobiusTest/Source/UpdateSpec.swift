@@ -19,16 +19,12 @@
 
 import MobiusCore
 
-public struct UpdateSpec<Types: LoopTypes> {
-    public typealias Model = Types.Model
-    public typealias Event = Types.Event
-    public typealias Effect = Types.Effect
-
+public struct UpdateSpec<Model, Event, Effect> {
     public typealias Assert = (Result) -> Void
 
-    private let update: Update<Types>
+    private let update: Update<Model, Event, Effect>
 
-    public init(_ update: @escaping Update<Types>) {
+    public init(_ update: @escaping Update<Model, Event, Effect>) {
         self.update = update
     }
 
@@ -37,10 +33,10 @@ public struct UpdateSpec<Types: LoopTypes> {
     }
 
     public struct When {
-        private let update: Update<Types>
+        private let update: Update<Model, Event, Effect>
         private let model: Model
 
-        init(_ update: @escaping Update<Types>, _ model: Model) {
+        init(_ update: @escaping Update<Model, Event, Effect>, _ model: Model) {
             self.update = update
             self.model = model
         }
@@ -51,11 +47,11 @@ public struct UpdateSpec<Types: LoopTypes> {
     }
 
     public struct Then {
-        private let update: Update<Types>
+        private let update: Update<Model, Event, Effect>
         private let model: Model
         private let events: [Event]
 
-        init(_ update: @escaping Update<Types>, _ model: Model, _ events: [Event]) {
+        init(_ update: @escaping Update<Model, Event, Effect>, _ model: Model, _ events: [Event]) {
             self.update = update
             self.model = model
             self.events = events

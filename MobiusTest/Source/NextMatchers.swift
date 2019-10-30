@@ -28,11 +28,11 @@ public typealias NextPredicate<Model, Effect> = Predicate<Next<Model, Effect>>
 ///   - predicate: a list of predicates to test
 ///   - failFunction: a function which is called when the predicate fails. Defaults to XCTFail
 /// - Returns: An `UpdateSpec` `Assert` that uses the assert to verify the result passed in to the `Assert`
-public func assertThatNext<Types: LoopTypes>(
-    _ predicates: NextPredicate<Types.Model, Types.Effect>...,
+public func assertThatNext<Model, Event, Effect>(
+    _ predicates: NextPredicate<Model, Effect>...,
     failFunction: @escaping AssertionFailure = XCTFail
-) -> UpdateSpec<Types>.Assert {
-    return { (result: UpdateSpec<Types>.Result) in
+) -> UpdateSpec<Model, Event, Effect>.Assert {
+    return { (result: UpdateSpec<Model, Event, Effect>.Result) in
         predicates.forEach({ predicate in
             let assertionResult = predicate(result.lastNext)
             if case let .failure(message, file, line) = assertionResult {

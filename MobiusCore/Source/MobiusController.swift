@@ -23,14 +23,14 @@ import Foundation
 ///
 /// If a loop is stopped and then started again, the new loop will continue from where the last
 /// one left off.
-public class MobiusController<Types: LoopTypes> {
-    private let loopFactory: (Types.Model) -> MobiusLoop<Types>
+public class MobiusController<Model, Event, Effect> {
+    private let loopFactory: (Model) -> MobiusLoop<Model, Event, Effect>
     private let lock = Lock()
 
-    private var viewConnectable: ConnectClosure<Types.Model, Types.Event>?
-    private var viewConnection: Connection<Types.Model>?
-    private var loop: MobiusLoop<Types>?
-    private var modelToStartFrom: Types.Model
+    private var viewConnectable: ConnectClosure<Model, Event>?
+    private var viewConnection: Connection<Model>?
+    private var loop: MobiusLoop<Model, Event, Effect>?
+    private var modelToStartFrom: Model
 
     /// A Boolean indicating whether the MobiusLoop is running or not.
     public var isRunning: Bool {
@@ -39,7 +39,7 @@ public class MobiusController<Types: LoopTypes> {
         }
     }
 
-    public init(builder: Mobius.Builder<Types>, defaultModel: Types.Model) {
+    public init(builder: Mobius.Builder<Model, Event, Effect>, defaultModel: Model) {
         loopFactory = builder.start
         modelToStartFrom = defaultModel
     }
@@ -53,7 +53,7 @@ public class MobiusController<Types: LoopTypes> {
     /// models and renders them. Disposing the connection should make the view stop emitting events.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if the controller already is connected
-    public func connectView<C: Connectable>(_ connectable: C) where C.InputType == Types.Model, C.OutputType == Types.Event {
+    public func connectView<C: Connectable>(_ connectable: C) where C.InputType == Model, C.OutputType == Event {
         lock.synchronized {
             guard viewConnectable == nil else {
                 MobiusHooks.onError("controller only supports connecting one view")
@@ -130,7 +130,7 @@ public class MobiusController<Types: LoopTypes> {
     ///
     /// - Parameter model: the model with the state the controller should start from
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running
-    public func replaceModel(_ model: Types.Model) {
+    public func replaceModel(_ model: Model) {
         lock.synchronized {
             guard loop == nil else {
                 MobiusHooks.onError("cannot replace the model of a running loop")
@@ -145,7 +145,7 @@ public class MobiusController<Types: LoopTypes> {
     /// if it's not running.
     ///
     /// - Returns: a model with the state of the controller
-    public func getModel() -> Types.Model {
+    public func getModel() -> Model {
         return lock.synchronized {
             loop?.latestModel ?? modelToStartFrom
         }

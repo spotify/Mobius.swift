@@ -20,12 +20,6 @@
 import MobiusCore
 import MobiusTest
 
-class AllStrings: LoopTypes {
-    typealias Model = String
-    typealias Event = String
-    typealias Effect = String
-}
-
 extension MobiusTest.PredicateResult {
     var failureMessage: String? {
         if case .failure(let message, _, _) = self {

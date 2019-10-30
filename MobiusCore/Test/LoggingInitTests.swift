@@ -25,7 +25,7 @@ class LoggingInitiatorTests: QuickSpec {
     override func spec() {
         describe("LoggingInitiator") {
             var logger: TestMobiusLogger!
-            var loggingInitiator: LoggingInitiator<AllStrings>!
+            var loggingInitiator: LoggingInitiator<String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()

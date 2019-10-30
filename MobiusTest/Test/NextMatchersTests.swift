@@ -49,7 +49,7 @@ class XCTestNextMatchersTests: QuickSpec {
             // Testing through proxy: UpdateSpec
             context("when asserting through predicates that fail") {
                 beforeEach {
-                    UpdateSpec<AllStrings>(testUpdate)
+                    UpdateSpec<String, String, String>(testUpdate)
                         .given("a model")
                         .when("")
                         .then(assertThatNext(

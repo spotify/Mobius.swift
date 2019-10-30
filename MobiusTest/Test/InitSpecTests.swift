@@ -27,8 +27,8 @@ class InitSpecTests: QuickSpec {
     override func spec() {
         describe("InitSpec") {
             context("when setting up a test scenario") {
-                var initiator: Initiator<AllStrings>!
-                var spec: InitSpec<AllStrings>!
+                var initiator: Initiator<String, String>!
+                var spec: InitSpec<String, String>!
                 var testModel: String!
                 var testEffects: [String]!
                 var assertionClosureCalled = false
@@ -40,7 +40,7 @@ class InitSpecTests: QuickSpec {
                         First<String, String>(model: model + model, effects: testEffects)
                     }
 
-                    spec = InitSpec<AllStrings>(initiator)
+                    spec = InitSpec(initiator)
                 }
 
                 it("should run the test provided") {

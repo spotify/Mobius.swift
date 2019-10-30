@@ -26,13 +26,7 @@ class EventProcessorTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("EventProcessor") {
-            struct IntTypes: LoopTypes {
-                typealias Model = Int
-                typealias Event = Int
-                typealias Effect = Int
-            }
-
-            var eventProcessor: EventProcessor<IntTypes>!
+            var eventProcessor: EventProcessor<Int, Int, Int>!
             var nextPublisher: ConnectablePublisher<Next<Int, Int>>!
             var consumer: Consumer<Next<Int, Int>>!
             var receivedModels: [Int]!

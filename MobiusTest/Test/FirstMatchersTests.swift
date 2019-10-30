@@ -44,7 +44,7 @@ class FirstMatchersTests: QuickSpec {
             // Testing through proxy: InitSpec
             context("when asserting through predicates that fail") {
                 beforeEach {
-                    InitSpec<AllStrings>(testInitiator)
+                    InitSpec(testInitiator)
                         .when("a model")
                         .then(assertThatFirst(
                             hasModel(model + "1"),

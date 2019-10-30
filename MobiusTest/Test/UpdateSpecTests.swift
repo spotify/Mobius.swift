@@ -22,12 +22,6 @@ import MobiusTest
 import Nimble
 import Quick
 
-struct MyTypes: LoopTypes {
-    typealias Model = MyModel
-    typealias Event = MyEvent
-    typealias Effect = MyEffect
-}
-
 struct MyModel: Equatable {
     let buttonClicked: Bool
     let count: Int
@@ -49,7 +43,7 @@ enum MyEffect {
 class UpdateSpecTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        let updateSpec = UpdateSpec<MyTypes>(myUpdate)
+        let updateSpec = UpdateSpec<MyModel, MyEvent, MyEffect>(myUpdate)
 
         describe("UpdateSpec") {
             describe("single events") {

@@ -20,7 +20,11 @@
 import Foundation
 
 /// Protocol for logging init and update calls.
-public protocol MobiusLogger: LoopTypes {
+public protocol MobiusLogger {
+    associatedtype Model
+    associatedtype Event
+    associatedtype Effect
+
     ///  Called right before the `Initiator` function is called.
     ///
     ///  This method mustn't block, as it'll hinder the loop from running. It will be called on the
@@ -61,10 +65,7 @@ public protocol MobiusLogger: LoopTypes {
     func didUpdate(model: Model, event: Event, next: Next<Model, Effect>)
 }
 
-class NoopLogger<Types: LoopTypes>: MobiusLogger {
-    typealias Model = Types.Model
-    typealias Event = Types.Event
-    typealias Effect = Types.Effect
+class NoopLogger<Model, Event, Effect>: MobiusLogger {
 
     func willInitiate(model: Model) {
         // empty
@@ -84,11 +85,7 @@ class NoopLogger<Types: LoopTypes>: MobiusLogger {
 }
 
 /// Type-erased `MobiusLogger`.
-public class AnyMobiusLogger<Types: LoopTypes>: MobiusLogger {
-    public typealias Model = Types.Model
-    public typealias Event = Types.Event
-    public typealias Effect = Types.Effect
-
+public class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {
     private let willInitiateClosure: (Model) -> Void
     private let didInitiateClosure: (Model, First<Model, Effect>) -> Void
     private let willUpdateClosure: (Model, Event) -> Void

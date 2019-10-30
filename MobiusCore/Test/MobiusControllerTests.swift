@@ -29,7 +29,7 @@ class MobiusControllerTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("MobiusController") {
-            var controller: MobiusController<AllStrings>!
+            var controller: MobiusController<String, String, String>!
             var view: RecordingTestConnectable!
             var errorThrown: Bool!
 
@@ -40,7 +40,7 @@ class MobiusControllerTests: QuickSpec {
                     .next("\(model)-\(event)")
                 }
 
-                var builder: Mobius.Builder<AllStrings> = Mobius.loop(
+                var builder = Mobius.loop(
                     update: updateFunction,
                     effectHandler: SimpleTestConnectable()
                 )
@@ -118,13 +118,13 @@ class MobiusControllerTests: QuickSpec {
                 describe("disposing connections") {
                     var modelObserver: MockConnectable!
                     var effectObserver: MockConnectable!
-                    var controller: MobiusController<AllStrings>!
+                    var controller: MobiusController<String, String, String>!
 
                     beforeEach {
                         modelObserver = MockConnectable()
                         effectObserver = MockConnectable()
-                        let builder: Mobius.Builder<AllStrings> = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
-                        controller = MobiusController<AllStrings>(builder: builder, defaultModel: "")
+                        let builder: Mobius.Builder<String, String, String> = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
+                        controller = MobiusController(builder: builder, defaultModel: "")
                         controller.connectView(modelObserver)
                         controller.start()
                     }
