@@ -18,11 +18,6 @@
 // under the License.
 import Foundation
 
-public enum HandleEffect<Type> {
-    case handle(Type)
-    case ignore
-}
-
 /// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
 /// An `EffectHandler` decides which effects it can handle based on its `canHandle` function. Multiple `EffectHandler`s can be composed by using an
 /// `EffectRouterBuilder`.
@@ -42,23 +37,23 @@ final public class EffectHandler<Effect, Event> {
 
     /// Create a handler for effects which satisfy the `canHandle` parameter function.
     ///
-    /// - Parameter canHandle: A function which indicates whether to handle an effect. If it returns `.handle(effect)` for a given `effect`, this
-    /// effect handler will handle said effect.
+    /// - Parameter canHandle: A function which determines if this EffectHandler can handle a given effect. If it can handle the effect, return the data
+    /// that should be sent as input to the `handle` function. If it cannot handle the effect, return `nil`
     /// - Parameter handleEffect: Handle effects which satisfy `canHandle`.
     /// - Parameter stopHandling: Tear down any resources being used by this effect handler.
     public init<EffectPayload>(
-        canHandle: @escaping (Effect) -> HandleEffect<EffectPayload>,
+        canHandle: @escaping (Effect) -> EffectPayload?,
         handle: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
         stopHandling disposable: @escaping () -> Void
     ) {
         disposeFn = disposable
         self.handleEffect = { effect in
-            switch canHandle(effect) {
-            case .handle(let subEffect):
+            if let payload = canHandle(effect) {
                 return { dispatch in
-                    handle(subEffect, dispatch)
+                    handle(payload, dispatch)
                 }
-            case .ignore: return nil
+            } else {
+                return nil
             }
         }
     }
@@ -127,11 +122,9 @@ public extension EffectHandler where Effect: Equatable {
     ) {
         self.init(
             canHandle: { effect in
-                if effect == acceptedEffect {
-                    return .handle(effect)
-                } else {
-                    return .ignore
-                }
+                effect == acceptedEffect
+                    ? effect
+                    : nil
             },
             handle: handle,
             stopHandling: stopHandling

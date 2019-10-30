@@ -136,13 +136,11 @@ class EffectHandlerTests: QuickSpec {
     }
 }
 
-private func canHandle(effect: OuterEffect) -> HandleEffect<InnerEffect> {
+private func canHandle(effect: OuterEffect) -> InnerEffect? {
     switch effect {
     case .innerEffect(let effect):
-        if effect == .effect1 {
-            return .handle(effect)
-        } else {
-            return .ignore
-        }
+        return effect == .effect1
+            ? effect
+            : nil
     }
 }
