@@ -21,14 +21,11 @@ import Foundation
 /// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
 /// `EffectHandler`s compose with themselves; simply supply the initializer with an array of `EffectHandler`s.
 ///
-/// Note: Each effect emitted in a Mobius loop must be handled by exactly __one__ `EffectHandler`.  When composing `EffectHandler`s, at most one
-/// `EffectHandler` can handle a given effect.
-/// Note: The `connnect` function is invoked on an `EffectHandler` when it should start handling effects and emitting events. Only one `Connection` at
-/// a time is supported, otherwise it will crash.
-/// Note: It is possible to emit events before `connect` has been called on an `EffectHandler`, and after a `Connection` to an `EffectHandler` has
-/// been disposed. These events can not, and will not be handled by anything. This will therefore cause a crash.
-/// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `stopHandling`
-/// parameter is used to specify which resources should be torn down when this happens.
+/// Note: Each effect emitted in a Mobius loop must be handled by exactly __one__ `EffectHandler`.
+/// Note: The `connnect` function supports exactly __one__ connection at a time.
+/// Note: Emitting an event after `stopHandling` has been called will cause a crash.
+/// Note `stopHandling` is called when an `EffectHandler` should tear down its resources. Ensure that any long-running operation is stopped once this
+/// closure returns. Emitting an event after `stopHandling` returns will cause a crash.
 final public class EffectHandler<Effect, Event> {
     private let lock = Lock()
     let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
