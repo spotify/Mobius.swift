@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
+		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
+		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
+		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D3A696E2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
@@ -257,6 +260,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
+		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D2FE60F20625E76002DFD69 /* Mobius.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Mobius.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
 		2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackwardsCompatibility.swift; sourceTree = "<group>"; };
@@ -476,6 +481,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		02D0DDBC2366EF8D00A1CE4C /* EffectHandlers */ = {
+			isa = PBXGroup;
+			children = (
+				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
+			);
+			path = EffectHandlers;
+			sourceTree = "<group>";
+		};
+		02D0DDC12366F46600A1CE4C /* EffectHandlers */ = {
+			isa = PBXGroup;
+			children = (
+				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
+			);
+			path = EffectHandlers;
+			sourceTree = "<group>";
+		};
 		2D9A2FAB205C06FA00B1A332 = {
 			isa = PBXGroup;
 			children = (
@@ -611,6 +632,7 @@
 		5BB287B4209995410043B530 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				02D0DDBC2366EF8D00A1CE4C /* EffectHandlers */,
 				5B1F1038210F5E7D0067193C /* ConnectableConvenienceClasses */,
 				5BB287BC209995410043B530 /* Disposables */,
 				5B4A369821107D0E00279C7D /* EventSources */,
@@ -688,6 +710,7 @@
 		5BB2884920999ACE0043B530 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				02D0DDC12366F46600A1CE4C /* EffectHandlers */,
 				5B1F1045211036FC0067193C /* ConnectableConvenienceClassesTests */,
 				5B4A369C21107F0D00279C7D /* EventSources */,
 				5BB2885620999ACE0043B530 /* AnyConnectionTests.swift */,
@@ -1198,6 +1221,7 @@
 				2DF4C2FD20DBDD5800A4B6DE /* Connection.swift in Sources */,
 				5B7095992109E89C0099298B /* EffectRouterBuilder.swift in Sources */,
 				2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
+				02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */,
 				5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
@@ -1267,6 +1291,7 @@
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
 				5BB2881C2099957D0043B530 /* ConnectablePublisher.swift in Sources */,
+				02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */,
 				5BB2881E209995810043B530 /* EventSource.swift in Sources */,
 				5B237EBA209C4F3C00764576 /* Connectable.swift in Sources */,
 			);
@@ -1286,6 +1311,7 @@
 				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
 				5BB2887120999AD60043B530 /* LoggingInitTests.swift in Sources */,
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
+				02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */,
 				5B85AD0220AAA8CA00C4FCD5 /* MobiusHooksTests.swift in Sources */,
 				5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */,
 				5BB2887B20999AD60043B530 /* ConnectablePublisherTests.swift in Sources */,
@@ -1522,9 +1548,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusCore/BuildSystem/MobiusCore-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1539,9 +1567,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusCore/BuildSystem/MobiusCore-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1554,10 +1584,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusCore/BuildSystem/MobiusCoreTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Debug;
 		};
@@ -1568,10 +1600,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusCore/BuildSystem/MobiusCoreTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Release;
 		};
@@ -1794,10 +1828,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusExtras/BuildSystem/MobiusExtrasTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusExtrasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Debug;
 		};
@@ -1808,10 +1844,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusExtras/BuildSystem/MobiusExtrasTests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusExtrasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
 			};
 			name = Release;
 		};

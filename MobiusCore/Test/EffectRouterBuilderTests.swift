@@ -27,7 +27,7 @@ import Quick
 class EffectRouterBuilderTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        describe("EffectRouterBuilder") {
+        describe("Legacy EffectRouterBuilder") {
             var sut: EffectRouterBuilder<String, String>!
 
             var output: String?
@@ -382,7 +382,78 @@ class EffectRouterBuilderTests: QuickSpec {
                 }
             }
         }
+
+        describe("EffectRouterBuilder") {
+            context("when adding an `EffectHandler`") {
+                var connection: Connection<Int>!
+                var receivedEvents: [Int]!
+
+                beforeEach {
+                    // An effect handler which only accepts the number 1. When it gets a 1, it emits a 1 as its event.
+                    let effectHandler1 = EffectHandler(handledEffect: 1, handle: handleEffect)
+                    // An effect handler which only accepts the number 2. When it gets a 2, it emits a 2 as its event.
+                    let effectHandler2 = EffectHandler(handledEffect: 2, handle: handleEffect)
+                    connection = EffectRouterBuilder()
+                        .addEffectHandler(effectHandler1)
+                        .addEffectHandler(effectHandler2)
+                        .build()
+                        .connect { event in
+                            receivedEvents.append(event)
+                        }
+                    receivedEvents = []
+                }
+                afterEach {
+                    connection.dispose()
+                }
+
+                it("dispatches effects which satisfy the effect handler's `canAccept` function") {
+                    connection.accept(1)
+                    connection.accept(2)
+                    expect(receivedEvents).to(equal([1, 2]))
+                }
+
+                it("crashes if an effect which no EffectHandler can handle is emitted") {
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler { _, _, _ in
+                        didCrash = true
+                    }
+
+                    connection.accept(3)
+
+                    expect(didCrash).to(beTrue())
+                }
+            }
+
+            context("when multiple `EffectHandler`s handle the same effect") {
+                var connection: Connection<Int>!
+                beforeEach {
+                    let effectHandler1 = EffectHandler(handledEffect: 1, handle: handleEffect)
+                    let effectHandler2 = EffectHandler(handledEffect: 1, handle: handleEffect)
+                    connection = EffectRouterBuilder()
+                        .addEffectHandler(effectHandler1)
+                        .addEffectHandler(effectHandler2)
+                        .build()
+                        .connect { _ in }
+                }
+                afterEach {
+                    connection.dispose()
+                }
+
+                it("should crash") {
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler { _, _, _ in
+                        didCrash = true
+                    }
+                    connection.accept(1)
+                    expect(didCrash).to(beTrue())
+                }
+            }
+        }
     }
+}
+
+private func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
+    dispatch(effect)
 }
 
 private class TestFilteredConnectable: Connectable, EffectPredicate {

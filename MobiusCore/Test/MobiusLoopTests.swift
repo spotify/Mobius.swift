@@ -269,6 +269,41 @@ class MobiusLoopTests: QuickSpec {
                 }
             }
         }
+
+        context("when configuring with an EffectHandler") {
+            var loop: MobiusLoop<Int, Int, Int>!
+            var isDisposed: Bool!
+            var didReceiveEffect: Bool!
+            beforeEach {
+                isDisposed = false
+                didReceiveEffect = false
+                loop = Mobius.loop(
+                    update: { (_: Int, _: Int) in Next.dispatchEffects([1]) },
+                    effectHandler: EffectHandler(
+                        handledEffect: 1,
+                        handle: { effect, _ in
+                            didReceiveEffect = effect == 1
+                        },
+                        stopHandling: {
+                            isDisposed = true
+                        }
+                    )
+                ).start(from: 0)
+            }
+            afterEach {
+                loop.dispose()
+            }
+
+            it("should dispatch effects to the EffectHandler") {
+                loop.dispatchEvent(1)
+                expect(didReceiveEffect).toEventually(beTrue())
+            }
+
+            it("should dispose the EffectHandler when the loop is disposed") {
+                loop.dispose()
+                expect(isDisposed).toEventually(beTrue())
+            }
+        }
     }
 }
 
