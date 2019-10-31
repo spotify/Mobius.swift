@@ -54,29 +54,6 @@ public extension Mobius {
         )
     }
 
-    /// Create a `Builder` to help you configure a `MobiusLoop ` before starting it.
-    ///
-    /// The builder is immutable. When setting various properties, a new instance of a builder will be returned.
-    /// It is therefore recommended to chain the loop configuration functions
-    ///
-    /// Once done configuring the loop you can start the loop using `start(from:)`.
-    ///
-    /// - Parameters:
-    ///   - update: the `Update` function of the loop
-    ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
-    /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, C: Connectable>(update: @escaping Update<Model, Event, Effect>, effectHandler: C) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
-        return Builder(
-            update: update,
-            effectHandler: effectHandler,
-            initiator: { First(model: $0) },
-            eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
-            eventQueue: DispatchQueue(label: "event processor"),
-            effectQueue: DispatchQueue(label: "effect processor", attributes: .concurrent),
-            logger: AnyMobiusLogger(NoopLogger())
-        )
-    }
-
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
@@ -86,7 +63,7 @@ public extension Mobius {
         private let effectQueue: DispatchQueue
         private let logger: AnyMobiusLogger<Model, Event, Effect>
 
-        fileprivate init<C: Connectable>(
+        init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
