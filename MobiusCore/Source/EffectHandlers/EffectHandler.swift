@@ -67,7 +67,8 @@ final public class EffectHandler<Effect, Event> {
     public func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
         return lock.synchronized {
             guard self.consumer == nil else {
-                fatalError("An EffectHandler only supports one connection at a time.")
+                MobiusHooks.onError("An EffectHandler only supports one connection at a time.")
+                return BrokenConnection<Effect>.connection()
             }
             self.consumer = consumer
 
@@ -93,7 +94,8 @@ final public class EffectHandler<Effect, Event> {
     private func dispatch(event: Event) {
         return lock.synchronized {
             guard let consumer = self.consumer else {
-                fatalError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `stopHandling`")
+                MobiusHooks.onError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `stopHandling`")
+                return
             }
 
             consumer(event)

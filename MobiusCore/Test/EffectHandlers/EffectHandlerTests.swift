@@ -103,10 +103,14 @@ class EffectHandlerTests: QuickSpec {
                 }
 
                 it("crashes if events are dispatched after `stopHandling` is called") {
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler { _, _, _ in
+                        didCrash = true
+                    }
+
                     stopHandling()
-                    expect({
-                        dispatchEffect(.innerEffect(.effect1))
-                    }()).to(throwAssertion())
+                    dispatchEffect(.innerEffect(.effect1))
+                    expect(didCrash).to(beTrue())
                 }
             }
 
@@ -127,9 +131,14 @@ class EffectHandlerTests: QuickSpec {
 
             context("connecting multiple times") {
                 it("should crash if the effect handler is connected to multiple times without disposing in between") {
-                    expect({
-                        _ = effectHandler.connect { _ in }
-                    }()).to(throwAssertion())
+                    var didCrash = false
+                    MobiusHooks.setErrorHandler { _, _, _ in
+                        didCrash = true
+                    }
+
+                    let connection = effectHandler.connect { _ in }
+                    expect(didCrash).to(beTrue())
+                    connection.dispose()
                 }
             }
         }
