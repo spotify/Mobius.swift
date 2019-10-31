@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
+		02C40609236B1BD200BD7ED8 /* EffectHandlerComposition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40608236B1BD200BD7ED8 /* EffectHandlerComposition.swift */; };
+		02C4060C236B233900BD7ED8 /* EffectHandlerCompositionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4060A236B231400BD7ED8 /* EffectHandlerCompositionTests.swift */; };
+		02C4060D236B233F00BD7ED8 /* EffectHandlerComposition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40608236B1BD200BD7ED8 /* EffectHandlerComposition.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
@@ -260,6 +263,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02C40608236B1BD200BD7ED8 /* EffectHandlerComposition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerComposition.swift; sourceTree = "<group>"; };
+		02C4060A236B231400BD7ED8 /* EffectHandlerCompositionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerCompositionTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
@@ -484,6 +489,7 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
+				02C40608236B1BD200BD7ED8 /* EffectHandlerComposition.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -492,6 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
+				02C4060A236B231400BD7ED8 /* EffectHandlerCompositionTests.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1224,6 +1231,7 @@
 				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
 				2DF4C30620DBDD5C00A4B6DE /* AnonymousDisposable.swift in Sources */,
+				02C4060D236B233F00BD7ED8 /* EffectHandlerComposition.swift in Sources */,
 				5B1F103D210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				2DF4C30520DBDD5C00A4B6DE /* CompositeDisposable.swift in Sources */,
 				5B1F1041210F5EEB0067193C /* BlockingFunctionConnectable.swift in Sources */,
@@ -1285,6 +1293,7 @@
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
 				5BB9346420D2A46A00A1FE3A /* EffectRouterBuilder.swift in Sources */,
+				02C40609236B1BD200BD7ED8 /* EffectHandlerComposition.swift in Sources */,
 				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
@@ -1316,6 +1325,7 @@
 				5BB2887620999AD60043B530 /* NextTests.swift in Sources */,
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
 				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
+				02C4060C236B233900BD7ED8 /* EffectHandlerCompositionTests.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,

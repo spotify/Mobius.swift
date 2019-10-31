@@ -19,10 +19,9 @@
 import Foundation
 
 /// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
-/// An `EffectHandler` decides which effects it can handle based on its `canHandle` function. Multiple `EffectHandler`s can be composed by using an
-/// `EffectRouterBuilder`.
+/// `EffectHandler`s compose with themselves; simply supply the initializer with an array of `EffectHandler`s.
 ///
-/// Note: When using an `EffectRouterBuilder` each effect must be handled by exactly one `EffectHandler`.
+/// Note: When composing `EffectHandler`s, at most one `EffectHandler` can handle a given effect.
 /// Note: The `connnect` function is invoked on an `EffectHandler` when it should start handling effects and emitting events. Only one `Connection` at
 /// a time is supported, otherwise it will crash.
 /// Note: It is possible to emit events before `connect` has been called on an `EffectHandler`, and after a `Connection` to an `EffectHandler` has
@@ -31,7 +30,7 @@ import Foundation
 /// parameter is used to specify which resources should be torn down when this happens.
 final public class EffectHandler<Effect, Event> {
     private let lock = Lock()
-    private let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
+    let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
     private let disposeFn: () -> Void
     private var consumer: Consumer<Event>?
 
@@ -41,21 +40,31 @@ final public class EffectHandler<Effect, Event> {
     /// that should be sent as input to the `handle` function. If it cannot handle the effect, return `nil`
     /// - Parameter handleEffect: Handle effects which satisfy `canHandle`.
     /// - Parameter stopHandling: Tear down any resources being used by this effect handler.
-    public init<EffectPayload>(
+    public convenience init<EffectPayload>(
         canHandle: @escaping (Effect) -> EffectPayload?,
         handle: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
+        stopHandling disposable: @escaping () -> Void = {}
+    ) {
+        self.init(
+            handleEffect: { effect in
+               if let payload = canHandle(effect) {
+                   return { dispatch in
+                       handle(payload, dispatch)
+                   }
+               } else {
+                   return nil
+               }
+            },
+            stopHandling: disposable
+        )
+    }
+
+    init(
+        handleEffect: @escaping (Effect) -> ((@escaping Consumer<Event>) -> Void)?,
         stopHandling disposable: @escaping () -> Void
     ) {
         disposeFn = disposable
-        self.handleEffect = { effect in
-            if let payload = canHandle(effect) {
-                return { dispatch in
-                    handle(payload, dispatch)
-                }
-            } else {
-                return nil
-            }
-        }
+        self.handleEffect = handleEffect
     }
 
     /// Connect to this `EffectHandler` by supplying it with an output for its events.
@@ -102,7 +111,7 @@ final public class EffectHandler<Effect, Event> {
         }
     }
 
-    private func dispose() {
+    func dispose() {
         lock.synchronized {
             disposeFn()
 
