@@ -278,7 +278,7 @@ class MobiusLoopTests: QuickSpec {
                 isDisposed = false
                 didReceiveEffect = false
                 loop = Mobius.loop(
-                    update: { (_: Int, _: Int) in Next.dispatchEffects([1]) },
+                    update: { (_: Int, event: Int) in Next.dispatchEffects([event]) },
                     effectHandler: EffectHandler(
                         handledEffect: 1,
                         handle: { effect, _ in
@@ -302,6 +302,16 @@ class MobiusLoopTests: QuickSpec {
             it("should dispose the EffectHandler when the loop is disposed") {
                 loop.dispose()
                 expect(isDisposed).toEventually(beTrue())
+            }
+
+            it("should crash if an emitted effect is not handled") {
+                var didCrash = false
+                MobiusHooks.setErrorHandler { _, _, _ in
+                    didCrash = true
+                }
+
+                loop.dispatchEvent(2)
+                expect(didCrash).toEventually(beTrue())
             }
         }
     }
