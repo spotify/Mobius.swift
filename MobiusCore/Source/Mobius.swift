@@ -205,7 +205,7 @@ private extension EffectHandler {
             let effectHandlerConnection = self.connect(dispatch)
             return Connection(
                 acceptClosure: { effect in
-                    if let executeEffect = self.handleEffect(effect) {
+                    if let executeEffect = self.canHandle(effect) {
                         executeEffect(dispatch)
                     } else {
                         MobiusHooks.onError("No Effect Handler could be found for: \(effect)")

@@ -28,7 +28,7 @@ import Foundation
 /// closure returns. Emitting an event after `stopHandling` returns will cause a crash.
 final public class EffectHandler<Effect, Event> {
     private let lock = Lock()
-    let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
+    private let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
     private let disposeFn: () -> Void
     private var consumer: Consumer<Event>?
 
@@ -86,8 +86,11 @@ final public class EffectHandler<Effect, Event> {
         }
     }
 
-    func canAccept(_ effect: Effect) -> Bool {
-        return handleEffect(effect) != nil
+    /// Determine if a given effect can be handled by this effect handler. If it can be handled, it will return its side-effect as a function of an output consumer. If not,
+    /// it will return nil.
+    /// - Parameter effect: the relevant effect
+    func canHandle(_ effect: Effect) -> ((@escaping Consumer<Event>) -> Void)? {
+        return handleEffect(effect)
     }
 
     private func accept(_ effect: Effect) {

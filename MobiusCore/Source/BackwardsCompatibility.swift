@@ -106,7 +106,9 @@ public struct EffectRouterBuilder<Input, Output> {
     public func addEffectHandler(
         _ effectHandler: EffectHandler<Input, Output>
     ) -> EffectRouterBuilder<Input, Output> {
-        let handler = (connect: effectHandler.connect, predicate: effectHandler.canAccept)
+        let handler = (connect: effectHandler.connect, predicate: { effect in
+            effectHandler.canHandle(effect) != nil
+        })
         return EffectRouterBuilder<Input, Output>(connectables: connectables + [handler])
     }
 

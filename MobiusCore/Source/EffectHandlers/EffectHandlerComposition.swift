@@ -51,7 +51,7 @@ public extension EffectHandler {
         handlers: [EffectHandler<Effect, Event>],
         effect: Effect
     ) -> ((@escaping Consumer<Event>) -> Void)? {
-        let relevantHandlers = handlers.compactMap { $0.handleEffect(effect) }
+        let relevantHandlers = handlers.compactMap { $0.canHandle(effect) }
         if relevantHandlers.count > 1 {
             MobiusHooks.onError("Multiple EffectHandlers found for effect: \(effect). Only one EffectHandler is supported per effect.")
             return nil
