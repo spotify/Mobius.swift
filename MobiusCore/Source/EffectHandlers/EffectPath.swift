@@ -1,3 +1,4 @@
+
 // Copyright (c) 2019 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
@@ -17,16 +18,10 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// Primitive EffectHandler
-public struct EffectHandler<Effect, Event> {
-    public let handle: (Effect, @escaping Consumer<Event>) -> Void
-    public let disposable: Disposable
+public struct EffectPath<Input, Output> {
+    public let tryPath: (Input) -> Output?
 
-    public init(
-        handle: @escaping (Effect, @escaping Consumer<Event>) -> Void,
-        disposable: Disposable
-    ) {
-        self.handle = handle
-        self.disposable = disposable
+    public init(tryPath: @escaping (Input) -> Output?) {
+        self.tryPath = tryPath
     }
 }

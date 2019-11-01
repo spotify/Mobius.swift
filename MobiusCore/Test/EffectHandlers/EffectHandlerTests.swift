@@ -21,13 +21,15 @@ import MobiusCore
 import Nimble
 import Quick
 
-enum InnerEffect: Equatable {
+private enum Effect: Equatable {
+    // Effect 1 is handled
     case effect1
+    // Effect 2 is not handled
     case effect2
 }
 
-enum OuterEffect: Equatable {
-    case innerEffect(InnerEffect)
+private enum Event {
+    case eventForEffect1
 }
 
 // swiftlint:disable type_body_length file_length
@@ -35,121 +37,73 @@ enum OuterEffect: Equatable {
 class EffectHandlerTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        describe("EffectHandler tests") {
-            var receivedEffects: [InnerEffect]!
-            var dispatchEffect: Consumer<OuterEffect>!
-            var stopHandling: (() -> Void)!
-            var isDisposed: Bool!
-            var effectHandler: EffectHandler<OuterEffect, InnerEffect>!
-            func onDispose() {
-                isDisposed = true
-            }
-            func handleEffect(effect: InnerEffect, dispatch: @escaping Consumer<InnerEffect>) {
-                dispatch(effect)
-            }
+        describe("Handling effects with EffectHandler") {
+            var effectHandler: EffectHandler<Effect, Event>!
+            var executeEffect: ((Effect) -> Void)!
+            var receivedEvents: [Event]!
+
             beforeEach {
-                isDisposed = false
-                receivedEffects = []
-                effectHandler = EffectHandler<OuterEffect, InnerEffect>(
-                    canHandle: canHandle,
+                effectHandler = EffectHandler(
                     handle: handleEffect,
-                    stopHandling: onDispose
+                    disposable: AnonymousDisposable {}
                 )
-                let connection = effectHandler.connect { effect in
-                    receivedEffects.append(effect)
+                receivedEvents = []
+                let output = { (event: Event) in receivedEvents.append(event) }
+                executeEffect = { effect in
+                    effectHandler.handle(effect, output)
                 }
-                dispatchEffect = connection.accept
-                stopHandling = connection.dispose
             }
             afterEach {
-                stopHandling()
+                effectHandler.disposable.dispose()
             }
 
-            context("`canHandle` unwraps effects with associated values") {
-                it("unwraps and outputs the effect's associated value if it satisfies `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect1))
-
-                    expect(receivedEffects).to(equal([.effect1]))
+            context("When executing effects") {
+                it("dispatches the expected event for an effect which can be handled") {
+                    _ = executeEffect(.effect1)
+                    expect(receivedEvents).to(equal([.eventForEffect1]))
                 }
 
-                it("does not unwrap or output the effect's associated value if it does not satisfy `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect2))
-
-                    expect(receivedEffects).to(equal([]))
-                }
-
-                it("unwraps and outputs only the effects which satisfy `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect1))
-                    dispatchEffect(.innerEffect(.effect2))
-                    dispatchEffect(.innerEffect(.effect1))
-                    dispatchEffect(.innerEffect(.effect2))
-
-                    expect(receivedEffects).to(equal([.effect1, .effect1]))
+                it("dispatches no effects for events which cannot be handled") {
+                    _ = executeEffect(.effect2)
+                    expect(receivedEvents).to(beEmpty())
                 }
             }
+        }
+        describe("Disposing EffectHandler") {
+            var effectHandler: EffectHandler<Effect, Event>!
+            var isDisposed: Bool!
 
-            context("`stopHandling`") {
-                it("The `stopHandling` function is called when the connection is disposed") {
-                    stopHandling()
-
-                    expect(isDisposed).to(beTrue())
-                }
-
-                it("`stopHandling` is idempotent") {
-                    stopHandling()
-                    stopHandling()
-                    stopHandling()
-                    expect(isDisposed).to(beTrue())
-                }
-
-                it("crashes if events are dispatched after `stopHandling` is called") {
-                    var didCrash = false
-                    MobiusHooks.setErrorHandler { _, _, _ in
-                        didCrash = true
+            beforeEach {
+                isDisposed = false
+                effectHandler = EffectHandler<Effect, Event>(
+                    handle: { _, _ in },
+                    disposable: AnonymousDisposable {
+                        isDisposed = true
                     }
-
-                    stopHandling()
-                    dispatchEffect(.innerEffect(.effect1))
-                    expect(didCrash).to(beTrue())
-                }
+                )
             }
 
-            context("reconnecting after `stopHandling` is called") {
-                it("is possible to connect again after the effect handler has been disposed") {
-                    dispatchEffect(.innerEffect(.effect1))
-                    stopHandling()
-                    let connection = effectHandler.connect { effect in
-                        receivedEffects.append(effect)
-                    }
-                    connection.accept(.innerEffect(.effect1))
-                    connection.accept(.innerEffect(.effect2))
-
-                    expect(receivedEffects).to(equal([.effect1, .effect1]))
-                    connection.dispose()
-                }
+            it("calls `stopHandling` when disposed") {
+                effectHandler.disposable.dispose()
+                expect(isDisposed).to(beTrue())
             }
 
-            context("connecting multiple times") {
-                it("should crash if the effect handler is connected to multiple times without disposing in between") {
-                    var didCrash = false
-                    MobiusHooks.setErrorHandler { _, _, _ in
-                        didCrash = true
-                    }
 
-                    let connection = effectHandler.connect { _ in }
-                    expect(didCrash).to(beTrue())
-                    connection.dispose()
-                }
+            it("disposing is idempotent") {
+                expect(isDisposed).to(beFalse())
+
+                effectHandler.disposable.dispose()
+                effectHandler.disposable.dispose()
+                effectHandler.disposable.dispose()
+
+                expect(isDisposed).to(beTrue())
             }
         }
     }
 }
 
-private func canHandle(effect: OuterEffect) -> InnerEffect? {
-    switch effect {
-    case .innerEffect(let effect):
-        return effect == .effect1
-            ? effect
-            : nil
+private func handleEffect(effect: Effect, output: Consumer<Event>) {
+    if effect == .effect1 {
+        output(.eventForEffect1)
     }
 }
