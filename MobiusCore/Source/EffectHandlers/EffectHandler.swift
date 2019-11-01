@@ -16,109 +16,64 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import Foundation
 
-/// An `EffectHandler` is a building block in Mobius loops which carry out side-effects in response to effects emitted by the `update` function.
-/// An `EffectHandler` decides which effects it can handle based on its `canHandle` function. Multiple `EffectHandler`s can be composed by using an
-/// `EffectRouterBuilder`.
+/// An `EffectHandler` is one of the main building blocks in Mobius.
+/// Its role is to interpret the `Effect`s which are returned by the `update` function. As a part of this interpretation, an `EffectHandler` may output events
+/// back into the loop.
 ///
-/// Note: When using an `EffectRouterBuilder` each effect must be handled by exactly one `EffectHandler`.
-/// Note: The `connnect` function is invoked on an `EffectHandler` when it should start handling effects and emitting events. Only one `Connection` at
-/// a time is supported, otherwise it will crash.
-/// Note: It is possible to emit events before `connect` has been called on an `EffectHandler`, and after a `Connection` to an `EffectHandler` has
-/// been disposed. These events can not, and will not be handled by anything. This will therefore cause a crash.
-/// Note: Any resources used by an `EffectHandler` must be disposed when a connection to the `EffectHandler` is disposed. The `stopHandling`
-/// parameter is used to specify which resources should be torn down when this happens.
-final public class EffectHandler<Effect, Event> {
-    private let lock = Lock()
-    private let handleEffect: (Effect) -> ((@escaping Consumer<Event>) -> Void)?
-    private let disposeFn: () -> Void
-    private var consumer: Consumer<Event>?
-
-    /// Create a handler for effects which satisfy the `canHandle` parameter function.
-    ///
-    /// - Parameter canHandle: A function which determines if this EffectHandler can handle a given effect. If it can handle the effect, return the data
-    /// that should be sent as input to the `handle` function. If it cannot handle the effect, return `nil`
-    /// - Parameter handleEffect: Handle effects which satisfy `canHandle`.
-    /// - Parameter stopHandling: Tear down any resources being used by this effect handler.
-    public init<EffectPayload>(
-        canHandle: @escaping (Effect) -> EffectPayload?,
-        handle: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
-        stopHandling disposable: @escaping () -> Void
+/// An `EffectHandler` can be viewed as a generalized function which receives members of its `Effect` type as input, and output members of its `Event`
+/// type. This process is not necessarily synchronous and any number of `Event`s could be outputted for a given `Effect`.
+///
+/// The `connect` function is called when an `EffectHandler` should start handling effects. The closure you supply to `stopHandling` will be called when
+/// this connection is torn down. You must therefore dispose of any resources you are using when you receive this callback.
+///
+/// Note: Sending events from your `EffectHandler` after `stopHandling` returns __will__ cause a runtime error.
+public struct EffectHandler<Effect, Event> {
+    private let connectFn: (@escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event>
+    fileprivate init(
+        connect: @escaping (@escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event>
     ) {
-        disposeFn = disposable
-        self.handleEffect = { effect in
-            if let payload = canHandle(effect) {
-                return { dispatch in
-                    handle(payload, dispatch)
-                }
-            } else {
-                return nil
-            }
-        }
+        connectFn = connect
     }
 
-    /// Connect to this `EffectHandler` by supplying it with an output for its events.
-    /// This will return a `Connection` which you can use to send effects to this `EffectHandler` and to tear down the connection.
-    ///
-    /// NOTE: Only one connection can be held to this `EffectHandler` at a time.
-    ///
-    /// - Parameter consumer: the output that this `EffectHandler` should send its events to.
-    public func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
-        return lock.synchronized {
-            guard self.consumer == nil else {
-                MobiusHooks.onError("An EffectHandler only supports one connection at a time.")
-                return BrokenConnection<Effect>.connection()
-            }
-            self.consumer = consumer
+    /// Start handling effects.
+    /// An `_EffectHandlerConnection` is returned which can handle effects and can be torn down when it should stop handling events.
+    /// - Parameter output: a `Consumer` which accepts your `Event` type. This will be used as the `EffectHandler`'s output.
+    public func connect(_ output: @escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event> {
+        return connectFn(output)
+    }
+}
 
-            return Connection(
-                acceptClosure: self.accept,
-                disposeClosure: self.dispose
+private typealias HandleEffectWithOutput<Event> = (@escaping Consumer<Event>) -> Void
+private extension EffectHandler {
+    init(
+        canHandle: @escaping (Effect) -> HandleEffectWithOutput<Event>?,
+        stopHandling: @escaping () -> Void
+    ) {
+        self.init(connect: { dispatch in
+            _EffectHandlerConnection<Effect, Event>(
+                canHandle: { effect, dispatch in
+                    if let handleWithDispatch = canHandle(effect) {
+                        return { handleWithDispatch(dispatch) }
+                    } else {
+                        return nil
+                    }
+                },
+                output: dispatch,
+                disposable: AnonymousDisposable(disposer: stopHandling)
             )
-        }
-    }
-
-    func canAccept(_ effect: Effect) -> Bool {
-        return handleEffect(effect) != nil
-    }
-
-    private func accept(_ effect: Effect) {
-        if let performEffect = handleEffect(effect) {
-            performEffect { [unowned self] event in
-                self.dispatch(event: event)
-            }
-        }
-    }
-
-    private func dispatch(event: Event) {
-        return lock.synchronized {
-            guard let consumer = self.consumer else {
-                MobiusHooks.onError("Nothing is connected to this `EffectHandler`. Ensure your resources have been cleaned up in `stopHandling`")
-                return
-            }
-
-            consumer(event)
-        }
-    }
-
-    private func dispose() {
-        lock.synchronized {
-            disposeFn()
-
-            consumer = nil
-        }
+        })
     }
 }
 
 public extension EffectHandler where Effect: Equatable {
     /// Create a handler for effects which are equal to the `acceptsEffect` parameter.
     ///
-    /// - Parameter handledEffect: a constant effect which should be handled by this effect handler.
-    /// - Parameter handle: handle effects which are equal to the `handledEffect`.
+    /// - Parameter handlesEffect: a constant effect which should be handled by this effect handler.
+    /// - Parameter handle: handle effects which are equal to `handlesEffect`.
     /// - Parameter stopHandling: Tear down any resources being used by this effect handler
-    convenience init(
-        handledEffect acceptedEffect: Effect,
+    init(
+        handlesEffect acceptedEffect: Effect,
         handle: @escaping (Effect, @escaping Consumer<Event>) -> Void,
         stopHandling: @escaping () -> Void = {}
     ) {
@@ -130,6 +85,33 @@ public extension EffectHandler where Effect: Equatable {
             },
             handle: handle,
             stopHandling: stopHandling
+        )
+    }
+}
+
+public extension EffectHandler {
+    /// Create a handler for effects which satisfy the `canHandle` parameter function.
+    ///
+    /// - Parameter canHandle: A function which determines if this EffectHandler can handle a given effect. If it can handle the effect, return the payload
+    /// that should be sent as input to the `handle` function. If it cannot handle the effect, return `nil`
+    /// - Parameter handleEffect: Handle the payloads of effects which satisfy `canHandle`.
+    /// - Parameter stopHandling: Tear down any resources being used by this effect handler.
+    init<EffectPayload>(
+        canHandle: @escaping (Effect) -> EffectPayload?,
+        handle: @escaping (EffectPayload, @escaping Consumer<Event>) -> Void,
+        stopHandling disposable: @escaping () -> Void = {}
+    ) {
+        self.init(
+            canHandle: { effect in
+                if let payload = canHandle(effect) {
+                    return { dispatch in
+                        handle(payload, dispatch)
+                    }
+                } else {
+                    return nil
+                }
+            },
+            stopHandling: disposable
         )
     }
 }

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
+		02C4060F236C515100BD7ED8 /* _EffectHandlerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4060E236C515100BD7ED8 /* _EffectHandlerConnection.swift */; };
+		02C40610236C799700BD7ED8 /* _EffectHandlerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4060E236C515100BD7ED8 /* _EffectHandlerConnection.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
@@ -260,6 +262,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02C4060E236C515100BD7ED8 /* _EffectHandlerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = _EffectHandlerConnection.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
@@ -484,6 +487,7 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
+				02C4060E236C515100BD7ED8 /* _EffectHandlerConnection.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1225,6 +1229,7 @@
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
 				2DF4C30620DBDD5C00A4B6DE /* AnonymousDisposable.swift in Sources */,
 				5B1F103D210F5EBC0067193C /* ActionConnectable.swift in Sources */,
+				02C40610236C799700BD7ED8 /* _EffectHandlerConnection.swift in Sources */,
 				2DF4C30520DBDD5C00A4B6DE /* CompositeDisposable.swift in Sources */,
 				5B1F1041210F5EEB0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				2DF4C30420DBDD5C00A4B6DE /* Disposable.swift in Sources */,
@@ -1286,6 +1291,7 @@
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
 				5BB9346420D2A46A00A1FE3A /* EffectRouterBuilder.swift in Sources */,
 				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
+				02C4060F236C515100BD7ED8 /* _EffectHandlerConnection.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
 				5BB2881C2099957D0043B530 /* ConnectablePublisher.swift in Sources */,

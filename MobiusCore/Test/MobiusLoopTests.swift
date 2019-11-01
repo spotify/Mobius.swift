@@ -280,7 +280,7 @@ class MobiusLoopTests: QuickSpec {
                 loop = Mobius.loop(
                     update: { (_: Int, _: Int) in Next.dispatchEffects([1]) },
                     effectHandler: EffectHandler(
-                        handledEffect: 1,
+                        handlesEffect: 1,
                         handle: { effect, _ in
                             didReceiveEffect = effect == 1
                         },

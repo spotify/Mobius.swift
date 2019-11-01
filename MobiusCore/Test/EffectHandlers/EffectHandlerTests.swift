@@ -38,7 +38,7 @@ class EffectHandlerTests: QuickSpec {
         describe("EffectHandler tests") {
             var receivedEffects: [InnerEffect]!
             var dispatchEffect: Consumer<OuterEffect>!
-            var stopHandling: (() -> Void)!
+            var dispose: (() -> Void)!
             var isDisposed: Bool!
             var effectHandler: EffectHandler<OuterEffect, InnerEffect>!
             func onDispose() {
@@ -58,11 +58,15 @@ class EffectHandlerTests: QuickSpec {
                 let connection = effectHandler.connect { effect in
                     receivedEffects.append(effect)
                 }
-                dispatchEffect = connection.accept
-                stopHandling = connection.dispose
+                dispatchEffect = { effect in
+                    if let sideEffect = connection.canHandle(effect) {
+                        sideEffect()
+                    }
+                }
+                dispose = connection.dispose
             }
             afterEach {
-                stopHandling()
+                dispose()
             }
 
             context("`canHandle` unwraps effects with associated values") {
@@ -88,41 +92,41 @@ class EffectHandlerTests: QuickSpec {
                 }
             }
 
-            context("`stopHandling`") {
+            context("`dispose`") {
                 it("The `stopHandling` function is called when the connection is disposed") {
-                    stopHandling()
+                    dispose()
 
                     expect(isDisposed).to(beTrue())
                 }
 
-                it("`stopHandling` is idempotent") {
-                    stopHandling()
-                    stopHandling()
-                    stopHandling()
+                it("`dispose` is idempotent") {
+                    dispose()
+                    dispose()
+                    dispose()
                     expect(isDisposed).to(beTrue())
                 }
 
-                it("crashes if events are dispatched after `stopHandling` is called") {
+                it("crashes if events are dispatched after `dispose` is called") {
                     var didCrash = false
                     MobiusHooks.setErrorHandler { _, _, _ in
                         didCrash = true
                     }
 
-                    stopHandling()
+                    dispose()
                     dispatchEffect(.innerEffect(.effect1))
                     expect(didCrash).to(beTrue())
                 }
             }
 
-            context("reconnecting after `stopHandling` is called") {
+            context("reconnecting after `dispose` is called") {
                 it("is possible to connect again after the effect handler has been disposed") {
                     dispatchEffect(.innerEffect(.effect1))
-                    stopHandling()
+                    dispose()
                     let connection = effectHandler.connect { effect in
                         receivedEffects.append(effect)
                     }
-                    connection.accept(.innerEffect(.effect1))
-                    connection.accept(.innerEffect(.effect2))
+                    connection.canHandle(.innerEffect(.effect1))?()
+                    connection.canHandle(.innerEffect(.effect2))?()
 
                     expect(receivedEffects).to(equal([.effect1, .effect1]))
                     connection.dispose()
@@ -130,15 +134,40 @@ class EffectHandlerTests: QuickSpec {
             }
 
             context("connecting multiple times") {
-                it("should crash if the effect handler is connected to multiple times without disposing in between") {
+                it("should not crash") {
                     var didCrash = false
                     MobiusHooks.setErrorHandler { _, _, _ in
                         didCrash = true
                     }
 
                     let connection = effectHandler.connect { _ in }
-                    expect(didCrash).to(beTrue())
+                    expect(didCrash).to(beFalse())
                     connection.dispose()
+                }
+
+                it("should support multiple independent connections without interference") {
+                    var newConnectionWasCalled = false
+                    let newConnection = effectHandler.connect { _ in
+                        newConnectionWasCalled = true
+                    }
+                    newConnection.canHandle(.innerEffect(.effect1))?()
+                    expect(newConnectionWasCalled).to(beTrue())
+                    expect(receivedEffects).to(equal([]))
+                    newConnection.dispose()
+                }
+
+                it("should be resilient to any of the independent connections being torn down") {
+                    var newConnectionWasCalled = false
+                    let newConnection = effectHandler.connect { _ in
+                        newConnectionWasCalled = true
+                    }
+                    dispose()
+                    expect(isDisposed).to(beTrue())
+
+                    newConnection.canHandle(.innerEffect(.effect1))?()
+                    expect(newConnectionWasCalled).to(beTrue())
+
+                    newConnection.dispose()
                 }
             }
         }

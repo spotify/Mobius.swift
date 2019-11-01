@@ -45,7 +45,7 @@ public extension Mobius {
     ) -> Builder<Model, Event, Effect> {
         return Builder(
             update: update,
-            effectHandler: AnyConnectable(effectHandler.connect),
+            effectHandler: effectHandler.asLoopConnectable,
             initiator: { First(model: $0) },
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventQueue: DispatchQueue(label: "event processor"),
@@ -216,5 +216,28 @@ class LoggingUpdate<Model, Event, Effect> {
         didUpdate(model, event, result)
 
         return result
+    }
+}
+
+private extension EffectHandler {
+    /// When using an `EffectHandler` to handle effects in a Mobius loop, at least one `EffectHandler` must respond to each event.
+    /// We cannot guarantee this in an `EffectHandler` or even in a composition of `EffectHandler`s, since we do not know how they will be nested.
+    /// We must therefore guarantee this property at the point where we connect our `EffectHandler` to the loop.
+    var asLoopConnectable: AnyConnectable<Effect, Event> {
+        return AnyConnectable { dispatch -> Connection<Effect> in
+            let connection = self.connect(dispatch)
+            return Connection(
+                acceptClosure: { effect in
+                    if let executeEffect = connection.canHandle(effect) {
+                        executeEffect()
+                    } else {
+                        MobiusHooks.onError("No effect handler could be found for effect: \(effect)")
+                    }
+                },
+                disposeClosure: {
+                    connection.dispose()
+                }
+            )
+        }
     }
 }
