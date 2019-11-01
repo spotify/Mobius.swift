@@ -208,7 +208,7 @@ private extension EffectHandler {
                     if let executeEffect = self.canHandle(effect) {
                         executeEffect(dispatch)
                     } else {
-                        MobiusHooks.onError("No Effect Handler could be found for: \(effect)")
+                        MobiusHooks.onError("No effect handler could be found for effect: \(effect)")
                     }
                 },
                 disposeClosure: {

@@ -19,7 +19,8 @@
 
 public extension EffectHandler {
     /// Merge a group of `EffectHandler`s.
-    /// Note: Any given `Effect` can be handled by at most  __1__ `EffectHandler`.
+    /// Note: Any given `Effect` can be handled by at most  __1__ `EffectHandler`. Handling an `Effect` in more than 1 `EffectHandler` will
+    /// cause a runtime crash.
     ///
     /// - Parameter handlers: the `EffectHandler`s which should be merged.
     convenience init(
@@ -29,7 +30,8 @@ public extension EffectHandler {
     }
 
     /// Merge an `Array` of `EffectHandler`s.
-    /// Note: Any given `Effect` can be handled by at most  __1__ `EffectHandler`.
+    /// Note: Any given `Effect` can be handled by at most  __1__ `EffectHandler`. Handling an `Effect` in more than 1 `EffectHandler` will
+    /// cause a runtime crash.
     ///
     /// - Parameter handlers: the `EffectHandler`s which should be merged.
     convenience init(
