@@ -27,6 +27,6 @@ xcb() {
 
 do_carthage_bootstrap() {
   carthage bootstrap --platform iOS \
-    --cache-builds --no-use-binaries || \
+    --cache-builds --no-use-binaries --verbose || \
     fail "Carthage bootstrap failed"
 }
