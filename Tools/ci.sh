@@ -57,7 +57,7 @@ xcb build \
 #
 heading "Running Tests"
 
-SIM_DEVICE="iPhone 6"
+SIM_DEVICE="iPhone 7"
 SIM_OS=`xcrun simctl list runtimes | grep iOS | awk '{print $2}' | tail -n 1`
 
 rm -rf build/TestBundle
