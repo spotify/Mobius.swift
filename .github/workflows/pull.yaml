@@ -10,4 +10,5 @@ jobs:
     - name: Build and Test
       run: Tools/ci.sh
       env:
+        DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
