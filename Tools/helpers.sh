@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 heading() {
   MAG='\033[0;35m'
   CLR='\033[0m'
   echo ""
-  echo "${MAG}** $@ **${CLR}"
+  echo -e "${MAG}** $@ **${CLR}"
   echo ""
 }
 
