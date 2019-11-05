@@ -37,7 +37,7 @@ class EffectHandlerTests: QuickSpec {
     override func spec() {
         describe("EffectHandler tests") {
             var receivedEffects: [InnerEffect]!
-            var dispatchEffect: Consumer<OuterEffect>!
+            var executeSideEffectFor: Consumer<OuterEffect>!
             var dispose: (() -> Void)!
             var isDisposed: Bool!
             var effectHandler: EffectHandler<OuterEffect, InnerEffect>!
@@ -51,15 +51,15 @@ class EffectHandlerTests: QuickSpec {
                 isDisposed = false
                 receivedEffects = []
                 effectHandler = EffectHandler<OuterEffect, InnerEffect>(
-                    canHandle: canHandle,
-                    handle: handleEffect,
+                    payloadFor: payloadFor,
+                    handlePayload: handleEffect,
                     stopHandling: onDispose
                 )
                 let connection = effectHandler.connect { effect in
                     receivedEffects.append(effect)
                 }
-                dispatchEffect = { effect in
-                    if let sideEffect = connection.canHandle(effect) {
+                executeSideEffectFor = { effect in
+                    if let sideEffect = connection.sideEffectFor(effect) {
                         sideEffect()
                     }
                 }
@@ -69,24 +69,24 @@ class EffectHandlerTests: QuickSpec {
                 dispose()
             }
 
-            context("`canHandle` unwraps effects with associated values") {
-                it("unwraps and outputs the effect's associated value if it satisfies `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect1))
+            context("`payloadFor` unwraps effects with associated values") {
+                it("unwraps and outputs the effect's associated value if it satisfies `payloadFor`") {
+                    executeSideEffectFor(.innerEffect(.effect1))
 
                     expect(receivedEffects).to(equal([.effect1]))
                 }
 
-                it("does not unwrap or output the effect's associated value if it does not satisfy `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect2))
+                it("does not unwrap or output the effect's associated value if it does not satisfy `payloadFor`") {
+                    executeSideEffectFor(.innerEffect(.effect2))
 
                     expect(receivedEffects).to(equal([]))
                 }
 
-                it("unwraps and outputs only the effects which satisfy `canHandle`") {
-                    dispatchEffect(.innerEffect(.effect1))
-                    dispatchEffect(.innerEffect(.effect2))
-                    dispatchEffect(.innerEffect(.effect1))
-                    dispatchEffect(.innerEffect(.effect2))
+                it("unwraps and outputs only the effects which satisfy `payloadFor`") {
+                    executeSideEffectFor(.innerEffect(.effect1))
+                    executeSideEffectFor(.innerEffect(.effect2))
+                    executeSideEffectFor(.innerEffect(.effect1))
+                    executeSideEffectFor(.innerEffect(.effect2))
 
                     expect(receivedEffects).to(equal([.effect1, .effect1]))
                 }
@@ -113,20 +113,20 @@ class EffectHandlerTests: QuickSpec {
                     }
 
                     dispose()
-                    dispatchEffect(.innerEffect(.effect1))
+                    executeSideEffectFor(.innerEffect(.effect1))
                     expect(didCrash).to(beTrue())
                 }
             }
 
             context("reconnecting after `dispose` is called") {
                 it("is possible to connect again after the effect handler has been disposed") {
-                    dispatchEffect(.innerEffect(.effect1))
+                    executeSideEffectFor(.innerEffect(.effect1))
                     dispose()
                     let connection = effectHandler.connect { effect in
                         receivedEffects.append(effect)
                     }
-                    connection.canHandle(.innerEffect(.effect1))?()
-                    connection.canHandle(.innerEffect(.effect2))?()
+                    connection.sideEffectFor(.innerEffect(.effect1))?()
+                    connection.sideEffectFor(.innerEffect(.effect2))?()
 
                     expect(receivedEffects).to(equal([.effect1, .effect1]))
                     connection.dispose()
@@ -150,7 +150,7 @@ class EffectHandlerTests: QuickSpec {
                     let newConnection = effectHandler.connect { _ in
                         newConnectionWasCalled = true
                     }
-                    newConnection.canHandle(.innerEffect(.effect1))?()
+                    newConnection.sideEffectFor(.innerEffect(.effect1))?()
                     expect(newConnectionWasCalled).to(beTrue())
                     expect(receivedEffects).to(equal([]))
                     newConnection.dispose()
@@ -164,7 +164,7 @@ class EffectHandlerTests: QuickSpec {
                     dispose()
                     expect(isDisposed).to(beTrue())
 
-                    newConnection.canHandle(.innerEffect(.effect1))?()
+                    newConnection.sideEffectFor(.innerEffect(.effect1))?()
                     expect(newConnectionWasCalled).to(beTrue())
 
                     newConnection.dispose()
@@ -174,7 +174,7 @@ class EffectHandlerTests: QuickSpec {
     }
 }
 
-private func canHandle(effect: OuterEffect) -> InnerEffect? {
+private func payloadFor(effect: OuterEffect) -> InnerEffect? {
     switch effect {
     case .innerEffect(let effect):
         return effect == .effect1

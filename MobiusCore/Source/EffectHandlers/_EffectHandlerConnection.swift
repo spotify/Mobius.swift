@@ -22,7 +22,7 @@ public typealias SideEffect = () -> Void
 /// An `_EffectHandlerConnection` describes the lifecycle of an effect handler. It can receive effects, and output events to its `output` `Consumer`.
 /// The `_` in the name denotes that while this class needs to be exposed publicly, you should not depend on it directly as a user of Mobius.
 public final class _EffectHandlerConnection<Effect, Event>: Disposable {
-    private let canHandleFn: (Effect, @escaping Consumer<Event>) -> SideEffect?
+    private let sideEffectForEffectWithOutput: (Effect, @escaping Consumer<Event>) -> SideEffect?
     // We cannot know if this `Consumer` is internally thread-safe. The thread-safety is therefore delegated to the
     // `output` instance function.
     private var unsafeOutput: Consumer<Event>?
@@ -32,25 +32,24 @@ public final class _EffectHandlerConnection<Effect, Event>: Disposable {
     private let lock = Lock()
 
     init(
-        canHandle canHandleFn: @escaping (Effect, @escaping Consumer<Event>) -> SideEffect?,
+        sideEffectForEffectWithOutput: @escaping (Effect, @escaping Consumer<Event>) -> SideEffect?,
         output unsafeOutput: @escaping Consumer<Event>,
         disposable unsafeDispose: Disposable
     ) {
-        self.canHandleFn = canHandleFn
+        self.sideEffectForEffectWithOutput = sideEffectForEffectWithOutput
         self.unsafeOutput = unsafeOutput
         self.unsafeDispose = unsafeDispose
     }
 
-    /// Determine if a given effect can be handled.
-    /// If an effect can be handled, a `SideEffect` is returned. Calling this `SideEffect` will cause the effect to be performed
-    /// If the effect cannot be handled, nil is returned.
+    /// Return an optional `SideEffect` for a given `Effect`.
+    /// `SideEffect` is the effectful interpretation of the `Effect` data, and will be `nil` if the effect could not be handled.
     /// 
     /// Note: Execution of the `SideEffect` function should never be deferred. Executing a `SideEffect` after `dispose`
     /// has returned may cause runtime exceptions. `SideEffect` itself may internally be concurrent.
     ///
     /// - Parameter effect: the effect in question
-    public func canHandle(_ effect: Effect) -> SideEffect? {
-        return canHandleFn(effect, output)
+    public func sideEffectFor(_ effect: Effect) -> SideEffect? {
+        return sideEffectForEffectWithOutput(effect, output)
     }
 
     /// Tear down the resources being consumed by this `_EffectHandlerConnection`.

@@ -228,7 +228,7 @@ private extension EffectHandler {
             let connection = self.connect(dispatch)
             return Connection(
                 acceptClosure: { effect in
-                    if let executeEffect = connection.canHandle(effect) {
+                    if let executeEffect = connection.sideEffectFor(effect) {
                         executeEffect()
                     } else {
                         MobiusHooks.onError("No effect handler could be found for effect: \(effect)")
