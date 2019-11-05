@@ -25,8 +25,20 @@ xcb() {
     "$@" | xcpretty
 }
 
+dump_log() {
+  heading "Dumping $1"
+  cat "$1"
+  echo ""
+}
+
 do_carthage_bootstrap() {
+  mkdir -p build
   carthage bootstrap --platform iOS \
-    --cache-builds --no-use-binaries || \
+    --cache-builds --no-use-binaries \
+    --log-path build/carthage.log
+
+  if [ $? -ne 0 ]; then
+    [[ "$IS_CI" == "1" ]] && dump_log "build/carthage.log"
     fail "Carthage bootstrap failed"
+  fi
 }
