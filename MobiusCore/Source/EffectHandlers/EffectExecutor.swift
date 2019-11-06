@@ -17,11 +17,50 @@
 // specific language governing permissions and limitations
 // under the License.
 
-public typealias SideEffect = () -> Void
+/// An `EffectExecutor` manages the lifecycle of an `EffectHandler`.
+///
+/// The lifecyle works as follows:
+/// - When being created: it connects the `EffectHandler` to its output.
+/// - After being created:  it can send effects to the `EffectHandler` to be handled.
+/// - After being destroyed or disposed - it will disconnect the `EffectHandler` from its output.
+public class EffectExecutor<Effect, Event>: Disposable {
+    private let connection: _EffectHandlerConnection<Effect, Event>
+
+    public init(
+        effectHandler: EffectHandler<Effect, Event>,
+        output: @escaping Consumer<Event>
+    ) {
+        self.connection = effectHandler.connect(output)
+    }
+
+    /// Send an effect to the `EffectHandler` used when creating this class.
+    /// Return `true` if the `EffectHandler` could handle the effect.
+    public func execute(_ effect: Effect) -> Bool {
+        if let sideEffect = connection.sideEffectFor(effect) {
+            sideEffect()
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /// Disconnect the `EffectHandler` associated with this class from its output.
+    /// After this function returns, it is no longer possible to call `execute`.
+    public func dispose() {
+        connection.dispose()
+    }
+
+    deinit {
+        connection.dispose()
+    }
+}
+
+
+typealias SideEffect = () -> Void
+
 // swiftlint:disable type_name
 /// An `_EffectHandlerConnection` describes the lifecycle of an effect handler. It can receive effects, and output events to its `output` `Consumer`.
-/// The `_` in the name denotes that while this class needs to be exposed publicly, you should not depend on it directly as a user of Mobius.
-public final class _EffectHandlerConnection<Effect, Event>: Disposable {
+final class _EffectHandlerConnection<Effect, Event>: Disposable {
     private let sideEffectForEffectWithOutput: (Effect, @escaping Consumer<Event>) -> SideEffect?
     // We cannot know if this `Consumer` is internally thread-safe. The thread-safety is therefore delegated to the
     // `output` instance function.

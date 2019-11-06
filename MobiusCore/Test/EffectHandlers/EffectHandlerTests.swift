@@ -55,14 +55,10 @@ class EffectHandlerTests: QuickSpec {
                     handlePayload: handleEffect,
                     stopHandling: onDispose
                 )
-                let connection = effectHandler.connect { effect in
+                let connection = EffectExecutor(effectHandler: effectHandler) { effect in
                     receivedEffects.append(effect)
                 }
-                executeSideEffectFor = { effect in
-                    if let sideEffect = connection.sideEffectFor(effect) {
-                        sideEffect()
-                    }
-                }
+                executeSideEffectFor = { connection.execute($0) }
                 dispose = connection.dispose
             }
             afterEach {
@@ -122,11 +118,11 @@ class EffectHandlerTests: QuickSpec {
                 it("is possible to connect again after the effect handler has been disposed") {
                     executeSideEffectFor(.innerEffect(.effect1))
                     dispose()
-                    let connection = effectHandler.connect { effect in
+                    let connection = EffectExecutor(effectHandler: effectHandler) { effect in
                         receivedEffects.append(effect)
                     }
-                    connection.sideEffectFor(.innerEffect(.effect1))?()
-                    connection.sideEffectFor(.innerEffect(.effect2))?()
+                    _ = connection.execute(.innerEffect(.effect1))
+                    _ = connection.execute(.innerEffect(.effect2))
 
                     expect(receivedEffects).to(equal([.effect1, .effect1]))
                     connection.dispose()
@@ -140,17 +136,17 @@ class EffectHandlerTests: QuickSpec {
                         didCrash = true
                     }
 
-                    let connection = effectHandler.connect { _ in }
+                    let connection = EffectExecutor(effectHandler: effectHandler)  { _ in }
                     expect(didCrash).to(beFalse())
                     connection.dispose()
                 }
 
                 it("should support multiple independent connections without interference") {
                     var newConnectionWasCalled = false
-                    let newConnection = effectHandler.connect { _ in
+                    let newConnection = EffectExecutor(effectHandler: effectHandler) { _ in
                         newConnectionWasCalled = true
                     }
-                    newConnection.sideEffectFor(.innerEffect(.effect1))?()
+                    _ = newConnection.execute(.innerEffect(.effect1))
                     expect(newConnectionWasCalled).to(beTrue())
                     expect(receivedEffects).to(equal([]))
                     newConnection.dispose()
@@ -158,13 +154,13 @@ class EffectHandlerTests: QuickSpec {
 
                 it("should be resilient to any of the independent connections being torn down") {
                     var newConnectionWasCalled = false
-                    let newConnection = effectHandler.connect { _ in
+                    let newConnection = EffectExecutor(effectHandler: effectHandler) { _ in
                         newConnectionWasCalled = true
                     }
                     dispose()
                     expect(isDisposed).to(beTrue())
 
-                    newConnection.sideEffectFor(.innerEffect(.effect1))?()
+                    _ = newConnection.execute(.innerEffect(.effect1))
                     expect(newConnectionWasCalled).to(beTrue())
 
                     newConnection.dispose()

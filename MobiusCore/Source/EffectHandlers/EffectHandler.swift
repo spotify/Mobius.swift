@@ -23,25 +23,9 @@
 /// An effect handler can be viewed as a generalized function which receives members of its `Effect` type as input, and output members of its `Event`
 /// type. This process is not necessarily synchronous and any number of `Event`s could be outputted for a given `Effect`.
 ///
-/// The `connect` function is called to create a connection which can receive effects, output events, and be torn down when it is disconnected from the loop.
-/// The `stopHandling` closure you supply is called as a part of the connection being torn down. You must therefore stop outputting events and dispose of any
-/// resources you are using when you receive this callback.
-///
 /// Note: Sending events from your `EffectHandler` after `stopHandling` returns __will__ cause a runtime error.
 public struct EffectHandler<Effect, Event> {
-    private let connectFn: (@escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event>
-    fileprivate init(
-        connect: @escaping (@escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event>
-    ) {
-        connectFn = connect
-    }
-
-    /// Start handling effects.
-    /// An `_EffectHandlerConnection` is returned which can handle effects and can be torn down when it should stop handling events.
-    /// - Parameter output: a `Consumer` which accepts your `Event` type. This will be used as the `EffectHandler`'s output.
-    public func connect(_ output: @escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event> {
-        return connectFn(output)
-    }
+    let connect: (@escaping Consumer<Event>) -> _EffectHandlerConnection<Effect, Event>
 }
 
 private typealias HandleEffectWithOutput<Event> = (@escaping Consumer<Event>) -> Void
