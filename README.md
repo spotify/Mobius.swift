@@ -2,7 +2,6 @@
 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MobiusCore.svg)](https://cocoapods.org/pods/MobiusCore)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Build Status](https://travis-ci.com/spotify/Mobius.swift.svg?branch=master)](https://travis-ci.com/spotify/Mobius.swift)
 [![codecov](https://codecov.io/gh/spotify/Mobius.swift/branch/master/graph/badge.svg)](https://codecov.io/gh/spotify/Mobius.swift)
 [![License](https://img.shields.io/github/license/spotify/Mobius.swift.svg)](LICENSE)
 
