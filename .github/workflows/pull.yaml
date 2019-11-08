@@ -12,3 +12,12 @@ jobs:
       env:
         DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  swiftlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: GitHub Action for SwiftLint
+        uses: norio-nomura/action-swiftlint@3.0.1
+        with:
+          args: lint --no-cache --strict
