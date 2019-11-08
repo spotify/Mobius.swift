@@ -10,22 +10,13 @@ cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodepro
 # Only install tools when running on travis
 if [[ -n "$TRAVIS_BUILD_ID" || -n "$GITHUB_WORKFLOW" ]]; then
   heading "Installing Tools"
-  brew install carthage swiftlint
+  brew install carthage
   gem install xcpretty
   export IS_CI=1
 fi
 
 has_command carthage || fail "Carthage must be installed"
-has_command swiftlint || fail "SwiftLint must be installed"
 has_command xcpretty || fail "xcpretty must be installed"
-
-#
-# Fail fast with swiftlint
-#
-heading "Linting"
-
-swiftlint lint --no-cache --strict || \
-  fail "swiftlint failed"
 
 # re-enable below when there is a solution to carthage issue w/ nimble:
 # https://github.com/Quick/Nimble/issues/702
