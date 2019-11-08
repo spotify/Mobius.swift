@@ -18,7 +18,7 @@
 // under the License.
 
 import Foundation
-@testable import MobiusCore
+import MobiusCore
 import Nimble
 import Quick
 

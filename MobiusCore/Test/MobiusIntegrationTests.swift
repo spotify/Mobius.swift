@@ -18,7 +18,7 @@
 // under the License.
 
 import Foundation
-import MobiusCore // not using '@testable', because we should only use public APIs in these tests
+import MobiusCore
 import Nimble
 import Quick
 
