@@ -22,8 +22,8 @@ import Foundation
 /// A CompositeDisposable holds onto the provided disposables and disposes
 /// all of them once its dispose() method is called.
 public class CompositeDisposable {
-    private let disposables: [Disposable]
-    let lock = NSRecursiveLock()
+    private var disposables: [Disposable]
+    private let lock = DispatchQueue(label: "Mobius.CompositeDisposable")
 
     /// Initialises a CompositeDisposable
     ///
@@ -36,10 +36,15 @@ public class CompositeDisposable {
 extension CompositeDisposable: MobiusCore.Disposable {
     /// Dispose function disposes all of the internal disposables
     public func dispose() {
-        lock.synchronized {
-            for disposable in disposables {
-                disposable.dispose()
-            }
+        var disposables = [Disposable]()
+
+        lock.sync {
+            disposables = self.disposables
+            self.disposables.removeAll()
+        }
+
+        for disposable in disposables {
+            disposable.dispose()
         }
     }
 }

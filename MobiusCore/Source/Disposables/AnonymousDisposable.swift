@@ -23,7 +23,7 @@ import Foundation
 public class AnonymousDisposable: MobiusCore.Disposable {
     /// The closure which disposes of the object.
     private var disposer: (() -> Void)?
-    private let lock = NSRecursiveLock()
+    private let lock = DispatchQueue(label: "Mobius.AnonymousDisposable")
 
     /// Initialize the `DisposableClosure` with the given code to run on disposing the resources.
     ///
@@ -35,11 +35,13 @@ public class AnonymousDisposable: MobiusCore.Disposable {
     }
 
     public func dispose() {
-        lock.synchronized {
-            guard let disposer = disposer else { return }
+        var disposer: (() -> Void)?
 
-            disposer()
+        lock.sync {
+            disposer = self.disposer
             self.disposer = nil
         }
+
+        disposer?()
     }
 }
