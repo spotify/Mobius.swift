@@ -22,7 +22,7 @@ let package = Package(
         .testTarget(name: "MobiusCoreTests", dependencies: ["MobiusCore", "Nimble", "Quick"], path: "MobiusCore/Test"),
         .testTarget(name: "MobiusExtrasTests", dependencies: ["MobiusExtras", "Nimble", "Quick"], path: "MobiusExtras/Test"),
         .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", "Quick"], path: "MobiusNimble/Test"),
-        .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick"], path: "MobiusTest/Test"),
+        .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick", "Nimble"], path: "MobiusTest/Test"),
     ],
     swiftLanguageVersions: [.v4_2]
 )
