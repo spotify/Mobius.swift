@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Source Helper Functions
 source "$(dirname "$0")/helpers.sh"

@@ -68,10 +68,7 @@
 		5B57E8BC2125AB16001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5B57E8BE2125AD09001AFC71 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E8BD2125AD09001AFC71 /* TestUtil.swift */; };
 		5B57E8C72126FFDD001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
-		5B57E8C82126FFEC001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
-		5B57E8C92126FFF6001AFC71 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		5B57E8CA21270025001AFC71 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
-		5B57E8CB2127002A001AFC71 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
 		5B5F11B9213805C000911A57 /* FirstMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F11B7213805C000911A57 /* FirstMatchers.swift */; };
 		5B5F11BA213805C000911A57 /* FirstMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F11B7213805C000911A57 /* FirstMatchers.swift */; };
 		5B5F11BB213805C000911A57 /* MatcherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F11B8213805C000911A57 /* MatcherUtils.swift */; };
@@ -197,6 +194,27 @@
 			remoteGlobalIDString = 5BB2888920999B2E0043B530;
 			remoteInfo = MobiusTest;
 		};
+		692C640A2371EFBE00EC0334 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B3AA33120975248003F35C3;
+			remoteInfo = MobiusCore;
+		};
+		692C640C2371EFCC00EC0334 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B3AA33120975248003F35C3;
+			remoteInfo = MobiusCore;
+		};
+		692C640E2371EFCE00EC0334 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BB2888920999B2E0043B530;
+			remoteInfo = MobiusTest;
+		};
 		69C12F80222F340600DC4F9E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
@@ -219,45 +237,6 @@
 			remoteInfo = MobiusExtras;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2DF4C2F320DBDD4700A4B6DE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2DF4C41B20DBDEFA00A4B6DE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2DF4C53120DBE03900A4B6DE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B80EDF32125A32200F87129 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
@@ -366,35 +345,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2DF4C2F220DBDD4700A4B6DE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2DF4C41A20DBDEFA00A4B6DE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2DF4C53020DBE03900A4B6DE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5B57E8BC2125AB16001AFC71 /* MobiusCore.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B3AA32E20975248003F35C3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5B3AA33820975248003F35C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,16 +383,6 @@
 				5B80EE082125A50700F87129 /* Nimble.framework in Frameworks */,
 				5B80EE092125A50700F87129 /* Quick.framework in Frameworks */,
 				5B80EDD82125A18900F87129 /* MobiusNimble.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B80EDF22125A32200F87129 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5B57E8CB2127002A001AFC71 /* MobiusTest.framework in Frameworks */,
-				5B57E8C92126FFF6001AFC71 /* Nimble.framework in Frameworks */,
-				5B57E8C82126FFEC001AFC71 /* MobiusCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -799,45 +739,12 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		5B3AA32F20975248003F35C3 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B3AA3CC20975802003F35C3 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B80EDCC2125A18800F87129 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5BB2888720999B2E0043B530 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		2DF4C2F420DBDD4700A4B6DE /* MobiusCore-static-ios */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DF4C2FB20DBDD4700A4B6DE /* Build configuration list for PBXNativeTarget "MobiusCore-static-ios" */;
 			buildPhases = (
 				2DF4C2F120DBDD4700A4B6DE /* Sources */,
-				2DF4C2F220DBDD4700A4B6DE /* Frameworks */,
-				2DF4C2F320DBDD4700A4B6DE /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -853,8 +760,6 @@
 			buildConfigurationList = 2DF4C42120DBDEFA00A4B6DE /* Build configuration list for PBXNativeTarget "MobiusExtras-static-ios" */;
 			buildPhases = (
 				2DF4C41920DBDEFA00A4B6DE /* Sources */,
-				2DF4C41A20DBDEFA00A4B6DE /* Frameworks */,
-				2DF4C41B20DBDEFA00A4B6DE /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -871,8 +776,6 @@
 			buildConfigurationList = 2DF4C53920DBE03900A4B6DE /* Build configuration list for PBXNativeTarget "MobiusTest-static-ios" */;
 			buildPhases = (
 				2DF4C52F20DBE03900A4B6DE /* Sources */,
-				2DF4C53020DBE03900A4B6DE /* Frameworks */,
-				2DF4C53120DBE03900A4B6DE /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -889,9 +792,6 @@
 			buildConfigurationList = 5B3AA34420975248003F35C3 /* Build configuration list for PBXNativeTarget "MobiusCore" */;
 			buildPhases = (
 				5B3AA32D20975248003F35C3 /* Sources */,
-				5B3AA32E20975248003F35C3 /* Frameworks */,
-				5B3AA32F20975248003F35C3 /* Headers */,
-				5B3AA33020975248003F35C3 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -908,7 +808,6 @@
 			buildPhases = (
 				5B3AA33720975248003F35C3 /* Sources */,
 				5B3AA33820975248003F35C3 /* Frameworks */,
-				5B3AA33920975248003F35C3 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -926,8 +825,6 @@
 			buildPhases = (
 				5B3AA3CA20975802003F35C3 /* Sources */,
 				5B3AA3CB20975802003F35C3 /* Frameworks */,
-				5B3AA3CC20975802003F35C3 /* Headers */,
-				5B3AA3CD20975802003F35C3 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -945,12 +842,12 @@
 			buildPhases = (
 				5B80EDCA2125A18800F87129 /* Sources */,
 				5B80EDCB2125A18800F87129 /* Frameworks */,
-				5B80EDCC2125A18800F87129 /* Headers */,
-				5B80EDCD2125A18800F87129 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				692C640F2371EFCE00EC0334 /* PBXTargetDependency */,
+				692C640D2371EFCC00EC0334 /* PBXTargetDependency */,
 			);
 			name = MobiusNimble;
 			productName = MobiusNimble;
@@ -963,7 +860,6 @@
 			buildPhases = (
 				5B80EDD32125A18800F87129 /* Sources */,
 				5B80EDD42125A18800F87129 /* Frameworks */,
-				5B80EDD52125A18800F87129 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -980,8 +876,6 @@
 			buildConfigurationList = 5B80EDF92125A32200F87129 /* Build configuration list for PBXNativeTarget "MobiusNimble-static-ios" */;
 			buildPhases = (
 				5B80EDF12125A32200F87129 /* Sources */,
-				5B80EDF22125A32200F87129 /* Frameworks */,
-				5B80EDF32125A32200F87129 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1000,12 +894,11 @@
 			buildPhases = (
 				5BB2888520999B2E0043B530 /* Sources */,
 				5BB2888620999B2E0043B530 /* Frameworks */,
-				5BB2888720999B2E0043B530 /* Headers */,
-				5BB2888820999B2E0043B530 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				692C640B2371EFBE00EC0334 /* PBXTargetDependency */,
 			);
 			name = MobiusTest;
 			productName = MobiusTest;
@@ -1018,7 +911,6 @@
 			buildPhases = (
 				5BB2888E20999B2E0043B530 /* Sources */,
 				5BB2888F20999B2E0043B530 /* Frameworks */,
-				5BB2889020999B2E0043B530 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -1036,7 +928,6 @@
 			buildPhases = (
 				DD710DB720A0BCEC0047A7EC /* Sources */,
 				DD710DC920A0BCEC0047A7EC /* Frameworks */,
-				DD710DCE20A0BCEC0047A7EC /* Resources */,
 			);
 			buildRules = (
 			);
@@ -1137,65 +1028,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		5B3AA33020975248003F35C3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B3AA33920975248003F35C3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B3AA3CD20975802003F35C3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B80EDCD2125A18800F87129 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B80EDD52125A18800F87129 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5BB2888820999B2E0043B530 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5BB2889020999B2E0043B530 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DD710DCE20A0BCEC0047A7EC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2DF4C2F120DBDD4700A4B6DE /* Sources */ = {
@@ -1432,6 +1264,21 @@
 			isa = PBXTargetDependency;
 			target = 5BB2888920999B2E0043B530 /* MobiusTest */;
 			targetProxy = 5BB2889420999B2E0043B530 /* PBXContainerItemProxy */;
+		};
+		692C640B2371EFBE00EC0334 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B3AA33120975248003F35C3 /* MobiusCore */;
+			targetProxy = 692C640A2371EFBE00EC0334 /* PBXContainerItemProxy */;
+		};
+		692C640D2371EFCC00EC0334 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B3AA33120975248003F35C3 /* MobiusCore */;
+			targetProxy = 692C640C2371EFCC00EC0334 /* PBXContainerItemProxy */;
+		};
+		692C640F2371EFCE00EC0334 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BB2888920999B2E0043B530 /* MobiusTest */;
+			targetProxy = 692C640E2371EFCE00EC0334 /* PBXContainerItemProxy */;
 		};
 		69C12F81222F340600DC4F9E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
