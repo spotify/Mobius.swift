@@ -139,7 +139,6 @@
 		69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
-		C5A56EC02371BBA600B872DD /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A56EBF2371BBA500B872DD /* Lock.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
@@ -340,7 +339,6 @@
 		69C12F77222F223700DC4F9E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Carthage/Checkouts/xcconfigs/Base/Configurations/Release.xcconfig; sourceTree = "<group>"; };
 		69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-Framework.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-Framework.xcconfig"; sourceTree = "<group>"; };
 		69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-StaticLibrary.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
-		C5A56EBF2371BBA500B872DD /* Lock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
@@ -630,7 +628,6 @@
 			isa = PBXGroup;
 			children = (
 				5BCF5F0020F3620700721C0D /* ConnectableClass.swift */,
-				C5A56EBF2371BBA500B872DD /* Lock.swift */,
 				5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */,
 				5BB287E8209995420043B530 /* ConsoleLogger.swift */,
 				DD748322212DB525008EEECD /* Copyable.swift */,
@@ -1166,7 +1163,6 @@
 				DD748323212DB525008EEECD /* Copyable.swift in Sources */,
 				5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */,
 				5B1F104D21105CAD0067193C /* EventSource+Extensions.swift in Sources */,
-				C5A56EC02371BBA600B872DD /* Lock.swift in Sources */,
 				DDA64A6720A0AD2D00150355 /* ConsoleLogger.swift in Sources */,
 				5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */,
 				2D3A696E2355AED90053C95E /* Lock.swift in Sources */,
