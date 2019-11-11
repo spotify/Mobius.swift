@@ -67,8 +67,8 @@ class EffectRouterTests: QuickSpec {
                 )
 
                 connection = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1, to: effectHandler1)
-                    .routeConstant(.effect2, to: effectHandler2)
+                    .routeConstant(.effect1, toHandler: effectHandler1)
+                    .routeConstant(.effect2, toHandler: effectHandler2)
                     .asConnectable
                     .connect { event in
                         receivedEvents.append(event)
@@ -113,8 +113,8 @@ class EffectRouterTests: QuickSpec {
                     disposable: AnonymousDisposable {}
                 )
                 let invalidRouter = EffectRouter()
-                    .routeConstant(.multipleHandlersForThisEffect, to: handler)
-                    .routeConstant(.multipleHandlersForThisEffect, to: handler)
+                    .routeConstant(.multipleHandlersForThisEffect, toHandler: handler)
+                    .routeConstant(.multipleHandlersForThisEffect, toHandler: handler)
                     .asConnectable
                     .connect { _ in }
                 route = invalidRouter.accept
