@@ -21,17 +21,17 @@ public extension EffectRouter where Input: Equatable {
     func routeConstant(
         _ constant: Input,
         to handler: EffectHandler<Input, Output>
-    ) -> EffectRouter {
+    ) -> EffectRouter<Input, Output> {
         return add(
             path: { effect in effect == constant ? constant : nil },
             to: handler
         )
     }
 
-    func routeConstant(
+    func routeConstantToVoid(
         _ constant: Input,
-        to fireAndForget: @escaping () -> Void
-    ) -> EffectRouter {
+        toVoid fireAndForget: @escaping () -> Void
+    ) -> EffectRouter<Input, Output> {
         return add(
             path: { effect in effect == constant ? constant : nil },
             to: EffectHandler(
@@ -41,10 +41,10 @@ public extension EffectRouter where Input: Equatable {
         )
     }
 
-    func routeConstant(
+    func routeConstantToEvent(
         _ constant: Input,
-        to outputFunction: @escaping () -> Output
-    ) -> EffectRouter {
+        toEvent outputFunction: @escaping () -> Output
+    ) -> EffectRouter<Input, Output> {
         return add(
             path: { effect in effect == constant ? constant : nil },
             to: EffectHandler(
@@ -55,26 +55,42 @@ public extension EffectRouter where Input: Equatable {
     }
 }
 
+private func predicateToPath<T>(_ predicate: @escaping (T) -> Bool) -> ((T) -> T?) {
+    return { t in predicate(t) ? t : nil }
+}
+
 public extension EffectRouter {
     func routePredicate(
-        _ predicate: Input,
+        _ predicate: @escaping (Input) -> Bool,
         to handler: EffectHandler<Input, Output>
-    ) -> EffectRouter {
-        fatalError()
+    ) -> EffectRouter<Input, Output> {
+        return add(path: predicateToPath(predicate), to: handler)
     }
 
-    func routePredicate(
-        _ predicate: Input,
-        to fireAndForget: @escaping (Input) -> Void
-    ) -> EffectRouter {
-        fatalError()
+    func routePredicateToVoid(
+        _ predicate: @escaping (Input) -> Bool,
+        toVoid fireAndForget: @escaping (Input) -> Void
+    ) -> EffectRouter<Input, Output> {
+        return add(
+            path: predicateToPath(predicate),
+            to: EffectHandler(
+                handle: { effect, _ in fireAndForget(effect) },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 
-    func routePredicate(
-        _ predicate: Input,
-        to function: @escaping (Input) -> Output
-    ) -> EffectRouter {
-        fatalError()
+    func routePredicateToEvent(
+        _ predicate: @escaping (Input) -> Bool,
+        toEvent function: @escaping (Input) -> Output
+    ) -> EffectRouter<Input, Output> {
+        return add(
+            path: predicateToPath(predicate),
+            to: EffectHandler(
+                handle: { effect, dispatch in dispatch(function(effect)) },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 }
 
@@ -82,21 +98,21 @@ public extension EffectRouter {
     func routePayload<Payload>(
         _ extractPayload: (Input) -> Payload?,
         to handler: EffectHandler<Input, Output>
-    ) -> EffectRouter {
+    ) -> EffectRouter<Input, Output> {
         fatalError()
     }
 
     func routePayload<Payload>(
         _ extractPayload: (Input) -> Payload?,
         to fireAndForget: @escaping (Input) -> Void
-    ) -> EffectRouter {
+    ) -> EffectRouter<Input, Output> {
         fatalError()
     }
 
     func routePayload<Payload>(
         _ extractPayload: (Input) -> Payload?,
-        to function: @escaping (Input) -> Output
-    ) -> EffectRouter {
+        toEvent function: @escaping (Input) -> Output
+    ) -> EffectRouter<Input, Output> {
         fatalError()
     }
 }

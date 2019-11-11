@@ -66,7 +66,7 @@ class EffectRouterDSLTests: QuickSpec {
                 var effectPerformedCount = 0
                 var didDispatchEvents = false
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1) { effectPerformedCount += 1 }
+                    .routeConstantToVoid(.effect1) { effectPerformedCount += 1 }
                     .asConnectable
                     .connect { _ in
                         didDispatchEvents = true
@@ -81,8 +81,73 @@ class EffectRouterDSLTests: QuickSpec {
             it("Supports returning a value for a given constant") {
                 var events: [Event] = []
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1) { .eventForEffect1 }
-                    .routeConstant(.effect2) { .eventForEffect2 }
+                    .routeConstantToEvent(.effect1) { .eventForEffect1 }
+                    .routeConstantToEvent(.effect2) { .eventForEffect2 }
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
+            }
+        }
+
+        context("Effect routers based on predicates") {
+            it("Supports routing a predicate to an effect handler") {
+                var events: [Event] = []
+                var wasDisposed = false
+                let effectHandler = EffectHandler<Effect, Event>(
+                    handle: { effect, dispatch in
+                        expect(effect).to(equal(.effect1))
+                        dispatch(.eventForEffect1)
+                    },
+                    disposable: AnonymousDisposable {
+                        wasDisposed = true
+                    }
+                )
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePredicate({ $0 == .effect1 }, to: effectHandler)
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1]))
+
+                dslHandler.dispose()
+                expect(wasDisposed).to(beTrue())
+            }
+
+            it("Supports carrying out an arbitrary side-effect for a given input without dispatched events") {
+                var performedEffects: [Effect] = []
+                var didDispatchEvents = false
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePredicateToVoid({ $0 == .effect1 }) { effect in
+                        performedEffects.append(effect)
+                    }
+                    .asConnectable
+                    .connect { _ in
+                        didDispatchEvents = true
+                    }
+
+                dslHandler.accept(.effect1)
+                dslHandler.accept(.effect2)
+                expect(performedEffects).to(equal([.effect1]))
+                expect(didDispatchEvents).to(beFalse())
+            }
+
+            it("Supports returning a value for a given constant") {
+                var events: [Event] = []
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePredicateToEvent({ $0 == .effect1 }) { effect in
+                        expect(effect).to(equal(.effect1))
+                        return .eventForEffect1
+                    }
+                    .routePredicateToEvent({ $0 == .effect2 }) { effect in
+                        expect(effect).to(equal(.effect2))
+                        return .eventForEffect2
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 
