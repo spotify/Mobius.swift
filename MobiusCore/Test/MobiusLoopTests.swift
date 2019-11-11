@@ -277,18 +277,22 @@ class MobiusLoopTests: QuickSpec {
             beforeEach {
                 isDisposed = false
                 didReceiveEffect = false
-                loop = Mobius.loop(
-                    update: { (_: Int, _: Int) in Next.dispatchEffects([1]) },
-                    effectHandler: EffectHandler(
-                        handledEffect: 1,
-                        handle: { effect, _ in
-                            didReceiveEffect = effect == 1
-                        },
-                        stopHandling: {
-                            isDisposed = true
-                        }
-                    )
-                ).start(from: 0)
+                let effectHandler = EffectHandler<Int, Int>(
+                    handle: { _, _ in
+                        didReceiveEffect = true
+                    },
+                    disposable: AnonymousDisposable {
+                        isDisposed = true
+                    }
+                )
+                let path = EffectPath<Int, Int> { $0 }
+                let effectConnectable = EffectRouter<Int, Int>()
+                    .add(path: path, to: effectHandler)
+                    .asConnectable
+                let update = { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
+                loop = Mobius
+                    .loop(update: update, effectHandler: effectConnectable)
+                    .start(from: 0)
             }
             afterEach {
                 loop.dispose()
