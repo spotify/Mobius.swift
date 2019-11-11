@@ -18,6 +18,8 @@
 // under the License.
 
 public extension EffectRouter where Input: Equatable {
+    /// Add a route for effects which are equal to `constant`
+    /// - Parameter constant: the effect that should be handled by this route
     func route(
         constant: Input
     ) -> PartialEffectRouter<Input, Input, Output> {
@@ -26,6 +28,8 @@ public extension EffectRouter where Input: Equatable {
 }
 
 public extension EffectRouter {
+    /// Add a route for effects which satisfy `predicate`
+    /// - Parameter predicate: The predicate that will be used to determine if this route should be taken for a given effect.
     func route(
         predicate: @escaping (Input) -> Bool
     ) -> PartialEffectRouter<Input, Input, Output> {
@@ -34,6 +38,8 @@ public extension EffectRouter {
 }
 
 public extension PartialEffectRouter {
+    /// Route to a side-effecting function.
+    /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
@@ -43,6 +49,9 @@ public extension PartialEffectRouter {
         ))
     }
 
+    /// Route to a function which returns an optional event when given the payload as input.
+    /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
+    /// `nil`.
     func toEvent(
         _ eventFunction: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {

@@ -28,6 +28,9 @@ public struct EffectRouter<Input, Output> {
         self.routes = routes
     }
 
+    /// Add a route for effects which satisfy `payload`. `payload` is a function which returns an optional value for a given effect. If this value is non-`nil`
+    /// this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is returned.
+    /// - Parameter payload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
     public func route<Payload>(
         payload: @escaping (Input) -> Payload?
     ) -> PartialEffectRouter<Input, Payload, Output> {
@@ -43,6 +46,8 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     fileprivate let routes: [Route<Input, Output>]
     fileprivate let path: (Input) -> Payload?
 
+    /// Route to an `EffectHandler`.
+    /// - Parameter effectHandler: the `EffectHandler` for the route in question.
     public func to(_ effectHandler: EffectHandler<Payload, Output>) -> EffectRouter<Input, Output> {
         let route = Route<Input, Output>(path: path, handler: effectHandler)
         return EffectRouter(routes: self.routes + [route])
