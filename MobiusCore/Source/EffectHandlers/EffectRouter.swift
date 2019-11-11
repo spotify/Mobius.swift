@@ -28,7 +28,7 @@ public struct EffectRouter<Input, Output> {
         self.routes = routes
     }
 
-    public func add<Payload>(
+    func add<Payload>(
         path: @escaping (Input) -> Payload?,
         to handler: EffectHandler<Payload, Output>
     ) -> EffectRouter<Input, Output> {
