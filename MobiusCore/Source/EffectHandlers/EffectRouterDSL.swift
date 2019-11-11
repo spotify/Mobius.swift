@@ -22,21 +22,36 @@ public extension EffectRouter where Input: Equatable {
         _ constant: Input,
         to handler: EffectHandler<Input, Output>
     ) -> EffectRouter {
-        fatalError()
+        return add(
+            path: { effect in effect == constant ? constant : nil },
+            to: handler
+        )
     }
 
     func routeConstant(
         _ constant: Input,
-        to fireAndForget: () -> Void
+        to fireAndForget: @escaping () -> Void
     ) -> EffectRouter {
-        fatalError()
+        return add(
+            path: { effect in effect == constant ? constant : nil },
+            to: EffectHandler(
+                handle: { _, _ in fireAndForget() },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 
     func routeConstant(
         _ constant: Input,
-        to outputFunction: () -> Output
+        to outputFunction: @escaping () -> Output
     ) -> EffectRouter {
-        fatalError()
+        return add(
+            path: { effect in effect == constant ? constant : nil },
+            to: EffectHandler(
+                handle: { _, dispatch in dispatch(outputFunction()) },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 }
 
