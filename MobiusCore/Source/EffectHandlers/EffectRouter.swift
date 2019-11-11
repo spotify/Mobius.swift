@@ -24,20 +24,28 @@ public struct EffectRouter<Input, Output> {
         routes = []
     }
 
-    private init(routes: [Route<Input, Output>]) {
+    fileprivate init(routes: [Route<Input, Output>]) {
         self.routes = routes
     }
 
-    func add<Payload>(
-        path: @escaping (Input) -> Payload?,
-        to handler: EffectHandler<Payload, Output>
-    ) -> EffectRouter<Input, Output> {
-        let route = Route(path: path, handler: handler)
-        return EffectRouter(routes: self.routes + [route])
+    public func route<Payload>(
+        payload: @escaping (Input) -> Payload?
+    ) -> PartialEffectRouter<Input, Payload, Output> {
+        return PartialEffectRouter(routes: routes, path: payload)
     }
 
     public var asConnectable: AnyConnectable<Input, Output> {
         return compose(routes: routes)
+    }
+}
+
+public struct PartialEffectRouter<Input, Payload, Output> {
+    fileprivate let routes: [Route<Input, Output>]
+    fileprivate let path: (Input) -> Payload?
+
+    public func to(_ effectHandler: EffectHandler<Payload, Output>) -> EffectRouter<Input, Output> {
+        let route = Route<Input, Output>(path: path, handler: effectHandler)
+        return EffectRouter(routes: self.routes + [route])
     }
 }
 

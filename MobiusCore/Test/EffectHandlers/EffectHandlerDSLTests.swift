@@ -50,7 +50,7 @@ class EffectRouterDSLTests: QuickSpec {
                     }
                 )
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1, toHandler: effectHandler)
+                    .route(constant: .effect1).to(effectHandler)
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -66,7 +66,10 @@ class EffectRouterDSLTests: QuickSpec {
                 var effectPerformedCount = 0
                 var didDispatchEvents = false
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1) { effectPerformedCount += 1 }
+                    .route(constant: .effect1).to { effect in
+                        expect(effect).to(equal(.effect1))
+                        effectPerformedCount += 1
+                    }
                     .asConnectable
                     .connect { _ in
                         didDispatchEvents = true
@@ -81,8 +84,14 @@ class EffectRouterDSLTests: QuickSpec {
             it("Supports routing to an event-returning function") {
                 var events: [Event] = []
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeConstant(.effect1) { .eventForEffect1 }
-                    .routeConstant(.effect2) { .eventForEffect2 }
+                    .route(constant: .effect1).toEvent { effect in
+                        expect(effect).to(equal(.effect1))
+                        return .eventForEffect1
+                    }
+                    .route(constant: .effect2).toEvent { effect in
+                        expect(effect).to(equal(.effect2))
+                        return .eventForEffect2
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -107,7 +116,7 @@ class EffectRouterDSLTests: QuickSpec {
                     }
                 )
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePredicate({ $0 == .effect1 }, toHandler: effectHandler)
+                    .route(predicate: { $0 == .effect1 }).to(effectHandler)
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -123,9 +132,9 @@ class EffectRouterDSLTests: QuickSpec {
                 var performedEffects: [Effect] = []
                 var didDispatchEvents = false
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePredicate({ $0 == .effect1 }, toVoid: { effect in
+                    .route(predicate: { $0 == .effect1 }).to { effect in
                         performedEffects.append(effect)
-                    })
+                    }
                     .asConnectable
                     .connect { _ in
                         didDispatchEvents = true
@@ -140,14 +149,14 @@ class EffectRouterDSLTests: QuickSpec {
             it("Supports routing to an event-returning function") {
                 var events: [Event] = []
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePredicate({ $0 == .effect1 }, toEvent: { effect in
+                    .route(predicate: { $0 == .effect1 }).toEvent { effect in
                         expect(effect).to(equal(.effect1))
                         return .eventForEffect1
-                    })
-                    .routePredicate({ $0 == .effect2 }, toEvent: { effect in
+                    }
+                    .route(predicate: { $0 == .effect2 }).toEvent { effect in
                         expect(effect).to(equal(.effect2))
                         return .eventForEffect2
-                    })
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -173,7 +182,7 @@ class EffectRouterDSLTests: QuickSpec {
                 )
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePayload(payload, toHandler: effectHandler)
+                    .route(payload: payload).to(effectHandler)
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -190,7 +199,7 @@ class EffectRouterDSLTests: QuickSpec {
                 var didDispatchEvents = false
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePayload(payload) { effect in
+                    .route(payload: payload).to { effect in
                         performedEffects.append(effect)
                     }
                     .asConnectable
@@ -209,14 +218,14 @@ class EffectRouterDSLTests: QuickSpec {
                 let extractEffect1: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let extractEffect2: (Effect) -> Effect? = { $0 == .effect2 ? .effect2 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePayload(extractEffect1, toEvent: { effect in
+                    .route(payload: extractEffect1).toEvent { effect in
                         expect(effect).to(equal(.effect1))
                         return .eventForEffect1
-                    })
-                    .routePayload(extractEffect2, toEvent: { effect in
+                    }
+                    .route(payload: extractEffect2).toEvent { effect in
                         expect(effect).to(equal(.effect2))
                         return .eventForEffect2
-                    })
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 
