@@ -65,12 +65,12 @@ class EffectRouterTests: QuickSpec {
                         disposed2 = true
                     }
                 )
-                let effect1Path = EffectPath<Effect, Effect> { effect in
+                let effect1Path: (Effect) -> Effect? = { effect in
                     effect == .effect1
                         ? effect
                         : nil
                 }
-                let effect2Path = EffectPath<Effect, Effect> { effect in
+                let effect2Path: (Effect) -> Effect? = { effect in
                     effect == .effect2
                         ? effect
                         : nil
@@ -122,7 +122,7 @@ class EffectRouterTests: QuickSpec {
                     handle: { _, _ in },
                     disposable: AnonymousDisposable {}
                 )
-                let duplicatePath = EffectPath<Effect, Effect> { effect in
+                let duplicatePath: (Effect) -> Effect? = { effect in
                     effect == .multipleHandlersForThisEffect
                         ? effect
                         : nil

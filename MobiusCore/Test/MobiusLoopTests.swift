@@ -285,7 +285,7 @@ class MobiusLoopTests: QuickSpec {
                         isDisposed = true
                     }
                 )
-                let path = EffectPath<Int, Int> { $0 }
+                let path: (Int) -> Int? = { $0 }
                 let effectConnectable = EffectRouter<Int, Int>()
                     .add(path: path, to: effectHandler)
                     .asConnectable

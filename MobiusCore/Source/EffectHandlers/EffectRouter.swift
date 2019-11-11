@@ -29,7 +29,7 @@ public struct EffectRouter<Input, Output> {
     }
 
     public func add<Payload>(
-        path: EffectPath<Input, Payload>,
+        path: @escaping (Input) -> Payload?,
         to handler: EffectHandler<Payload, Output>
     ) -> EffectRouter<Input, Output> {
         let route = Route(path: path, handler: handler)
@@ -46,11 +46,11 @@ private struct Route<Input, Output> {
     let disposable: Disposable
 
     init<Payload>(
-        path: EffectPath<Input, Payload>,
+        path tryPath: @escaping (Input) -> Payload?,
         handler: EffectHandler<Payload, Output>
     ) {
         tryRoute = { input, output in
-            if let payload = path.tryPath(input) {
+            if let payload = tryPath(input) {
                 handler.handle(payload, output)
                 return true
             } else {
