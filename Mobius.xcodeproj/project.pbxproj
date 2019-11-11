@@ -11,6 +11,8 @@
 		02C4061D2373078400BD7ED8 /* PredicatedSafeConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
 		02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40622237425E100BD7ED8 /* EffectRouterTests.swift */; };
+		02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
+		02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
@@ -244,6 +246,8 @@
 		02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredicatedSafeConnection.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
+		02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSL.swift; sourceTree = "<group>"; };
+		02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerDSLTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
@@ -430,6 +434,7 @@
 			children = (
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
 				02C40620237422EF00BD7ED8 /* EffectRouter.swift */,
+				02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */,
 				02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */,
 			);
 			path = EffectHandlers;
@@ -440,6 +445,7 @@
 			children = (
 				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
 				02C40622237425E100BD7ED8 /* EffectRouterTests.swift */,
+				02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1104,6 +1110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */,
+				02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
@@ -1164,6 +1171,7 @@
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
 				5BB2887920999AD60043B530 /* CompositeDisposableTests.swift in Sources */,
+				02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
