@@ -55,8 +55,8 @@ public extension EffectRouter where Input: Equatable {
     }
 }
 
-private func predicateToPath<T>(_ predicate: @escaping (T) -> Bool) -> ((T) -> T?) {
-    return { t in predicate(t) ? t : nil }
+private func predicateToPath<Value>(_ predicate: @escaping (Value) -> Bool) -> ((Value) -> Value?) {
+    return { value in predicate(value) ? value : nil }
 }
 
 public extension EffectRouter {
@@ -96,23 +96,38 @@ public extension EffectRouter {
 
 public extension EffectRouter {
     func routePayload<Payload>(
-        _ extractPayload: (Input) -> Payload?,
-        to handler: EffectHandler<Input, Output>
+        _ extractPayload: @escaping (Input) -> Payload?,
+        to handler: EffectHandler<Payload, Output>
     ) -> EffectRouter<Input, Output> {
-        fatalError()
+        return add(
+            path: extractPayload,
+            to: handler
+        )
     }
 
-    func routePayload<Payload>(
-        _ extractPayload: (Input) -> Payload?,
-        to fireAndForget: @escaping (Input) -> Void
+    func routePayloadToVoid<Payload>(
+        _ extractPayload: @escaping (Input) -> Payload?,
+        toVoid fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
-        fatalError()
+        return add(
+            path: extractPayload,
+            to: EffectHandler(
+                handle: { payload, _ in fireAndForget(payload) },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 
-    func routePayload<Payload>(
-        _ extractPayload: (Input) -> Payload?,
-        toEvent function: @escaping (Input) -> Output
+    func routePayloadToEvent<Payload>(
+        _ extractPayload: @escaping (Input) -> Payload?,
+        toEvent function: @escaping (Payload) -> Output
     ) -> EffectRouter<Input, Output> {
-        fatalError()
+        return add(
+            path: extractPayload,
+            to: EffectHandler(
+                handle: { payload, dispatch in dispatch(function(payload)) },
+                disposable: AnonymousDisposable {}
+            )
+        )
     }
 }

@@ -37,7 +37,7 @@ class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         context("Effect routers based on constants") {
-            it("Supports routing a constant to an effect handler") {
+            it("Supports routing an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
                 let effectHandler = EffectHandler<Effect, Event>(
@@ -62,7 +62,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(wasDisposed).to(beTrue())
             }
 
-            it("Supports carrying out an arbitrary side-effect for a given input without dispatched events") {
+            it("Supports routing to a side-effecting function") {
                 var effectPerformedCount = 0
                 var didDispatchEvents = false
                 let dslHandler = EffectRouter<Effect, Event>()
@@ -78,7 +78,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(didDispatchEvents).to(beFalse())
             }
 
-            it("Supports returning a value for a given constant") {
+            it("Supports routing to an event-returning function") {
                 var events: [Event] = []
                 let dslHandler = EffectRouter<Effect, Event>()
                     .routeConstantToEvent(.effect1) { .eventForEffect1 }
@@ -94,7 +94,7 @@ class EffectRouterDSLTests: QuickSpec {
         }
 
         context("Effect routers based on predicates") {
-            it("Supports routing a predicate to an effect handler") {
+            it("Supports routing an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
                 let effectHandler = EffectHandler<Effect, Event>(
@@ -119,11 +119,78 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(wasDisposed).to(beTrue())
             }
 
-            it("Supports carrying out an arbitrary side-effect for a given input without dispatched events") {
+            it("Supports routing to a side-effecting function") {
                 var performedEffects: [Effect] = []
                 var didDispatchEvents = false
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePredicateToVoid({ $0 == .effect1 }) { effect in
+                    .routePredicateToVoid({ $0 == .effect1 }, toVoid: { effect in
+                        performedEffects.append(effect)
+                    })
+                    .asConnectable
+                    .connect { _ in
+                        didDispatchEvents = true
+                    }
+
+                dslHandler.accept(.effect1)
+                dslHandler.accept(.effect2)
+                expect(performedEffects).to(equal([.effect1]))
+                expect(didDispatchEvents).to(beFalse())
+            }
+
+            it("Supports routing to an event-returning function") {
+                var events: [Event] = []
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePredicateToEvent({ $0 == .effect1 }, toEvent: { effect in
+                        expect(effect).to(equal(.effect1))
+                        return .eventForEffect1
+                    })
+                    .routePredicateToEvent({ $0 == .effect2 }, toEvent: { effect in
+                        expect(effect).to(equal(.effect2))
+                        return .eventForEffect2
+                    })
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
+            }
+        }
+
+        context("Effect routers based on payload extracting functions") {
+            it("Supports routing an effect handler") {
+                var events: [Event] = []
+                var wasDisposed = false
+                let effectHandler = EffectHandler<Effect, Event>(
+                    handle: { effect, dispatch in
+                        expect(effect).to(equal(.effect1))
+                        dispatch(.eventForEffect1)
+                    },
+                    disposable: AnonymousDisposable {
+                        wasDisposed = true
+                    }
+                )
+                let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePayload(payload, to: effectHandler)
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1]))
+
+                dslHandler.dispose()
+                expect(wasDisposed).to(beTrue())
+            }
+
+            it("Supports routing to a side-effecting function") {
+                var performedEffects: [Effect] = []
+                var didDispatchEvents = false
+                let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routePayloadToVoid(payload) { effect in
                         performedEffects.append(effect)
                     }
                     .asConnectable
@@ -137,14 +204,16 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(didDispatchEvents).to(beFalse())
             }
 
-            it("Supports returning a value for a given constant") {
+            it("Supports routing to an event-returning function") {
                 var events: [Event] = []
+                let extractEffect1: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let extractEffect2: (Effect) -> Effect? = { $0 == .effect2 ? .effect2 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routePredicateToEvent({ $0 == .effect1 }) { effect in
+                    .routePayloadToEvent(extractEffect1) { effect in
                         expect(effect).to(equal(.effect1))
                         return .eventForEffect1
                     }
-                    .routePredicateToEvent({ $0 == .effect2 }) { effect in
+                    .routePayloadToEvent(extractEffect2) { effect in
                         expect(effect).to(equal(.effect2))
                         return .eventForEffect2
                     }
