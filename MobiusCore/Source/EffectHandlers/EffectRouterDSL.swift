@@ -18,6 +18,9 @@
 // under the License.
 
 public extension EffectRouter where Input: Equatable {
+    /// Route to an `EffectHandler` for all effects which are equal to `constant`.
+    /// - Parameter constant: the constant to use for comparisons
+    /// - Parameter handler: the effect handler which should handle `constant`
     func routeConstant(
         _ constant: Input,
         to handler: EffectHandler<Input, Output>
@@ -28,6 +31,9 @@ public extension EffectRouter where Input: Equatable {
         )
     }
 
+    /// Route to an side-effecting function for all effects which are equal to `constant`.
+    /// - Parameter constant: the constant to use for comparisons
+    /// - Parameter fireAndForget: the function which should perform a side-effect
     func routeConstantToVoid(
         _ constant: Input,
         toVoid fireAndForget: @escaping () -> Void
@@ -41,6 +47,9 @@ public extension EffectRouter where Input: Equatable {
         )
     }
 
+    /// Route to a function which returns an event for all effects which are equal to `constant`.
+    /// - Parameter constant: the constant to use for comparisons
+    /// - Parameter outputFunction: the function which returns an event for the `constant`
     func routeConstantToEvent(
         _ constant: Input,
         toEvent outputFunction: @escaping () -> Output
@@ -60,6 +69,9 @@ private func predicateToPath<Value>(_ predicate: @escaping (Value) -> Bool) -> (
 }
 
 public extension EffectRouter {
+    /// Route to an `EffectHandler` for all effects which satisfy `predicate`.
+    /// - Parameter predicate: the predicate function to use
+    /// - Parameter handler: the effect handler which should handle effects satisfying `predicate`
     func routePredicate(
         _ predicate: @escaping (Input) -> Bool,
         to handler: EffectHandler<Input, Output>
@@ -67,6 +79,9 @@ public extension EffectRouter {
         return add(path: predicateToPath(predicate), to: handler)
     }
 
+    /// Route to an side-effecting function for all effects which satisy `predicate`.
+    /// - Parameter predicate: the predicate function to use
+    /// - Parameter fireAndForget: the function which should perform a side-effect when the predicate is satisfied
     func routePredicateToVoid(
         _ predicate: @escaping (Input) -> Bool,
         toVoid fireAndForget: @escaping (Input) -> Void
@@ -80,6 +95,9 @@ public extension EffectRouter {
         )
     }
 
+    /// Route to a function which returns an event for all effects which satisfy `predicate`.
+    /// - Parameter predicate: the predicate function to use
+    /// - Parameter outputFunction: the function which returns an event for effects matching `predicate`
     func routePredicateToEvent(
         _ predicate: @escaping (Input) -> Bool,
         toEvent function: @escaping (Input) -> Output
@@ -95,6 +113,11 @@ public extension EffectRouter {
 }
 
 public extension EffectRouter {
+    /// Route to an `EffectHandler` for all effects which satisfy `extractPayload`. An effect satisfies `extractPayload` if `extractPayload`
+    /// returns a non-`nil` value for that effect. The returned value is sent to `handler`.
+    /// - Parameter extractPayload: a function which returns a non-`nil` value containing the payload that `handler` should handle, or `nil` if
+    /// another route should be taken instead.
+    /// - Parameter handler: the effect handler which should handle effects satisfying `extractPayload`
     func routePayload<Payload>(
         _ extractPayload: @escaping (Input) -> Payload?,
         to handler: EffectHandler<Payload, Output>
@@ -105,6 +128,11 @@ public extension EffectRouter {
         )
     }
 
+    /// Route to a side-effecting function for all effects which satisfy `extractPayload`. An effect satisfies `extractPayload` if `extractPayload`
+    /// returns a non-`nil` value for that effect. The returned value is sent to `fireAndForget`.
+    /// - Parameter extractPayload: a function which returns a non-`nil` value containing the payload that `fireAndForget` should handle, or
+    ///  `nil` if another route should be taken instead.
+    /// - Parameter fireAndForget: the side-effecting function to call with the result of all non-`nil` values returned by `extractPayload`
     func routePayloadToVoid<Payload>(
         _ extractPayload: @escaping (Input) -> Payload?,
         toVoid fireAndForget: @escaping (Payload) -> Void
@@ -118,6 +146,11 @@ public extension EffectRouter {
         )
     }
 
+    /// Route to a function which returns events for all effects which satisfy `extractPayload`. An effect satisfies `extractPayload` if
+    /// `extractPayload` returns a non-`nil` value for that effect. The returned value is sent to `function`.
+    /// - Parameter extractPayload: a function which returns a non-`nil` value containing the payload that `function` should handle, or `nil` if
+    /// another route should be taken instead.
+    /// - Parameter function: the event-returning function to call with the result of all non-`nil` values returned by `extractPayload`
     func routePayloadToEvent<Payload>(
         _ extractPayload: @escaping (Input) -> Payload?,
         toEvent function: @escaping (Payload) -> Output
