@@ -1,4 +1,3 @@
-
 // Copyright (c) 2019 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one

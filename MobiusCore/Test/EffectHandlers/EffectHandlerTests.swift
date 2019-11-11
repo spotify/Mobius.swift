@@ -88,7 +88,6 @@ class EffectHandlerTests: QuickSpec {
                 expect(isDisposed).to(beTrue())
             }
 
-
             it("disposing is idempotent") {
                 expect(isDisposed).to(beFalse())
 

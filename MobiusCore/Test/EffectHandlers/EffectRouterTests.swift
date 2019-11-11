@@ -50,7 +50,7 @@ class EffectRouterTests: QuickSpec {
                 disposed1 = false
                 disposed2 = false
                 let effectHandler1 = EffectHandler<Effect, Event>(
-                    handle: { effect, dispatch in
+                    handle: { _, dispatch in
                         dispatch(.eventForEffect1)
                     },
                     disposable: AnonymousDisposable {
@@ -58,7 +58,7 @@ class EffectRouterTests: QuickSpec {
                     }
                 )
                 let effectHandler2 = EffectHandler<Effect, Event>(
-                    handle: { effect, dispatch in
+                    handle: { _, dispatch in
                         dispatch(.eventForEffect2)
                     },
                     disposable: AnonymousDisposable {
@@ -154,5 +154,3 @@ class EffectRouterTests: QuickSpec {
         }
     }
 }
-
-
