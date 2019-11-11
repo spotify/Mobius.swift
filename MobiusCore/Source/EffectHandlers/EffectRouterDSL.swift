@@ -44,10 +44,14 @@ public extension PartialEffectRouter {
     }
 
     func toEvent(
-        _ eventFunction: @escaping (Payload) -> Output
+        _ eventFunction: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {
         return to(EffectHandler<Payload, Output>(
-            handle: { payload, dispatch in dispatch(eventFunction(payload)) },
+            handle: { payload, dispatch in
+                if let event = eventFunction(payload) {
+                    dispatch(event)
+                }
+            },
             disposable: AnonymousDisposable {}
         ))
     }
