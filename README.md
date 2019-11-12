@@ -127,14 +127,7 @@ let effectHandler = EffectRouter<CounterEffect, CounterEvent>()
 
 Now that we have all the pieces in place, let's tie it all together:
 ```swift
-// For convenience, we put all our types in one enum
-enum CounterLoopTypes: LoopTypes {
-    typealias Event = CounterEvent
-    typealias Effect = CounterEffect
-    typealias Model = CounterModel
-}
-// And build a Mobius Loop!
-let application: MobiusLoop<CounterLoopTypes> = Mobius
+let application = Mobius
     .loop(update: update, effectHandler: effectHandler)
     .start(from: 0)
 ```
