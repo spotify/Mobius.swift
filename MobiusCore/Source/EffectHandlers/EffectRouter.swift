@@ -24,20 +24,33 @@ public struct EffectRouter<Input, Output> {
         routes = []
     }
 
-    private init(routes: [Route<Input, Output>]) {
+    fileprivate init(routes: [Route<Input, Output>]) {
         self.routes = routes
     }
 
-    public func add<Payload>(
-        path: EffectPath<Input, Payload>,
-        to handler: EffectHandler<Payload, Output>
-    ) -> EffectRouter<Input, Output> {
-        let route = Route(path: path, handler: handler)
-        return EffectRouter(routes: self.routes + [route])
+    /// Add a route for effects which satisfy `withPayload`. `withPayload` is a function which returns an optional value for a given effect. If this value is
+    /// non-`nil` this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is returned.
+    /// - Parameter withPayload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
+    public func routeEffects<Payload>(
+        withPayload payload: @escaping (Input) -> Payload?
+    ) -> PartialEffectRouter<Input, Payload, Output> {
+        return PartialEffectRouter(routes: routes, path: payload)
     }
 
     public var asConnectable: AnyConnectable<Input, Output> {
         return compose(routes: routes)
+    }
+}
+
+public struct PartialEffectRouter<Input, Payload, Output> {
+    fileprivate let routes: [Route<Input, Output>]
+    fileprivate let path: (Input) -> Payload?
+
+    /// Route to an `EffectHandler`.
+    /// - Parameter effectHandler: the `EffectHandler` for the route in question.
+    public func to(_ effectHandler: EffectHandler<Payload, Output>) -> EffectRouter<Input, Output> {
+        let route = Route<Input, Output>(path: path, handler: effectHandler)
+        return EffectRouter(routes: self.routes + [route])
     }
 }
 
@@ -46,11 +59,11 @@ private struct Route<Input, Output> {
     let disposable: Disposable
 
     init<Payload>(
-        path: EffectPath<Input, Payload>,
+        path tryPath: @escaping (Input) -> Payload?,
         handler: EffectHandler<Payload, Output>
     ) {
         tryRoute = { input, output in
-            if let payload = path.tryPath(input) {
+            if let payload = tryPath(input) {
                 handler.handle(payload, output)
                 return true
             } else {

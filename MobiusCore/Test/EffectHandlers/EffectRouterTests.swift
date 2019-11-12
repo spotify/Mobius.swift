@@ -65,20 +65,10 @@ class EffectRouterTests: QuickSpec {
                         disposed2 = true
                     }
                 )
-                let effect1Path = EffectPath<Effect, Effect> { effect in
-                    effect == .effect1
-                        ? effect
-                        : nil
-                }
-                let effect2Path = EffectPath<Effect, Effect> { effect in
-                    effect == .effect2
-                        ? effect
-                        : nil
-                }
 
                 connection = EffectRouter<Effect, Event>()
-                    .add(path: effect1Path, to: effectHandler1)
-                    .add(path: effect2Path, to: effectHandler2)
+                    .routeEffects(equalTo: .effect1).to(effectHandler1)
+                    .routeEffects(equalTo: .effect2).to(effectHandler2)
                     .asConnectable
                     .connect { event in
                         receivedEvents.append(event)
@@ -122,14 +112,9 @@ class EffectRouterTests: QuickSpec {
                     handle: { _, _ in },
                     disposable: AnonymousDisposable {}
                 )
-                let duplicatePath = EffectPath<Effect, Effect> { effect in
-                    effect == .multipleHandlersForThisEffect
-                        ? effect
-                        : nil
-                }
                 let invalidRouter = EffectRouter()
-                    .add(path: duplicatePath, to: handler)
-                    .add(path: duplicatePath, to: handler)
+                    .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
+                    .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
                     .asConnectable
                     .connect { _ in }
                 route = invalidRouter.accept

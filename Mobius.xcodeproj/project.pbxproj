@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		02B33E70237595AE002DBCF5 /* EffectPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B33E6F237595AE002DBCF5 /* EffectPath.swift */; };
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		02C4061D2373078400BD7ED8 /* PredicatedSafeConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
 		02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40622237425E100BD7ED8 /* EffectRouterTests.swift */; };
+		02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
+		02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
@@ -69,7 +70,6 @@
 		5B3AA3C5209757AC003F35C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
 		5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
 		5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
-		5B57E8BC2125AB16001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5B57E8BE2125AD09001AFC71 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E8BD2125AD09001AFC71 /* TestUtil.swift */; };
 		5B57E8C72126FFDD001AFC71 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		5B57E8CA21270025001AFC71 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
@@ -243,10 +243,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02B33E6F237595AE002DBCF5 /* EffectPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectPath.swift; sourceTree = "<group>"; };
 		02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredicatedSafeConnection.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
+		02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSL.swift; sourceTree = "<group>"; };
+		02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerDSLTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
@@ -433,7 +434,7 @@
 			children = (
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
 				02C40620237422EF00BD7ED8 /* EffectRouter.swift */,
-				02B33E6F237595AE002DBCF5 /* EffectPath.swift */,
+				02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */,
 				02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */,
 			);
 			path = EffectHandlers;
@@ -444,6 +445,7 @@
 			children = (
 				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
 				02C40622237425E100BD7ED8 /* EffectRouterTests.swift */,
+				02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1108,6 +1110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */,
+				02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
@@ -1130,7 +1133,6 @@
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
 				5BB9346420D2A46A00A1FE3A /* EffectRouterBuilder.swift in Sources */,
-				02B33E70237595AE002DBCF5 /* EffectPath.swift in Sources */,
 				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
@@ -1169,6 +1171,7 @@
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
 				5BB2887920999AD60043B530 /* CompositeDisposableTests.swift in Sources */,
+				02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
