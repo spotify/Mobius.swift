@@ -29,16 +29,16 @@ public extension EffectRouter where Input: Equatable {
 
 public extension EffectRouter {
     /// Add a route for effects which satisfy `predicate`
-    /// - Parameter predicate: The predicate that will be used to determine if this route should be taken for a given effect.
+    /// - Parameter matching: The predicate that will be used to determine if this route should be taken for a given effect.
     func route(
-        predicate: @escaping (Input) -> Bool
+        matching predicate: @escaping (Input) -> Bool
     ) -> PartialEffectRouter<Input, Input, Output> {
         return route(payload: { effect in predicate(effect) ? effect : nil })
     }
 }
 
 public extension PartialEffectRouter {
-    /// Route to a side-effecting function.
+    /// Route to a side-effecting closure.
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
@@ -49,7 +49,7 @@ public extension PartialEffectRouter {
         ))
     }
 
-    /// Route to a function which returns an optional event when given the payload as input.
+    /// Route to a closure which returns an optional event when given the payload as input.
     /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
     /// `nil`.
     func toEvent(
