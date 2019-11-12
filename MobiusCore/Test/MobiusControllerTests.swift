@@ -24,8 +24,8 @@ import Nimble
 import Quick
 
 class MobiusControllerTests: QuickSpec {
-    let serialEventQueue = DispatchQueue(label: "serialEventQueue")
-    let serialEffectQueue = DispatchQueue(label: "serialEffectQueue")
+    let loopQueue = DispatchQueue(label: "loop queue")
+    let viewQueue = DispatchQueue(label: "view queue")
 
     // swiftlint:disable function_body_length
     override func spec() {
@@ -35,18 +35,16 @@ class MobiusControllerTests: QuickSpec {
             var errorThrown: Bool!
 
             beforeEach {
-                view = RecordingTestConnectable()
+                view = RecordingTestConnectable(expectedQueue: self.viewQueue)
 
-                let updateFunction = { (model: String, event: String) -> Next<String, String> in
-                    .next("\(model)-\(event)")
+                let updateFunction =
+                { [loopQueue = self.loopQueue] (model: String, event: String) -> Next<String, String> in
+                    dispatchPrecondition(condition: .onQueue(loopQueue))
+                    return .next("\(model)-\(event)")
                 }
 
                 controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
-                /* FIXME
-                    .withEventQueue(self.serialEventQueue)
-                    .withEffectQueue(self.serialEffectQueue)
-                */
-                    .makeController(from: "S")
+                    .makeController(from: "S", loopQueue: self.loopQueue, viewQueue: self.viewQueue)
 
                 errorThrown = false
                 MobiusHooks.setErrorHandler({ _, _, _ in
@@ -64,7 +62,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.start()
 
-                        expect(view.recorder.items).to(equal(["S"]))
+                        expect(view.recorder.items).toEventually(equal(["S"]))
                     }
                     it("should hook up the view's events to the loop") {
                         controller.connectView(view)
@@ -131,7 +129,7 @@ class MobiusControllerTests: QuickSpec {
 
                     it("Should dispose any listeners of the model") {
                         controller.stop()
-                        expect(modelObserver.disposed).to(beTrue())
+                        expect(modelObserver.disposed).toEventually(beTrue())
                     }
 
                     it("Should dispose any effect handlers") {
@@ -253,7 +251,7 @@ class MobiusControllerTests: QuickSpec {
             describe("accessing the model") {
                 describe("happy cases") {
                     it("should return the default model before starting") {
-                        expect(controller.getModel()).to(equal("S"))
+                        expect(controller.model).to(equal("S"))
                     }
                     it("should read the model from a running loop") {
                         controller.connectView(view)
@@ -261,7 +259,7 @@ class MobiusControllerTests: QuickSpec {
 
                         view.dispatch("an event")
 
-                        expect(controller.getModel()).toEventually(equal("S-an event"))
+                        expect(controller.model).toEventually(equal("S-an event"))
                     }
                     it("should read the last loop model after stopping") {
                         controller.connectView(view)
@@ -274,7 +272,7 @@ class MobiusControllerTests: QuickSpec {
 
                         controller.stop()
 
-                        expect(controller.getModel()).to(equal("S-the last event"))
+                        expect(controller.model).to(equal("S-the last event"))
                     }
                     it("should start from the last loop model on restart") {
                         controller.connectView(view)
@@ -316,12 +314,12 @@ class MobiusControllerTests: QuickSpec {
     }
 
     func makeSureAllEffectsAndEventsHaveBeenProccessed() {
-        serialEffectQueue.sync {
+        loopQueue.sync {
             // Waiting synchronously for effects to be completed
         }
 
-        serialEventQueue.sync {
-            // Waiting synchronously for events to be completed
+        viewQueue.sync {
+            // Waiting synchronously for view observations to be completed
         }
     }
 }

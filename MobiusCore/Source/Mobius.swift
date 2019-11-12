@@ -118,12 +118,32 @@ public extension Mobius {
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - qos: The Quality of Service class for the controller’s work queue. Default: `.userInitiated`
         public func makeController(
-            from initialModel: Model
+            from initialModel: Model,
+            qos: DispatchQoS.QoSClass = .userInitiated
+        ) -> MobiusController<Model, Event, Effect> {
+            return makeController(from: initialModel, loopQueue: .global(qos: qos))
+        }
+
+        /// Create a `MobiusController` from the builder
+        ///
+        /// - Parameters:
+        ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The queue will dispatch events and
+        ///     effects on a serial queue that targets this queue.
+        ///   - viewQueue: The queue to use to post to the `MobiusController`’s view connection.
+        ///     Default: the main queue.
+        public func makeController(
+            from initialModel: Model,
+            loopQueue: DispatchQueue,
+            viewQueue: DispatchQueue = .main
         ) -> MobiusController<Model, Event, Effect> {
             return MobiusController(
                 builder: self,
-                initialModel: initialModel
+                initialModel: initialModel,
+                loopQueue: loopQueue,
+                viewQueue: viewQueue
             )
         }
     }
