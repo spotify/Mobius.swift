@@ -17,8 +17,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
+@testable import MobiusCore
+
 import Foundation
-import MobiusCore
 import Nimble
 import Quick
 
@@ -40,13 +41,10 @@ class MobiusControllerTests: QuickSpec {
                     .next("\(model)-\(event)")
                 }
 
-                var builder = Mobius.loop(
-                    update: updateFunction,
-                    effectHandler: SimpleTestConnectable()
-                )
-                builder = builder.withEventQueue(self.serialEventQueue)
-                builder = builder.withEffectQueue(self.serialEffectQueue)
-                controller = MobiusController(builder: builder, defaultModel: "S")
+                controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
+                    .withEventQueue(self.serialEventQueue)
+                    .withEffectQueue(self.serialEffectQueue)
+                    .makeController(from: "S")
 
                 errorThrown = false
                 MobiusHooks.setErrorHandler({ _, _, _ in
@@ -123,8 +121,8 @@ class MobiusControllerTests: QuickSpec {
                     beforeEach {
                         modelObserver = MockConnectable()
                         effectObserver = MockConnectable()
-                        let builder: Mobius.Builder<String, String, String> = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
-                        controller = MobiusController(builder: builder, defaultModel: "")
+                        controller = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
+                            .makeController(from: "")
                         controller.connectView(modelObserver)
                         controller.start()
                     }

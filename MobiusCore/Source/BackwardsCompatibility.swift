@@ -45,6 +45,14 @@ public extension MobiusLoop {
         return latestModel
     }
 }
+
+public extension MobiusController {
+    @available(*, deprecated, message: "use `Mobius.Builder.makeController` instead")
+    convenience init(builder: Mobius.Builder<Model, Event, Effect>, defaultModel: Model) {
+        self.init(builder: builder, initialModel: defaultModel)
+    }
+}
+
 @available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol EffectPredicate {
     associatedtype Effect
