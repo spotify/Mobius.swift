@@ -39,9 +39,9 @@ public class MobiusController<Model, Event, Effect> {
         }
     }
 
-    public init(builder: Mobius.Builder<Model, Event, Effect>, defaultModel: Model) {
+    init(builder: Mobius.Builder<Model, Event, Effect>, initialModel: Model) {
         loopFactory = builder.start
-        modelToStartFrom = defaultModel
+        modelToStartFrom = initialModel
     }
 
     /// Connect a view to this controller.
