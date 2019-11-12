@@ -34,6 +34,7 @@ private typealias PredicatedConnection<Input> = (connection: Connection<Input>, 
 ///
 /// All the classes that the effect router know about must have a common type T.Effect. Note that
 /// instances of the builder are mutable and not thread-safe.
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public struct EffectRouterBuilder<Input, Output> {
     private let connectables: [PredicatedConnectable<Input, Output>]
 
