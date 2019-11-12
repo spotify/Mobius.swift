@@ -28,11 +28,11 @@ public struct EffectRouter<Input, Output> {
         self.routes = routes
     }
 
-    /// Add a route for effects which satisfy `payload`. `payload` is a function which returns an optional value for a given effect. If this value is non-`nil`
-    /// this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is returned.
-    /// - Parameter payload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
-    public func route<Payload>(
-        payload: @escaping (Input) -> Payload?
+    /// Add a route for effects which satisfy `withPayload`. `withPayload` is a function which returns an optional value for a given effect. If this value is
+    /// non-`nil` this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is returned.
+    /// - Parameter withPayload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
+    public func routeEffects<Payload>(
+        withPayload payload: @escaping (Input) -> Payload?
     ) -> PartialEffectRouter<Input, Payload, Output> {
         return PartialEffectRouter(routes: routes, path: payload)
     }

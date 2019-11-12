@@ -18,22 +18,22 @@
 // under the License.
 
 public extension EffectRouter where Input: Equatable {
-    /// Add a route for effects which are equal to `constant`
-    /// - Parameter constant: the effect that should be handled by this route
-    func route(
-        constant: Input
+    /// Add a route for effects which are equal to `equalTo`.
+    /// - Parameter `equalTo`: the effect that should be handled by this route
+    func routeEffects(
+        equalTo constant: Input
     ) -> PartialEffectRouter<Input, Input, Output> {
-        return route(payload: { effect in effect == constant ? constant : nil })
+        return routeEffects(withPayload: { effect in effect == constant ? effect : nil })
     }
 }
 
 public extension EffectRouter {
-    /// Add a route for effects which satisfy `predicate`
+    /// Add a route for effects which satisfy `matching`.
     /// - Parameter matching: The predicate that will be used to determine if this route should be taken for a given effect.
-    func route(
+    func routeEffects(
         matching predicate: @escaping (Input) -> Bool
     ) -> PartialEffectRouter<Input, Input, Output> {
-        return route(payload: { effect in predicate(effect) ? effect : nil })
+        return routeEffects(withPayload: { effect in predicate(effect) ? effect : nil })
     }
 }
 
