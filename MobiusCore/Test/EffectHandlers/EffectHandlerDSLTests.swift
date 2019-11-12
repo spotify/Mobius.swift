@@ -37,7 +37,7 @@ class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         context("Effect routers based on constants") {
-            it("Supports routing an effect handler") {
+            it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
                 let effectHandler = EffectHandler<Effect, Event>(
@@ -103,7 +103,7 @@ class EffectRouterDSLTests: QuickSpec {
         }
 
         context("Effect routers based on predicates") {
-            it("Supports routing an effect handler") {
+            it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
                 let effectHandler = EffectHandler<Effect, Event>(
@@ -168,7 +168,7 @@ class EffectRouterDSLTests: QuickSpec {
         }
 
         context("Effect routers based on payload extracting functions") {
-            it("Supports routing an effect handler") {
+            it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
                 let effectHandler = EffectHandler<Effect, Event>(
