@@ -115,14 +115,14 @@ func update(model: CounterModel, event: CounterEvent) -> Next<CounterModel, Coun
 Mobius sends each of the effects you return in any state transition to something called an *Effect Handler*. Let's make one of those now:
 ```swift
 import AVFoundation
-import MobiusExtras
 
-class PlaySoundEffectHandler: ConnectableClass<CounterEffect, CounterEvent> {
-    override func handle(_ input: CounterEffect) {
-        AudioServicesPlayAlertSound(SystemSoundID(1322))
-    }
-    override func onDispose() {}
+private func beep() {
+    AudioServicesPlayAlertSound(SystemSoundID(1322))
 }
+
+let effectHandler = EffectRouter<CounterEffect, CounterEvent>()
+    .routeEffects(equalTo: .playSound).to { _ in beep() }
+    .asConnectable
 ```
 
 Now that we have all the pieces in place, let's tie it all together:
@@ -135,7 +135,7 @@ enum CounterLoopTypes: LoopTypes {
 }
 // And build a Mobius Loop!
 let application: MobiusLoop<CounterLoopTypes> = Mobius
-    .loop(update: update, effectHandler: PlaySoundEffectHandler())
+    .loop(update: update, effectHandler: effectHandler)
     .start(from: 0)
 ```
 
