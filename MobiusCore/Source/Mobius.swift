@@ -150,6 +150,19 @@ public extension Mobius {
                 logger: logger
             )
         }
+
+        /// Create a `MobiusController` from the builder
+        ///
+        /// - Parameters:
+        ///   - defaultModel: The initial default model of the `MobiusController`
+        public func makeController(
+            from defaultModel: Model
+        ) -> MobiusController<Model, Event, Effect> {
+            return MobiusController(
+                builder: self,
+                defaultModel: defaultModel
+            )
+        }
     }
 }
 
