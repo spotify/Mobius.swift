@@ -40,13 +40,14 @@ public extension Mobius {
     ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
     static func loop<Model, Event, Effect, C: Connectable>(update: @escaping Update<Model, Event, Effect>, effectHandler: C) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+        let noOpConnectable = AnyConnectable<Model, Event> { _ in
+            Connection(acceptClosure: { _ in }, disposeClosure: {})
+        }
         return Builder(
             update: update,
             effectHandler: effectHandler,
             initiator: { First(model: $0) },
-            eventSource: AnyConnectable({ _ in
-                return Connection(acceptClosure: { _ in }, disposeClosure: {})
-            }),
+            eventSource: noOpConnectable,
             eventQueue: DispatchQueue(label: "event processor"),
             effectQueue: DispatchQueue(label: "effect processor", attributes: .concurrent),
             logger: AnyMobiusLogger(NoopLogger())
@@ -86,6 +87,20 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource.toConnectable(),
+                eventQueue: eventQueue,
+                effectQueue: effectQueue,
+                logger: logger
+            )
+        }
+
+        public func withEventSourceConnectable<ES: Connectable>(
+            _ eventSource: ES
+        ) -> Builder where ES.InputType == Model, ES.OutputType == Event {
+            return Builder(
+                update: update,
+                effectHandler: effectHandler,
+                initiator: initiator,
+                eventSource: AnyConnectable(eventSource),
                 eventQueue: eventQueue,
                 effectQueue: effectQueue,
                 logger: logger
