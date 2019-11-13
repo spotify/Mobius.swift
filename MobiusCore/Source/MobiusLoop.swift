@@ -92,7 +92,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         effectHandler: C,
         initialModel: Model,
         initiator: @escaping Initiator<Model, Effect>,
-        eventSource: AnyEventSource<Event>,
+        eventSource: AnyConnectable<Model, Event>,
         eventQueue: DispatchQueue,
         effectQueue: DispatchQueue,
         logger: AnyMobiusLogger<Model, Event, Effect>
@@ -110,7 +110,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(eventProcessor.accept)
 
-        let eventSourceDisposable = eventSource.subscribe(consumer: eventProcessor.accept)
+        let eventSourceDisposable = eventSource.connect(eventProcessor.accept)
 
         // model observer support
         let modelPublisher = ConnectablePublisher<Model>()
@@ -119,6 +119,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         let nextConsumer: Consumer<Next<Model, Effect>> = { next in
             if let model = next.model {
                 modelPublisher.post(model)
+                eventSourceDisposable.accept(model)
             }
 
             next.effects.forEach({ (effect: Effect) in
