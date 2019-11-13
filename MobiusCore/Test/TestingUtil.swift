@@ -135,7 +135,7 @@ class TestEventSource<Event>: EventSource {
     }
 
     var allDisposed: Bool {
-        return activeSubscriptions.count == 0
+        return activeSubscriptions.isEmpty
     }
 
     func dispatch(_ event: Event) {
