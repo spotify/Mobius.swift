@@ -28,40 +28,40 @@ import Foundation
 ///
 /// A `Next` instance can either be created using the the initializer or the convenience factory methods. It’s
 /// **recommended to use the convenience factory methods** as it helps with readability in update functions.
-public struct Next<Model, Effect> where Effect: Hashable {
+public struct Next<Model, Effect> {
     /// The model that should be used next.
     public let model: Model?
 
-    /// A set of effects that should be dispatched next.
+    /// A list of effects that should be dispatched next.
     ///
     /// Can be empty in which case no side-effects should be dispatched.
-    public let effects: Set<Effect>
+    public let effects: [Effect]
 }
 
 public extension Next {
-    /// Create a `Next` that updates the model and dispatches the supplied set of effects.
+    /// Create a `Next` that updates the model and dispatches the supplied effects.
     ///
     /// If `effects` is empty no side-effects will be dispatched.
     ///
     /// - Parameters:
     ///   - model: The model that should be used next.
-    ///   - effects: The effects that should be dispatched next. Defaults to an empty set (no effects).
-    /// - Returns: A `Next` that updates the model and an, optionally empty, set of effects.
-    static func next(_ model: Model, effects: Set<Effect> = []) -> Next<Model, Effect> {
+    ///   - effects: The effects that should be dispatched next. Defaults to an empty array (no effects).
+    /// - Returns: A `Next` that updates the model and an, optionally empty, list of effects.
+    static func next(_ model: Model, effects: [Effect] = []) -> Next<Model, Effect> {
         return self.init(model: model, effects: effects)
     }
 
-    /// Create a `Next` that doesn’t update the model but dispatches a set of effects.
+    /// Create a `Next` that doesn’t update the model but dispatches a list of effects.
     ///
     /// - Parameter effects: The effects that should be dispatched next.
-    /// - Returns: A `Next` that doesn’t update the model but dispatches a set of effects.
-    static func dispatchEffects(_ effects: Set<Effect>) -> Next<Model, Effect> {
+    /// - Returns: A `Next` that doesn’t update the model but dispatches a list of effects.
+    static func dispatchEffects(_ effects: [Effect]) -> Next<Model, Effect> {
         return self.init(model: nil, effects: effects)
     }
 
     /// Creates an empty `Next` that doesn’t update the model or dispatch effects.
     ///
-    /// The `model` property will be `nil`, and the `effects` set will be empty.
+    /// The `model` property will be `nil`, and the `effects` will be empty.
     static var noChange: Next<Model, Effect> {
         return Next(model: nil, effects: [])
     }
@@ -72,7 +72,7 @@ public extension Next {
     var hasEffects: Bool { return !effects.isEmpty }
 }
 
-extension Next: Equatable where Model: Equatable {
+extension Next: Equatable where Model: Equatable, Effect: Equatable {
     public static func == (lhs: Next<Model, Effect>, rhs: Next<Model, Effect>) -> Bool {
         return lhs.model == rhs.model && lhs.effects == rhs.effects
     }

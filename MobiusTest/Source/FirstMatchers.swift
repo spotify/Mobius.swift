@@ -21,7 +21,7 @@ import Foundation
 import MobiusCore
 import XCTest
 
-public typealias FirstPredicate<Model, Effect: Hashable> = Predicate<First<Model, Effect>>
+public typealias FirstPredicate<Model, Effect> = Predicate<First<Model, Effect>>
 
 /// Function to produce an `AssertFirst` function to be used with the `InitSpec`
 ///
@@ -92,7 +92,7 @@ public func hasEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        if !first.effects.isSuperset(of: expected) {
+        if !expected.allSatisfy(first.effects.contains) {
             return .failure(
                 message: "Expected effects <\(first.effects)> to contain <\(expected)>",
                 file: file,

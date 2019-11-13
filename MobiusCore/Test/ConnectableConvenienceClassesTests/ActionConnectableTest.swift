@@ -70,13 +70,3 @@ class ActionConnectableTests: QuickSpec {
         }
     }
 }
-
-private class TestFilteredActionConnectable: ActionConnectable<String, String>, EffectPredicate {
-    typealias Effect = String
-
-    static let acceptedString = "Action Connectable"
-
-    func canAccept(_ effect: String) -> Bool {
-        return effect == TestFilteredActionConnectable.acceptedString
-    }
-}

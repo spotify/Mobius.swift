@@ -19,27 +19,6 @@
 
 import Foundation
 
-public protocol EffectPredicate {
-    associatedtype Effect
-    func canAccept(_ effect: Effect) -> Bool
-}
-
-public protocol ConnectableWithPredicate: Connectable, EffectPredicate {}
-
-public protocol ConsumerWithPredicate: EffectPredicate {
-    func accept(_ effect: Effect)
-}
-
-public protocol ActionWithPredicate: EffectPredicate {
-    func run()
-}
-
-public protocol FunctionWithPredicate: EffectPredicate {
-    associatedtype Event
-
-    func apply(_ effect: Effect) -> Event
-}
-
 private typealias PredicatedConnectable<Input, Output> = (connect: ConnectClosure<Input, Output>, predicate: (Input) -> Bool)
 private typealias PredicatedConnection<Input> = (connection: Connection<Input>, predicate: (Input) -> Bool)
 
@@ -55,6 +34,7 @@ private typealias PredicatedConnection<Input> = (connection: Connection<Input>, 
 ///
 /// All the classes that the effect router know about must have a common type T.Effect. Note that
 /// instances of the builder are mutable and not thread-safe.
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public struct EffectRouterBuilder<Input, Output> {
     private let connectables: [PredicatedConnectable<Input, Output>]
 
@@ -66,39 +46,7 @@ public struct EffectRouterBuilder<Input, Output> {
         self.connectables = connectables
     }
 
-    /// Add a filtered `Connectable` for handling effects of a given type. The `Connectable` `Connection` will be invoked for
-    /// each incoming effect object that passes its `canAccept` call.
-    ///
-    /// - Parameters:
-    ///   - connectable: The `Connectable` which handles an effect
-    /// - Returns: This builder.
-    public func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output, C.Effect == Input {
-        return addConnectable(connectable, predicate: connectable.canAccept)
-    }
-
-    // If `function` produces an output that is not nil, it will be passed to the connected consumer. If nil is produced
-    // it will not be passed to the consumer
-    func addFunction(_ function: @escaping (Input) -> Output?, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> {
-        let connectable = ClosureConnectable<Input, Output>(function)
-        return addConnectable(connectable, predicate: predicate)
-    }
-
-    public func addFunction<F: FunctionWithPredicate>(_ function: F, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where F.Effect == Input, F.Event == Output {
-        let connectable = ClosureConnectable<Input, Output>(function.apply, queue: queue)
-        return addConnectable(connectable, predicate: function.canAccept)
-    }
-
-    public func addConsumer<C: ConsumerWithPredicate>(_ consumer: C, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where C.Effect == Input {
-        let connectable = ClosureConnectable<Input, Output>(consumer.accept, queue: queue)
-        return addConnectable(connectable, predicate: consumer.canAccept)
-    }
-
-    public func addAction<A: ActionWithPredicate>(_ action: A, queue: DispatchQueue? = nil) -> EffectRouterBuilder<Input, Output> where A.Effect == Input {
-        let connectable = ClosureConnectable<Input, Output>(action.run, queue: queue)
-        return addConnectable(connectable, predicate: action.canAccept)
-    }
-
-    private func addConnectable<C: Connectable>(_ connectable: C, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output {
+    func addConnectable<C: Connectable>(_ connectable: C, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output {
         let handler = (connect: connectable.connect, predicate: predicate)
         return EffectRouterBuilder<Input, Output>(connectables: connectables + [handler])
     }
@@ -129,7 +77,7 @@ private func createConnections<Input, Output>(_ connectables: [PredicatedConnect
 }
 
 private func mergedConnections<Input>(_ connections: [PredicatedConnection<Input>]) -> Connection<Input> {
-    let lock = NSRecursiveLock()
+    let lock = Lock()
 
     let connection = Connection<Input>(
         acceptClosure: { (input: Input) in

@@ -17,7 +17,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-@testable import MobiusCore
+import MobiusCore
 import Nimble
 import Quick
 
@@ -37,7 +37,7 @@ class NextTests: QuickSpec {
             describe("init(model:effects:)") {
                 context("when given a model and no effects") {
                     beforeEach {
-                        sut = Next(model: "foo", effects: [])
+                        sut = Next.next("foo", effects: [])
                     }
 
                     it("should set the model property") {
@@ -51,7 +51,7 @@ class NextTests: QuickSpec {
 
                 context("when given a set of effect and no model") {
                     beforeEach {
-                        sut = Next(model: nil, effects: [.send, .refresh])
+                        sut = Next.dispatchEffects([.send, .refresh])
                     }
 
                     it("should set the model property to nil") {
@@ -65,7 +65,7 @@ class NextTests: QuickSpec {
 
                 context("when given a model and effects") {
                     beforeEach {
-                        sut = Next(model: "bar", effects: [.send])
+                        sut = Next.next("bar", effects: [.send])
                     }
 
                     it("should set the model property") {
@@ -79,7 +79,7 @@ class NextTests: QuickSpec {
 
                 context("when given no model and no effects") {
                     beforeEach {
-                        sut = Next(model: nil, effects: [])
+                        sut = Next.dispatchEffects([])
                     }
 
                     it("should set the model property to nil") {
@@ -116,7 +116,7 @@ class NextTests: QuickSpec {
 
                 describe("noChange") {
                     it("should not have a model") {
-                        expect(Next<Int, NoEffect>.noChange.model).to(beNil())
+                        expect(Next<Int, Never>.noChange.model).to(beNil())
                     }
 
                     it("should not have any effects") {
@@ -128,7 +128,7 @@ class NextTests: QuickSpec {
             describe("hasEffects") {
                 context("when the Next has multiple effects") {
                     beforeEach {
-                        sut = Next(model: nil, effects: [.send, .refresh])
+                        sut = Next.dispatchEffects([.send, .refresh])
                     }
 
                     it("should return true") {
@@ -138,7 +138,7 @@ class NextTests: QuickSpec {
 
                 context("when the Next has one effect") {
                     beforeEach {
-                        sut = Next(model: nil, effects: [.refresh])
+                        sut = Next.dispatchEffects([.refresh])
                     }
 
                     it("should return true") {
@@ -148,11 +148,11 @@ class NextTests: QuickSpec {
 
                 context("when the Next does not have any effects") {
                     it("should return false") {
-                        expect(Next<String, Effect>(model: "foo", effects: []).hasEffects).to(beFalse())
+                        expect(Next<String, Effect>.next("foo", effects: []).hasEffects).to(beFalse())
                     }
 
                     it("should return false for a change with nil effects") {
-                        expect(Next<String, Effect>(model: nil, effects: []).hasEffects).to(beFalse())
+                        expect(Next<String, Effect>.dispatchEffects([]).hasEffects).to(beFalse())
                     }
 
                     it("should return false for a noChange") {
@@ -161,7 +161,6 @@ class NextTests: QuickSpec {
                 }
             }
 
-            #if swift(>=4.1)
             describe("Equatable") {
                 context("when the model type is equatable") {
                     let model1 = "some text"
@@ -170,40 +169,39 @@ class NextTests: QuickSpec {
                     let effect2 = "different event from before"
 
                     it("should return true if model and effects are equal") {
-                        let lhs = Next(model: model1, effects: [effect1])
-                        let rhs = Next(model: model1, effects: [effect1])
+                        let lhs = Next.next(model1, effects: [effect1])
+                        let rhs = Next.next(model1, effects: [effect1])
 
                         expect(lhs == rhs).to(beTrue())
                     }
 
                     it("should return false if model are not equal but effects are") {
-                        let lhs = Next(model: model1, effects: [effect1])
-                        let rhs = Next(model: model2, effects: [effect1])
+                        let lhs = Next.next(model1, effects: [effect1])
+                        let rhs = Next.next(model2, effects: [effect1])
 
                         expect(lhs == rhs).to(beFalse())
                     }
 
                     it("should return false if model are equal but effects aren't") {
-                        let lhs = Next(model: model1, effects: [effect1])
-                        let rhs = Next(model: model1, effects: [effect2])
+                        let lhs = Next.next(model1, effects: [effect1])
+                        let rhs = Next.next(model1, effects: [effect2])
 
                         expect(lhs == rhs).to(beFalse())
                     }
 
                     it("should return false if neither model nor effects are equal") {
-                        let lhs = Next(model: model1, effects: [effect1])
-                        let rhs = Next(model: model2, effects: [effect2])
+                        let lhs = Next.next(model1, effects: [effect1])
+                        let rhs = Next.next(model2, effects: [effect2])
 
                         expect(lhs == rhs).to(beFalse())
                     }
                 }
             }
-            #endif
 
             describe("debug description") {
                 context("when containing a model") {
                     it("should produce the appropriate description") {
-                        let next = Next<Int, Int>(model: 3, effects: Set([1]))
+                        let next = Next<Int, Int>.next(3, effects: [1])
                         let description = String(describing: next)
                         expect(description).to(equal("(3, [1])"))
                     }
@@ -211,7 +209,7 @@ class NextTests: QuickSpec {
 
                 context("when no model") {
                     it("should produce the appropriate description") {
-                        let next = Next<Int, Int>(model: nil, effects: Set([1]))
+                        let next = Next<Int, Int>.dispatchEffects([1])
                         let description = String(describing: next)
                         expect(description).to(equal("(nil, [1])"))
                     }

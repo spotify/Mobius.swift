@@ -17,21 +17,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import MobiusCore
-import MobiusTest
+// Primitive EffectHandler
+public struct EffectHandler<Effect, Event> {
+    public let handle: (Effect, @escaping Consumer<Event>) -> Void
+    public let disposable: Disposable
 
-extension MobiusTest.PredicateResult {
-    var failureMessage: String? {
-        if case .failure(let message, _, _) = self {
-            return message
-        }
-        return nil
-    }
-
-    var wasSuccessful: Bool {
-        if case .success = self {
-            return true
-        }
-        return false
+    public init(
+        handle: @escaping (Effect, @escaping Consumer<Event>) -> Void,
+        disposable: Disposable
+    ) {
+        self.handle = handle
+        self.disposable = disposable
     }
 }

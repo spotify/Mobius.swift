@@ -77,13 +77,3 @@ class BlockingFunctionConnectableTests: QuickSpec {
         }
     }
 }
-
-private class TestFilteredBlockingFunctionConnectable: BlockingFunctionConnectable<String, String>, EffectPredicate {
-    typealias Effect = String
-
-    static let acceptedString = "Blocking Function Connectable"
-
-    func canAccept(_ effect: String) -> Bool {
-        return effect == TestFilteredBlockingFunctionConnectable.acceptedString
-    }
-}

@@ -25,7 +25,7 @@ class LoggingInitiatorTests: QuickSpec {
     override func spec() {
         describe("LoggingInitiator") {
             var logger: TestMobiusLogger!
-            var loggingInitiator: LoggingInitiator<AllStrings>!
+            var loggingInitiator: LoggingInitiator<String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()
@@ -35,7 +35,7 @@ class LoggingInitiatorTests: QuickSpec {
             it("should log willInitiate and didInitiate for each initiate attempt") {
                 _ = loggingInitiator.initiate("from this")
 
-                expect(logger.logMessages).to(equal(["willInitiate(from this)", "didInitiate(from this, First<String, String>(model: \"from this\", effects: Set([])))"]))
+                expect(logger.logMessages).to(equal(["willInitiate(from this)", "didInitiate(from this, First<String, String>(model: \"from this\", effects: []))"]))
             }
 
             it("should return init from delegate") {

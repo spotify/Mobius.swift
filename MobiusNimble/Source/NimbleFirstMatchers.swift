@@ -72,7 +72,7 @@ public func haveNoEffects<Model, Effect>() -> Nimble.Predicate<First<Model, Effe
 ///
 /// - Parameter effects: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
-public func haveEffects<Model, Effect: Equatable>(_ effects: Set<Effect>) -> Nimble.Predicate<First<Model, Effect>> {
+public func haveEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble.Predicate<First<Model, Effect>> {
     return Nimble.Predicate<First<Model, Effect>>.define(matcher: { actualExpression -> Nimble.PredicateResult in
         guard let first = try actualExpression.evaluate() else {
             return unexpectedNilParameterPredicateResult
@@ -80,6 +80,11 @@ public func haveEffects<Model, Effect: Equatable>(_ effects: Set<Effect>) -> Nim
 
         let expectedDescription = String(describing: effects)
         let actualDescription = String(describing: first.effects)
-        return PredicateResult(bool: first.effects.isSuperset(of: effects), message: .expectedCustomValueTo("contain <\(expectedDescription)>", "<\(actualDescription)> (order doesn't matter)"))
+        return PredicateResult(bool: effects.allSatisfy(first.effects.contains), message: .expectedCustomValueTo("contain <\(expectedDescription)>", "<\(actualDescription)> (order doesn't matter)"))
     })
+}
+
+@available(*, deprecated, message: "use array of effects instead")
+public func haveEffects<Model, Effect: Equatable>(_ effects: Set<Effect>) -> Nimble.Predicate<First<Model, Effect>> {
+    return haveEffects(Array(effects))
 }

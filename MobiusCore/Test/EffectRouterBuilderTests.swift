@@ -27,7 +27,7 @@ import Quick
 class EffectRouterBuilderTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        describe("EffectRouterBuilder") {
+        describe("Legacy EffectRouterBuilder") {
             var sut: EffectRouterBuilder<String, String>!
 
             var output: String?
@@ -383,6 +383,10 @@ class EffectRouterBuilderTests: QuickSpec {
             }
         }
     }
+}
+
+private func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
+    dispatch(effect)
 }
 
 private class TestFilteredConnectable: Connectable, EffectPredicate {

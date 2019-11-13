@@ -19,12 +19,13 @@
 
 import Foundation
 
-public extension NSRecursiveLock {
-    @discardableResult
+struct Lock {
+    private let lock = NSRecursiveLock()
+
     func synchronized<R>(closure: () -> R) -> R {
-        lock()
+        lock.lock()
         defer {
-            self.unlock()
+            lock.unlock()
         }
 
         return closure()

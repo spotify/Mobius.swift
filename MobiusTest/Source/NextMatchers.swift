@@ -20,7 +20,7 @@
 import MobiusCore
 import XCTest
 
-public typealias NextPredicate<Model, Effect: Hashable> = Predicate<Next<Model, Effect>>
+public typealias NextPredicate<Model, Effect> = Predicate<Next<Model, Effect>>
 
 /// Convenience function to produce `UpdateSpec` `Assert`
 ///
@@ -28,11 +28,11 @@ public typealias NextPredicate<Model, Effect: Hashable> = Predicate<Next<Model, 
 ///   - predicate: a list of predicates to test
 ///   - failFunction: a function which is called when the predicate fails. Defaults to XCTFail
 /// - Returns: An `UpdateSpec` `Assert` that uses the assert to verify the result passed in to the `Assert`
-public func assertThatNext<Types: LoopTypes>(
-    _ predicates: NextPredicate<Types.Model, Types.Effect>...,
+public func assertThatNext<Model, Event, Effect>(
+    _ predicates: NextPredicate<Model, Effect>...,
     failFunction: @escaping AssertionFailure = XCTFail
-) -> UpdateSpec<Types>.Assert {
-    return { (result: UpdateSpec<Types>.Result) in
+) -> UpdateSpec<Model, Event, Effect>.Assert {
+    return { (result: UpdateSpec<Model, Event, Effect>.Result) in
         predicates.forEach({ predicate in
             let assertionResult = predicate(result.lastNext)
             if case let .failure(message, file, line) = assertionResult {
@@ -118,14 +118,14 @@ public func hasNoEffects<Model, Effect>(file: StaticString = #file, line: UInt =
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
-public func hasEffects<Model, Effect>(
-    _ expected: Set<Effect>,
+public func hasEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
     file: StaticString = #file,
     line: UInt = #line
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.effects
-        if !actual.isSuperset(of: expected) {
+        if !expected.allSatisfy(actual.contains) {
             return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
         }
         return .success

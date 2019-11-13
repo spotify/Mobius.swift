@@ -26,8 +26,8 @@ class MobiusLoopTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("MobiusLoop") {
-            var builder: Mobius.Builder<AllStrings>!
-            var loop: MobiusLoop<AllStrings>!
+            var builder: Mobius.Builder<String, String, String>!
+            var loop: MobiusLoop<String, String, String>!
             var receivedModels: [String]!
             var effectHandler: SimpleTestConnectable!
             var queue: DispatchQueue!
@@ -38,7 +38,7 @@ class MobiusLoopTests: QuickSpec {
 
                 modelObserver = { receivedModels.append($0) }
 
-                let update: Update<AllStrings> = { _, event in Next.next(event) }
+                let update: Update<String, String, String> = { _, event in Next.next(event) }
 
                 effectHandler = SimpleTestConnectable()
 
@@ -104,9 +104,7 @@ class MobiusLoopTests: QuickSpec {
                 }
 
                 it("should queue up events dispatched before start to support racy initialisations") {
-                    let update: Update<AllStrings> = { model, event in Next.next(model + "-" + event) }
-
-                    loop = Mobius.loop(update: update, effectHandler: EagerEffectHandler())
+                    loop = Mobius.loop(update: { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
                         .withEventQueue(queue)
                         .start(from: "the beginning")
 
@@ -122,12 +120,12 @@ class MobiusLoopTests: QuickSpec {
                 it("should track the most recent model") {
                     loop = builder.start(from: "the first model")
 
-                    expect(loop.getMostRecentModel()).to(equal("the first model"))
+                    expect(loop.latestModel).to(equal("the first model"))
 
                     loop.dispatchEvent("two")
 
                     queue.waitForOutstandingTasks()
-                    expect(loop.getMostRecentModel()).to(equal("two"))
+                    expect(loop.latestModel).to(equal("two"))
                 }
             }
 
@@ -160,20 +158,20 @@ class MobiusLoopTests: QuickSpec {
             }
 
             describe("dispose dependencies") {
-                var eventProcessor: TestEventProcessor<AllStrings>!
+                var eventProcessor: TestEventProcessor<String, String, String>!
                 var modelPublisher: ConnectablePublisher<String>!
                 var disposable: ConnectablePublisher<String>!
 
                 beforeEach {
-                    eventProcessor = TestEventProcessor<AllStrings>(
+                    eventProcessor = TestEventProcessor(
                         update: { _, _ in .noChange },
-                        publisher: ConnectablePublisher<Next<String, String>>(),
+                        publisher: ConnectablePublisher(),
                         queue: DispatchQueue(label: "dispose test queue")
                     )
                     modelPublisher = ConnectablePublisher<String>()
                     disposable = ConnectablePublisher<String>()
 
-                    loop = MobiusLoop<AllStrings>(
+                    loop = MobiusLoop(
                         eventProcessor: eventProcessor,
                         modelPublisher: modelPublisher,
                         disposable: disposable
@@ -200,7 +198,7 @@ class MobiusLoopTests: QuickSpec {
                 }
 
                 it("should log startup") {
-                    expect(logger.logMessages).toEventually(equal(["willInitiate(begin)", "didInitiate(begin, First<String, String>(model: \"begin\", effects: Set([])))"]))
+                    expect(logger.logMessages).toEventually(equal(["willInitiate(begin)", "didInitiate(begin, First<String, String>(model: \"begin\", effects: []))"]))
                 }
 
                 it("should log updates") {
@@ -245,20 +243,20 @@ class MobiusLoopTests: QuickSpec {
                 let eventProcessorDebugDescription = "blah"
                 beforeEach {
                     let publisher = ConnectablePublisher<String>()
-                    let eventProcessor = TestEventProcessor<AllStrings>(
+                    let eventProcessor = TestEventProcessor<String, String, String>(
                         update: { _, _ in .noChange },
                         publisher: ConnectablePublisher<Next<String, String>>(),
                         queue: DispatchQueue(label: "dispose test queue")
                     )
                     eventProcessor.desiredDebugDescription = eventProcessorDebugDescription
 
-                    loop = MobiusLoop<AllStrings>(eventProcessor: eventProcessor, modelPublisher: publisher, disposable: publisher)
+                    loop = MobiusLoop(eventProcessor: eventProcessor, modelPublisher: publisher, disposable: publisher)
                 }
 
                 context("when not disposed") {
                     it("should describe the loop and the event processor") {
                         let description = String(describing: loop)
-                        expect(description).to(equal("Optional(MobiusLoop<AllStrings> \(eventProcessorDebugDescription))"))
+                        expect(description).to(equal("Optional(MobiusLoop<String, String, String> \(eventProcessorDebugDescription))"))
                     }
                 }
 
@@ -269,6 +267,45 @@ class MobiusLoopTests: QuickSpec {
                         expect(description).to(equal("Optional(disposed loop!)"))
                     }
                 }
+            }
+        }
+
+        context("when configuring with an EffectHandler") {
+            var loop: MobiusLoop<Int, Int, Int>!
+            var isDisposed: Bool!
+            var didReceiveEffect: Bool!
+            beforeEach {
+                isDisposed = false
+                didReceiveEffect = false
+                let effectHandler = EffectHandler<Int, Int>(
+                    handle: { _, _ in
+                        didReceiveEffect = true
+                    },
+                    disposable: AnonymousDisposable {
+                        isDisposed = true
+                    }
+                )
+                let payload: (Int) -> Int? = { $0 }
+                let effectConnectable = EffectRouter<Int, Int>()
+                    .routeEffects(withPayload: payload).to(effectHandler)
+                    .asConnectable
+                let update = { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
+                loop = Mobius
+                    .loop(update: update, effectHandler: effectConnectable)
+                    .start(from: 0)
+            }
+            afterEach {
+                loop.dispose()
+            }
+
+            it("should dispatch effects to the EffectHandler") {
+                loop.dispatchEvent(1)
+                expect(didReceiveEffect).toEventually(beTrue())
+            }
+
+            it("should dispose the EffectHandler when the loop is disposed") {
+                loop.dispose()
+                expect(isDisposed).toEventually(beTrue())
             }
         }
     }
@@ -287,7 +324,7 @@ private class EagerEffectHandler: Connectable {
     }
 }
 
-private class TestEventProcessor<T: LoopTypes>: EventProcessor<T> {
+private class TestEventProcessor<Model, Event, Effect>: EventProcessor<Model, Event, Effect> {
     var disposed = false
     override func dispose() {
         disposed = true

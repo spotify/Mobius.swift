@@ -26,8 +26,8 @@ import Nimble
 ///
 /// - Parameter predicates: matchers an array of `Predicate`, all of which must match
 /// - Returns: an `Assert` that applies all the matchers
-public func assertThatNext<T: LoopTypes>(_ predicates: Nimble.Predicate<Next<T.Model, T.Effect>>...) -> UpdateSpec<T>.Assert {
-    return { (result: UpdateSpec<T>.Result) in
+public func assertThatNext<Model, Event, Effect>(_ predicates: Nimble.Predicate<Next<Model, Effect>>...) -> UpdateSpec<Model, Event, Effect>.Assert {
+    return { (result: UpdateSpec.Result) in
         predicates.forEach({ predicate in
             expect(result.lastNext).to(predicate)
         })
@@ -102,7 +102,7 @@ public func haveNoEffects<Model, Effect>() -> Nimble.Predicate<Next<Model, Effec
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
-public func haveEffects<Model, Effect: Hashable>(_ expected: Set<Effect>) -> Nimble.Predicate<Next<Model, Effect>> {
+public func haveEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimble.Predicate<Next<Model, Effect>> {
     return Nimble.Predicate<Next<Model, Effect>>.define(matcher: { actualExpression in
         guard let next = try actualExpression.evaluate() else {
             return unexpectedNilParameterPredicate
@@ -111,8 +111,13 @@ public func haveEffects<Model, Effect: Hashable>(_ expected: Set<Effect>) -> Nim
         let expectedDescription = String(describing: expected)
         let actualDescription = String(describing: next.effects)
         return Nimble.PredicateResult(
-            bool: next.effects.isSuperset(of: expected),
+            bool: expected.allSatisfy(next.effects.contains),
             message: .expectedCustomValueTo("contain <\(expectedDescription)>", "<\(actualDescription)> (order doesn't matter)")
         )
     })
+}
+
+@available(*, deprecated, message: "use array of effects instead")
+public func haveEffects<Model, Effect: Hashable>(_ expected: Set<Effect>) -> Nimble.Predicate<Next<Model, Effect>> {
+    return haveEffects(Array(expected))
 }

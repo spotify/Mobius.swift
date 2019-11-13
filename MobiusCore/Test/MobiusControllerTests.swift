@@ -17,8 +17,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Foundation
 @testable import MobiusCore
+
+import Foundation
 import Nimble
 import Quick
 
@@ -29,7 +30,7 @@ class MobiusControllerTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("MobiusController") {
-            var controller: MobiusController<AllStrings>!
+            var controller: MobiusController<String, String, String>!
             var view: RecordingTestConnectable!
             var errorThrown: Bool!
 
@@ -40,13 +41,10 @@ class MobiusControllerTests: QuickSpec {
                     .next("\(model)-\(event)")
                 }
 
-                var builder: Mobius.Builder<AllStrings> = Mobius.loop(
-                    update: updateFunction,
-                    effectHandler: SimpleTestConnectable()
-                )
-                builder = builder.withEventQueue(self.serialEventQueue)
-                builder = builder.withEffectQueue(self.serialEffectQueue)
-                controller = MobiusController(builder: builder, defaultModel: "S")
+                controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
+                    .withEventQueue(self.serialEventQueue)
+                    .withEffectQueue(self.serialEffectQueue)
+                    .makeController(from: "S")
 
                 errorThrown = false
                 MobiusHooks.setErrorHandler({ _, _, _ in
@@ -118,13 +116,13 @@ class MobiusControllerTests: QuickSpec {
                 describe("disposing connections") {
                     var modelObserver: MockConnectable!
                     var effectObserver: MockConnectable!
-                    var controller: MobiusController<AllStrings>!
+                    var controller: MobiusController<String, String, String>!
 
                     beforeEach {
                         modelObserver = MockConnectable()
                         effectObserver = MockConnectable()
-                        let builder: Mobius.Builder<AllStrings> = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
-                        controller = MobiusController<AllStrings>(builder: builder, defaultModel: "")
+                        controller = Mobius.loop(update: { _, _ in .noChange }, effectHandler: effectObserver)
+                            .makeController(from: "")
                         controller.connectView(modelObserver)
                         controller.start()
                     }

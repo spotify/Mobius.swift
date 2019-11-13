@@ -33,6 +33,7 @@ import MobiusCore
 ///
 /// - Attention: Should not be used directly. Instead a subclass should be used which overrides the
 /// `handle` and `disposed` functions
+@available(*, deprecated, message: "use `EffectHandler` instead")
 open class ConnectableClass<InputType, OutputType>: Connectable {
     private var consumer: Consumer<OutputType>?
 
@@ -49,14 +50,17 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
     /// - Attention: This class will throw an error to the MobiusHooks error handler if a connection has not been
     /// established before a call to this function is made. Setting up a connection is usually handled by the MobiusLoop
     public final func send(_ output: OutputType) {
-        lock.synchronized {
-            guard let consumer = consumer else {
-                handleError("\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set. Send should only be used once the Connectable has been properly connected.")
-                return
-            }
-
-            consumer(output)
+        lock.lock()
+        defer {
+            lock.unlock()
         }
+        guard let consumer = consumer else {
+            handleError("\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set. Send should only be used once the Connectable has been properly connected.")
+            return
+        }
+
+        consumer(output)
+
     }
 
     /// Called when the `Connectable` receives input to allow the subclass to react to it.
@@ -76,24 +80,27 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
     }
 
     public final func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
-        return lock.synchronized { () -> Connection<InputType> in
-            guard self.consumer == nil else {
-                handleError("ConnectionLimitExceeded: The Connectable \(type(of: self)) is already connected. Unable to connect more than once")
-                return BrokenConnection<InputType>.connection()
-            }
-
-            self.consumer = consumer
-            return Connection<InputType>(acceptClosure: self.accept, disposeClosure: self.dispose)
+        lock.lock()
+        defer {
+            lock.unlock()
         }
+
+        guard self.consumer == nil else {
+            handleError("ConnectionLimitExceeded: The Connectable \(type(of: self)) is already connected. Unable to connect more than once")
+            return BrokenConnection<InputType>.connection()
+        }
+
+        self.consumer = consumer
+        return Connection<InputType>(acceptClosure: self.accept, disposeClosure: self.dispose)
     }
 
     private func accept(_ input: InputType) {
         // The construct of consumerSet is there to release the lock asap.
         // We dont know what goes on in the overriden `handle` function...
         var consumerSet: Bool = false
-        lock.synchronized {
-            consumerSet = consumer != nil
-        }
+        lock.lock()
+        consumerSet = consumer != nil
+        lock.unlock()
         guard consumerSet else {
             handleError("\(type(of: self)) is unable to handle \(type(of: input)) before any consumer has been set")
             return
@@ -103,9 +110,9 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
     }
 
     private func dispose() {
-        lock.synchronized {
-            consumer = nil
-        }
+        lock.lock()
+        consumer = nil
+        lock.unlock()
         onDispose()
     }
 }

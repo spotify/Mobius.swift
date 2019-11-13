@@ -21,14 +21,14 @@ import Foundation
 
 /// Internal class that manages the atomic state updates and notifications of model changes when processing of events via
 /// the Update function.
-class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible {
-    let update: Update<Types>
-    let publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>
+class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
+    let update: Update<Model, Event, Effect>
+    let publisher: ConnectablePublisher<Next<Model, Effect>>
 
     private let queue: DispatchQueue
 
-    private var currentModel: Types.Model?
-    private var queuedEvents = [Types.Event]()
+    private var currentModel: Model?
+    private var queuedEvents = [Event]()
 
     public var debugDescription: String {
         let modelDescription: String
@@ -41,8 +41,8 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
     }
 
     init(
-        update: @escaping Update<Types>,
-        publisher: ConnectablePublisher<Next<Types.Model, Types.Effect>>,
+        update: @escaping Update<Model, Event, Effect>,
+        publisher: ConnectablePublisher<Next<Model, Effect>>,
         queue: DispatchQueue
     ) {
         self.update = update
@@ -50,7 +50,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
         self.queue = queue
     }
 
-    func start(from first: First<Types.Model, Types.Effect>) {
+    func start(from first: First<Model, Effect>) {
         queue.sync(flags: .barrier) {
             currentModel = first.model
 
@@ -64,7 +64,7 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
         }
     }
 
-    func accept(_ event: Types.Event) {
+    func accept(_ event: Event) {
         queue.async(flags: .barrier) {
             if let current = self.currentModel {
                 let next = self.update(current, event)
@@ -84,7 +84,14 @@ class EventProcessor<Types: LoopTypes>: Disposable, CustomDebugStringConvertible
         publisher.dispose()
     }
 
-    func readCurrentModel() -> Types.Model? {
+    func readCurrentModel() -> Model? {
         return queue.sync { currentModel }
+    }
+
+    var latestModel: Model {
+        guard let model = readCurrentModel() else {
+            preconditionFailure("latestModel may only be invoked after start()")
+        }
+        return model
     }
 }

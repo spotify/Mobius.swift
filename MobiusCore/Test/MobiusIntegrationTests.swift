@@ -18,7 +18,7 @@
 // under the License.
 
 import Foundation
-import MobiusCore // not using '@testable', because we should only use public APIs in these tests
+import MobiusCore
 import Nimble
 import Quick
 
@@ -27,12 +27,8 @@ class MobiusIntegrationTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("Mobius integration tests") {
-            struct TestLogic: LoopTypes {
-                typealias Model = String
-                typealias Event = String
-                typealias Effect = String
-
-                func initiate(model: Model) -> First<Model, Effect> {
+            struct TestLogic {
+                func initiate(model: String) -> First<String, String> {
                     switch model {
                     case "start":
                         return First(model: "init", effects: ["trigger loading"])
@@ -41,7 +37,7 @@ class MobiusIntegrationTests: QuickSpec {
                     }
                 }
 
-                func update(model: Model, event: Event) -> Next<Model, Effect> {
+                func update(model: String, event: String) -> Next<String, String> {
                     switch event {
                     case "button pushed":
                         return Next.next("pushed")
@@ -58,8 +54,8 @@ class MobiusIntegrationTests: QuickSpec {
             }
 
             var receivedModels: [String]!
-            var builder: Mobius.Builder<TestLogic>!
-            var loop: MobiusLoop<TestLogic>!
+            var builder: Mobius.Builder<String, String, String>!
+            var loop: MobiusLoop<String, String, String>!
             var queue: DispatchQueue!
 
             var eventSourceEventConsumer: Consumer<String>!

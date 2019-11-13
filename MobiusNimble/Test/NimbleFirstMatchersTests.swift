@@ -45,13 +45,13 @@ class NimbleFirstMatchersTests: QuickSpec {
 
             let model = "3"
             func testInitiator(model: String) -> First<String, String> {
-                return First<String, String>(model: model, effects: Set(["2", "4"]))
+                return First<String, String>(model: model, effects: ["2", "4"])
             }
 
             // Testing through proxy: UpdateSpec
             context("when asserting through predicates that fail") {
                 beforeEach {
-                    InitSpec<AllStrings>(testInitiator)
+                    InitSpec(testInitiator)
                         .when("a model")
                         .then(assertThatFirst(haveModel(model + "1"), haveNoEffects()))
                 }
@@ -135,7 +135,7 @@ class NimbleFirstMatchersTests: QuickSpec {
                 context("when the First has effects") {
                     let effects = [4]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(effects))
+                        let first = First<Int, Int>(model: 3, effects: effects)
                         expect(first).to(haveNoEffects())
                     }
 
@@ -168,8 +168,8 @@ class NimbleFirstMatchersTests: QuickSpec {
                 context("when the First has those effects") {
                     let expectedEffects = [4, 7, 0]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(expectedEffects))
-                        expect(first).to(haveEffects(Set(expectedEffects)))
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
+                        expect(first).to(haveEffects(expectedEffects))
                     }
 
                     it("should not match") {
@@ -181,8 +181,8 @@ class NimbleFirstMatchersTests: QuickSpec {
                     let expectedEffects = [4, 7, 0]
                     let actualEffects = [1, 4, 7, 0]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(actualEffects))
-                        expect(first).to(haveEffects(Set(expectedEffects)))
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveEffects(expectedEffects))
                     }
 
                     it("should match") {
@@ -194,8 +194,8 @@ class NimbleFirstMatchersTests: QuickSpec {
                     let expectedEffects = [4]
                     let actualEffects = [1]
                     beforeEach {
-                        let first = First<Int, Int>(model: 3, effects: Set(actualEffects))
-                        expect(first).to(haveEffects(Set(expectedEffects)))
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveEffects(expectedEffects))
                     }
 
                     it("should produce an appropriate error message") {
