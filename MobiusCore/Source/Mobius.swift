@@ -44,7 +44,9 @@ public extension Mobius {
             update: update,
             effectHandler: effectHandler,
             initiator: { First(model: $0) },
-            eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
+            eventSource: AnyConnectable({ _ in
+                return Connection(acceptClosure: { _ in }, disposeClosure: {})
+            }),
             eventQueue: DispatchQueue(label: "event processor"),
             effectQueue: DispatchQueue(label: "effect processor", attributes: .concurrent),
             logger: AnyMobiusLogger(NoopLogger())
@@ -55,7 +57,7 @@ public extension Mobius {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
         private let initiator: Initiator<Model, Effect>
-        private let eventSource: AnyEventSource<Event>
+        private let eventSource: AnyConnectable<Model, Event>
         private let eventQueue: DispatchQueue
         private let effectQueue: DispatchQueue
         private let logger: AnyMobiusLogger<Model, Event, Effect>
@@ -64,7 +66,7 @@ public extension Mobius {
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
-            eventSource: AnyEventSource<Event>,
+            eventSource: AnyConnectable<Model, Event>,
             eventQueue: DispatchQueue,
             effectQueue: DispatchQueue,
             logger: AnyMobiusLogger<Model, Event, Effect>
@@ -83,7 +85,7 @@ public extension Mobius {
                 update: update,
                 effectHandler: effectHandler,
                 initiator: initiator,
-                eventSource: AnyEventSource(eventSource),
+                eventSource: eventSource.toConnectable(),
                 eventQueue: eventQueue,
                 effectQueue: effectQueue,
                 logger: logger
@@ -203,5 +205,23 @@ class LoggingUpdate<Model, Event, Effect> {
         didUpdate(model, event, result)
 
         return result
+    }
+}
+
+private extension EventSource {
+    func toConnectable<Model>() -> AnyConnectable<Model, Event> {
+        return AnyConnectable<Model, Event> { dispatch -> Connection<Model> in
+            var disposable: Disposable?
+            return Connection<Model>(
+                acceptClosure: { _ in
+                    if disposable == nil {
+                        disposable = self.subscribe(consumer: dispatch)
+                    }
+                },
+                disposeClosure: {
+                    disposable?.dispose()
+                }
+            )
+        }
     }
 }
