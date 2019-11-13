@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0280FB55237C1476007489A2 /* EventSourceConnectableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0280FB53237C1450007489A2 /* EventSourceConnectableTests.swift */; };
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		02C4061D2373078400BD7ED8 /* PredicatedSafeConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
@@ -243,6 +244,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0280FB53237C1450007489A2 /* EventSourceConnectableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSourceConnectableTests.swift; sourceTree = "<group>"; };
 		02C4061C2373078400BD7ED8 /* PredicatedSafeConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredicatedSafeConnection.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
@@ -529,6 +531,7 @@
 			children = (
 				5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */,
 				2DDF54C2229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift */,
+				0280FB53237C1450007489A2 /* EventSourceConnectableTests.swift */,
 			);
 			path = EventSources;
 			sourceTree = "<group>";
@@ -1154,6 +1157,7 @@
 				02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */,
 				5BB2887520999AD60043B530 /* AnyEventSourceTests.swift in Sources */,
 				5B1F1047211037270067193C /* BlockingFunctionConnectableTests.swift in Sources */,
+				0280FB55237C1476007489A2 /* EventSourceConnectableTests.swift in Sources */,
 				5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */,
 				5BB2887820999AD60043B530 /* AnyConnectionTests.swift in Sources */,
 				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
