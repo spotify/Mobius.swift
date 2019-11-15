@@ -106,3 +106,41 @@ class TestMobiusLogger: MobiusLogger {
         logMessages.append("didUpdate(\(model), \(event), \(next))")
     }
 }
+
+class TestEventSource<Event>: EventSource {
+    enum Subscription {
+        case disposed
+        case active(Consumer<Event>)
+    }
+    private(set) var subscriptions: [Subscription] = []
+
+    func subscribe(consumer: @escaping Consumer<Event>) -> Disposable {
+        let index = subscriptions.count
+        subscriptions.append(.active(consumer))
+
+        return AnonymousDisposable { [weak self] in
+            self?.subscriptions[index] = .disposed
+        }
+    }
+
+    var activeSubscriptions: [Consumer<Event>] {
+        return subscriptions.compactMap {
+            switch $0 {
+            case .disposed:
+                return nil
+            case .active(let consumer):
+                return consumer
+            }
+        }
+    }
+
+    var allDisposed: Bool {
+        return activeSubscriptions.isEmpty
+    }
+
+    func dispatch(_ event: Event) {
+        activeSubscriptions.forEach {
+            $0(event)
+        }
+    }
+}
