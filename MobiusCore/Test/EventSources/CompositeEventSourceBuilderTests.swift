@@ -49,7 +49,7 @@ class CompositeEventSourceBuilderTest: QuickSpec {
                 }
 
                 context("with one event source") {
-                    var eventSource: TestEventSource!
+                    var eventSource: TestEventSource<Int>!
 
                     beforeEach {
                         eventSource = TestEventSource()
@@ -75,12 +75,12 @@ class CompositeEventSourceBuilderTest: QuickSpec {
                     it("should return a disposable that disposes the original event source") {
                         disposable?.dispose()
 
-                        expect(eventSource.isDisposed).to(beTrue())
+                        expect(eventSource.allDisposed).to(beTrue())
                     }
                 }
 
                 context("with several event sources") {
-                    var eventSources: [TestEventSource]!
+                    var eventSources: [TestEventSource<Int>]!
 
                     beforeEach {
                         eventSources = [TestEventSource(), TestEventSource(), TestEventSource()]
@@ -110,30 +110,11 @@ class CompositeEventSourceBuilderTest: QuickSpec {
                         disposable?.dispose()
 
                         eventSources.forEach {
-                            expect($0.isDisposed).to(beTrue())
+                            expect($0.allDisposed).to(beTrue())
                         }
                     }
                 }
             }
         }
-    }
-}
-
-private class TestEventSource: EventSource, Disposable {
-    typealias Event = Int
-
-    var consumer: Consumer<Int>?
-    func subscribe(consumer: @escaping Consumer<Int>) -> Disposable {
-        self.consumer = consumer
-        return self
-    }
-
-    var isDisposed = false
-    func dispose() {
-        isDisposed = true
-    }
-
-    func dispatch(_ event: Int) {
-        consumer?(event)
     }
 }

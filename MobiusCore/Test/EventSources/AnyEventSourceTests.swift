@@ -26,7 +26,7 @@ class AnyEventSourceTests: QuickSpec {
     override func spec() {
         describe("AnyEventSource") {
             var eventConsumer: TestConsumer!
-            var delegateEventSource: TestEventSource!
+            var delegateEventSource: TestEventSource<String>!
 
             beforeEach {
                 eventConsumer = TestConsumer()
@@ -53,7 +53,7 @@ class AnyEventSourceTests: QuickSpec {
 
                 _ = source.subscribe(consumer: eventConsumer.accept)
 
-                delegateEventSource.produce(value: "a value")
+                delegateEventSource.dispatch("a value")
 
                 expect(eventConsumer.received).to(equal(["a value"]))
             }
@@ -72,7 +72,7 @@ class AnyEventSourceTests: QuickSpec {
 
                 actualDisposable.dispose()
 
-                expect(delegateEventSource.disposed).to(beTrue())
+                expect(delegateEventSource.allDisposed).to(beTrue())
             }
         }
     }
@@ -83,26 +83,5 @@ private class TestConsumer {
 
     func accept(_ value: String) {
         received.append(value)
-    }
-}
-
-private class TestEventSource: EventSource {
-    typealias Event = String
-
-    var consumer: Consumer<String>?
-    var disposed = false
-
-    func subscribe(consumer: @escaping Consumer<String>) -> Disposable {
-        guard self.consumer == nil else {
-            fatalError("subscribed twice to the same event source")
-        }
-
-        self.consumer = consumer
-
-        return AnonymousDisposable(disposer: { () in self.disposed = true })
-    }
-
-    func produce(value: String) {
-        consumer!(value)
     }
 }
