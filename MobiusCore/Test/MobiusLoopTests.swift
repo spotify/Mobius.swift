@@ -264,7 +264,7 @@ class MobiusLoopTests: QuickSpec {
                     it("should indicate that the loop is disposed") {
                         loop.dispose()
                         let description = String(describing: loop)
-                        expect(description).to(equal("Optional(disposed loop!)"))
+                        expect(description).to(equal("Optional(disposed MobiusLoop<String, String, String>!)"))
                     }
                 }
             }

@@ -31,7 +31,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
 
     public var debugDescription: String {
         if disposed.value {
-            return "disposed loop!"
+            return "disposed \(type(of: self))!"
         }
         return "\(type(of: self)) \(eventProcessor)"
     }
