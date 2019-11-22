@@ -16,7 +16,7 @@
   "platforms": {
     "ios": "10.0"
   },
-  "swift_version": "4.2",
+  "swift_version": "5.0",
   "module_name": "MobiusNimble",
   "source_files": "MobiusNimble/Source/**/*.swift",
   "frameworks": [
