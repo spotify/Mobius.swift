@@ -32,6 +32,7 @@ extension MobiusLoop {
     ) {
         self.init(
             eventProcessor: eventProcessor,
+            consumeEvent: eventProcessor.accept,
             modelPublisher: modelPublisher,
             disposable: disposable,
             accessGuard: accessGuard,

@@ -49,6 +49,7 @@ public extension Mobius {
             effectHandler: effectHandler,
             initiator: { First(model: $0) },
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
+            eventFilter: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
         )
     }
@@ -59,12 +60,14 @@ public extension Mobius {
         private let initiator: Initiator<Model, Effect>
         private let eventSource: AnyEventSource<Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
+        private let eventFilter: ConsumerFilter<Event>
 
         fileprivate init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
             eventSource: AnyEventSource<Event>,
+            eventFilter: @escaping ConsumerFilter<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where C.InputType == Effect, C.OutputType == Event {
             self.update = update
@@ -72,6 +75,7 @@ public extension Mobius {
             self.initiator = initiator
             self.eventSource = eventSource
             self.logger = logger
+            self.eventFilter = eventFilter
         }
 
         public func withEventSource<ES: EventSource>(_ eventSource: ES) -> Builder where ES.Event == Event {
@@ -80,6 +84,7 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: AnyEventSource(eventSource),
+                eventFilter: eventFilter,
                 logger: logger
             )
         }
@@ -90,6 +95,7 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
+                eventFilter: eventFilter,
                 logger: logger
             )
         }
@@ -100,7 +106,28 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
+                eventFilter: eventFilter,
                 logger: AnyMobiusLogger(logger)
+            )
+        }
+
+
+        /// Add a function to transform the event consumers, i.e. functions that take an event and pass it to the
+        /// loop’s processing logic. This can be used for scheduling, for example.
+        ///
+        /// Note that this is a map over `Consumer<Event>`, not over `Event`.
+        ///
+        /// - Parameter eventFilter: The transformation to apply to event consumers.
+        /// - Returns: A transformed event consumer.
+        public func withEventFilter(_ eventFilter: @escaping ConsumerFilter<Event>) -> Builder {
+            let oldFilter = self.eventFilter
+            return Builder(
+                update: update,
+                effectHandler: effectHandler,
+                initiator: initiator,
+                eventSource: eventSource,
+                eventFilter: { consumer in eventFilter(oldFilter(consumer)) },
+                logger: logger
             )
         }
 
@@ -111,6 +138,7 @@ public extension Mobius {
                 initialModel: initialModel,
                 initiator: initiator,
                 eventSource: eventSource,
+                eventFilter: eventFilter,
                 logger: logger
             )
         }

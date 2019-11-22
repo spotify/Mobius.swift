@@ -22,6 +22,7 @@ import Foundation
 /// - Callout(Instantiating): Use `Mobius.loop(update:effectHandler:)` to create an instance.
 public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
     private let eventProcessor: EventProcessor<Model, Event, Effect>
+    private let consumeEvent: Consumer<Event>
     private let modelPublisher: ConnectablePublisher<Model>
     private let disposable: Disposable
     private var disposed = false
@@ -39,12 +40,14 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
 
     init(
         eventProcessor: EventProcessor<Model, Event, Effect>,
+        consumeEvent: @escaping Consumer<Event>,
         modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable,
         accessGuard: SequentialAccessGuard,
         workBag: WorkBag
     ) {
         self.eventProcessor = eventProcessor
+        self.consumeEvent = consumeEvent
         self.modelPublisher = modelPublisher
         self.disposable = disposable
         self.access = accessGuard
@@ -93,7 +96,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             }
 
             workBag.submit {
-                self.eventProcessor.accept(event)
+                self.consumeEvent(event)
             }
             workBag.service()
         }
@@ -106,6 +109,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         initialModel: Model,
         initiator: @escaping Initiator<Model, Effect>,
         eventSource: AnyEventSource<Event>,
+        eventFilter: ConsumerFilter<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
         let accessGuard = SequentialAccessGuard()
@@ -124,10 +128,12 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             accessGuard: accessGuard
         )
 
-        // effect handler: handle effects, push events to the event processor
-        let effectHandlerConnection = effectHandler.connect(eventProcessor.accept)
+        let consumeEvent = eventFilter(eventProcessor.accept)
 
-        let eventSourceDisposable = eventSource.subscribe(consumer: eventProcessor.accept)
+        // effect handler: handle effects, push events to the event processor
+        let effectHandlerConnection = effectHandler.connect(consumeEvent)
+
+        let eventSourceDisposable = eventSource.subscribe(consumer: consumeEvent)
 
         // model observer support
         let modelPublisher = ConnectablePublisher<Model>()
@@ -152,6 +158,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
 
         return MobiusLoop(
             eventProcessor: eventProcessor,
+            consumeEvent: consumeEvent,
             modelPublisher: modelPublisher,
             disposable: CompositeDisposable(disposables: [eventSourceDisposable, nextConnection, effectHandlerConnection]),
             accessGuard: accessGuard,
