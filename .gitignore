@@ -4,6 +4,7 @@
 ## Build generated
 build/
 DerivedData/
+Mobius.xcodeproj/xcshareddata/xcschemes/ZZZ_MOBIUS_ALL.xcscheme
 
 ## Various settings
 *.pbxuser
@@ -40,6 +41,7 @@ playground.xcworkspace
 # Package.pins
 Package.resolved
 .build/
+.swiftpm/
 
 # Carthage
 Carthage/Checkouts/*
