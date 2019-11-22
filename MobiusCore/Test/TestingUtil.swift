@@ -42,8 +42,11 @@ class RecordingTestConnectable: Connectable {
     private(set) var connection: Connection<String>!
     var disposed: Bool = false
 
-    init() {
+    private let expectedQueue: DispatchQueue?
+
+    init(expectedQueue: DispatchQueue? = nil) {
         recorder = Recorder<String>()
+        self.expectedQueue = expectedQueue
     }
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
@@ -57,11 +60,21 @@ class RecordingTestConnectable: Connectable {
     }
 
     func accept(_ value: String) {
+        verifyQueue()
+
         recorder.append(value)
     }
 
     func dispose() {
+        verifyQueue()
+
         disposed = true
+    }
+
+    private func verifyQueue() {
+        if let expectedQueue = expectedQueue {
+            dispatchPrecondition(condition: .onQueue(expectedQueue))
+        }
     }
 }
 
