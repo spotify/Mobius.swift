@@ -57,7 +57,7 @@ class RecordingTestConnectable: Connectable {
     }
 
     func accept(_ value: String) {
-        recorder.items.append(value)
+        recorder.append(value)
     }
 
     func dispose() {
@@ -65,8 +65,27 @@ class RecordingTestConnectable: Connectable {
     }
 }
 
-class Recorder<T> {
-    var items = [T]()
+final class Recorder<T> {
+    private var storage = [T]()
+    private let queue = DispatchQueue(label: "Recorder")
+
+    var items: [T] {
+        return queue.sync {
+            storage
+        }
+    }
+
+    func append(_ item: T) {
+        queue.sync {
+            storage.append(item)
+        }
+    }
+
+    func clear() {
+        queue.sync {
+            storage = []
+        }
+    }
 }
 
 class TestDisposable: Disposable {

@@ -77,7 +77,7 @@ class MobiusControllerTests: QuickSpec {
                         beforeEach {
                             controller.connectView(view)
                             controller.start()
-                            view.recorder.items.removeAll()
+                            view.recorder.clear()
                         }
                         it("should allow stopping and starting again") {
                             controller.stop()
@@ -95,7 +95,7 @@ class MobiusControllerTests: QuickSpec {
                         it("should retain updated state") {
                             view.dispatch("hi")
                             controller.stop()
-                            view.recorder.items.removeAll()
+                            view.recorder.clear()
 
                             controller.start()
 
@@ -282,7 +282,7 @@ class MobiusControllerTests: QuickSpec {
 
                         controller.stop()
 
-                        view.recorder.items.removeAll()
+                        view.recorder.clear()
 
                         controller.start()
 

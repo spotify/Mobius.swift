@@ -111,7 +111,7 @@ class MobiusIntegrationTests: QuickSpec {
                     // clear out startup noise
                     queue.waitForOutstandingTasks() // Wait for the serial queue before clearing effects
                     receivedModels.removeAll()
-                    receivedEffects.items.removeAll()
+                    receivedEffects.clear()
                 }
 
                 it("should be possible for the UI to push events and receive models") {
