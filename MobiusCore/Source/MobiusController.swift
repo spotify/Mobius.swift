@@ -145,7 +145,7 @@ public class MobiusController<Model, Event, Effect> {
     /// if it's not running.
     ///
     /// - Returns: a model with the state of the controller
-    public func getModel() -> Model {
+    public var model: Model {
         return lock.synchronized {
             loop?.latestModel ?? modelToStartFrom
         }
