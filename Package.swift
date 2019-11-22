@@ -3,6 +3,12 @@ import PackageDescription
 
 let package = Package(
     name: "Mobius",
+    platforms: [
+        .iOS(.v10),
+        .macOS(.v10_12),
+        .tvOS(.v10),
+        .watchOS(.v3),
+    ],
     products: [
         .library(name: "MobiusCore", targets: ["MobiusCore"]),
         .library(name: "MobiusExtras", targets: ["MobiusExtras"]),
