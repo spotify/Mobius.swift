@@ -28,7 +28,8 @@ public enum Mobius {}
 // MARK: - Building a Mobius Loop
 
 public extension Mobius {
-    /// Create a `Builder` to help you configure a `MobiusLoop ` before starting it.
+
+    /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
     ///
     /// The builder is immutable. When setting various properties, a new instance of a builder will be returned.
     /// It is therefore recommended to chain the loop configuration functions
