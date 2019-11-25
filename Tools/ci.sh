@@ -23,7 +23,7 @@ has_command xcpretty || fail "xcpretty must be installed"
 
 # until then using SPM to unblock CI:
 
-swift test --enable-code-coverage || fail "SPM Test Failed"
+swift test --enable-code-coverage --sanitize=thread || fail "SPM Test Failed"
 
 # h4x to trick codecov
 for bundle in .build/x86_64-apple-macosx/debug/*.xctest ; do

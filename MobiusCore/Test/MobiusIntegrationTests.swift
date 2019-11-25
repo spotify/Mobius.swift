@@ -53,7 +53,8 @@ class MobiusIntegrationTests: QuickSpec {
                 }
             }
 
-            var receivedModels: [String]!
+            // swiftlint:disable:next quick_discouraged_call
+            var receivedModels = Synchronized<[String]?>(value: nil)
             var builder: Mobius.Builder<String, String, String>!
             var loop: MobiusLoop<String, String, String>!
             var queue: DispatchQueue!
@@ -63,9 +64,11 @@ class MobiusIntegrationTests: QuickSpec {
             var receivedEffects: Recorder<String>!
 
             beforeEach {
-                receivedModels = []
+                receivedModels.value = []
                 modelConsumer = { model in
-                    receivedModels.append(model)
+                    receivedModels.mutate {
+                        $0!.append(model)
+                    }
                 }
 
                 let logic = TestLogic()
@@ -98,7 +101,7 @@ class MobiusIntegrationTests: QuickSpec {
                     loop.addObserver(modelConsumer)
 
                     queue.waitForOutstandingTasks()
-                    expect(receivedModels).to(equal(["init"]))
+                    expect(receivedModels.value).to(equal(["init"]))
                     expect(receivedEffects.items).to(equal(["trigger loading"]))
                 }
             }
@@ -110,22 +113,22 @@ class MobiusIntegrationTests: QuickSpec {
 
                     // clear out startup noise
                     queue.waitForOutstandingTasks() // Wait for the serial queue before clearing effects
-                    receivedModels.removeAll()
-                    receivedEffects.items.removeAll()
+                    receivedModels.value = []
+                    receivedEffects.clear()
                 }
 
                 it("should be possible for the UI to push events and receive models") {
                     loop.dispatchEvent("button pushed")
 
                     queue.waitForOutstandingTasks()
-                    expect(receivedModels).to(equal(["pushed"]))
+                    expect(receivedModels.value).to(equal(["pushed"]))
                 }
 
                 it("should be possible for effect handler to receive effects and send events") {
                     loop.dispatchEvent("trigger effect")
 
                     queue.waitForOutstandingTasks()
-                    expect(receivedModels).toEventually(equal(["triggered", "done"]))
+                    expect(receivedModels.value).toEventually(equal(["triggered", "done"]))
                     expect(receivedEffects.items).to(equal(["leads to event"]))
                 }
 
@@ -133,7 +136,7 @@ class MobiusIntegrationTests: QuickSpec {
                     eventSourceEventConsumer("from source")
 
                     queue.waitForOutstandingTasks()
-                    expect(receivedModels).to(equal(["event sourced"]))
+                    expect(receivedModels.value).to(equal(["event sourced"]))
                 }
             }
         }

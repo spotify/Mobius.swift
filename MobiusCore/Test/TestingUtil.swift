@@ -57,7 +57,7 @@ class RecordingTestConnectable: Connectable {
     }
 
     func accept(_ value: String) {
-        recorder.items.append(value)
+        recorder.append(value)
     }
 
     func dispose() {
@@ -65,8 +65,27 @@ class RecordingTestConnectable: Connectable {
     }
 }
 
-class Recorder<T> {
-    var items = [T]()
+final class Recorder<T> {
+    private var storage = [T]()
+    private let queue = DispatchQueue(label: "Recorder")
+
+    var items: [T] {
+        return queue.sync {
+            storage
+        }
+    }
+
+    func append(_ item: T) {
+        queue.sync {
+            storage.append(item)
+        }
+    }
+
+    func clear() {
+        queue.sync {
+            storage = []
+        }
+    }
 }
 
 class TestDisposable: Disposable {
@@ -88,22 +107,36 @@ extension DispatchQueue {
 }
 
 class TestMobiusLogger: MobiusLogger {
-    var logMessages = [String]()
+    private var messages = Synchronized<[String]>(value: [])
+
+    private func appendLog(_ log: String) {
+        messages.mutate {
+            $0.append(log)
+        }
+    }
+
+    public var logMessages: [String] {
+        return messages.value
+    }
+
+    func clear() {
+        messages.value = []
+    }
 
     func willInitiate(model: String) {
-        logMessages.append("willInitiate(\(model))")
+        appendLog("willInitiate(\(model))")
     }
 
     func didInitiate(model: String, first: First<String, String>) {
-        logMessages.append("didInitiate(\(model), \(first))")
+        appendLog("didInitiate(\(model), \(first))")
     }
 
     func willUpdate(model: String, event: String) {
-        logMessages.append("willUpdate(\(model), \(event))")
+        appendLog("willUpdate(\(model), \(event))")
     }
 
     func didUpdate(model: String, event: String, next: Next<String, String>) {
-        logMessages.append("didUpdate(\(model), \(event), \(next))")
+        appendLog("didUpdate(\(model), \(event), \(next))")
     }
 }
 
@@ -142,5 +175,30 @@ class TestEventSource<Event>: EventSource {
         activeSubscriptions.forEach {
             $0(event)
         }
+    }
+}
+
+/*
+ Helper to simulate atomic access to a property.
+
+ This could be a property wrapper when we raise our target to Swift 5.1.
+ */
+final class Synchronized<Value> {
+    private var _value: Value
+    private var lock = DispatchQueue(label: "TestUtil Synchronized lock")
+
+    var value: Value {
+        get { return lock.sync { _value } }
+        set(newValue) { lock.sync { _value = newValue } }
+    }
+
+    func mutate(with closure: (inout Value) -> Void) {
+        lock.sync {
+            closure(&_value)
+        }
+    }
+
+    init(value: Value) {
+        _value = value
     }
 }
