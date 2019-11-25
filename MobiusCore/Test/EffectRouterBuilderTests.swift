@@ -26,13 +26,15 @@ import Quick
 
 class EffectRouterBuilderTests: QuickSpec {
     // swiftlint:disable function_body_length
+
     override func spec() {
         describe("Legacy EffectRouterBuilder") {
             var sut: EffectRouterBuilder<String, String>!
 
-            var output: String?
+            var output = Synchronized<String?>(value: nil)
+
             let outputHandler: Consumer<String> = { (string: String) in
-                output = string
+                output.value = string
             }
 
             beforeEach {
@@ -64,7 +66,7 @@ class EffectRouterBuilderTests: QuickSpec {
                     }
 
                     it("that output handler should be passed to the effect handler") {
-                        expect(output).to(equal(expectedOutput))
+                        expect(output.value).to(equal(expectedOutput))
                     }
                 }
 
@@ -329,12 +331,12 @@ class EffectRouterBuilderTests: QuickSpec {
 
                 it("should call the function when the effect matches its predicate") {
                     handler.accept(TestFunction.acceptableEffect)
-                    expect(output).to(equal(TestFunction.acceptableEffect + TestFunction.responseEvent))
+                    expect(output.value).to(equal(TestFunction.acceptableEffect + TestFunction.responseEvent))
                 }
 
                 it("should not call the function when the effect does not match its predicate") {
                     handler.accept(TestFunction.acceptableEffect + "not")
-                    expect(output).to(equal(fallback))
+                    expect(output.value).to(equal(fallback))
                 }
             }
 
@@ -356,7 +358,7 @@ class EffectRouterBuilderTests: QuickSpec {
                         .build()
                         .connect(outputHandler)
                         .accept("test")
-                    expect(output).toEventually(equal(testQueue.label))
+                    expect(output.value).toEventually(equal(testQueue.label))
                 }
             }
 
