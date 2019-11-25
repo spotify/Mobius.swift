@@ -32,7 +32,7 @@ class EffectRouterBuilderTests: QuickSpec {
             var sut: EffectRouterBuilder<String, String>!
 
             // swiftlint:disable:next quick_discouraged_call
-            var output = Synchronized<String?>(value: nil)
+            let output = Synchronized<String?>(value: nil)
 
             let outputHandler: Consumer<String> = { (string: String) in
                 output.value = string
