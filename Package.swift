@@ -16,7 +16,7 @@ let package = Package(
         .library(name: "MobiusTest", targets: ["MobiusTest"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Nimble", branch: "master"),
+        .package(url: "https://github.com/Quick/Nimble"),
         .package(url: "https://github.com/Quick/Quick", from: "2.1.0"),
     ],
     targets: [
