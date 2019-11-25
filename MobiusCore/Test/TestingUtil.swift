@@ -178,7 +178,6 @@ class TestEventSource<Event>: EventSource {
     }
 }
 
-
 /*
  Helper to simulate atomic access to a property.
 

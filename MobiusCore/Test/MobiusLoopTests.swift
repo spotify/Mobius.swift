@@ -272,7 +272,9 @@ class MobiusLoopTests: QuickSpec {
 
         context("when configuring with an EffectHandler") {
             var loop: MobiusLoop<Int, Int, Int>!
+            // swiftlint:disable:next quick_discouraged_call
             let isDisposed = Synchronized<Bool>(value: false)
+            // swiftlint:disable:next quick_discouraged_call
             let didReceiveEffect = Synchronized<Bool>(value: false)
             beforeEach {
                 isDisposed.value = false

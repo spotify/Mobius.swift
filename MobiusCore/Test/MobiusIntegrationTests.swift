@@ -53,6 +53,7 @@ class MobiusIntegrationTests: QuickSpec {
                 }
             }
 
+            // swiftlint:disable:next quick_discouraged_call
             var receivedModels = Synchronized<[String]?>(value: nil)
             var builder: Mobius.Builder<String, String, String>!
             var loop: MobiusLoop<String, String, String>!
