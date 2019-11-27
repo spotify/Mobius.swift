@@ -77,7 +77,7 @@ class EventHandlerDisposalLogicalRaceRegressionTest: QuickSpec {
                 MobiusHooks.setDefaultErrorHandler()
             }
 
-            xit("allows stopping a loop immediately after dispatching an event") {
+            it("allows stopping a loop immediately after dispatching an event") {
                 controller.start()
                 eventSource.dispatchEvent(.event1)
                 controller.stop()
