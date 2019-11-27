@@ -19,16 +19,20 @@
 
 import Foundation
 
-/// Trivial non-concurrent work queue.
+/// Like a work queue, but agressively avoids doing things sequentially.
 ///
-/// Enqueued blocks are executed in FIFO order by calling `service`. Nested calls to `service` are ignored, so that
-/// the queue is only processed in the outermost invocation. This avoids surprising reentrancy in effect handlers (for
+/// We don’t want to commit to any sequencing guarantees in Mobius loops. Since we’re cognizant of Hyrum’s Law, we don’t
+/// want to provide _unguaranteed_ sequencing either, so this implementation currently randomizes execution order. We
+/// can change this later to give any specific guarantees we want to commit to.
+///
+/// Submitted blocks are executed in random order by calling `service`. Nested calls to `service` are ignored, so that
+/// work is only processed in the outermost invocation. This avoids surprising reentrancy in effect handlers (for
 /// example, if the recursion check is removed, the effect handler in `SequencingTests` will enqueue events 2 and 3
 /// multiple times).
-class WorkQueue {
+class WorkBag {
     typealias WorkItem = () -> Void
 
-    private var queue = Queue<WorkItem>()
+    private var queue = [WorkItem]()
     private var servicing = false
     private var access: SequentialAccessGuard
 
@@ -37,51 +41,30 @@ class WorkQueue {
     }
 
     /// Submit an action to be executed.
-    func enqueue(_ action: @escaping WorkItem) {
+    func submit(_ action: @escaping WorkItem) {
         access.guard {
-            queue.enqueue(action)
+            queue.append(action)
         }
     }
 
     /// Execute all pending work, if we’re not being called recursively from an invocation of `service`.
     ///
-    /// If we _are_ being invoked recursively, new work submitted via `enqueue` will be executed by the ongoing
-    /// `service` call, until there is no more enqueued work.
+    /// If we _are_ being invoked recursively, new work submitted via `submit` will be executed by the ongoing `service`
+    /// call, until there is no more pending work.
     func service() {
         access.guard {
             guard !servicing else { return }
             servicing = true
             defer { servicing = false }
 
-            while !queue.isEmpty {
-                let action = queue.dequeue()
+            while let action = next() {
                 action()
             }
         }
     }
-}
 
-/// Trivial queue, wrapping NSMutableArray. Note that NSMutableArray has the performance guarantees of a deque, while
-/// Swift’s array doesn’t and generally behaves like an array. It will likely be very rare for a loop to have so many
-/// pending work items that this matters, but there’s no great overhead to doing it this way.
-private struct Queue<T> {
-    private var storage: NSMutableArray = []
-
-    mutating func enqueue(_ item: T) {
-        storage.add(item)
-    }
-
-    // NOTE: will crash if queue is empty.
-    mutating func dequeue() -> T {
-        // swiftlint:disable:next force_cast
-        let result = storage.firstObject as! T
-        storage.removeObject(at: 0)
-        return result
-    }
-
-    var isEmpty: Bool {
-        // NSMutableArray isn’t a Collection and doesn’t implement isEmpty, but SwiftLint complains anyway
-        // swiftlint:disable:next empty_count
-        return storage.count == 0
+    private func next() -> WorkItem? {
+        guard !queue.isEmpty else { return nil }
+        return queue.remove(at: Int.random(in: 0..<queue.endIndex))
     }
 }

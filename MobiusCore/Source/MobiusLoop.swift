@@ -26,7 +26,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     private let disposable: Disposable
     private var disposed = false
     private var access: SequentialAccessGuard
-    private var workQueue: WorkQueue
+    private var workBag: WorkBag
 
     public var debugDescription: String {
         return access.guard {
@@ -42,13 +42,13 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable,
         accessGuard: SequentialAccessGuard,
-        workQueue: WorkQueue
+        workBag: WorkBag
     ) {
         self.eventProcessor = eventProcessor
         self.modelPublisher = modelPublisher
         self.disposable = disposable
         self.access = accessGuard
-        self.workQueue = workQueue
+        self.workBag = workBag
     }
 
     /// Add an observer of model changes to this loop. If `getMostRecentModel()` is non-nil,
@@ -92,10 +92,10 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
                 return
             }
 
-            workQueue.enqueue {
+            workBag.submit {
                 self.eventProcessor.accept(event)
             }
-            workQueue.service()
+            workBag.service()
         }
     }
 
@@ -111,7 +111,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         let accessGuard = SequentialAccessGuard()
         let loggingInitiator = LoggingInitiator(initiator, logger)
         let loggingUpdate = LoggingUpdate(update, logger)
-        let workQueue = WorkQueue(accessGuard: accessGuard)
+        let workBag = WorkBag(accessGuard: accessGuard)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
         // dispatch models and effects to the right places
@@ -139,11 +139,11 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             }
 
             next.effects.forEach({ (effect: Effect) in
-                workQueue.enqueue {
+                workBag.submit {
                     effectHandlerConnection.accept(effect)
                 }
             })
-            workQueue.service()
+            workBag.service()
         }
         let nextConnection = nextPublisher.connect(to: nextConsumer)
 
@@ -155,7 +155,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             modelPublisher: modelPublisher,
             disposable: CompositeDisposable(disposables: [eventSourceDisposable, nextConnection, effectHandlerConnection]),
             accessGuard: accessGuard,
-            workQueue: workQueue
+            workBag: workBag
         )
     }
 }
