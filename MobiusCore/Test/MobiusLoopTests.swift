@@ -149,6 +149,13 @@ class MobiusLoopTests: QuickSpec {
                     MobiusHooks.setDefaultErrorHandler()
                 }
 
+                xit("should allow disposing immediately after an effect") {
+                    loop.dispatchEvent("event")
+                    loop.dispose()
+
+                    expect(errorThrown).to(beFalse())
+                }
+
                 it("should dispose effect handler connection on dispose") {
                     loop.dispose()
 
