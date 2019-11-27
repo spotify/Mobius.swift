@@ -23,7 +23,9 @@ import Foundation
 ///
 /// If a loop is stopped and then started again, the new loop will continue from where the last one left off.
 public final class MobiusController<Model, Event, Effect> {
-    private let loopFactory: (Model) -> MobiusLoop<Model, Event, Effect>
+    // This is a var to support two-stage initialization to avoid chicken-and-eggs problems. It shouldn’t be mutated
+    // after init.
+    private var loopFactory: (Model) -> MobiusLoop<Model, Event, Effect>
 
     private var viewConnectable: AsyncDispatchQueueConnectable<Model, Event>?
     private var viewConnection: Connection<Model>?
@@ -49,16 +51,43 @@ public final class MobiusController<Model, Event, Effect> {
     ) {
         let actualLoopQueue = DispatchQueue(label: "MobiusController \(Model.self)", target: loopQueue)
 
+        loopFactory = {
+            // swiftlint:disable:next fatal_error_message
+            _ in fatalError()
+
+        }
+        modelToStartFrom = initialModel
+        self.loopQueue = actualLoopQueue
+        self.viewQueue = viewQueue
+
+        // NOTE: This is fragile, or at least scary. We call `running` twice, and the first one isn’t necessarily on
+        // the loop queue. This “seems to work” when we use a weak to self reference here, because it adds a fence. If
+        // we use unowned or strong references, we crash in unit tests.
+        //
+        // I want to fix this by refactoring state representation in the loop controller, but I think it would be easier
+        // to review that as a separate PR.
+        let running: () -> Bool = { [weak self] in self?.loop != nil }
+
         func flipEventsToLoopQueue(consumer: @escaping Consumer<Event>) -> Consumer<Event> {
             return { event in
-                actualLoopQueue.async { consumer(event) }
+                guard running() else {
+                    MobiusHooks.onError("cannot accept events when stopped")
+                    return
+                }
+
+                actualLoopQueue.async {
+                    guard running() else {
+                        // If we got here, the controller was stopped while this async block was queued. Callers can’t
+                        // possibly avoid this except through complete external serialization of all access to the
+                        // controller, so it’s not a usage error.
+                        return
+                    }
+                    consumer(event)
+                }
             }
         }
 
         loopFactory = builder.withEventFilter(flipEventsToLoopQueue).start
-        modelToStartFrom = initialModel
-        self.loopQueue = actualLoopQueue
-        self.viewQueue = viewQueue
     }
 
     /// Connect a view to this controller.
