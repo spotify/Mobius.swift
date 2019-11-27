@@ -33,10 +33,16 @@ class LoggingInitiator<Model, Effect> {
 
     func initiate(_ model: Model) -> First<Model, Effect> {
         willInit(model)
-        let result = realInit(model)
+        let result = invokeInitiate(model: model)
         didInit(model, result)
 
         return result
+    }
+
+    @inline(never)
+    @_silgen_name("__MOBIUS_IS_CALLING_AN_INITIATOR_FUNCTION__")
+    private func invokeInitiate(model: Model) -> First<Model, Effect> {
+        return realInit(model)
     }
 }
 
@@ -56,9 +62,15 @@ class LoggingUpdate<Model, Event, Effect> {
 
     func update(_ model: Model, _ event: Event) -> Next<Model, Effect> {
         willUpdate(model, event)
-        let result = realUpdate(model, event)
+        let result = invokeUpdate(model: model, event: event)
         didUpdate(model, event, result)
 
         return result
+    }
+
+    @inline(never)
+    @_silgen_name("__MOBIUS_IS_CALLING_AN_UPDATE_FUNCTION__")
+    private func invokeUpdate(model: Model, event: Event) -> Next<Model, Effect> {
+        return realUpdate(model, event)
     }
 }
