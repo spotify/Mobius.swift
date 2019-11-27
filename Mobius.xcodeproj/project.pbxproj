@@ -20,10 +20,9 @@
 		2D3A69672354AC820053C95E /* SequentialAccessGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* SequentialAccessGuard.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D3A696E2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
-		2D3A69712355EFDD0053C95E /* SequencingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A696F2355EFC50053C95E /* SequencingTests.swift */; };
-		2D3A6973235737430053C95E /* WorkQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkQueue.swift */; };
-		2D3A6974235737430053C95E /* WorkQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkQueue.swift */; };
-		2D3A69772359EAAA0053C95E /* WorkQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69752359EAA00053C95E /* WorkQueueTests.swift */; };
+		2D3A6973235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
+		2D3A6974235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
+		2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69752359EAA00053C95E /* WorkBagTests.swift */; };
 		2DC2C0A62350CEBE005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
 		2DC2C0A72350CEC1005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
 		2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */; };
@@ -255,9 +254,8 @@
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
 		2D3A69652354AC820053C95E /* SequentialAccessGuard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequentialAccessGuard.swift; sourceTree = "<group>"; };
-		2D3A696F2355EFC50053C95E /* SequencingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequencingTests.swift; sourceTree = "<group>"; };
-		2D3A6972235737430053C95E /* WorkQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkQueue.swift; sourceTree = "<group>"; };
-		2D3A69752359EAA00053C95E /* WorkQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkQueueTests.swift; sourceTree = "<group>"; };
+		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
+		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
 		2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackwardsCompatibility.swift; sourceTree = "<group>"; };
 		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
 		2DDF54C2229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilderTests.swift; sourceTree = "<group>"; };
@@ -613,7 +611,7 @@
 				5BB287B5209995410043B530 /* Next.swift */,
 				5BB287C5209995410043B530 /* NoEffect.swift */,
 				2D3A69652354AC820053C95E /* SequentialAccessGuard.swift */,
-				2D3A6972235737430053C95E /* WorkQueue.swift */,
+				2D3A6972235737430053C95E /* WorkBag.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -688,9 +686,8 @@
 				5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */,
 				5BB2885820999ACE0043B530 /* MobiusLoopTests.swift */,
 				5BB2885420999ACE0043B530 /* NextTests.swift */,
-				2D3A696F2355EFC50053C95E /* SequencingTests.swift */,
 				5BB2884D20999ACE0043B530 /* TestingUtil.swift */,
-				2D3A69752359EAA00053C95E /* WorkQueueTests.swift */,
+				2D3A69752359EAA00053C95E /* WorkBagTests.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -1060,7 +1057,7 @@
 			files = (
 				2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */,
 				2DF4C30120DBDD5800A4B6DE /* MobiusHooks.swift in Sources */,
-				2D3A6974235737430053C95E /* WorkQueue.swift in Sources */,
+				2D3A6974235737430053C95E /* WorkBag.swift in Sources */,
 				5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				2DF4C30220DBDD5800A4B6DE /* ConnectablePublisher.swift in Sources */,
 				2DF4C2FF20DBDD5800A4B6DE /* Consumer.swift in Sources */,
@@ -1123,7 +1120,7 @@
 				02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
-				2D3A6973235737430053C95E /* WorkQueue.swift in Sources */,
+				2D3A6973235737430053C95E /* WorkBag.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,
@@ -1164,14 +1161,13 @@
 				5BB2886F20999AD60043B530 /* TestingUtil.swift in Sources */,
 				5BB2887320999AD60043B530 /* BrokenConnectionTests.swift in Sources */,
 				02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */,
-				2D3A69712355EFDD0053C95E /* SequencingTests.swift in Sources */,
 				5BB2887520999AD60043B530 /* AnyEventSourceTests.swift in Sources */,
 				5B1F1047211037270067193C /* BlockingFunctionConnectableTests.swift in Sources */,
 				5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */,
 				5BB2887820999AD60043B530 /* AnyConnectionTests.swift in Sources */,
 				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
 				5BB2887120999AD60043B530 /* LoggingInitTests.swift in Sources */,
-				2D3A69772359EAAA0053C95E /* WorkQueueTests.swift in Sources */,
+				2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */,
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
 				02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */,
 				5B85AD0220AAA8CA00C4FCD5 /* MobiusHooksTests.swift in Sources */,

@@ -28,14 +28,14 @@ extension MobiusLoop {
         modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable,
         accessGuard: SequentialAccessGuard = SequentialAccessGuard(),
-        workQueue: WorkQueue? = nil
+        workBag: WorkBag? = nil
     ) {
         self.init(
             eventProcessor: eventProcessor,
             modelPublisher: modelPublisher,
             disposable: disposable,
             accessGuard: accessGuard,
-            workQueue: workQueue ?? WorkQueue(accessGuard: accessGuard)
+            workBag: workBag ?? WorkBag(accessGuard: accessGuard)
         )
     }
 }

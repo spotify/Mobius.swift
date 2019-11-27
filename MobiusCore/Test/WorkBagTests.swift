@@ -21,22 +21,22 @@
 import Nimble
 import Quick
 
-class WorkQueueTests: QuickSpec {
+class WorkBagTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        describe("WorkQueue") {
-            var workQueue: WorkQueue!
-            var results: [String]!
+        describe("WorkBag") {
+            var workBag: WorkBag!
+            var results: Set<String>!
 
             beforeEach {
-                workQueue = WorkQueue()
+                workBag = WorkBag()
                 results = []
             }
 
-            // Enqueue a block that appends a given string to the results array
+            // Enqueue a block that adds a given string to the results set
             func enqueue(_ result: String) {
-                workQueue.enqueue {
-                    results.append(result)
+                workBag.submit {
+                    results.insert(result)
                 }
             }
 
@@ -45,7 +45,7 @@ class WorkQueueTests: QuickSpec {
                 enqueue("item 2")
                 enqueue("item 3")
 
-                workQueue.service()
+                workBag.service()
 
                 expect(results).to(equal(["item 1", "item 2", "item 3"]))
             }
@@ -55,12 +55,12 @@ class WorkQueueTests: QuickSpec {
                 enqueue("item 2")
                 enqueue("item 3")
 
-                workQueue.service()
+                workBag.service()
 
                 enqueue("item 4")
                 enqueue("item 5")
 
-                workQueue.service()
+                workBag.service()
 
                 expect(results).to(equal(["item 1", "item 2", "item 3", "item 4", "item 5"]))
             }
@@ -70,7 +70,7 @@ class WorkQueueTests: QuickSpec {
                 enqueue("item 2")
                 enqueue("item 3")
 
-                workQueue.service()
+                workBag.service()
 
                 enqueue("item 5")
                 enqueue("item 6")
@@ -79,26 +79,30 @@ class WorkQueueTests: QuickSpec {
             }
 
             it("executes blocks added within a work item during the current service cycle") {
-                workQueue.enqueue {
+                workBag.submit {
                     enqueue("item 1")
                 }
 
-                workQueue.service()
+                workBag.service()
 
                 expect(results).to(equal(["item 1"]))
             }
 
             it("performs nested work items strictly after ongoing ones") {
-                workQueue.enqueue {
-                    enqueue("item 3")
+                // Note that here results is an array rather than a set
+                var results = [String]()
+
+                workBag.submit {
+                    workBag.submit {
+                        results.append("item 2")
+                    }
                     results.append("item 1")
-                    workQueue.service()
+                    workBag.service()
                 }
-                enqueue("item 2")
 
-                workQueue.service()
+                workBag.service()
 
-                expect(results).to(equal(["item 1", "item 2", "item 3"]))
+                expect(results).to(equal(["item 1", "item 2"]))
             }
         }
     }
