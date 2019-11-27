@@ -21,17 +21,21 @@
 ///
 /// Also adds call stack annotation where we call into the client-provided initiator.
 class LoggingInitiator<Model, Effect> {
-    private let realInit: Initiator<Model, Effect>
-    private let willInit: (Model) -> Void
-    private let didInit: (Model, First<Model, Effect>) -> Void
+    typealias Initiator = MobiusCore.Initiator<Model, Effect>
+    typealias First = MobiusCore.First<Model, Effect>
 
-    init<L: MobiusLogger>(_ realInit: @escaping Initiator<Model, Effect>, _ logger: L) where L.Model == Model, L.Effect == Effect {
+    private let realInit: Initiator
+    private let willInit: (Model) -> Void
+    private let didInit: (Model, First) -> Void
+
+    init<Logger: MobiusLogger>(_ realInit: @escaping Initiator, logger: Logger)
+    where Logger.Model == Model, Logger.Effect == Effect {
         self.realInit = realInit
         willInit = logger.willInitiate
         didInit = logger.didInitiate
     }
 
-    func initiate(_ model: Model) -> First<Model, Effect> {
+    func initiate(_ model: Model) -> First {
         willInit(model)
         let result = invokeInitiate(model: model)
         didInit(model, result)
@@ -41,7 +45,7 @@ class LoggingInitiator<Model, Effect> {
 
     @inline(never)
     @_silgen_name("__MOBIUS_IS_CALLING_AN_INITIATOR_FUNCTION__")
-    private func invokeInitiate(model: Model) -> First<Model, Effect> {
+    private func invokeInitiate(model: Model) -> First {
         return realInit(model)
     }
 }
@@ -50,17 +54,21 @@ class LoggingInitiator<Model, Effect> {
 ///
 /// Also adds call stack annotation where we call into the client-provided update.
 class LoggingUpdate<Model, Event, Effect> {
-    private let realUpdate: Update<Model, Event, Effect>
-    private let willUpdate: (Model, Event) -> Void
-    private let didUpdate: (Model, Event, Next<Model, Effect>) -> Void
+    typealias Update = MobiusCore.Update<Model, Event, Effect>
+    typealias Next = MobiusCore.Next<Model, Effect>
 
-    init<L: MobiusLogger>(_ realUpdate: @escaping Update<Model, Event, Effect>, _ logger: L) where L.Model == Model, L.Event == Event, L.Effect == Effect {
+    private let realUpdate: Update
+    private let willUpdate: (Model, Event) -> Void
+    private let didUpdate: (Model, Event, Next) -> Void
+
+    init<Logger: MobiusLogger>(_ realUpdate: @escaping Update, logger: Logger)
+    where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
         self.realUpdate = realUpdate
         willUpdate = logger.willUpdate
         didUpdate = logger.didUpdate
     }
 
-    func update(_ model: Model, _ event: Event) -> Next<Model, Effect> {
+    func update(_ model: Model, _ event: Event) -> Next {
         willUpdate(model, event)
         let result = invokeUpdate(model: model, event: event)
         didUpdate(model, event, result)
@@ -70,7 +78,7 @@ class LoggingUpdate<Model, Event, Effect> {
 
     @inline(never)
     @_silgen_name("__MOBIUS_IS_CALLING_AN_UPDATE_FUNCTION__")
-    private func invokeUpdate(model: Model, event: Event) -> Next<Model, Effect> {
+    private func invokeUpdate(model: Model, event: Event) -> Next {
         return realUpdate(model, event)
     }
 }

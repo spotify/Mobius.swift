@@ -97,8 +97,8 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         effectQueue: DispatchQueue,
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
-        let loggingInitiator = LoggingInitiator(initiator, logger)
-        let loggingUpdate = LoggingUpdate(update, logger)
+        let loggingInitiator = LoggingInitiator(initiator, logger: logger)
+        let loggingUpdate = LoggingUpdate(update, logger: logger)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
         // dispatch models and effects to the right places
