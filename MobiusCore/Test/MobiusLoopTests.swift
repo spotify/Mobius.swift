@@ -182,8 +182,8 @@ class MobiusLoopTests: QuickSpec {
                     loop.dispose()
 
                     expect(eventProcessor.disposed).to(equal(true))
-                    expect(modelPublisher.isDisposed).to(equal(true))
-                    expect(disposable.isDisposed).to(equal(true))
+                    expect(modelPublisher.disposed).to(equal(true))
+                    expect(disposable.disposed).to(equal(true))
                 }
             }
 
@@ -273,18 +273,18 @@ class MobiusLoopTests: QuickSpec {
         context("when configuring with an EffectHandler") {
             var loop: MobiusLoop<Int, Int, Int>!
             // swiftlint:disable:next quick_discouraged_call
-            let isDisposed = Synchronized<Bool>(value: false)
+            let disposed = Synchronized<Bool>(value: false)
             // swiftlint:disable:next quick_discouraged_call
             let didReceiveEffect = Synchronized<Bool>(value: false)
             beforeEach {
-                isDisposed.value = false
+                disposed.value = false
                 didReceiveEffect.value = false
                 let effectHandler = EffectHandler<Int, Int>(
                     handle: { _, _ in
                         didReceiveEffect.value = true
                     },
                     disposable: AnonymousDisposable {
-                        isDisposed.value = true
+                        disposed.value = true
                     }
                 )
                 let payload: (Int) -> Int? = { $0 }
@@ -307,7 +307,7 @@ class MobiusLoopTests: QuickSpec {
 
             it("should dispose the EffectHandler when the loop is disposed") {
                 loop.dispose()
-                expect(isDisposed.value).toEventually(beTrue())
+                expect(disposed.value).toEventually(beTrue())
             }
         }
     }

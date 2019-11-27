@@ -56,6 +56,9 @@ public extension MobiusController {
     func getModel() -> Model {
         return model
     }
+
+    @available(*, deprecated, message: "use running instead")
+    var isRunning: Bool { return running }
 }
 
 @available(*, deprecated, message: "use `EffectRouter` instead")

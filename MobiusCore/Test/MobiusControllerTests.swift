@@ -105,10 +105,10 @@ class MobiusControllerTests: QuickSpec {
                         }
                         it("should indicate the running status") {
                             controller.stop()
-                            expect(controller.isRunning).to(beFalse())
+                            expect(controller.running).to(beFalse())
 
                             controller.start()
-                            expect(controller.isRunning).to(beTrue())
+                            expect(controller.running).to(beTrue())
                         }
                     }
                 }

@@ -33,7 +33,7 @@ public class MobiusController<Model, Event, Effect> {
     private var modelToStartFrom: Model
 
     /// A Boolean indicating whether the MobiusLoop is running or not.
-    public var isRunning: Bool {
+    public var running: Bool {
         return lock.synchronized {
             loop != nil
         }
