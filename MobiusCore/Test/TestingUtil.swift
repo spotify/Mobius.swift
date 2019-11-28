@@ -18,7 +18,7 @@
 // under the License.
 
 import Foundation
-import MobiusCore
+@testable import MobiusCore
 import Nimble
 
 class SimpleTestConnectable: Connectable {
@@ -195,30 +195,5 @@ class TestEventSource<Event>: EventSource {
         activeSubscriptions.forEach {
             $0(event)
         }
-    }
-}
-
-/*
- Helper to simulate atomic access to a property.
-
- This could be a property wrapper when we raise our target to Swift 5.1.
- */
-final class Synchronized<Value> {
-    private var _value: Value
-    private var lock = DispatchQueue(label: "TestUtil Synchronized lock")
-
-    var value: Value {
-        get { return lock.sync { _value } }
-        set(newValue) { lock.sync { _value = newValue } }
-    }
-
-    func mutate(with closure: (inout Value) -> Void) {
-        lock.sync {
-            closure(&_value)
-        }
-    }
-
-    init(value: Value) {
-        _value = value
     }
 }

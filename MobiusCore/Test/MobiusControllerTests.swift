@@ -234,7 +234,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
                         controller.stop()
                     }
-                    xit("should allow dispatching an event from the event source immediately") {
+                    it("should allow dispatching an event from the event source immediately") {
                         controller.connectView(view)
                         eventSource.dispatchOnSubscribe("startup")
                         controller.start()

@@ -22,12 +22,36 @@ import Foundation
 struct Lock {
     private let lock = NSRecursiveLock()
 
-    func synchronized<R>(closure: () -> R) -> R {
+    func synchronized<Result>(closure: () throws -> Result) rethrows -> Result {
         lock.lock()
         defer {
             lock.unlock()
         }
 
-        return closure()
+        return try closure()
+    }
+}
+
+final class Synchronized<Value> {
+    private let lock = DispatchQueue(label: "Mobius synchronized storage")
+    private var storage: Value
+
+    init(value: Value) {
+        storage = value
+    }
+
+    var value: Value {
+        get {
+            return lock.sync { storage }
+        }
+        set(newValue) {
+            lock.sync { self.storage = newValue }
+        }
+    }
+
+    func mutate(with closure: (inout Value) throws -> Void) rethrows {
+        try lock.sync {
+            try closure(&storage)
+        }
     }
 }
