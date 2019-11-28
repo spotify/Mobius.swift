@@ -23,4 +23,4 @@ import Foundation
 public typealias Consumer<ValueType> = (ValueType) -> Void
 
 /// A function that can transform a Consumer.
-public typealias ConsumerFilter<ValueType> = (@escaping Consumer<ValueType>) -> Consumer<ValueType>
+public typealias ConsumerTransformer<ValueType> = (@escaping Consumer<ValueType>) -> Consumer<ValueType>

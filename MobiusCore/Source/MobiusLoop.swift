@@ -109,7 +109,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         initialModel: Model,
         initiator: @escaping Initiator<Model, Effect>,
         eventSource: AnyEventSource<Event>,
-        eventFilter: ConsumerFilter<Event>,
+        eventConsumerTransformer: ConsumerTransformer<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
         let accessGuard = SequentialAccessGuard()
@@ -128,7 +128,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             accessGuard: accessGuard
         )
 
-        let consumeEvent = eventFilter(eventProcessor.accept)
+        let consumeEvent = eventConsumerTransformer(eventProcessor.accept)
 
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(consumeEvent)

@@ -73,7 +73,7 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        loopFactory = builder.withEventFilter(flipEventsToLoopQueue).start
+        loopFactory = builder.withEventConsumerTransformer(flipEventsToLoopQueue).start
 
         // NOTE: This is fragile, or at least scary. We call `running` twice, and the first one isn’t necessarily on
         // the loop queue. This “seems to work” when we use a weak to self reference here, because it adds a fence. If
