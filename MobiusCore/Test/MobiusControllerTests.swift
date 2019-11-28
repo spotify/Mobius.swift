@@ -251,7 +251,7 @@ class MobiusControllerTests: QuickSpec {
             describe("accessing the model") {
                 describe("happy cases") {
                     it("should return the default model before starting") {
-                        expect(controller.getModel()).to(equal("S"))
+                        expect(controller.model).to(equal("S"))
                     }
                     it("should read the model from a running loop") {
                         controller.connectView(view)
@@ -259,7 +259,7 @@ class MobiusControllerTests: QuickSpec {
 
                         view.dispatch("an event")
 
-                        expect(controller.getModel()).toEventually(equal("S-an event"))
+                        expect(controller.model).toEventually(equal("S-an event"))
                     }
                     it("should read the last loop model after stopping") {
                         controller.connectView(view)
@@ -272,7 +272,7 @@ class MobiusControllerTests: QuickSpec {
 
                         controller.stop()
 
-                        expect(controller.getModel()).to(equal("S-the last event"))
+                        expect(controller.model).to(equal("S-the last event"))
                     }
                     it("should start from the last loop model on restart") {
                         controller.connectView(view)
