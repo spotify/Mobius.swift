@@ -107,7 +107,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Disconnect UI from this controller.
     ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if there isn't anything to disconnect
     public func disconnectView() {
@@ -127,7 +127,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Start a MobiusLoop from the current model.
     ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop already is running or no view has been connected
     public func start() {
@@ -156,7 +156,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// When the loop is stopped, the last model of the loop will be remembered and used as the first model the next
     /// time the loop is started.
     ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
     /// To stop the queue as an effect, dispatch to a different queue.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop isn't running
@@ -178,7 +178,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Replace which model the controller should start from.
     ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Parameter model: the model with the state the controller should start from
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running
@@ -195,7 +195,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Get the current model of the loop that this controller is running, or the most recent model if it's not running.
     ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Returns: a model with the state of the controller
     public var model: Model {
