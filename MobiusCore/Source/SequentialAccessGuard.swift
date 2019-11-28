@@ -29,15 +29,50 @@ import Foundation
 /// of the critical regions of all copies.
 struct SequentialAccessGuard {
     #if DEBUG
-    private let lock = NSRecursiveLock()
+    // This is hidden in an inner final class because we want it to be an empty struct in non-debug builds
+    private final class State {
+        let lock = NSRecursiveLock()
+        var lastSeenLocation: Location = Location(file: "", line: 0, queue: "")
+    }
+
+    private struct Location: CustomStringConvertible {
+        var file: StaticString
+        var line: UInt
+        var queue: String
+
+        var description: String {
+            let shortFile = String(describing: file).split(separator: "/").last ?? "<unknown>"
+            return "\(shortFile): \(line) on “\(queue)”"
+        }
+    }
+
+    private let state = State()
 
     func `guard`<T>(file: StaticString = #file, line: UInt = #line, _ block: () throws -> T) rethrows -> T {
-        guard lock.try() else {
-            preconditionFailure("Unpermitted concurrent access", file: file, line: line)
+        let location = Location(file: file, line: line, queue: currentQueueLabel())
+
+        guard state.lock.try() else {
+            preconditionFailure(
+                """
+                Unpermitted concurrent access.
+                    Currently held by \(state.lastSeenLocation)
+                    Conflicting access by \(location)
+
+                """,
+                file: file,
+                line: line
+            )
         }
-        defer { lock.unlock() }
+        defer { state.lock.unlock() }
+
+        state.lastSeenLocation = location
 
         return try block()
+    }
+
+    private func currentQueueLabel() -> String {
+        let name = __dispatch_queue_get_label(nil)
+        return String(cString: name, encoding: .utf8) ?? ""
     }
     #else
     // This currently needs to be explicitly annotated to be optimized out
