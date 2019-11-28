@@ -35,7 +35,7 @@ public func assertThatNext<Model, Event, Effect>(
     return { (result: UpdateSpec<Model, Event, Effect>.Result) in
         predicates.forEach({ predicate in
             let assertionResult = predicate(result.lastNext)
-            if case let .failure(message, file, line) = assertionResult {
+            if case .failure(let message, let file, let line) = assertionResult {
                 failFunction(message, file, line)
             }
         })

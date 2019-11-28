@@ -71,31 +71,31 @@ class EffectHandlerTests: QuickSpec {
         }
         describe("Disposing EffectHandler") {
             var effectHandler: EffectHandler<Effect, Event>!
-            var isDisposed: Bool!
+            var disposed: Bool!
 
             beforeEach {
-                isDisposed = false
+                disposed = false
                 effectHandler = EffectHandler<Effect, Event>(
                     handle: { _, _ in },
                     disposable: AnonymousDisposable {
-                        isDisposed = true
+                        disposed = true
                     }
                 )
             }
 
             it("calls `stopHandling` when disposed") {
                 effectHandler.disposable.dispose()
-                expect(isDisposed).to(beTrue())
+                expect(disposed).to(beTrue())
             }
 
             it("disposing is idempotent") {
-                expect(isDisposed).to(beFalse())
+                expect(disposed).to(beFalse())
 
                 effectHandler.disposable.dispose()
                 effectHandler.disposable.dispose()
                 effectHandler.disposable.dispose()
 
-                expect(isDisposed).to(beTrue())
+                expect(disposed).to(beTrue())
             }
         }
     }

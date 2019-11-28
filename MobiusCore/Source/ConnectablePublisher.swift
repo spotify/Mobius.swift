@@ -26,15 +26,15 @@ class ConnectablePublisher<ValueType>: Disposable {
     private let lock = DispatchQueue(label: "Mobius.ConnectablePublisher")
     private var connections = [UUID: Connection<ValueType>]()
     private var currentValue: ValueType?
-    private var disposed = false
+    private var _disposed = false
 
-    var isDisposed: Bool {
-        return lock.sync { disposed }
+    var disposed: Bool {
+        return lock.sync { _disposed }
     }
 
     func post(_ value: ValueType) {
         let connections: [Connection<ValueType>] = lock.sync {
-            guard !disposed else {
+            guard !_disposed else {
                 // Callers are responsible for ensuring post is never entered after dispose.
                 MobiusHooks.onError("cannot accept values when disposed")
                 return []
@@ -53,7 +53,7 @@ class ConnectablePublisher<ValueType>: Disposable {
     @discardableResult
     func connect(to outputConsumer: @escaping Consumer<ValueType>) -> Connection<ValueType> {
         return lock.sync { () -> Connection<ValueType> in
-            guard !disposed else {
+            guard !_disposed else {
                 // Callers are responsible for ensuring connect is never entered after dispose.
                 MobiusHooks.onError("cannot add connections when disposed")
                 return BrokenConnection<ValueType>.connection()
@@ -74,9 +74,9 @@ class ConnectablePublisher<ValueType>: Disposable {
 
     func dispose() {
         let connections: [Connection<ValueType>] = lock.sync {
-            guard !disposed else { return [] }
+            guard !_disposed else { return [] }
 
-            disposed = true
+            _disposed = true
             return Array(self.connections.values)
         }
 

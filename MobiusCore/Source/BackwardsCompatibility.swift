@@ -40,7 +40,7 @@ public extension Next where Effect: Hashable {
 }
 
 public extension MobiusLoop {
-    @available(*, deprecated, message: "use latestModel of effects instead")
+    @available(*, deprecated, message: "use latestModel instead")
     func getMostRecentModel() -> Model? {
         return latestModel
     }
@@ -51,6 +51,14 @@ public extension MobiusController {
     convenience init(builder: Mobius.Builder<Model, Event, Effect>, defaultModel: Model) {
         self.init(builder: builder, initialModel: defaultModel)
     }
+
+    @available(*, deprecated, message: "use model instead")
+    func getModel() -> Model {
+        return model
+    }
+
+    @available(*, deprecated, message: "use running instead")
+    var isRunning: Bool { return running }
 }
 
 @available(*, deprecated, message: "use `EffectRouter` instead")

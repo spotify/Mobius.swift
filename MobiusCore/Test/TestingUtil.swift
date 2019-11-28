@@ -66,25 +66,21 @@ class RecordingTestConnectable: Connectable {
 }
 
 final class Recorder<T> {
-    private var storage = [T]()
+    private var storage = Synchronized<[T]>(value: [])
     private let queue = DispatchQueue(label: "Recorder")
 
     var items: [T] {
-        return queue.sync {
-            storage
-        }
+        return storage.value
     }
 
     func append(_ item: T) {
-        queue.sync {
-            storage.append(item)
+        storage.mutate {
+            $0.append(item)
         }
     }
 
     func clear() {
-        queue.sync {
-            storage = []
-        }
+        storage.value = []
     }
 }
 

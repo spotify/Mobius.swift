@@ -105,7 +105,7 @@ class EventProcessorTests: QuickSpec {
             it("should dispose publisher on dispose") {
                 eventProcessor.dispose()
 
-                expect(nextPublisher.isDisposed).to(beTrue())
+                expect(nextPublisher.disposed).to(beTrue())
             }
 
             describe("debug description") {

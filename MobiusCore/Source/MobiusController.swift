@@ -33,7 +33,7 @@ public class MobiusController<Model, Event, Effect> {
     private var modelToStartFrom: Model
 
     /// A Boolean indicating whether the MobiusLoop is running or not.
-    public var isRunning: Bool {
+    public var running: Bool {
         return lock.synchronized {
             loop != nil
         }
@@ -145,7 +145,7 @@ public class MobiusController<Model, Event, Effect> {
     /// if it's not running.
     ///
     /// - Returns: a model with the state of the controller
-    public func getModel() -> Model {
+    public var model: Model {
         return lock.synchronized {
             loop?.latestModel ?? modelToStartFrom
         }
