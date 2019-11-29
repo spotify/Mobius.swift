@@ -234,6 +234,15 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
                         controller.stop()
                     }
+                    xit("should allow dispatching an event from the event source immediately") {
+                        controller.connectView(view)
+                        eventSource.dispatchOnSubscribe("startup")
+                        controller.start()
+                        controller.stop()
+
+                        expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
+                        expect(errorThrown).to(beFalse())
+                    }
                 }
                 #if arch(x86_64) || arch(arm64)
                 describe("error handling") {
