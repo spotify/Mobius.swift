@@ -54,7 +54,7 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
             lock.unlock()
         }
         guard let consumer = consumer else {
-            // handleError("\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set. Send should only be used once the Connectable has been properly connected.")
+            handleError("\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set. Send should only be used once the Connectable has been properly connected.")
             return
         }
 

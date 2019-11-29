@@ -106,7 +106,7 @@ class ConnectableTests: QuickSpec {
                         sut.handleError = handleError
                     }
 
-                    xit("should cause a mobius error") {
+                    it("should cause a mobius error") {
                         sut.send("Some string")
                         expect(errorThrown).to(beTrue())
                     }
