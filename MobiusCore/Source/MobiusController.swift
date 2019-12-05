@@ -21,7 +21,7 @@ import Foundation
 
 /// Defines a controller that can be used to start and stop MobiusLoops.
 ///
-/// If a loop is stopped and then started again, the new loop will continue from where the last one left off.
+/// If a loop is stopped and then started again via the controller, the new loop will continue from where the last one left off.
 public final class MobiusController<Model, Event, Effect> {
     private let loopFactory: (Model) -> MobiusLoop<Model, Event, Effect>
 
