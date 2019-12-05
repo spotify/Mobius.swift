@@ -53,7 +53,8 @@ public extension Mobius.Builder {
         return self
     }
 
-    @available(*, deprecated, message: "use withInitiate instead")
+    @available(*, deprecated, message:
+    "initiators are deprecated for raw loops. For MobiusController, pass the initiator to makeController instead")
     func withInitiator(_ initiate: @escaping Initiate<Model, Effect>) -> Mobius.Builder<Model, Event, Effect> {
         return withInitiate(initiate)
     }

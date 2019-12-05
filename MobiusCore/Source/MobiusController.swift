@@ -42,6 +42,7 @@ public final class MobiusController<Model, Event, Effect> {
     init(
         builder: Mobius.Builder<Model, Event, Effect>,
         initialModel: Model,
+        initiate: Initiate<Model, Effect>? = nil,
         loopQueue loopTargetQueue: DispatchQueue,
         viewQueue: DispatchQueue
     ) {
@@ -107,7 +108,12 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        loopFactory = builder.withEventConsumerTransformer(flipEventsToLoopQueue).start
+        var decoratedBuilder = builder.withEventConsumerTransformer(flipEventsToLoopQueue)
+        if let initiate = initiate {
+            decoratedBuilder = decoratedBuilder.withInitiate(initiate)
+        }
+
+        loopFactory = decoratedBuilder.start
     }
 
     /// Connect a view to this controller.

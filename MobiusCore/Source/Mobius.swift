@@ -89,7 +89,7 @@ public extension Mobius {
             )
         }
 
-        public func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
+        func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
@@ -156,27 +156,31 @@ public extension Mobius {
         ///   - qos: The Quality of Service class for the controller’s work queue. Default: `.userInitiated`
         public func makeController(
             from initialModel: Model,
+            initiate: Initiate<Model, Effect>? = nil,
             qos: DispatchQoS.QoSClass = .userInitiated
         ) -> MobiusController<Model, Event, Effect> {
-            return makeController(from: initialModel, loopQueue: .global(qos: qos))
+            return makeController(from: initialModel, initiate: initiate, loopQueue: .global(qos: qos))
         }
 
         /// Create a `MobiusController` from the builder
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - initiate: An optional initiator function to invoke each time the controller’s loop is started.
         ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The controller will dispatch events
         ///     and effects on a serial queue that targets this queue.
         ///   - viewQueue: The queue to use to post to the `MobiusController`’s view connection.
         ///     Default: the main queue.
         public func makeController(
             from initialModel: Model,
+            initiate: Initiate<Model, Effect>? = nil,
             loopQueue: DispatchQueue,
             viewQueue: DispatchQueue = .main
         ) -> MobiusController<Model, Event, Effect> {
             return MobiusController(
                 builder: self,
                 initialModel: initialModel,
+                initiate: initiate,
                 loopQueue: loopQueue,
                 viewQueue: viewQueue
             )

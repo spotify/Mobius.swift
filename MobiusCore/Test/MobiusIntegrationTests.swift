@@ -81,7 +81,7 @@ class MobiusIntegrationTests: QuickSpec {
                 }
 
                 builder = Mobius.loop(update: logic.update, effectHandler: effectHandler)
-                    .withInitiate(logic.initiate)
+                    .withInitiator(logic.initiate)
                     .withEventSource(AnyEventSource<String>(subscribe))
             }
 

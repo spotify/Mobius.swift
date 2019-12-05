@@ -35,7 +35,9 @@ class MobiusControllerTests: QuickSpec {
             var controller: MobiusController<String, String, String>!
             var view: RecordingTestConnectable!
             var eventSource: TestEventSource<String>!
+            var effectHandler: RecordingTestConnectable!
             var errorThrown: Bool!
+            var activateInitiator: Bool!
 
             func clearViewRecorder() {
                 makeSureAllEffectsAndEventsHaveBeenProccessed()
@@ -51,11 +53,26 @@ class MobiusControllerTests: QuickSpec {
                     return .next("\(model)-\(event)")
                 }
 
-                eventSource = TestEventSource()
+                activateInitiator = false
+                let initiate: Initiate<String, String> = { model in
+                    if activateInitiator {
+                        return First(model: "\(model)-init", effects: ["initEffect"])
+                    } else {
+                        return First(model: model)
+                    }
+                }
 
-                controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
+                eventSource = TestEventSource()
+                effectHandler = RecordingTestConnectable()
+
+                controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
                     .withEventSource(eventSource)
-                    .makeController(from: "S", loopQueue: self.loopQueue, viewQueue: self.viewQueue)
+                    .makeController(
+                        from: "S",
+                        initiate: initiate,
+                        loopQueue: self.loopQueue,
+                        viewQueue: self.viewQueue
+                    )
 
                 errorThrown = false
                 MobiusHooks.setErrorHandler({ _, _, _ in
@@ -241,6 +258,19 @@ class MobiusControllerTests: QuickSpec {
                         controller.stop()
 
                         expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
+                        expect(errorThrown).to(beFalse())
+                    }
+                    it("should execute the initiator on each start") {
+                        activateInitiator = true
+                        controller.connectView(view)
+                        controller.start()
+                        controller.stop()
+                        controller.start()
+                        controller.stop()
+
+                        // Note that there’s no "S" – the initiator takes effect before the model is ever published.
+                        expect(view.recorder.items).toEventually(equal(["S-init", "S-init-init"]))
+                        expect(effectHandler.recorder.items).toEventually(equal(["initEffect", "initEffect"]))
                         expect(errorThrown).to(beFalse())
                     }
                 }
