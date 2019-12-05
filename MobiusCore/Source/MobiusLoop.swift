@@ -26,7 +26,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     private let modelPublisher: ConnectablePublisher<Model>
     private let disposable: Disposable
     private var disposed = false
-    private var access: SequentialAccessGuard
+    private var access: ConcurrentAccessDetector
     private var workBag: WorkBag
 
     public var debugDescription: String {
@@ -43,7 +43,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         consumeEvent: @escaping Consumer<Event>,
         modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable,
-        accessGuard: SequentialAccessGuard,
+        accessGuard: ConcurrentAccessDetector,
         workBag: WorkBag
     ) {
         self.eventProcessor = eventProcessor
@@ -112,7 +112,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         eventConsumerTransformer: ConsumerTransformer<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
-        let accessGuard = SequentialAccessGuard()
+        let accessGuard = ConcurrentAccessDetector()
         let loggingInitiator = LoggingInitiator(initiator, logger)
         let loggingUpdate = LoggingUpdate(update, logger)
         let workBag = WorkBag(accessGuard: accessGuard)

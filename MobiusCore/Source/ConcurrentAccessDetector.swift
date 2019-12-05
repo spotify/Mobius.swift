@@ -21,13 +21,13 @@ import Foundation
 
 /// Utility to catch invalid concurrent access to non-thread-safe code.
 ///
-/// Like a mutex, `SequentialAccessGuard` guards a critical region. However, instead of blocking if two threads attemt
-/// to enter the critical region at once, it crashes in debug builds. In release builds, it has no effect (and also no
-/// overhead, as long as it’s only used within one module).
+/// Like a mutex, `ConcurrentAccessDetector` guards a critical region. However, instead of blocking if two threads
+/// attemt to enter the critical region at once, it crashes in debug builds. In release builds, it has no effect (and
+/// also no overhead, as long as it’s only used within one module).
 ///
-/// Copies of a `SequentialAccessGuard` share the same underlying mutex, and hence their critical region is the union
+/// Copies of a `ConcurrentAccessDetector` share the same underlying mutex, and hence their critical region is the union
 /// of the critical regions of all copies.
-struct SequentialAccessGuard {
+struct ConcurrentAccessDetector {
     #if DEBUG
     // This is hidden in an inner final class because we want it to be an empty struct in non-debug builds
     private final class State {

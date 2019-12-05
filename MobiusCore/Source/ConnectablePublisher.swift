@@ -23,12 +23,12 @@ import Foundation
 /// will broadcast posted values to all connections. It also retains a current value, and will post that value to new
 /// connections.
 class ConnectablePublisher<ValueType>: Disposable {
-    private let access: SequentialAccessGuard
+    private let access: ConcurrentAccessDetector
     private var connections = [UUID: Connection<ValueType>]()
     private var currentValue: ValueType?
     private var _disposed = false
 
-    init(accessGuard: SequentialAccessGuard = SequentialAccessGuard()) {
+    init(accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()) {
         access = accessGuard
     }
 

@@ -34,9 +34,9 @@ class WorkBag {
 
     private var queue = [WorkItem]()
     private var servicing = false
-    private var access: SequentialAccessGuard
+    private var access: ConcurrentAccessDetector
 
-    init(accessGuard: SequentialAccessGuard = SequentialAccessGuard()) {
+    init(accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()) {
         access = accessGuard
     }
 

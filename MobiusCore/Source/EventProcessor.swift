@@ -24,7 +24,7 @@ import Foundation
 class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
     let update: Update<Model, Event, Effect>
     let publisher: ConnectablePublisher<Next<Model, Effect>>
-    let access: SequentialAccessGuard
+    let access: ConcurrentAccessDetector
 
     private var currentModel: Model?
     private var queuedEvents = [Event]()
@@ -44,7 +44,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
     init(
         update: @escaping Update<Model, Event, Effect>,
         publisher: ConnectablePublisher<Next<Model, Effect>>,
-        accessGuard: SequentialAccessGuard = SequentialAccessGuard()
+        accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()
     ) {
         self.update = update
         self.publisher = publisher

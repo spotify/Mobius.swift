@@ -27,7 +27,7 @@ extension MobiusLoop {
         eventProcessor: EventProcessor<Model, Event, Effect>,
         modelPublisher: ConnectablePublisher<Model>,
         disposable: Disposable,
-        accessGuard: SequentialAccessGuard = SequentialAccessGuard(),
+        accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector(),
         workBag: WorkBag? = nil
     ) {
         self.init(
