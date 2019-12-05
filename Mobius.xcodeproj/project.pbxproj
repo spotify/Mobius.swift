@@ -127,7 +127,7 @@
 		5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */; };
 		5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */; };
 		5BB2886F20999AD60043B530 /* TestingUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884D20999ACE0043B530 /* TestingUtil.swift */; };
-		5BB2887120999AD60043B530 /* LoggingInitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884F20999ACE0043B530 /* LoggingInitTests.swift */; };
+		5BB2887120999AD60043B530 /* LoggingInitiateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */; };
 		5BB2887220999AD60043B530 /* EventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885020999ACE0043B530 /* EventProcessorTests.swift */; };
 		5BB2887320999AD60043B530 /* BrokenConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885120999ACE0043B530 /* BrokenConnectionTests.swift */; };
 		5BB2887520999AD60043B530 /* AnyEventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */; };
@@ -338,7 +338,7 @@
 		5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusControllerTests.swift; sourceTree = "<group>"; };
 		5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusIntegrationTests.swift; sourceTree = "<group>"; };
 		5BB2884D20999ACE0043B530 /* TestingUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingUtil.swift; sourceTree = "<group>"; };
-		5BB2884F20999ACE0043B530 /* LoggingInitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggingInitTests.swift; sourceTree = "<group>"; };
+		5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggingInitiateTests.swift; sourceTree = "<group>"; };
 		5BB2885020999ACE0043B530 /* EventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProcessorTests.swift; sourceTree = "<group>"; };
 		5BB2885120999ACE0043B530 /* BrokenConnectionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrokenConnectionTests.swift; sourceTree = "<group>"; };
 		5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyEventSourceTests.swift; sourceTree = "<group>"; };
@@ -692,7 +692,7 @@
 				5BB2885020999ACE0043B530 /* EventProcessorTests.swift */,
 				2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */,
 				5BB2885520999ACE0043B530 /* FirstTests.swift */,
-				5BB2884F20999ACE0043B530 /* LoggingInitTests.swift */,
+				5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */,
 				5BB2885A20999ACE0043B530 /* LoggingUpdateTests.swift */,
 				5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */,
 				5B85AD0020AAA87D00C4FCD5 /* MobiusHooksTests.swift */,
@@ -1184,7 +1184,7 @@
 				5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */,
 				5BB2887820999AD60043B530 /* AnyConnectionTests.swift in Sources */,
 				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
-				5BB2887120999AD60043B530 /* LoggingInitTests.swift in Sources */,
+				5BB2887120999AD60043B530 /* LoggingInitiateTests.swift in Sources */,
 				2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */,
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
 				02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */,

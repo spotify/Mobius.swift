@@ -22,27 +22,33 @@ import MobiusCore
 public typealias AssertFirst<Model, Effect> = (First<Model, Effect>) -> Void
 
 public final class InitSpec<Model, Effect> {
-    let initiator: Initiator<Model, Effect>
+    let initiate: Initiate<Model, Effect>
 
-    public init(_ initiator: @escaping Initiator<Model, Effect>) {
-        self.initiator = initiator
+    public init(_ initiate: @escaping Initiate<Model, Effect>) {
+        self.initiate = initiate
     }
 
     public func when(_ model: Model) -> Then {
-        return Then(model, initiator: initiator)
+        return Then(model, initiate: initiate)
     }
 
     public struct Then {
         let model: Model
-        let initiator: Initiator<Model, Effect>
+        let initiate: Initiate<Model, Effect>
 
-        public init(_ model: Model, initiator: @escaping Initiator<Model, Effect>) {
+        init(_ model: Model, initiate: @escaping Initiate<Model, Effect>) {
             self.model = model
-            self.initiator = initiator
+            self.initiate = initiate
+        }
+
+        // It’s unclear why this was public; the replacement isn’t.
+        @available(*, deprecated, message: "use InitSpec.then instead")
+        public init(_ model: Model, initiator: @escaping Initiate<Model, Effect>) {
+            self.init(model, initiate: initiator)
         }
 
         public func then(_ assertion: AssertFirst<Model, Effect>) {
-            let first = initiator(model)
+            let first = initiate(model)
             assertion(first)
         }
     }

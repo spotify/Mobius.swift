@@ -27,7 +27,7 @@ class InitSpecTests: QuickSpec {
     override func spec() {
         describe("InitSpec") {
             context("when setting up a test scenario") {
-                var initiator: Initiator<String, String>!
+                var initiate: Initiate<String, String>!
                 var spec: InitSpec<String, String>!
                 var testModel: String!
                 var testEffects: [String]!
@@ -36,11 +36,11 @@ class InitSpecTests: QuickSpec {
                 beforeEach {
                     testModel = UUID().uuidString
                     testEffects = ["1", "2", "3"]
-                    initiator = { (model: String) in
+                    initiate = { (model: String) in
                         First<String, String>(model: model + model, effects: testEffects)
                     }
 
-                    spec = InitSpec(initiator)
+                    spec = InitSpec(initiate)
                 }
 
                 it("should run the test provided") {

@@ -21,7 +21,7 @@ import Foundation
 
 public typealias Update<Model, Event, Effect> = (Model, Event) -> Next<Model, Effect>
 
-public typealias Initiator<Model, Effect> = (Model) -> First<Model, Effect>
+public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
 public enum Mobius {}
 
@@ -47,7 +47,7 @@ public extension Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            initiator: { First(model: $0) },
+            initiate: { First(model: $0) },
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
@@ -57,7 +57,7 @@ public extension Mobius {
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
-        private let initiator: Initiator<Model, Effect>
+        private let initiate: Initiate<Model, Effect>
         private let eventSource: AnyEventSource<Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
@@ -65,14 +65,14 @@ public extension Mobius {
         fileprivate init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
-            initiator: @escaping Initiator<Model, Effect>,
+            initiate: @escaping Initiate<Model, Effect>,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where C.InputType == Effect, C.OutputType == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
-            self.initiator = initiator
+            self.initiate = initiate
             self.eventSource = eventSource
             self.logger = logger
             self.eventConsumerTransformer = eventConsumerTransformer
@@ -82,18 +82,18 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: AnyEventSource(eventSource),
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )
         }
 
-        public func withInitiator(_ initiator: @escaping Initiator<Model, Effect>) -> Builder {
+        public func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
@@ -104,7 +104,7 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: AnyMobiusLogger(logger)
@@ -130,7 +130,7 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: { consumer in transformer(oldTransfomer(consumer)) },
                 logger: logger
@@ -142,7 +142,7 @@ public extension Mobius {
                 update: update,
                 effectHandler: effectHandler,
                 initialModel: initialModel,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
