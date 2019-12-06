@@ -55,7 +55,6 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1]))
 
                 dslHandler.dispose()
@@ -76,7 +75,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(effectPerformedCount).to(equal(1))
                 expect(didDispatchEvents).to(beFalse())
             }
@@ -121,7 +119,6 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1]))
 
                 dslHandler.dispose()
@@ -141,7 +138,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(performedEffects).to(equal([.effect1]))
                 expect(didDispatchEvents).to(beFalse())
             }
@@ -187,7 +183,6 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1]))
 
                 dslHandler.dispose()
@@ -208,7 +203,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(performedEffects).to(equal([.effect1]))
                 expect(didDispatchEvents).to(beFalse())
             }

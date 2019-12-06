@@ -43,6 +43,11 @@ class MobiusHooksTests: QuickSpec {
                     errorCalledOnLine = #line + 1
                     MobiusHooks.onError(someString)
                 }
+
+                afterEach {
+                    MobiusHooks.setDefaultErrorHandler()
+                }
+
                 it("should use that error handler when an error occurs") {
                     expect(errorMessage).to(match(someString))
                 }

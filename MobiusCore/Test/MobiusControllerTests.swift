@@ -212,6 +212,10 @@ class MobiusControllerTests: QuickSpec {
 
                 #if arch(x86_64) || arch(arm64)
                 describe("error handling") {
+                    beforeEach {
+                        controller.connectView(view)
+                    }
+
                     it("should not allow disconnecting while running") {
                         controller.start()
                         controller.disconnectView()
