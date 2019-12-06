@@ -27,24 +27,65 @@ import Foundation
 public enum MobiusHooks {
     public typealias ErrorHandler = (String, StaticString, UInt) -> Void
 
-    private static var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
+    private static var errorHandler: ErrorHandler = MobiusHooks._defaultErrorHandler
 
+    @available(*, deprecated, message: "error hooking is deprecated")
     public static func setErrorHandler(_ newErrorHandler: @escaping ErrorHandler) {
         errorHandler = newErrorHandler
     }
 
+    @available(*, deprecated, message: "error hooking is deprecated")
     public static func setDefaultErrorHandler() {
-        errorHandler = defaultErrorHandler
+        errorHandler = _defaultErrorHandler
     }
 
     static func onError(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
         errorHandler(message, file, line)
     }
 
-    public static func defaultErrorHandler(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
+    static func _defaultErrorHandler(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
         Thread.callStackSymbols.forEach { (symbol: String) in
             print(symbol)
         }
         fatalError(message, file: file, line: line)
     }
+
+    @available(*, deprecated, message: "error hooking is deprecated")
+    public static func defaultErrorHandler(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
+        _defaultErrorHandler(message, file: file, line: line)
+    }
+
+    #if DEBUG
+    typealias DispatchSync = (DispatchQueue, @escaping () -> Void) -> Void
+
+    /// Hook for adding behaviour to `DispatchQueue.sync` in tests. See `exceptionForwardingDispatchSync` in
+    /// TestUtil.swift.
+    static var dispatchSync: DispatchSync = MobiusHooks.defaultDispatchSync
+
+    static func defaultDispatchSync(queue: DispatchQueue, closure: () -> Void) {
+        return queue.sync(execute: closure)
+    }
+
+    /// Convenience wrapper around `dispatchSync` which forwards a result.
+    static func synchronized<Result>(
+        queue: DispatchQueue,
+        closure: () -> Result
+    ) -> Result {
+        var result: Result?
+        withoutActuallyEscaping(closure) { closure in
+            dispatchSync(queue) {
+                result = closure()
+            }
+        }
+        return result!
+    }
+    #else
+    @inline(__always)
+    static func synchronized<Result>(
+        queue: DispatchQueue,
+        closure: () -> Result
+    ) -> Result {
+        return queue.sync(execute: closure)
+    }
+    #endif
 }

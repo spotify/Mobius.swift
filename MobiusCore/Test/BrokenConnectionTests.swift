@@ -24,32 +24,21 @@ import Quick
 class BrokenConnectionTests: QuickSpec {
     override func spec() {
         var connection: Connection<Int>!
-        var errorThrown: Bool!
 
-        describe("BrokenAnyConnection") {
+        describe("BrokenConnection") {
             beforeEach {
                 connection = BrokenConnection<Int>.connection()
-                errorThrown = false
-                MobiusHooks.setErrorHandler({ _, _, _ in
-                    errorThrown = true
-                })
-            }
-
-            afterEach {
-                MobiusHooks.setDefaultErrorHandler()
             }
 
             context("when calling accept value") {
                 it("should trigger the error handler") {
-                    connection.accept(3)
-                    expect(errorThrown).to(beTrue())
+                    expect(connection.accept(3)).to(throwAssertion())
                 }
             }
 
             context("when attempting to dispose") {
                 it("should trigger the error handler") {
-                    connection.dispose()
-                    expect(errorThrown).to(beTrue())
+                    expect(connection.dispose()).to(throwAssertion())
                 }
             }
         }

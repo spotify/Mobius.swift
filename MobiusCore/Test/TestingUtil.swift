@@ -201,3 +201,16 @@ class TestEventSource<Event>: EventSource {
         }
     }
 }
+
+/// Wrapper around `DispatchQueue.sync` which forwards `BadInstructionException`s to the calling queue.
+///
+/// Use with `MobiusHooks.dispatchSync` to catch precondition failures on `MobiusController`’s queue.
+func exceptionForwardingDispatchSync(queue: DispatchQueue, closure: @escaping () -> Void) {
+    var exception: BadInstructionException?
+
+    queue.sync {
+        exception = catchBadInstruction(in: closure)
+    }
+
+    exception?.raise()
+}

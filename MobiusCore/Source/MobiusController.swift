@@ -234,15 +234,15 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        func syncRead<T>(_ closure: (Snapshot) throws -> T) rethrows -> T {
-            return try loopQueue.sync {
-                try closure(snapshot())
+        func syncRead<T>(_ closure: (Snapshot) -> T) -> T {
+            return synchronized {
+                closure(snapshot())
             }
         }
 
         func syncMutateStopped(error: String, _ closure: (inout StoppedState) -> Void) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
-            loopQueue.sync {
+            synchronized {
                 switch snapshot() {
                 case .running:
                     MobiusHooks.onError(error)
@@ -255,7 +255,7 @@ public final class MobiusController<Model, Event, Effect> {
 
         func syncTransitionToRunning(error: String, _ transition: (StoppedState) -> RunningState?) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
-            loopQueue.sync {
+            synchronized {
                 switch snapshot() {
                 case .running:
                     MobiusHooks.onError(error)
@@ -272,7 +272,7 @@ public final class MobiusController<Model, Event, Effect> {
 
         func syncTransitionToStopped(error: String, _ transition: (RunningState) -> StoppedState?) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
-            loopQueue.sync {
+            synchronized {
                 switch snapshot() {
                 case .stopped:
                     MobiusHooks.onError(error)
@@ -314,6 +314,11 @@ public final class MobiusController<Model, Event, Effect> {
             self.stoppedState = state
             rawState.value = .stopped
             self.runningState = nil
+        }
+
+        @inline(__always)
+        private func synchronized<Result>(_ closure: () -> Result) -> Result {
+            return MobiusHooks.synchronized(queue: loopQueue, closure: closure)
         }
     }
 }

@@ -29,7 +29,6 @@ class ConnectablePublisherTests: QuickSpec {
             var publisher: ConnectablePublisher<String>!
             var received: [String]!
             var consumer: Consumer<String>!
-            var errorThrown: Bool!
 
             beforeEach {
                 publisher = ConnectablePublisher()
@@ -38,15 +37,6 @@ class ConnectablePublisherTests: QuickSpec {
                 consumer = {
                     received.append($0)
                 }
-
-                errorThrown = false
-                MobiusHooks.setErrorHandler({ _, _, _ in
-                    errorThrown = true
-                })
-            }
-
-            afterEach {
-                MobiusHooks.setDefaultErrorHandler()
             }
 
             describe("connections") {
@@ -138,11 +128,10 @@ class ConnectablePublisherTests: QuickSpec {
 
                     context("when trying to connect") {
                         it("should refuse connections") {
-                            publisher.connect(to: consumer)
-
-                            expect(errorThrown).to(beTrue())
+                            expect { publisher.connect(to: consumer) }.to(throwAssertion())
                         }
 
+                        // NOTE: This can be removed when removing MobiusHooks
                         context("when error handling does not cause a crash") {
                             var errorMessage: String?
                             beforeEach {
@@ -169,9 +158,7 @@ class ConnectablePublisherTests: QuickSpec {
 
                     context("when trying to post") {
                         it("should refuse values") {
-                            publisher.post("crashme")
-
-                            expect(errorThrown).to(beTrue())
+                            expect(publisher.post("crashme")).to(throwAssertion())
                         }
                     }
 

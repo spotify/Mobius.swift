@@ -99,15 +99,10 @@ class EffectRouterTests: QuickSpec {
         }
 
         context("Router error cases") {
-            var didCrash: Bool!
             var route: Consumer<Effect>!
             var dispose: (() -> Void)!
 
             beforeEach {
-                didCrash = false
-                MobiusHooks.setErrorHandler { _, _, _ in
-                    didCrash = true
-                }
                 let handler = EffectHandler<Effect, Event>(
                     handle: { _, _ in },
                     disposable: AnonymousDisposable {}
@@ -126,15 +121,11 @@ class EffectRouterTests: QuickSpec {
             }
 
             it("should crash if more than 1 effect handler could be found") {
-                route(.multipleHandlersForThisEffect)
-
-                expect(didCrash).to(beTrue())
+                expect(route(.multipleHandlersForThisEffect)).to(throwAssertion())
             }
 
             it("should crash if no effect handlers could be found") {
-                route(.noHandlersForThisEffect)
-
-                expect(didCrash).to(beTrue())
+                expect(route(.noHandlersForThisEffect)).to(throwAssertion())
             }
         }
     }

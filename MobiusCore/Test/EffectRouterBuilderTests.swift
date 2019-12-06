@@ -103,36 +103,18 @@ class EffectRouterBuilderTests: QuickSpec {
                 }
 
                 context("when that effect is dispatched") {
-                    var mobiusError: String?
-                    beforeEach {
-                        MobiusHooks.setErrorHandler({ (error: String, _, _) in
-                            mobiusError = error
-                        })
-
-                        sut.build().connect(outputHandler).accept(effect)
-                    }
-
                     it("should generate an error in the error handler") {
-                        expect(mobiusError).toNot(beNil())
+                        expect { sut.build().connect(outputHandler).accept(effect) }.to(throwAssertion())
                     }
                 }
             }
 
             context("when adding no effect handler for an effect") {
                 context("when that effect is dispatched") {
-                    var mobiusError: String?
-
                     let effect = "Effect"
-                    beforeEach {
-                        MobiusHooks.setErrorHandler({ (error: String, _, _) in
-                            mobiusError = error
-                        })
-
-                        sut.build().connect(outputHandler).accept(effect)
-                    }
 
                     it("should generate an error in the error handler") {
-                        expect(mobiusError).toNot(beNil())
+                        expect { sut.build().connect(outputHandler).accept(effect) }.to(throwAssertion())
                     }
                 }
             }
