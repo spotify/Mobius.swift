@@ -136,7 +136,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// time the loop is started.
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
-    /// To stop the queue as an effect, dispatch to a different queue.
+    /// To stop the loop as an effect, dispatch to a different queue.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop isn't running
     public func stop() {
