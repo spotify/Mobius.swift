@@ -42,8 +42,11 @@ class RecordingTestConnectable: Connectable {
     private(set) var connection: Connection<String>!
     var disposed: Bool = false
 
-    init() {
+    private let expectedQueue: DispatchQueue?
+
+    init(expectedQueue: DispatchQueue? = nil) {
         recorder = Recorder<String>()
+        self.expectedQueue = expectedQueue
     }
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
@@ -57,11 +60,21 @@ class RecordingTestConnectable: Connectable {
     }
 
     func accept(_ value: String) {
+        verifyQueue()
+
         recorder.append(value)
     }
 
     func dispose() {
+        verifyQueue()
+
         disposed = true
+    }
+
+    private func verifyQueue() {
+        if let expectedQueue = expectedQueue {
+            dispatchPrecondition(condition: .onQueue(expectedQueue))
+        }
     }
 }
 
@@ -142,10 +155,16 @@ class TestEventSource<Event>: EventSource {
         case active(Consumer<Event>)
     }
     private(set) var subscriptions: [Subscription] = []
+    private var pendingEvent: Event?
 
     func subscribe(consumer: @escaping Consumer<Event>) -> Disposable {
         let index = subscriptions.count
         subscriptions.append(.active(consumer))
+
+        if let event = pendingEvent {
+            consumer(event)
+            pendingEvent = nil
+        }
 
         return AnonymousDisposable { [weak self] in
             self?.subscriptions[index] = .disposed
@@ -165,6 +184,11 @@ class TestEventSource<Event>: EventSource {
 
     var allDisposed: Bool {
         return activeSubscriptions.isEmpty
+    }
+
+    // Set an event to dispatch immediately when subscribed
+    func dispatchOnSubscribe(_ event: Event) {
+        pendingEvent = event
     }
 
     func dispatch(_ event: Event) {

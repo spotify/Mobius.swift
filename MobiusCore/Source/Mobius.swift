@@ -40,14 +40,16 @@ public extension Mobius {
     ///   - update: the `Update` function of the loop
     ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, C: Connectable>(update: @escaping Update<Model, Event, Effect>, effectHandler: C) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+    static func loop<Model, Event, Effect, C: Connectable>(
+        update: @escaping Update<Model, Event, Effect>,
+        effectHandler: C
+    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
         return Builder(
             update: update,
             effectHandler: effectHandler,
             initiator: { First(model: $0) },
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
-            eventQueue: DispatchQueue(label: "event processor"),
-            effectQueue: DispatchQueue(label: "effect processor", attributes: .concurrent),
+            eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
         )
     }
@@ -57,26 +59,23 @@ public extension Mobius {
         private let effectHandler: AnyConnectable<Effect, Event>
         private let initiator: Initiator<Model, Effect>
         private let eventSource: AnyEventSource<Event>
-        private let eventQueue: DispatchQueue
-        private let effectQueue: DispatchQueue
         private let logger: AnyMobiusLogger<Model, Event, Effect>
+        private let eventConsumerTransformer: ConsumerTransformer<Event>
 
         fileprivate init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
             eventSource: AnyEventSource<Event>,
-            eventQueue: DispatchQueue,
-            effectQueue: DispatchQueue,
+            eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where C.InputType == Effect, C.OutputType == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
             self.initiator = initiator
             self.eventSource = eventSource
-            self.eventQueue = eventQueue
-            self.effectQueue = effectQueue
             self.logger = logger
+            self.eventConsumerTransformer = eventConsumerTransformer
         }
 
         public func withEventSource<ES: EventSource>(_ eventSource: ES) -> Builder where ES.Event == Event {
@@ -85,8 +84,7 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: AnyEventSource(eventSource),
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
+                eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )
         }
@@ -97,32 +95,7 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
-                logger: logger
-            )
-        }
-
-        public func withEventQueue(_ eventQueue: DispatchQueue) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiator: initiator,
-                eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
-                logger: logger
-            )
-        }
-
-        public func withEffectQueue(_ effectQueue: DispatchQueue) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiator: initiator,
-                eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
+                eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )
         }
@@ -133,9 +106,34 @@ public extension Mobius {
                 effectHandler: effectHandler,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
+                eventConsumerTransformer: eventConsumerTransformer,
                 logger: AnyMobiusLogger(logger)
+            )
+        }
+
+
+        /// Add a function to transform the event consumers, i.e. functions that take an event and pass it to the
+        /// loop’s processing logic. If multiple transformers are supplied, they will be applied in the order they
+        /// were specified.
+        ///
+        /// Note that this is a map over `Consumer<Event>`, not over `Event`.
+        ///
+        /// - Note: The event consumer transformer can be used to implement custom scheduling, such as marshalling
+        /// events to a particular queue or thread. However, correctly managing the logic around this while also
+        /// handling loop teardown is tricky; it is recommended that you use `MobiusController` for this purpose, or
+        /// at least refer to its implementation.
+        ///
+        /// - Parameter transformer: The transformation to apply to event consumers.
+        /// - Returns: An updated Builder.
+        public func withEventConsumerTransformer(_ transformer: @escaping ConsumerTransformer<Event>) -> Builder {
+            let oldTransfomer = self.eventConsumerTransformer
+            return Builder(
+                update: update,
+                effectHandler: effectHandler,
+                initiator: initiator,
+                eventSource: eventSource,
+                eventConsumerTransformer: { consumer in transformer(oldTransfomer(consumer)) },
+                logger: logger
             )
         }
 
@@ -146,8 +144,7 @@ public extension Mobius {
                 initialModel: initialModel,
                 initiator: initiator,
                 eventSource: eventSource,
-                eventQueue: eventQueue,
-                effectQueue: effectQueue,
+                eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )
         }
@@ -156,12 +153,32 @@ public extension Mobius {
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - qos: The Quality of Service class for the controller’s work queue. Default: `.userInitiated`
         public func makeController(
-            from initialModel: Model
+            from initialModel: Model,
+            qos: DispatchQoS.QoSClass = .userInitiated
+        ) -> MobiusController<Model, Event, Effect> {
+            return makeController(from: initialModel, loopQueue: .global(qos: qos))
+        }
+
+        /// Create a `MobiusController` from the builder
+        ///
+        /// - Parameters:
+        ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The queue will dispatch events and
+        ///     effects on a serial queue that targets this queue.
+        ///   - viewQueue: The queue to use to post to the `MobiusController`’s view connection.
+        ///     Default: the main queue.
+        public func makeController(
+            from initialModel: Model,
+            loopQueue: DispatchQueue,
+            viewQueue: DispatchQueue = .main
         ) -> MobiusController<Model, Event, Effect> {
             return MobiusController(
                 builder: self,
-                initialModel: initialModel
+                initialModel: initialModel,
+                loopQueue: loopQueue,
+                viewQueue: viewQueue
             )
         }
     }

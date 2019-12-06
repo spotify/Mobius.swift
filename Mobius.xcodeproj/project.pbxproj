@@ -16,10 +16,16 @@
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
+		2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
+		2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D3A696E2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
-		2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
-		2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D54D0EF21C11362002AAC19 /* AtomicBool.swift */; };
+		2D3A6973235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
+		2D3A6974235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
+		2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69752359EAA00053C95E /* WorkBagTests.swift */; };
+		2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */; };
+		2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */; };
+		2D896047238C150A00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */; };
 		2DC2C0A62350CEBE005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
 		2DC2C0A72350CEC1005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
 		2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */; };
@@ -250,7 +256,12 @@
 		02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerDSLTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
-		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
+		2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentAccessDetector.swift; sourceTree = "<group>"; };
+		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
+		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
+		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AsyncDispatchQueueConnectable.swift; path = ConnectableConvenienceClasses/AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
+		2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventRouterDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
+		2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHandlerDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
 		2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackwardsCompatibility.swift; sourceTree = "<group>"; };
 		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
 		2DDF54C2229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilderTests.swift; sourceTree = "<group>"; };
@@ -594,6 +605,7 @@
 				5BB287BA209995410043B530 /* ConnectablePublisher.swift */,
 				5BB287B6209995410043B530 /* Connection.swift */,
 				5BB287B7209995410043B530 /* Consumer.swift */,
+				2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */,
 				5BB9346320D2A46A00A1FE3A /* EffectRouterBuilder.swift */,
 				5BB287C6209995410043B530 /* EventProcessor.swift */,
 				5BB287BB209995410043B530 /* First.swift */,
@@ -605,7 +617,8 @@
 				5BB287B8209995410043B530 /* MobiusLoop.swift */,
 				5BB287B5209995410043B530 /* Next.swift */,
 				5BB287C5209995410043B530 /* NoEffect.swift */,
-				2D54D0EF21C11362002AAC19 /* AtomicBool.swift */,
+				2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */,
+				2D3A6972235737430053C95E /* WorkBag.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -672,6 +685,7 @@
 				5BB2885920999ACE0043B530 /* ConnectablePublisherTests.swift */,
 				5BB9346520D3CAA600A1FE3A /* EffectRouterBuilderTests.swift */,
 				5BB2885020999ACE0043B530 /* EventProcessorTests.swift */,
+				2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */,
 				5BB2885520999ACE0043B530 /* FirstTests.swift */,
 				5BB2884F20999ACE0043B530 /* LoggingInitTests.swift */,
 				5BB2885A20999ACE0043B530 /* LoggingUpdateTests.swift */,
@@ -681,6 +695,7 @@
 				5BB2885820999ACE0043B530 /* MobiusLoopTests.swift */,
 				5BB2885420999ACE0043B530 /* NextTests.swift */,
 				5BB2884D20999ACE0043B530 /* TestingUtil.swift */,
+				2D3A69752359EAA00053C95E /* WorkBagTests.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -736,6 +751,7 @@
 				5B9CE80621199D4400DB79A7 /* ConnectableContramapTests.swift */,
 				DD748324212DEEC1008EEECD /* CopyableTests.swift */,
 				5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */,
+				2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -1048,9 +1064,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D54D0F121C1167C002AAC19 /* AtomicBool.swift in Sources */,
 				2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */,
 				2DF4C30120DBDD5800A4B6DE /* MobiusHooks.swift in Sources */,
+				2D3A6974235737430053C95E /* WorkBag.swift in Sources */,
 				5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				2DF4C30220DBDD5800A4B6DE /* ConnectablePublisher.swift in Sources */,
 				2DF4C2FF20DBDD5800A4B6DE /* Consumer.swift in Sources */,
@@ -1077,6 +1093,7 @@
 				2DF4C30920DBDD5C00A4B6DE /* Mobius.swift in Sources */,
 				2DF4C30320DBDD5800A4B6DE /* First.swift in Sources */,
 				2DF4C30E20DBDD5C00A4B6DE /* Lock.swift in Sources */,
+				2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1109,12 +1126,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D54D0F021C11362002AAC19 /* AtomicBool.swift in Sources */,
 				02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
+				2D3A6973235737430053C95E /* WorkBag.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
+				2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,
 				02C4061D2373078400BD7ED8 /* PredicatedSafeConnection.swift in Sources */,
 				5BB288192099957D0043B530 /* Consumer.swift in Sources */,
@@ -1141,6 +1159,7 @@
 				5BB2881E209995810043B530 /* EventSource.swift in Sources */,
 				02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */,
 				5B237EBA209C4F3C00764576 /* Connectable.swift in Sources */,
+				2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1158,6 +1177,7 @@
 				5BB2887820999AD60043B530 /* AnyConnectionTests.swift in Sources */,
 				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
 				5BB2887120999AD60043B530 /* LoggingInitTests.swift in Sources */,
+				2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */,
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
 				02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */,
 				5B85AD0220AAA8CA00C4FCD5 /* MobiusHooksTests.swift in Sources */,
@@ -1171,6 +1191,7 @@
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
 				5BB2887920999AD60043B530 /* CompositeDisposableTests.swift in Sources */,
+				2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */,
 				02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1245,6 +1266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD748325212DEEC1008EEECD /* CopyableTests.swift in Sources */,
+				2D896047238C150A00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift in Sources */,
 				5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */,
 				5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */,
 				5B9CE80721199D4400DB79A7 /* ConnectableContramapTests.swift in Sources */,

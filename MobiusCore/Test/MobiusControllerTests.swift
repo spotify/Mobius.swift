@@ -23,28 +23,39 @@ import Foundation
 import Nimble
 import Quick
 
+// swiftlint:disable type_body_length file_length
+
 class MobiusControllerTests: QuickSpec {
-    let serialEventQueue = DispatchQueue(label: "serialEventQueue")
-    let serialEffectQueue = DispatchQueue(label: "serialEffectQueue")
+    let loopQueue = DispatchQueue(label: "loop queue")
+    let viewQueue = DispatchQueue(label: "view queue")
 
     // swiftlint:disable function_body_length
     override func spec() {
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
             var view: RecordingTestConnectable!
+            var eventSource: TestEventSource<String>!
             var errorThrown: Bool!
 
-            beforeEach {
-                view = RecordingTestConnectable()
+            func clearViewRecorder() {
+                makeSureAllEffectsAndEventsHaveBeenProccessed()
+                view.recorder.clear()
+            }
 
-                let updateFunction = { (model: String, event: String) -> Next<String, String> in
-                    .next("\(model)-\(event)")
+            beforeEach {
+                view = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                let loopQueue = self.loopQueue
+
+                let updateFunction: Update<String, String, String> = { model, event in
+                    dispatchPrecondition(condition: .onQueue(loopQueue))
+                    return .next("\(model)-\(event)")
                 }
 
+                eventSource = TestEventSource()
+
                 controller = Mobius.loop(update: updateFunction, effectHandler: SimpleTestConnectable())
-                    .withEventQueue(self.serialEventQueue)
-                    .withEffectQueue(self.serialEffectQueue)
-                    .makeController(from: "S")
+                    .withEventSource(eventSource)
+                    .makeController(from: "S", loopQueue: self.loopQueue, viewQueue: self.viewQueue)
 
                 errorThrown = false
                 MobiusHooks.setErrorHandler({ _, _, _ in
@@ -62,7 +73,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.start()
 
-                        expect(view.recorder.items).to(equal(["S"]))
+                        expect(view.recorder.items).toEventually(equal(["S"]))
                     }
                     it("should hook up the view's events to the loop") {
                         controller.connectView(view)
@@ -77,7 +88,8 @@ class MobiusControllerTests: QuickSpec {
                         beforeEach {
                             controller.connectView(view)
                             controller.start()
-                            view.recorder.clear()
+
+                            clearViewRecorder()
                         }
                         it("should allow stopping and starting again") {
                             controller.stop()
@@ -94,8 +106,11 @@ class MobiusControllerTests: QuickSpec {
                         }
                         it("should retain updated state") {
                             view.dispatch("hi")
+                            self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+
                             controller.stop()
-                            view.recorder.clear()
+
+                            clearViewRecorder()
 
                             controller.start()
 
@@ -129,7 +144,7 @@ class MobiusControllerTests: QuickSpec {
 
                     it("Should dispose any listeners of the model") {
                         controller.stop()
-                        expect(modelObserver.disposed).to(beTrue())
+                        expect(modelObserver.disposed).toEventually(beTrue())
                     }
 
                     it("Should dispose any effect handlers") {
@@ -219,6 +234,15 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
                         controller.stop()
                     }
+                    xit("should allow dispatching an event from the event source immediately") {
+                        controller.connectView(view)
+                        eventSource.dispatchOnSubscribe("startup")
+                        controller.start()
+                        controller.stop()
+
+                        expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
+                        expect(errorThrown).to(beFalse())
+                    }
                 }
                 #if arch(x86_64) || arch(arm64)
                 describe("error handling") {
@@ -251,7 +275,7 @@ class MobiusControllerTests: QuickSpec {
             describe("accessing the model") {
                 describe("happy cases") {
                     it("should return the default model before starting") {
-                        expect(controller.getModel()).to(equal("S"))
+                        expect(controller.model).to(equal("S"))
                     }
                     it("should read the model from a running loop") {
                         controller.connectView(view)
@@ -259,7 +283,7 @@ class MobiusControllerTests: QuickSpec {
 
                         view.dispatch("an event")
 
-                        expect(controller.getModel()).toEventually(equal("S-an event"))
+                        expect(controller.model).toEventually(equal("S-an event"))
                     }
                     it("should read the last loop model after stopping") {
                         controller.connectView(view)
@@ -272,17 +296,18 @@ class MobiusControllerTests: QuickSpec {
 
                         controller.stop()
 
-                        expect(controller.getModel()).to(equal("S-the last event"))
+                        expect(controller.model).to(equal("S-the last event"))
                     }
                     it("should start from the last loop model on restart") {
                         controller.connectView(view)
                         controller.start()
 
                         view.dispatch("the last event")
+                        self.makeSureAllEffectsAndEventsHaveBeenProccessed()
 
                         controller.stop()
 
-                        view.recorder.clear()
+                        clearViewRecorder()
 
                         controller.start()
 
@@ -310,16 +335,29 @@ class MobiusControllerTests: QuickSpec {
                 }
                 #endif
             }
+
+            describe("dispatching events") {
+                beforeEach {
+                    controller.connectView(view)
+                    controller.start()
+                }
+
+                it("should dispatch events from the event source") {
+                    eventSource.dispatch("event source event")
+
+                    expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
+                }
+            }
         }
     }
 
     func makeSureAllEffectsAndEventsHaveBeenProccessed() {
-        serialEffectQueue.sync {
+        loopQueue.sync {
             // Waiting synchronously for effects to be completed
         }
 
-        serialEventQueue.sync {
-            // Waiting synchronously for events to be completed
+        viewQueue.sync {
+            // Waiting synchronously for view observations to be completed
         }
     }
 }

@@ -39,6 +39,18 @@ public extension Next where Effect: Hashable {
     }
 }
 
+public extension Mobius.Builder {
+    @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
+    func withEventQueue(_ eventQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
+        return self
+    }
+
+    @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
+    func withEffectQueue(_ effectQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
+        return self
+    }
+}
+
 public extension MobiusLoop {
     @available(*, deprecated, message: "use latestModel instead")
     func getMostRecentModel() -> Model? {
@@ -49,7 +61,12 @@ public extension MobiusLoop {
 public extension MobiusController {
     @available(*, deprecated, message: "use `Mobius.Builder.makeController` instead")
     convenience init(builder: Mobius.Builder<Model, Event, Effect>, defaultModel: Model) {
-        self.init(builder: builder, initialModel: defaultModel)
+        self.init(
+            builder: builder,
+            initialModel: defaultModel,
+            loopQueue: .global(qos: .userInitiated),
+            viewQueue: .main
+        )
     }
 
     @available(*, deprecated, message: "use model instead")

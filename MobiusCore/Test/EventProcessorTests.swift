@@ -30,12 +30,10 @@ class EventProcessorTests: QuickSpec {
             var nextPublisher: ConnectablePublisher<Next<Int, Int>>!
             var consumer: Consumer<Next<Int, Int>>!
             var receivedModels: [Int]!
-            var queue: DispatchQueue!
 
             beforeEach {
                 nextPublisher = ConnectablePublisher()
-                queue = DispatchQueue(label: "test EP", attributes: .concurrent)
-                eventProcessor = EventProcessor(update: self.testUpdate, publisher: nextPublisher, queue: queue)
+                eventProcessor = EventProcessor(update: self.testUpdate, publisher: nextPublisher)
 
                 receivedModels = []
                 consumer = {
@@ -51,7 +49,6 @@ class EventProcessorTests: QuickSpec {
                 it("should post the first to the publisher as a next") {
                     eventProcessor.start(from: First(model: 1, effects: []))
 
-                    queue.waitForOutstandingTasks()
                     expect(receivedModels).to(equal([1]))
                 }
 
@@ -60,9 +57,6 @@ class EventProcessorTests: QuickSpec {
 
                     eventProcessor.accept(10)
                     eventProcessor.accept(200)
-
-                    queue.waitForOutstandingTasks()
-
                     expect(receivedModels).to(equal([1, 11, 211]))
                 }
             }
@@ -78,14 +72,12 @@ class EventProcessorTests: QuickSpec {
                     }
 
                     it("should track the current model from start") {
-                        queue.waitForOutstandingTasks()
                         expect(eventProcessor.readCurrentModel()).to(equal(1))
                     }
 
                     it("should track the current model from updates") {
                         eventProcessor.accept(99)
 
-                        queue.waitForOutstandingTasks()
                         expect(eventProcessor.readCurrentModel()).to(equal(100))
                     }
                 }
@@ -96,8 +88,6 @@ class EventProcessorTests: QuickSpec {
                 eventProcessor.accept(400)
 
                 eventProcessor.start(from: First(model: 1, effects: []))
-
-                queue.waitForOutstandingTasks()
 
                 expect(receivedModels).to(equal([1, 81, 481]))
             }
