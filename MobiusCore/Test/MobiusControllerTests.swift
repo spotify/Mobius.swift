@@ -191,7 +191,7 @@ class MobiusControllerTests: QuickSpec {
                         expect(view.recorder.items).toEventually(equal(["S"]))
                     }
                     it("should not send events to a disconnected view") {
-                        let disconnectedView = RecordingTestConnectable()
+                        let disconnectedView = RecordingTestConnectable(expectedQueue: self.viewQueue)
                         controller.connectView(disconnectedView)
                         controller.disconnectView()
 

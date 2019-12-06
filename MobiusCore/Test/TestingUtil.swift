@@ -56,7 +56,11 @@ class RecordingTestConnectable: Connectable {
     }
 
     func dispatch(_ string: String) {
-        consumer?(string)
+        if let queue = self.expectedQueue {
+            queue.sync { consumer?(string) }
+        } else {
+            consumer?(string)
+        }
     }
 
     func accept(_ value: String) {
