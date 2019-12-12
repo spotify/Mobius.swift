@@ -48,8 +48,8 @@ class NimbleNextMatchersTests: QuickSpec {
                 NimbleAssertionHandler = defaultHandler!
             }
 
-            let testUpdate = Update<String, String, String> { model, event in
-                return .next("some model", effects: ["some effect"])
+            let testUpdate = Update<String, String, String> { _, _ in
+                .next("some model", effects: ["some effect"])
             }
 
             // Testing through proxy: UpdateSpec

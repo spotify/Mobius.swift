@@ -37,7 +37,7 @@ class MobiusIntegrationTests: QuickSpec {
                     }
                 }
 
-                let update = Update<String, String, String> { model, event in
+                let update = Update<String, String, String> { _, event in
                     switch event {
                     case "button pushed":
                         return Next.next("pushed")
