@@ -48,7 +48,7 @@ class NimbleNextMatchersTests: QuickSpec {
                 NimbleAssertionHandler = defaultHandler!
             }
 
-            func testUpdate(model: String, event: String) -> Next<String, String> {
+            let testUpdate = Update<String, String, String> { model, event in
                 return .next("some model", effects: ["some effect"])
             }
 

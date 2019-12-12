@@ -62,7 +62,7 @@ class EventHandlerDisposalLogicalRaceRegressionTest: QuickSpec {
                     errorThrown = true
                 })
 
-                func update(model: Model, event: Event) -> Next<Model, Effect> {
+                let update = Update<Model, Event, Effect> { _, _ in
                     return .dispatchEffects([.effect1])
                 }
 

@@ -19,7 +19,17 @@
 
 import Foundation
 
-public typealias Update<Model, Event, Effect> = (Model, Event) -> Next<Model, Effect>
+public struct Update<Model, Event, Effect> {
+    private let update: (Model, Event) -> Next<Model, Effect>
+
+    public init(update: @escaping (Model, Event) -> Next<Model, Effect>) {
+        self.update = update
+    }
+
+    public func update(model: Model, event: Event) -> Next<Model, Effect> {
+        return self.update(model, event)
+    }
+}
 
 public typealias Initiator<Model, Effect> = (Model) -> First<Model, Effect>
 
@@ -41,7 +51,7 @@ public extension Mobius {
     ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
     static func loop<Model, Event, Effect, C: Connectable>(
-        update: @escaping Update<Model, Event, Effect>,
+        update: Update<Model, Event, Effect>,
         effectHandler: C
     ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
         return Builder(
@@ -63,7 +73,7 @@ public extension Mobius {
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
         fileprivate init<C: Connectable>(
-            update: @escaping Update<Model, Event, Effect>,
+            update: Update<Model, Event, Effect>,
             effectHandler: C,
             initiator: @escaping Initiator<Model, Effect>,
             eventSource: AnyEventSource<Event>,
@@ -204,22 +214,13 @@ class LoggingInitiator<Model, Effect> {
     }
 }
 
-class LoggingUpdate<Model, Event, Effect> {
-    private let realUpdate: Update<Model, Event, Effect>
-    private let willUpdate: (Model, Event) -> Void
-    private let didUpdate: (Model, Event, Next<Model, Effect>) -> Void
-
-    init<L: MobiusLogger>(_ realUpdate: @escaping Update<Model, Event, Effect>, _ logger: L) where L.Model == Model, L.Event == Event, L.Effect == Effect {
-        self.realUpdate = realUpdate
-        willUpdate = logger.willUpdate
-        didUpdate = logger.didUpdate
-    }
-
-    func update(_ model: Model, _ event: Event) -> Next<Model, Effect> {
-        willUpdate(model, event)
-        let result = realUpdate(model, event)
-        didUpdate(model, event, result)
-
-        return result
+extension Update {
+    func logging<L: MobiusLogger>(_ logger: L) -> Update where L.Model == Model, L.Event == Event, L.Effect == Effect {
+        return Update { model, event in
+            logger.willUpdate(model: model, event: event)
+            let next = self.update(model: model, event: event)
+            logger.didUpdate(model: model, event: event, next: next)
+            return next
+        }
     }
 }

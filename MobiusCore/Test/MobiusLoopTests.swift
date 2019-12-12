@@ -56,7 +56,7 @@ class MobiusLoopTests: QuickSpec {
 
                 modelObserver = { receivedModels.append($0) }
 
-                let update: Update<String, String, String> = { _, event in Next.next(event) }
+                let update = Update<String, String, String> { _, event in Next.next(event) }
 
                 effectHandler = SimpleTestConnectable()
 
@@ -114,7 +114,7 @@ class MobiusLoopTests: QuickSpec {
                 }
 
                 it("should queue up events dispatched before start to support racy initialisations") {
-                    loop = Mobius.loop(update: { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
+                    loop = Mobius.loop(update: Update { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
                         .start(from: "the beginning")
 
                     loop.addObserver(modelObserver)
@@ -177,7 +177,7 @@ class MobiusLoopTests: QuickSpec {
 
                 beforeEach {
                     eventProcessor = TestEventProcessor(
-                        update: { _, _ in .noChange },
+                        update: Update { _, _ in .noChange },
                         publisher: ConnectablePublisher()
                     )
                     modelPublisher = ConnectablePublisher<String>()
@@ -238,7 +238,7 @@ class MobiusLoopTests: QuickSpec {
             describe("when creating a builder") {
                 context("when a class corresponding to the ConnectableProtocol is used as effecthandler") {
                     beforeEach {
-                        let update = { (_: String, _: String) -> Next<String, String> in
+                        let update = Update { (_: String, _: String) -> Next<String, String> in
                             Next<String, String>.noChange
                         }
 
@@ -256,7 +256,7 @@ class MobiusLoopTests: QuickSpec {
                 beforeEach {
                     let publisher = ConnectablePublisher<String>()
                     let eventProcessor = TestEventProcessor<String, String, String>(
-                        update: { _, _ in .noChange },
+                        update: Update { _, _ in .noChange },
                         publisher: ConnectablePublisher<Next<String, String>>()
                     )
                     eventProcessor.desiredDebugDescription = eventProcessorDebugDescription
@@ -302,7 +302,7 @@ class MobiusLoopTests: QuickSpec {
                 let effectConnectable = EffectRouter<Int, Int>()
                     .routeEffects(withPayload: payload).to(effectHandler)
                     .asConnectable
-                let update = { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
+                let update = Update { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
                 loop = Mobius
                     .loop(update: update, effectHandler: effectConnectable)
                     .start(from: 0)

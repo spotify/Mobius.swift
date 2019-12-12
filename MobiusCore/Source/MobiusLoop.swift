@@ -104,7 +104,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
 
     // swiftlint:disable:next function_parameter_count
     static func createLoop<C: Connectable>(
-        update: @escaping Update<Model, Event, Effect>,
+        update: Update<Model, Event, Effect>,
         effectHandler: C,
         initialModel: Model,
         initiator: @escaping Initiator<Model, Effect>,
@@ -114,7 +114,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
         let accessGuard = ConcurrentAccessDetector()
         let loggingInitiator = LoggingInitiator(initiator, logger)
-        let loggingUpdate = LoggingUpdate(update, logger)
+        let loggingUpdate = update.logging(logger)
         let workBag = WorkBag(accessGuard: accessGuard)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
@@ -123,7 +123,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
 
         // event processor: process events, publish Next:s, retain current model
         let eventProcessor = EventProcessor(
-            update: loggingUpdate.update,
+            update: loggingUpdate,
             publisher: nextPublisher,
             accessGuard: accessGuard
         )

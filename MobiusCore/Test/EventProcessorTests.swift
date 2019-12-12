@@ -117,7 +117,7 @@ class EventProcessorTests: QuickSpec {
         }
     }
 
-    func testUpdate(model: Int, event: Int) -> Next<Int, Int> {
+    let testUpdate = Update<Int, Int, Int> { model, event in
         return Next.next(model + event)
     }
 }
