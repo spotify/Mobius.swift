@@ -122,7 +122,7 @@ public final class MobiusController<Model, Event, Effect> {
                 return nil
             }
 
-            let loop = loopFactory(stoppedState.modelToStartForm)
+            let loop = loopFactory(stoppedState.modelToStartFrom)
             let viewConnection = viewConnectable.connect(loop.dispatchEvent)
             loop.addObserver(viewConnection.accept)
 
@@ -146,7 +146,7 @@ public final class MobiusController<Model, Event, Effect> {
             runningState.loop.dispose()
             runningState.viewConnection.dispose()
 
-            return StoppedState(modelToStartForm: model, viewConnectable: runningState.viewConnectable)
+            return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
         }
     }
 
@@ -158,7 +158,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running
     public func replaceModel(_ model: Model) {
         state.syncMutateStopped(error: "cannot replace the model of a running loop") { state in
-            state.modelToStartForm = model
+            state.modelToStartFrom = model
         }
     }
 
@@ -171,7 +171,7 @@ public final class MobiusController<Model, Event, Effect> {
         return state.syncRead {
             switch $0 {
             case .stopped(let state):
-                return state.modelToStartForm
+                return state.modelToStartFrom
             case .running(let state):
                 return state.loop.latestModel
             }
@@ -181,7 +181,7 @@ public final class MobiusController<Model, Event, Effect> {
     // MARK: - State model
 
     private struct StoppedState {
-        var modelToStartForm: Model
+        var modelToStartFrom: Model
         var viewConnectable: ViewConnectable?
 
     }
@@ -221,7 +221,7 @@ public final class MobiusController<Model, Event, Effect> {
         }
 
         init(model: Model, queue: DispatchQueue) {
-            stoppedState = StoppedState(modelToStartForm: model, viewConnectable: nil)
+            stoppedState = StoppedState(modelToStartFrom: model, viewConnectable: nil)
             loopQueue = queue
         }
 
