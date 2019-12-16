@@ -29,7 +29,7 @@ class LoggingInitiatorTests: QuickSpec {
 
             beforeEach {
                 logger = TestMobiusLogger()
-                loggingInitiator = LoggingInitiator({ model in First(model: model) }, logger)
+                loggingInitiator = LoggingInitiator({ model in First(model: model) }, logger: logger)
             }
 
             it("should log willInitiate and didInitiate for each initiate attempt") {
