@@ -18,6 +18,7 @@
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
+		2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D3A696E2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
 		2D3A6973235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
@@ -50,7 +51,7 @@
 		2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C8209995410043B530 /* MobiusController.swift */; };
 		2DF4C30D20DBDD5C00A4B6DE /* MobiusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C9209995410043B530 /* MobiusLogger.swift */; };
 		2DF4C30E20DBDD5C00A4B6DE /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
-		2DF4C42420DBDF1B00A4B6DE /* ConsoleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287E8209995420043B530 /* ConsoleLogger.swift */; };
+		2DF4C42420DBDF1B00A4B6DE /* SimpleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287E8209995420043B530 /* SimpleLogger.swift */; };
 		2DF4C53A20DBE04B00A4B6DE /* UpdateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB288A420999B750043B530 /* UpdateSpec.swift */; };
 		3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCF5F0020F3620700721C0D /* ConnectableClass.swift */; };
 		5B19F71B21254CCD00074AD7 /* NextMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B19F71A21254CCD00074AD7 /* NextMatchers.swift */; };
@@ -156,7 +157,7 @@
 		DD748323212DB525008EEECD /* Copyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD748322212DB525008EEECD /* Copyable.swift */; };
 		DD748325212DEEC1008EEECD /* CopyableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD748324212DEEC1008EEECD /* CopyableTests.swift */; };
 		DD748326212DEEC6008EEECD /* Copyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD748322212DB525008EEECD /* Copyable.swift */; };
-		DDA64A6720A0AD2D00150355 /* ConsoleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287E8209995420043B530 /* ConsoleLogger.swift */; };
+		DDA64A6720A0AD2D00150355 /* SimpleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287E8209995420043B530 /* SimpleLogger.swift */; };
 		DDA64A6820A0AD5000150355 /* UpdateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB288A420999B750043B530 /* UpdateSpec.swift */; };
 		DDA64A6920A0AD5200150355 /* UpdateSpecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB288AA20999B750043B530 /* UpdateSpecTests.swift */; };
 /* End PBXBuildFile section */
@@ -262,6 +263,8 @@
 		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AsyncDispatchQueueConnectable.swift; path = ConnectableConvenienceClasses/AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
 		2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventRouterDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
 		2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHandlerDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
+		2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingAdaptors.swift; sourceTree = "<group>"; };
+		2D54D0EF21C11362002AAC19 /* AtomicBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicBool.swift; sourceTree = "<group>"; };
 		2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackwardsCompatibility.swift; sourceTree = "<group>"; };
 		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
 		2DDF54C2229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilderTests.swift; sourceTree = "<group>"; };
@@ -327,7 +330,7 @@
 		5BB287C9209995410043B530 /* MobiusLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusLogger.swift; sourceTree = "<group>"; };
 		5BB287CA209995410043B530 /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
 		5BB287E6209995420043B530 /* MobiusExtras-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusExtras-Info.plist"; sourceTree = "<group>"; };
-		5BB287E8209995420043B530 /* ConsoleLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleLogger.swift; sourceTree = "<group>"; };
+		5BB287E8209995420043B530 /* SimpleLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleLogger.swift; sourceTree = "<group>"; };
 		5BB2882D2099964F0043B530 /* MobiusCore-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusCore-Info.plist"; sourceTree = "<group>"; };
 		5BB2882E2099964F0043B530 /* MobiusCoreTests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "MobiusCoreTests-Info.plist"; sourceTree = "<group>"; };
 		5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyMobiusLoggerTests.swift; sourceTree = "<group>"; };
@@ -610,6 +613,7 @@
 				5BB287C6209995410043B530 /* EventProcessor.swift */,
 				5BB287BB209995410043B530 /* First.swift */,
 				5BB287CA209995410043B530 /* Lock.swift */,
+				2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */,
 				5BB287C3209995410043B530 /* Mobius.swift */,
 				5BB287C8209995410043B530 /* MobiusController.swift */,
 				5BB287B9209995410043B530 /* MobiusHooks.swift */,
@@ -656,7 +660,7 @@
 			children = (
 				5BCF5F0020F3620700721C0D /* ConnectableClass.swift */,
 				5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */,
-				5BB287E8209995420043B530 /* ConsoleLogger.swift */,
+				5BB287E8209995420043B530 /* SimpleLogger.swift */,
 				DD748322212DB525008EEECD /* Copyable.swift */,
 				5B1F104C21105CAD0067193C /* EventSource+Extensions.swift */,
 			);
@@ -1103,7 +1107,7 @@
 			files = (
 				DD748326212DEEC6008EEECD /* Copyable.swift in Sources */,
 				3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */,
-				2DF4C42420DBDF1B00A4B6DE /* ConsoleLogger.swift in Sources */,
+				2DF4C42420DBDF1B00A4B6DE /* SimpleLogger.swift in Sources */,
 				02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */,
 				5B1F104E21105CB10067193C /* EventSource+Extensions.swift in Sources */,
 				2D3A696D2355AED90053C95E /* Lock.swift in Sources */,
@@ -1147,6 +1151,7 @@
 				5BB28823209995810043B530 /* NoEffect.swift in Sources */,
 				2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				5B1F103F210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
+				2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */,
 				5B1F1043210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
@@ -1203,7 +1208,7 @@
 				DD748323212DB525008EEECD /* Copyable.swift in Sources */,
 				5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */,
 				5B1F104D21105CAD0067193C /* EventSource+Extensions.swift in Sources */,
-				DDA64A6720A0AD2D00150355 /* ConsoleLogger.swift in Sources */,
+				DDA64A6720A0AD2D00150355 /* SimpleLogger.swift in Sources */,
 				5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */,
 				2D3A696E2355AED90053C95E /* Lock.swift in Sources */,
 			);

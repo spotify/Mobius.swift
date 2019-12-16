@@ -20,36 +20,41 @@
 import Foundation
 import MobiusCore
 
-public class ConsoleLogger<Model, Event, Effect>: MobiusLogger {
+public class SimpleLogger<Model, Event, Effect>: MobiusLogger {
     private let prefix: String
+    private let consumer: Consumer<String>
 
-    public init(tag: String = "Mobius") {
+    public init(tag: String = "Mobius", consumer: @escaping Consumer<String> = { print($0) }) {
         prefix = tag + ": "
+        self.consumer = consumer
     }
 
     public func willInitiate(model: Model) {
-        print(prefix + "Initializing loop")
+        consumer(prefix + "Initializing loop")
     }
 
     public func didInitiate(model: Model, first: First<Model, Effect>) {
-        print(prefix + "Loop initialized, starting from model: \(first.model)")
+        consumer(prefix + "Loop initialized, starting from model: \(first.model)")
 
         first.effects.forEach { (effect: Effect) in
-            print(prefix + "Effect dispatched: \(effect)")
+            consumer(prefix + "Effect dispatched: \(effect)")
         }
     }
 
     public func willUpdate(model: Model, event: Event) {
-        print(prefix + "Event received: \(event)")
+        consumer(prefix + "Event received: \(event)")
     }
 
     public func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {
         if let nextModel = next.model {
-            print(prefix + "Model updated: \(nextModel)")
+            consumer(prefix + "Model updated: \(nextModel)")
         }
 
         next.effects.forEach { (effect: Effect) in
-            print(prefix + "Effect dispatched: \(effect)")
+            consumer(prefix + "Effect dispatched: \(effect)")
         }
     }
 }
+
+@available(*, deprecated, message: "use SimpleLogger instead")
+typealias ConsoleLogger = SimpleLogger
