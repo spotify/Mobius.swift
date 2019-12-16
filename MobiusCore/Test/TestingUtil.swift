@@ -42,8 +42,11 @@ class RecordingTestConnectable: Connectable {
     private(set) var connection: Connection<String>!
     var disposed: Bool = false
 
-    init() {
+    private let expectedQueue: DispatchQueue?
+
+    init(expectedQueue: DispatchQueue? = nil) {
         recorder = Recorder<String>()
+        self.expectedQueue = expectedQueue
     }
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
@@ -57,16 +60,41 @@ class RecordingTestConnectable: Connectable {
     }
 
     func accept(_ value: String) {
-        recorder.items.append(value)
+        verifyQueue()
+
+        recorder.append(value)
     }
 
     func dispose() {
+        verifyQueue()
+
         disposed = true
+    }
+
+    private func verifyQueue() {
+        if let expectedQueue = expectedQueue {
+            dispatchPrecondition(condition: .onQueue(expectedQueue))
+        }
     }
 }
 
-class Recorder<T> {
-    var items = [T]()
+final class Recorder<T> {
+    private var storage = Synchronized<[T]>(value: [])
+    private let queue = DispatchQueue(label: "Recorder")
+
+    var items: [T] {
+        return storage.value
+    }
+
+    func append(_ item: T) {
+        storage.mutate {
+            $0.append(item)
+        }
+    }
+
+    func clear() {
+        storage.value = []
+    }
 }
 
 class TestDisposable: Disposable {
@@ -88,22 +116,36 @@ extension DispatchQueue {
 }
 
 class TestMobiusLogger: MobiusLogger {
-    var logMessages = [String]()
+    private var messages = Synchronized<[String]>(value: [])
+
+    private func appendLog(_ log: String) {
+        messages.mutate {
+            $0.append(log)
+        }
+    }
+
+    public var logMessages: [String] {
+        return messages.value
+    }
+
+    func clear() {
+        messages.value = []
+    }
 
     func willInitiate(model: String) {
-        logMessages.append("willInitiate(\(model))")
+        appendLog("willInitiate(\(model))")
     }
 
     func didInitiate(model: String, first: First<String, String>) {
-        logMessages.append("didInitiate(\(model), \(first))")
+        appendLog("didInitiate(\(model), \(first))")
     }
 
     func willUpdate(model: String, event: String) {
-        logMessages.append("willUpdate(\(model), \(event))")
+        appendLog("willUpdate(\(model), \(event))")
     }
 
     func didUpdate(model: String, event: String, next: Next<String, String>) {
-        logMessages.append("didUpdate(\(model), \(event), \(next))")
+        appendLog("didUpdate(\(model), \(event), \(next))")
     }
 }
 
@@ -113,10 +155,16 @@ class TestEventSource<Event>: EventSource {
         case active(Consumer<Event>)
     }
     private(set) var subscriptions: [Subscription] = []
+    private var pendingEvent: Event?
 
     func subscribe(consumer: @escaping Consumer<Event>) -> Disposable {
         let index = subscriptions.count
         subscriptions.append(.active(consumer))
+
+        if let event = pendingEvent {
+            consumer(event)
+            pendingEvent = nil
+        }
 
         return AnonymousDisposable { [weak self] in
             self?.subscriptions[index] = .disposed
@@ -138,9 +186,39 @@ class TestEventSource<Event>: EventSource {
         return activeSubscriptions.isEmpty
     }
 
+    // Set an event to dispatch immediately when subscribed
+    func dispatchOnSubscribe(_ event: Event) {
+        pendingEvent = event
+    }
+
     func dispatch(_ event: Event) {
         activeSubscriptions.forEach {
             $0(event)
         }
+    }
+}
+
+/*
+ Helper to simulate atomic access to a property.
+
+ This could be a property wrapper when we raise our target to Swift 5.1.
+ */
+final class Synchronized<Value> {
+    private var _value: Value
+    private var lock = DispatchQueue(label: "TestUtil Synchronized lock")
+
+    var value: Value {
+        get { return lock.sync { _value } }
+        set(newValue) { lock.sync { _value = newValue } }
+    }
+
+    func mutate(with closure: (inout Value) -> Void) {
+        lock.sync {
+            closure(&_value)
+        }
+    }
+
+    init(value: Value) {
+        _value = value
     }
 }

@@ -34,7 +34,7 @@ public func assertThatFirst<Model, Effect>(
     return { (result: First<Model, Effect>) in
         predicates.forEach({ predicate in
             let predicateResult = predicate(result)
-            if case let .failure(message, file, line) = predicateResult {
+            if case .failure(let message, let file, let line) = predicateResult {
                 failFunction(message, file, line)
             }
         })

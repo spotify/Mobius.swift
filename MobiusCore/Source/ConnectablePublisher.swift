@@ -23,17 +23,21 @@ import Foundation
 /// will broadcast posted values to all connections. It also retains a current value, and will post that value to new
 /// connections.
 class ConnectablePublisher<ValueType>: Disposable {
-    private let lock = DispatchQueue(label: "Mobius.ConnectablePublisher")
+    private let access: ConcurrentAccessDetector
     private var connections = [UUID: Connection<ValueType>]()
     private var currentValue: ValueType?
-    private var disposed = false
+    private var _disposed = false
 
-    var isDisposed: Bool {
-        return lock.sync { disposed }
+    init(accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()) {
+        access = accessGuard
+    }
+
+    var disposed: Bool {
+        return access.guard { _disposed }
     }
 
     func post(_ value: ValueType) {
-        let connections: [Connection<ValueType>] = lock.sync {
+        let connections: [Connection<ValueType>] = access.guard {
             guard !disposed else {
                 // Callers are responsible for ensuring post is never entered after dispose.
                 MobiusHooks.onError("cannot accept values when disposed")
@@ -52,8 +56,8 @@ class ConnectablePublisher<ValueType>: Disposable {
 
     @discardableResult
     func connect(to outputConsumer: @escaping Consumer<ValueType>) -> Connection<ValueType> {
-        return lock.sync { () -> Connection<ValueType> in
-            guard !disposed else {
+        return access.guard { () -> Connection<ValueType> in
+            guard !_disposed else {
                 // Callers are responsible for ensuring connect is never entered after dispose.
                 MobiusHooks.onError("cannot add connections when disposed")
                 return BrokenConnection<ValueType>.connection()
@@ -73,10 +77,10 @@ class ConnectablePublisher<ValueType>: Disposable {
     }
 
     func dispose() {
-        let connections: [Connection<ValueType>] = lock.sync {
-            guard !disposed else { return [] }
+        let connections: [Connection<ValueType>] = access.guard {
+            guard !_disposed else { return [] }
 
-            disposed = true
+            _disposed = true
             return Array(self.connections.values)
         }
 
@@ -86,7 +90,7 @@ class ConnectablePublisher<ValueType>: Disposable {
     }
 
     private func removeConnection(for uuid: UUID) {
-        lock.sync {
+        access.guard {
             self.connections[uuid] = nil
         }
     }
