@@ -67,14 +67,9 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
 
     func accept(_ event: Event) {
         access.guard {
-            if let current = self.currentModel {
-                let next = self.update.update(model: current, event: event)
-
-                if let newModel = next.model {
-                    self.currentModel = newModel
-                }
-
-                self.publisher.post(next)
+            if self.currentModel != nil {
+                let effects = self.update.update(into: &self.currentModel!, event: event)
+                self.publisher.post(.next(self.currentModel!, effects: effects))
             } else {
                 self.queuedEvents.append(event)
             }

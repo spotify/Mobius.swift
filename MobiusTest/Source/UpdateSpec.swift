@@ -58,16 +58,15 @@ public struct UpdateSpec<Model, Event, Effect> {
         }
 
         public func then(_ expression: Assert) {
-            var lastNext: Next<Model, Effect>?
+            var lastEffects: [Effect]?
             var lastModel = model
 
             for event in events {
-                lastNext = update.update(model: lastModel, event: event)
-                lastModel = lastNext?.model ?? lastModel
+                lastEffects = update.update(into: &lastModel, event: event)
             }
 
             // there will always be at least one event, so lastNext is guaranteed to have a value
-            expression(Result(model: lastModel, lastNext: lastNext!))
+            expression(Result(model: lastModel, lastNext: .next(lastModel, effects: lastEffects!)))
         }
     }
 

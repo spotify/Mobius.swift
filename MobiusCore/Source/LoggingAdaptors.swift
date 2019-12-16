@@ -59,9 +59,9 @@ extension Update {
     func logging<L: MobiusLogger>(_ logger: L) -> Update where L.Model == Model, L.Event == Event, L.Effect == Effect {
         return Update { model, event in
             logger.willUpdate(model: model, event: event)
-            let next = self.update(model: model, event: event)
-            logger.didUpdate(model: model, event: event, next: next)
-            return next
+            let effects = self.update(into: &model, event: event)
+            logger.didUpdate(model: model, event: event, next: Next(model: model, effects: effects))
+            return effects
         }
     }
 }

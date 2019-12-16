@@ -62,9 +62,7 @@ class EventHandlerDisposalLogicalRaceRegressionTest: QuickSpec {
                     errorThrown = true
                 })
 
-                let update = Update<Model, Event, Effect> { _, _ in
-                    .dispatchEffects([.effect1])
-                }
+                let update = Update<Model, Event, Effect> { _, _ in [.effect1] }
 
                 controller = Mobius.loop(update: update, effectHandler: effectHandler)
                     .withEventSource(eventSource)

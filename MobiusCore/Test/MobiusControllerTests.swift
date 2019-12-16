@@ -46,7 +46,7 @@ class MobiusControllerTests: QuickSpec {
                 view = RecordingTestConnectable(expectedQueue: self.viewQueue)
                 let loopQueue = self.loopQueue
 
-                let updateFunction = Update<String, String, String> { model, event in
+                let updateFunction = Update<String, String, String>.create { model, event in
                     dispatchPrecondition(condition: .onQueue(loopQueue))
                     return .next("\(model)-\(event)")
                 }
@@ -136,7 +136,7 @@ class MobiusControllerTests: QuickSpec {
                     beforeEach {
                         modelObserver = MockConnectable()
                         effectObserver = MockConnectable()
-                        controller = Mobius.loop(update: Update { _, _ in .noChange }, effectHandler: effectObserver)
+                        controller = Mobius.loop(update: Update { _, _ in [] }, effectHandler: effectObserver)
                             .makeController(from: "")
                         controller.connectView(modelObserver)
                         controller.start()

@@ -42,7 +42,7 @@ class XCTestNextMatchersTests: QuickSpec {
                 failMessages = []
             }
 
-            let testUpdate = Update<String, String, String> { _, _ in
+            let testUpdate = Update<String, String, String>.create { _, _ in
                 .next("some model", effects: ["some effect"])
             }
 

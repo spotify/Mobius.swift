@@ -37,18 +37,23 @@ class MobiusIntegrationTests: QuickSpec {
                     }
                 }
 
-                let update = Update<String, String, String> { _, event in
+                let update = Update<String, String, String> { model, event in
                     switch event {
                     case "button pushed":
-                        return Next.next("pushed")
+                        model = "pushed"
+                        return []
                     case "trigger effect":
-                        return Next.next("triggered", effects: ["leads to event"])
+                        model = "triggered"
+                        return ["leads to event"]
                     case "effect feedback":
-                        return Next.next("done")
+                        model = "done"
+                        return []
                     case "from source":
-                        return Next.next("event sourced")
+                        model = "event sourced"
+                        return []
                     default:
-                        fatalError("unexpected event \(event)")
+                        model = "unexpected event \(event)"
+                        return []
                     }
                 }
             }

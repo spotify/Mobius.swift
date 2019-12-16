@@ -21,14 +21,22 @@ import Foundation
 
 /// A wrapper around an update function.
 public struct Update<Model, Event, Effect> {
-    private let update: (Model, Event) -> Next<Model, Effect>
+    private let update: (inout Model, Event) -> [Effect]
 
-    public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
+    public init(_ update: @escaping (inout Model, Event) -> [Effect]) {
         self.update = update
     }
 
-    public func update(model: Model, event: Event) -> Next<Model, Effect> {
-        return self.update(model, event)
+    public static func create(_ update: @escaping (Model, Event) -> Next<Model, Effect>) -> Update {
+        return Update { model, event in
+            let next = update(model, event)
+            model = next.model ?? model
+            return next.effects
+        }
+    }
+
+    public func update(into model: inout Model, event: Event) -> [Effect] {
+        return self.update(&model, event)
     }
 }
 
@@ -76,7 +84,7 @@ public extension Mobius {
         effectHandler: C
     ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
         return self.loop(
-            update: Update(update),
+            update: Update.create(update),
             effectHandler: effectHandler
         )
     }

@@ -118,6 +118,7 @@ class EventProcessorTests: QuickSpec {
     }
 
     let testUpdate = Update<Int, Int, Int> { model, event in
-        Next.next(model + event)
+        model += event
+        return []
     }
 }
