@@ -65,6 +65,22 @@ public extension Mobius {
         )
     }
 
+    /// A convenience version of `loop` that takes an unwrapped update function.
+    ///
+    /// - Parameters:
+    ///   - update: the update function of the loop
+    ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
+    /// - Returns: a `Builder` instance that you can further configure before starting the loop
+    static func loop<Model, Event, Effect, C: Connectable>(
+        update: @escaping (Model, Event) -> Next<Model, Effect>,
+        effectHandler: C
+    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+        return self.loop(
+            update: Update(update),
+            effectHandler: effectHandler
+        )
+    }
+
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
