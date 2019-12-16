@@ -19,27 +19,40 @@
 
 import Foundation
 
+/// A connectable adapter which imposes asynchronous dispatch blocks around calls in both directions.
+///
+/// * Consumers passed to `connect` will be executed on the provided `consumerQueue`
+/// * The underlying connectable’s connections’ `acceptClosure` and `disposeClosure` will be executed on the provided
+///   `consumerQueue`
 final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     private let underlyingConnectable: AnyConnectable<InputType, OutputType>
     private let acceptQueue: DispatchQueue
+    private let consumerQueue: DispatchQueue
 
     init(
         _ underlyingConnectable: AnyConnectable<InputType, OutputType>,
-        acceptQueue: DispatchQueue
+        acceptQueue: DispatchQueue,
+        consumerQueue: DispatchQueue
     ) {
         self.underlyingConnectable = underlyingConnectable
         self.acceptQueue = acceptQueue
+        self.consumerQueue = consumerQueue
     }
 
     convenience init<C: Connectable>(
         _ underlyingConnectable: C,
-        acceptQueue: DispatchQueue
+        acceptQueue: DispatchQueue,
+        consumerQueue: DispatchQueue
     ) where C.InputType == InputType, C.OutputType == OutputType {
-        self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue)
+        self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue, consumerQueue: consumerQueue)
     }
 
     func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
-        let connection = underlyingConnectable.connect(consumer)
+        let connection = underlyingConnectable.connect { [consumerQueue] value in
+            consumerQueue.async {
+                consumer(value)
+            }
+        }
 
         return Connection(
             acceptClosure: { [acceptQueue] input in

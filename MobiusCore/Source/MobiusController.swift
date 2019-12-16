@@ -28,6 +28,7 @@ public final class MobiusController<Model, Event, Effect> {
     typealias ViewConnection = Connection<Model>
 
     private let loopFactory: (Model) -> Loop
+    private let loopQueue: DispatchQueue
     private let viewQueue: DispatchQueue
 
     private let state: State
@@ -44,34 +45,39 @@ public final class MobiusController<Model, Event, Effect> {
         loopQueue loopTargetQueue: DispatchQueue,
         viewQueue: DispatchQueue
     ) {
+        /*
+         Ownership graph after initing:
+
+                     ┏━━━━━━━━━━━━┓
+                ┌────┨ controller ┠────────┬──┐
+                │    ┗━━━━━━━━━━┯━┛        │  │
+         ┏━━━━━━┷━━━━━━┓    ┏━━━┷━━━━━━━┓  │  │
+         ┃ loopFactory ┃    ┃ viewQueue ┃  │  │
+         ┗━━━━━━━━━┯━━━┛    ┗━━━━━━━━━━━┛  │  │
+              ┏━━━━┷━━━━━━━━━━━━━━━━━━┓    │  │
+              ┃ flipEventsToLoopQueue ┃ ┌──┘  │
+              ┗━━━━━━━━━━━━━━┯━━━━━━┯━┛ │     │
+                             │    ┏━┷━━━┷━┓   │
+                             │    ┃ state ┃   │
+                             │    ┗━┯━━━━━┛   │
+                             │      │ ┌───────┘
+                           ┏━┷━━━━━━┷━┷┓
+                           ┃ loopQueue ┃
+                           ┗━━━━━━━━━━━┛
+
+         In order to construct this bottom-up and fulfil definitive initialization requirements, state and loopQueue are
+         duplicated in local variables.
+         */
+
         // The internal loopQueue is a serial queue targeting the provided queue, so that targeting a concurrent queue
-        // doesn’t result in concurrent work on the underlying MobiusLoop.
+        // doesn’t result in concurrent work on the underlying MobiusLoop. This behaviour is documented on
+        // `Mobius.Buildre.makeController`.
         let loopQueue = DispatchQueue(label: "MobiusController \(Model.self)", target: loopTargetQueue)
+        self.loopQueue = loopQueue
         self.viewQueue = viewQueue
 
         let state = State(model: initialModel, queue: loopQueue)
         self.state = state
-        /*
-         Note: `flipEventsToLoopQueue` should not and in fact cannot capture `self`, because it’s used to initialize
-         `self.loopFactory`. It can however capture `state`.
-
-         In fact, here’s the ownership graph after initing:
-                     ┏━━━━━━━━━━━━┓
-                ┌────┨ controller ┠────────┐
-                │    ┗━━━━━━━━━━┯━┛        │
-         ┏━━━━━━┷━━━━━━┓    ┏━━━┷━━━━━━━┓  │
-         ┃ loopFactory ┃    ┃ viewQueue ┃  │
-         ┗━━━━━━━━━┯━━━┛    ┗━━━━━━━━━━━┛  │
-              ┏━━━━┷━━━━━━━━━━━━━━━━━━┓    │
-              ┃ flipEventsToLoopQueue ┃ ┌──┘
-              ┗━━━━━━━━━━━━━━┯━━━━━━┯━┛ │
-                             │    ┏━┷━━━┷━┓
-                             │    ┃ state ┃
-                             │    ┗━┯━━━━━┛
-                           ┏━┷━━━━━━┷━━┓
-                           ┃ loopQueue ┃
-                           ┗━━━━━━━━━━━┛
-         */
 
         // Maps an event consumer to a new event consumer that invokes the original one on the loop queue,
         // asynchronously.
@@ -121,7 +127,11 @@ public final class MobiusController<Model, Event, Effect> {
                 return
             }
 
-            state.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
+            state.viewConnectable = AsyncDispatchQueueConnectable(
+                connectable,
+                acceptQueue: viewQueue,
+                consumerQueue: loopQueue
+            )
         }
     }
 
