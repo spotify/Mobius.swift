@@ -65,24 +65,14 @@ public protocol MobiusLogger {
     func didUpdate(model: Model, event: Event, next: Next<Model, Effect>)
 }
 
-class NoopLogger<Model, Event, Effect>: MobiusLogger {
-
-    func willInitiate(model: Model) {
-        // empty
-    }
-
-    func didInitiate(model: Model, first: First<Model, Effect>) {
-        // empty
-    }
-
-    func willUpdate(model: Model, event: Event) {
-        // empty
-    }
-
-    func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {
-        // empty
-    }
+public extension MobiusLogger {
+    func willInitiate(model: Model) {}
+    func didInitiate(model: Model, first: First<Model, Effect>) {}
+    func willUpdate(model: Model, event: Event) {}
+    func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {}
 }
+
+class NoopLogger<Model, Event, Effect>: MobiusLogger {}
 
 /// Type-erased `MobiusLogger`.
 public class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {
