@@ -165,8 +165,8 @@ public extension Mobius {
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
-        ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The queue will dispatch events and
-        ///     effects on a serial queue that targets this queue.
+        ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The controller will dispatch events
+        ///     and effects on a serial queue that targets this queue.
         ///   - viewQueue: The queue to use to post to the `MobiusController`’s view connection.
         ///     Default: the main queue.
         public func makeController(

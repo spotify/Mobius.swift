@@ -33,24 +33,52 @@ public final class MobiusController<Model, Event, Effect> {
     private let state: State
 
     /// A Boolean indicating whether the MobiusLoop is running or not.
-    ///
-    /// May not be called directly from the update function or an effect handler running on the controller’s loop queue.
     public var running: Bool {
         return state.running
     }
 
+    /// See `Mobius.Builder.makeController` for documentation
     init(
         builder: Mobius.Builder<Model, Event, Effect>,
         initialModel: Model,
-        loopQueue: DispatchQueue,
+        loopQueue loopTargetQueue: DispatchQueue,
         viewQueue: DispatchQueue
     ) {
-        let actualLoopQueue = DispatchQueue(label: "MobiusController \(Model.self)", target: loopQueue)
+        // The internal loopQueue is a serial queue targeting the provided queue, so that targeting a concurrent queue
+        // doesn’t result in concurrent work on the underlying MobiusLoop.
+        let loopQueue = DispatchQueue(label: "MobiusController \(Model.self)", target: loopTargetQueue)
         self.viewQueue = viewQueue
 
-        let state = State(model: initialModel, queue: actualLoopQueue)
+        let state = State(model: initialModel, queue: loopQueue)
         self.state = state
+        /*
+         Note: `flipEventsToLoopQueue` should not and in fact cannot capture `self`, because it’s used to initialize
+         `self.loopFactory`. It can however capture `state`.
 
+         In fact, here’s the ownership graph after initing:
+                     ┏━━━━━━━━━━━━┓
+                ┌────┨ controller ┠────────┐
+                │    ┗━━━━━━━━━━┯━┛        │
+         ┏━━━━━━┷━━━━━━┓    ┏━━━┷━━━━━━━┓  │
+         ┃ loopFactory ┃    ┃ viewQueue ┃  │
+         ┗━━━━━━━━━┯━━━┛    ┗━━━━━━━━━━━┛  │
+              ┏━━━━┷━━━━━━━━━━━━━━━━━━┓    │
+              ┃ flipEventsToLoopQueue ┃ ┌──┘
+              ┗━━━━━━━━━━━━━━┯━━━━━━┯━┛ │
+                             │    ┏━┷━━━┷━┓
+                             │    ┃ state ┃
+                             │    ┗━┯━━━━━┛
+                           ┏━┷━━━━━━┷━━┓
+                           ┃ loopQueue ┃
+                           ┗━━━━━━━━━━━┛
+         */
+
+        // Maps an event consumer to a new event consumer that invokes the original one on the loop queue,
+        // asynchronously.
+        //
+        // The input will be the core `MobiusLoop`’s event dispatcher, which asserts that it isn’t invoked after the
+        // loop is disposed. This doesn’t play nicely with asynchrony, so here we assert when the transformed event
+        // consumer is invoked, but fail silently if the controller is stopped before the asynchronous block executes.
         func flipEventsToLoopQueue(consumer: @escaping Consumer<Event>) -> Consumer<Event> {
             return { event in
                 guard state.running else {
@@ -58,11 +86,14 @@ public final class MobiusController<Model, Event, Effect> {
                     return
                 }
 
-                actualLoopQueue.async {
+                loopQueue.async {
                     guard state.running else {
                         // If we got here, the controller was stopped while this async block was queued. Callers can’t
                         // possibly avoid this except through complete external serialization of all access to the
                         // controller, so it’s not a usage error.
+                        //
+                        // Note that since we’re on the loop queue at this point, `state` can’t be transitional; it is
+                        // necessarily fully running or stopped at this point.
                         return
                     }
                     consumer(event)
@@ -84,7 +115,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if the controller already is connected
     public func connectView<C: Connectable>(_ connectable: C) where C.InputType == Model, C.OutputType == Event {
-        state.syncMutateStopped(error: "cannot connect to a running controller") { state in
+        state.mutateIfStopped(error: "cannot connect to a running controller") { state in
             guard state.viewConnectable == nil else {
                 MobiusHooks.onError("controller only supports connecting one view")
                 return
@@ -100,7 +131,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if there isn't anything to disconnect
     public func disconnectView() {
-        state.syncMutateStopped(error: "cannot disconnect from a running controller; call stop first") { stoppedState in
+        state.mutateIfStopped(error: "cannot disconnect from a running controller; call stop first") { stoppedState in
             guard stoppedState.viewConnectable != nil else {
                 MobiusHooks.onError("not connected, cannot disconnect view from controller")
                 return
@@ -116,7 +147,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop already is running or no view has been connected
     public func start() {
-        state.syncTransitionToRunning(error: "cannot start a running controller") { stoppedState in
+        state.transitionToRunning(error: "cannot start a running controller") { stoppedState in
             guard let viewConnectable = stoppedState.viewConnectable else {
                 MobiusHooks.onError("not connected, cannot start controller")
                 return nil
@@ -140,7 +171,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop isn't running
     public func stop() {
-        state.syncTransitionToStopped(error: "cannot stop a controller that isn't running") { runningState in
+        state.transitionToStopped(error: "cannot stop a controller that isn't running") { runningState in
             let model = runningState.loop.latestModel
 
             runningState.loop.dispose()
@@ -157,7 +188,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// - Parameter model: the model with the state the controller should start from
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running
     public func replaceModel(_ model: Model) {
-        state.syncMutateStopped(error: "cannot replace the model of a running loop") { state in
+        state.mutateIfStopped(error: "cannot replace the model of a running loop") { state in
             state.modelToStartFrom = model
         }
     }
@@ -225,6 +256,9 @@ public final class MobiusController<Model, Event, Effect> {
             loopQueue = queue
         }
 
+        /// Test whether we’re in a running state. Ongoing transitions are considered running states.
+        ///
+        /// This is safe to invoke from any queue, including the loop queue.
         var running: Bool {
             switch rawState.value {
             case .stopped:
@@ -234,13 +268,16 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
+        /// Call `closure` with the current state. It will execute on the loop queue.
         func syncRead<T>(_ closure: (Snapshot) throws -> T) rethrows -> T {
+            dispatchPrecondition(condition: .notOnQueue(loopQueue))
             return try loopQueue.sync {
                 try closure(snapshot())
             }
         }
 
-        func syncMutateStopped(error: String, _ closure: (inout StoppedState) -> Void) {
+        /// Mutate the stopped state, assuming we’re currently stopped. If not, fail with the provided error message.
+        func mutateIfStopped(error: String, _ closure: (inout StoppedState) -> Void) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
             loopQueue.sync {
                 switch snapshot() {
@@ -253,7 +290,13 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        func syncTransitionToRunning(error: String, _ transition: (StoppedState) -> RunningState?) {
+        /// Transition from a stopped state to a running state, assuming we’re currently stopped. If not, fail with the
+        /// provided error message.
+        ///
+        /// The `transition` closure may return nil to indicate failure, in which case the state remains unchanged. This
+        /// behaviour isn’t desired but is forced by our error hooking mechanism – if `transition` calls
+        /// `MobiusHooks.onError` it should then return `nil`.
+        func transitionToRunning(error: String, _ transition: (StoppedState) -> RunningState?) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
             loopQueue.sync {
                 switch snapshot() {
@@ -270,7 +313,13 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        func syncTransitionToStopped(error: String, _ transition: (RunningState) -> StoppedState?) {
+        /// Transition from a running state to a stopped state, assuming we’re currently running. If not, fail with the
+        /// provided error message.
+        ///
+        /// The `transition` closure may return nil to indicate failure, in which case the state remains unchanged. This
+        /// behaviour isn’t desired but is forced by our error hooking mechanism – if `transition` calls
+        /// `MobiusHooks.onError` it should then return `nil`.
+        func transitionToStopped(error: String, _ transition: (RunningState) -> StoppedState?) {
             dispatchPrecondition(condition: .notOnQueue(loopQueue))
             loopQueue.sync {
                 switch snapshot() {
@@ -287,7 +336,9 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        // This function is the only point where we deal with the two optionals.
+        /// Generate a `Snapshot`  reflecting the current, er, state of the `State`.
+        ///
+        /// This function is the only point where we deal with the two optionals.
         private func snapshot() -> Snapshot {
             dispatchPrecondition(condition: .onQueue(loopQueue))
 
