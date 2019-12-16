@@ -19,10 +19,11 @@
 
 import Foundation
 
+/// A wrapper around an update function.
 public struct Update<Model, Event, Effect> {
     private let update: (Model, Event) -> Next<Model, Effect>
 
-    public init(update: @escaping (Model, Event) -> Next<Model, Effect>) {
+    public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
         self.update = update
     }
 
