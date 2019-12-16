@@ -32,7 +32,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     public var debugDescription: String {
         return access.guard {
             if disposed {
-                return "disposed loop!"
+                return "disposed \(type(of: self))!"
             }
             return "\(type(of: self)) \(eventProcessor)"
         }
@@ -113,7 +113,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
         let accessGuard = ConcurrentAccessDetector()
-        let loggingInitiator = LoggingInitiator(initiator, logger)
+        let loggingInitiator = LoggingInitiator(initiator, logger: logger)
         let loggingUpdate = update.logging(logger)
         let workBag = WorkBag(accessGuard: accessGuard)
 

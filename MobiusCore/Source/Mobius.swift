@@ -210,34 +210,3 @@ public extension Mobius {
         }
     }
 }
-
-class LoggingInitiator<Model, Effect> {
-    private let realInit: Initiator<Model, Effect>
-    private let willInit: (Model) -> Void
-    private let didInit: (Model, First<Model, Effect>) -> Void
-
-    init<L: MobiusLogger>(_ realInit: @escaping Initiator<Model, Effect>, _ logger: L) where L.Model == Model, L.Effect == Effect {
-        self.realInit = realInit
-        willInit = logger.willInitiate
-        didInit = logger.didInitiate
-    }
-
-    func initiate(_ model: Model) -> First<Model, Effect> {
-        willInit(model)
-        let result = realInit(model)
-        didInit(model, result)
-
-        return result
-    }
-}
-
-extension Update {
-    func logging<L: MobiusLogger>(_ logger: L) -> Update where L.Model == Model, L.Event == Event, L.Effect == Effect {
-        return Update { model, event in
-            logger.willUpdate(model: model, event: event)
-            let next = self.update(model: model, event: event)
-            logger.didUpdate(model: model, event: event, next: next)
-            return next
-        }
-    }
-}
