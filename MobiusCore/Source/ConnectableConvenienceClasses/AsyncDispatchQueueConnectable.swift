@@ -23,7 +23,7 @@ import Foundation
 ///
 /// * Consumers passed to `connect` will be executed on the provided `consumerQueue`
 /// * The underlying connectable’s connections’ `acceptClosure` and `disposeClosure` will be executed on the provided
-///   `consumerQueue`
+///   `acceptQueue`
 final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     private let underlyingConnectable: AnyConnectable<InputType, OutputType>
     private let acceptQueue: DispatchQueue
