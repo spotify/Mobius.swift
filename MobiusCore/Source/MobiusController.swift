@@ -129,8 +129,7 @@ public final class MobiusController<Model, Event, Effect> {
 
             state.viewConnectable = AsyncDispatchQueueConnectable(
                 connectable,
-                acceptQueue: viewQueue,
-                consumerQueue: loopQueue
+                acceptQueue: viewQueue
             )
         }
     }
@@ -166,7 +165,9 @@ public final class MobiusController<Model, Event, Effect> {
             }
 
             let loop = loopFactory(stoppedState.modelToStartFrom)
-            let viewConnection = viewConnectable.connect(loop.dispatchEvent)
+            // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
+            // that “unguarded” refers to, and also (of course) flips to the loop queue.
+            let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
             loop.addObserver(viewConnection.accept)
 
             return RunningState(loop: loop, viewConnectable: viewConnectable, viewConnection: viewConnection)

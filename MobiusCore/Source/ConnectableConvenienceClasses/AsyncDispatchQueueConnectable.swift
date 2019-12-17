@@ -27,32 +27,24 @@ import Foundation
 final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     private let underlyingConnectable: AnyConnectable<InputType, OutputType>
     private let acceptQueue: DispatchQueue
-    private let consumerQueue: DispatchQueue
 
     init(
         _ underlyingConnectable: AnyConnectable<InputType, OutputType>,
-        acceptQueue: DispatchQueue,
-        consumerQueue: DispatchQueue
+        acceptQueue: DispatchQueue
     ) {
         self.underlyingConnectable = underlyingConnectable
         self.acceptQueue = acceptQueue
-        self.consumerQueue = consumerQueue
     }
 
     convenience init<C: Connectable>(
         _ underlyingConnectable: C,
-        acceptQueue: DispatchQueue,
-        consumerQueue: DispatchQueue
+        acceptQueue: DispatchQueue
     ) where C.InputType == InputType, C.OutputType == OutputType {
-        self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue, consumerQueue: consumerQueue)
+        self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue)
     }
 
     func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
-        let connection = underlyingConnectable.connect { [consumerQueue] value in
-            consumerQueue.async {
-                consumer(value)
-            }
-        }
+        let connection = underlyingConnectable.connect(consumer)
 
         return Connection(
             acceptClosure: { [acceptQueue] input in

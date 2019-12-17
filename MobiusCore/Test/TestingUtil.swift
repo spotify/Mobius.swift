@@ -21,6 +21,25 @@ import Foundation
 @testable import MobiusCore
 import Nimble
 
+extension MobiusLoop {
+    convenience init(
+        eventProcessor: EventProcessor<Model, Event, Effect>,
+        modelPublisher: ConnectablePublisher<Model>,
+        disposable: Disposable,
+        accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector(),
+        workBag: WorkBag? = nil
+    ) {
+        self.init(
+            eventProcessor: eventProcessor,
+            consumeEvent: eventProcessor.accept,
+            modelPublisher: modelPublisher,
+            disposable: disposable,
+            accessGuard: accessGuard,
+            workBag: workBag ?? WorkBag(accessGuard: accessGuard)
+        )
+    }
+}
+
 class SimpleTestConnectable: Connectable {
     typealias InputType = String
     typealias OutputType = String
