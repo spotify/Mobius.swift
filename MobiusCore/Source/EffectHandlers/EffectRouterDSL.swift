@@ -33,10 +33,10 @@ public extension PartialEffectRouter {
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
-        return to(EffectHandler<Payload, Output>(
-            handle: { payload, _ in fireAndForget(payload) },
-            disposable: AnonymousDisposable {}
-        ))
+        return to(AnyEffectHandler<Payload, Output> { payload, _ in
+            fireAndForget(payload)
+            return AnonymousDisposable {}
+        })
     }
 
     /// Route to a closure which returns an optional event when given the payload as input.
@@ -45,14 +45,13 @@ public extension PartialEffectRouter {
     func toEvent(
         _ eventFunction: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {
-        return to(EffectHandler<Payload, Output>(
-            handle: { payload, dispatch in
-                if let event = eventFunction(payload) {
-                    dispatch(event)
-                }
-            },
-            disposable: AnonymousDisposable {}
-        ))
+        return to(AnyEffectHandler<Payload, Output> { payload, dispatch in
+            if let event = eventFunction(payload) {
+                dispatch(event)
+            }
+            return AnonymousDisposable {}
+        })
+        
     }
 
     /// Route to a side-effecting closure.
@@ -61,13 +60,13 @@ public extension PartialEffectRouter {
         _ connectable: C
     ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
         var connection: Connection<Payload>?
-        return to(EffectHandler<Payload, Output>(
+        return to(AnyEffectHandler<Payload, Output>(
             handle: { payload, output in
                 connection = connection ?? connectable.connect(output)
                 connection?.accept(payload)
-            },
-            disposable: AnonymousDisposable {
-                connection?.dispose()
+                return AnonymousDisposable {
+                    connection?.dispose()
+                }
             }
         ))
     }

@@ -40,17 +40,15 @@ class EffectRouterDSLTests: QuickSpec {
             it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
-                let effectHandler = EffectHandler<Effect, Event>(
-                    handle: { effect, dispatch in
-                        expect(effect).to(equal(.effect1))
-                        dispatch(.eventForEffect1)
-                    },
-                    disposable: AnonymousDisposable {
-                        wasDisposed = true
-                    }
-                )
+
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(equalTo: .effect1).to(effectHandler)
+                    .routeEffects(equalTo: .effect1).to { effect, response in
+                        expect(effect).to(equal(.effect1))
+                        response.send(.eventForEffect1)
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 
@@ -100,38 +98,21 @@ class EffectRouterDSLTests: QuickSpec {
                 dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
             }
-
-            it("Supports routing to a connectable") {
-                var events: [Event] = []
-                let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(equalTo: .effect1).to(EffectConnectable(emitsEvent: .eventForEffect1))
-                    .routeEffects(equalTo: .effect2).to(EffectConnectable(emitsEvent: .eventForEffect2))
-                    .asConnectable
-                    .connect { events.append($0) }
-
-                dslHandler.accept(.effect1)
-                expect(events).to(equal([.eventForEffect1]))
-                dslHandler.accept(.effect2)
-                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
-            }
         }
 
         context("Effect routers based on payload extracting functions") {
             it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
-                let effectHandler = EffectHandler<Effect, Event>(
-                    handle: { effect, dispatch in
-                        expect(effect).to(equal(.effect1))
-                        dispatch(.eventForEffect1)
-                    },
-                    disposable: AnonymousDisposable {
-                        wasDisposed = true
-                    }
-                )
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(withPayload: payload).to(effectHandler)
+                    .routeEffects(withPayload: payload).to { effect, response in
+                        expect(effect).to(equal(.effect1))
+                        response.send(.eventForEffect1)
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
                     .asConnectable
                     .connect { events.append($0) }
 

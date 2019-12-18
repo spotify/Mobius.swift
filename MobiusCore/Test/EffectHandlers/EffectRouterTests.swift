@@ -49,22 +49,18 @@ class EffectRouterTests: QuickSpec {
                 receivedEvents = []
                 disposed1 = false
                 disposed2 = false
-                let effectHandler1 = EffectHandler<Effect, Event>(
-                    handle: { _, dispatch in
-                        dispatch(.eventForEffect1)
-                    },
-                    disposable: AnonymousDisposable {
+                let effectHandler1 = AnyEffectHandler<Effect, Event> { _, dispatch in
+                    dispatch(.eventForEffect1)
+                    return AnonymousDisposable {
                         disposed1 = true
                     }
-                )
-                let effectHandler2 = EffectHandler<Effect, Event>(
-                    handle: { _, dispatch in
-                        dispatch(.eventForEffect2)
-                    },
-                    disposable: AnonymousDisposable {
+                }
+                let effectHandler2 = AnyEffectHandler<Effect, Event> { _, dispatch in
+                    dispatch(.eventForEffect2)
+                    return AnonymousDisposable {
                         disposed2 = true
                     }
-                )
+                }
 
                 connection = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect1).to(effectHandler1)
@@ -91,7 +87,9 @@ class EffectRouterTests: QuickSpec {
                 expect(receivedEvents).to(equal([.eventForEffect2]))
             }
 
-            it("should dispose all existing effect handlers when router is disposed") {
+            it("should dispose all started effect handlers when router is disposed") {
+                _ = route(.effect1)
+                _ = route(.effect2)
                 connection.dispose()
                 expect(disposed1).to(beTrue())
                 expect(disposed2).to(beTrue())
@@ -108,11 +106,10 @@ class EffectRouterTests: QuickSpec {
                 MobiusHooks.setErrorHandler { _, _, _ in
                     didCrash = true
                 }
-                let handler = EffectHandler<Effect, Event>(
-                    handle: { _, _ in },
-                    disposable: AnonymousDisposable {}
-                )
-                let invalidRouter = EffectRouter()
+                let handler = AnyEffectHandler<Effect, Event> { _, _ in
+                    AnonymousDisposable {}
+                }
+                let invalidRouter = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
                     .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
                     .asConnectable

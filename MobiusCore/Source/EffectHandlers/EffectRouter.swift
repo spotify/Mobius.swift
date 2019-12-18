@@ -48,7 +48,9 @@ public struct PartialEffectRouter<Input, Payload, Output> {
 
     /// Route to an `EffectHandler`.
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
-    public func to(_ effectHandler: EffectHandler<Payload, Output>) -> EffectRouter<Input, Output> {
+    public func to<Handler: EffectHandler>(
+        _ effectHandler: Handler
+    ) -> EffectRouter<Input, Output> where Handler.Input == Payload, Handler.Output == Output {
         let route = Route<Input, Output>(path: path, handler: effectHandler)
         return EffectRouter(routes: self.routes + [route])
     }
@@ -58,19 +60,23 @@ private struct Route<Input, Output> {
     let tryRoute: (Input, @escaping Consumer<Output>) -> Bool
     let disposable: Disposable
 
-    init<Payload>(
+    init<Payload, Handler: EffectHandler>(
         path tryPath: @escaping (Input) -> Payload?,
-        handler: EffectHandler<Payload, Output>
-    ) {
+        handler: Handler
+    ) where Handler.Input == Payload, Handler.Output == Output {
+        var disposables: [Disposable] = []
         tryRoute = { input, output in
             if let payload = tryPath(input) {
-                handler.handle(payload, output)
+                let disposable = handler.handle(payload, output)
+                disposables.append(disposable)
                 return true
             } else {
                 return false
             }
         }
-        disposable = handler.disposable
+        disposable = AnonymousDisposable {
+            disposables.forEach { $0.dispose() }
+        }
     }
 }
 

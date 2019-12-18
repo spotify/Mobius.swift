@@ -17,16 +17,23 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// Primitive EffectHandler
-public struct EffectHandler<Effect, Event> {
-    public let handle: (Effect, @escaping Consumer<Event>) -> Void
-    public let disposable: Disposable
+public protocol EffectHandler {
+    associatedtype Input
+    associatedtype Output
+
+    func handle(_ input: Input, _ output: @escaping Consumer<Output>) -> Disposable
+}
+
+public struct AnyEffectHandler<Input, Output>: EffectHandler {
+    private let handler: (Input, @escaping (Output) -> Void) -> Disposable
 
     public init(
-        handle: @escaping (Effect, @escaping Consumer<Event>) -> Void,
-        disposable: Disposable
+        handle: @escaping (Input, @escaping (Output) -> Void) -> Disposable
     ) {
-        self.handle = handle
-        self.disposable = disposable
+        self.handler = handle
+    }
+
+    public func handle(_ input: Input, _ output: @escaping (Output) -> Void) -> Disposable {
+        return handler(input, output)
     }
 }

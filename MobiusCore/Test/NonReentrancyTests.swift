@@ -70,10 +70,10 @@ class NonReentrancyTests: QuickSpec {
                     }
                 }
 
-                let testEffectHandler = EffectHandler(
-                    handle: { handleEffect($0, $1) },
-                    disposable: AnonymousDisposable {}
-                )
+                let testEffectHandler = AnyEffectHandler<Effect, Event> {
+                    handleEffect($0, $1)
+                    return AnonymousDisposable {}
+                }
 
                 let effectConnectable = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .testEffect).to(testEffectHandler)
