@@ -100,6 +100,20 @@ class EffectRouterDSLTests: QuickSpec {
                 dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
             }
+
+            it("Supports routing to a connectable") {
+                var events: [Event] = []
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1).to(EffectConnectable(emitsEvent: .eventForEffect1))
+                    .routeEffects(equalTo: .effect2).to(EffectConnectable(emitsEvent: .eventForEffect2))
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
+            }
         }
 
         context("Effect routers based on predicates") {
@@ -165,6 +179,23 @@ class EffectRouterDSLTests: QuickSpec {
                 dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
             }
+
+            it("Supports routing to a Connectable") {
+                var events: [Event] = []
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(matching: { $0 == .effect1 }).to(EffectConnectable(emitsEvent: .eventForEffect1))
+                    .routeEffects(matching: { $0 == .effect2 }).to(EffectConnectable(emitsEvent: .eventForEffect2))
+                    .asConnectable
+                    .connect { event in
+                        events.append(event)
+                    }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+                dslHandler.accept(.effect2)
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
+            }
+
         }
 
         context("Effect routers based on payload extracting functions") {
@@ -234,6 +265,38 @@ class EffectRouterDSLTests: QuickSpec {
                 dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
             }
+
+            it("Supports routing to a Connectable") {
+                var dispatchedEvents: [Event] = []
+                let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(withPayload: payload).to(EffectConnectable(emitsEvent: .eventForEffect1))
+                    .asConnectable
+                    .connect { event in
+                        dispatchedEvents.append(event)
+                    }
+
+                dslHandler.accept(.effect1)
+                dslHandler.accept(.effect2)
+                expect(dispatchedEvents).to(equal([.eventForEffect1]))
+            }
         }
+    }
+}
+
+private class EffectConnectable: Connectable {
+    let emitsEvent: Event
+
+    init(emitsEvent event: Event) {
+        emitsEvent = event
+    }
+
+    func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
+        return Connection(
+            acceptClosure: { _ in
+                consumer(self.emitsEvent)
+            },
+            disposeClosure: {}
+        )
     }
 }
