@@ -54,4 +54,21 @@ public extension PartialEffectRouter {
             disposable: AnonymousDisposable {}
         ))
     }
+
+    /// Route to a side-effecting closure.
+    /// - Parameter connectable: a connectable which will be used to handle effects
+    func to<C: Connectable>(
+        _ connectable: C
+    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
+        var connection: Connection<Payload>?
+        return to(EffectHandler<Payload, Output>(
+            handle: { payload, output in
+                connection = connection ?? connectable.connect(output)
+                connection?.accept(payload)
+            },
+            disposable: AnonymousDisposable {
+                connection?.dispose()
+            }
+        ))
+    }
 }
