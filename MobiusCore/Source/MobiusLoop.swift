@@ -95,10 +95,19 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
                 return
             }
 
-            workBag.submit {
-                self.consumeEvent(event)
+            unguardedDispatchEvent(event)
+        }
+    }
+
+    /// Like `dispatchEvent`, but without asserting that the loop hasn’t been disposed.
+    ///
+    /// This should not be used directly, but is useful in constructing asynchronous wrappers around loops (like
+    /// `MobiusController`, where the eventConsumerTransformer is used to implement equivalent async-safe assertions).
+    public func unguardedDispatchEvent(_ event: Event) {
+        return access.guard {
+            if !disposed {
+                consumeEvent(event)
             }
-            workBag.service()
         }
     }
 
@@ -128,7 +137,12 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             accessGuard: accessGuard
         )
 
-        let consumeEvent = eventConsumerTransformer(eventProcessor.accept)
+        let consumeEvent = eventConsumerTransformer { event in
+            workBag.submit {
+                eventProcessor.accept(event)
+            }
+            workBag.service()
+        }
 
         // effect handler: handle effects, push events to the event processor
         let effectHandlerConnection = effectHandler.connect(consumeEvent)

@@ -18,8 +18,27 @@
 // under the License.
 
 import Foundation
-import MobiusCore
+@testable import MobiusCore
 import Nimble
+
+extension MobiusLoop {
+    convenience init(
+        eventProcessor: EventProcessor<Model, Event, Effect>,
+        modelPublisher: ConnectablePublisher<Model>,
+        disposable: Disposable,
+        accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector(),
+        workBag: WorkBag? = nil
+    ) {
+        self.init(
+            eventProcessor: eventProcessor,
+            consumeEvent: eventProcessor.accept,
+            modelPublisher: modelPublisher,
+            disposable: disposable,
+            accessGuard: accessGuard,
+            workBag: workBag ?? WorkBag(accessGuard: accessGuard)
+        )
+    }
+}
 
 class SimpleTestConnectable: Connectable {
     typealias InputType = String
@@ -56,7 +75,11 @@ class RecordingTestConnectable: Connectable {
     }
 
     func dispatch(_ string: String) {
-        consumer?(string)
+        if let queue = self.expectedQueue {
+            queue.sync { consumer?(string) }
+        } else {
+            consumer?(string)
+        }
     }
 
     func accept(_ value: String) {
@@ -195,30 +218,5 @@ class TestEventSource<Event>: EventSource {
         activeSubscriptions.forEach {
             $0(event)
         }
-    }
-}
-
-/*
- Helper to simulate atomic access to a property.
-
- This could be a property wrapper when we raise our target to Swift 5.1.
- */
-final class Synchronized<Value> {
-    private var _value: Value
-    private var lock = DispatchQueue(label: "TestUtil Synchronized lock")
-
-    var value: Value {
-        get { return lock.sync { _value } }
-        set(newValue) { lock.sync { _value = newValue } }
-    }
-
-    func mutate(with closure: (inout Value) -> Void) {
-        lock.sync {
-            closure(&_value)
-        }
-    }
-
-    init(value: Value) {
-        _value = value
     }
 }

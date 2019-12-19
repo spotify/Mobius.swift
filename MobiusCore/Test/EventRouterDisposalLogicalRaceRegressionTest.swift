@@ -22,7 +22,7 @@ import MobiusCore
 import Nimble
 import Quick
 
-struct Model {}
+private struct Model {}
 
 private enum Event {
     case event1
