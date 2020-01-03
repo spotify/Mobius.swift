@@ -89,7 +89,7 @@ private func compose<Effect, Event>(
                     .count
 
                 if handledCount != 1 {
-                    MobiusHooks.onError("Error: \(handledCount) EffectHandlers could be found for effect: \(handledCount). Exactly 1 is required.")
+                    MobiusHooks.onError("Error: \(handledCount) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
                 }
             },
             disposeClosure: {
