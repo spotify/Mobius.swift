@@ -21,6 +21,11 @@ public protocol EffectHandler {
     associatedtype Effect
     associatedtype Event
 
+    /// Handle an `Effect`.
+    /// To output events, call `response.send`
+    /// When you are done handling `input`, be sure to call `response.end()` to prevent memory leaks.
+    ///
+    /// Return a `Disposable` which tears down any resources that is being used by this effect handler.
     func handle(
         _ input: Effect,
         _ response: Response<Event>
