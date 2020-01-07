@@ -55,7 +55,7 @@ class EffectHandlingConnection<Effect, Event>: Disposable {
 
     func dispose() {
         lock.synchronized {
-            self.handlingEffects.forEach { (id, state) in
+            self.handlingEffects.values.forEach { state in
                 if case .beingHandled(_, let disposable) = state {
                     disposable.dispose()
                 }

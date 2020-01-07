@@ -29,7 +29,7 @@ public protocol EffectHandler {
     func handle(
         _ input: Effect,
         _ response: Response<Event>
-    )  -> Disposable
+    ) -> Disposable
 }
 
 public class Response<T> {

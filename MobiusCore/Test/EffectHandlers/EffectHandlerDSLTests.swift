@@ -33,37 +33,6 @@ private enum Event: Equatable {
     case eventForEffect2
 }
 
-
-class EffectRouterDSLTests1: QuickSpec {
-    // swiftlint:disable function_body_length
-    override func spec() {
-        context("Effect routers based on constants") {
-            it("Supports routing to an effect handler") {
-                var events: [Event] = []
-                var wasDisposed = false
-                let effectHandler = AnyEffectHandler<Effect, Event> { effect, response in
-                    expect(effect).to(equal(.effect1))
-                    response.send(.eventForEffect1)
-                    response.end()
-                    return AnonymousDisposable {
-                        wasDisposed = true
-                    }
-                }
-                let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(equalTo: .effect1).to(effectHandler)
-                    .asConnectable
-                    .connect { events.append($0) }
-
-                dslHandler.accept(.effect1)
-                expect(events).to(equal([.eventForEffect1]))
-
-                dslHandler.dispose()
-                expect(wasDisposed).to(beFalse())
-            }
-        }
-    }
-}
-
 class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
@@ -74,7 +43,7 @@ class EffectRouterDSLTests: QuickSpec {
             beforeEach {
                 wasDisposed = false
                 connection = EffectRouter<Int, ()>()
-                    .routeEffects(equalTo: 1).to { effect, response in
+                    .routeEffects(equalTo: 1).to { _, response in
                         response.end()
                         return AnonymousDisposable {
                             wasDisposed = true
@@ -107,7 +76,7 @@ class EffectRouterDSLTests: QuickSpec {
                 wasDisposed = false
                 end = {}
                 connection = EffectRouter<Int, ()>()
-                    .routeEffects(equalTo: 1).to { effect, response in
+                    .routeEffects(equalTo: 1).to { _, response in
                         end = response.end
                         return AnonymousDisposable {
                             wasDisposed = true
