@@ -28,30 +28,39 @@ public extension EffectRouter where Input: Equatable {
 }
 
 public extension PartialEffectRouter {
+    /// Route to an `EffectHandler`.
+    /// - Parameter effectHandler: the `EffectHandler` for the route in question.
+    func to(
+        _ handle: @escaping (Payload, Response<Output>) -> Disposable
+    ) -> EffectRouter<Input, Output> {
+        return to(AnyEffectHandler<Payload, Output>(handle: handle))
+    }
+
     /// Route to a side-effecting closure.
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
-        return to(AnyEffectHandler<Payload, Output> { payload, _ in
+        return to { payload, response in
             fireAndForget(payload)
+            response.end()
             return AnonymousDisposable {}
-        })
+        }
     }
 
     /// Route to a closure which returns an optional event when given the payload as input.
     /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
     /// `nil`.
     func toEvent(
-        _ eventFunction: @escaping (Payload) -> Output?
+        _ eventClosure: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {
-        return to(AnyEffectHandler<Payload, Output> { payload, dispatch in
-            if let event = eventFunction(payload) {
-                dispatch(event)
+        return to { payload, response in
+            if let event = eventClosure(payload) {
+                response.send(event)
+                response.end()
             }
             return AnonymousDisposable {}
-        })
-        
+        }
     }
 
     /// Route to a side-effecting closure.
@@ -60,14 +69,12 @@ public extension PartialEffectRouter {
         _ connectable: C
     ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
         var connection: Connection<Payload>?
-        return to(AnyEffectHandler<Payload, Output>(
-            handle: { payload, output in
-                connection = connection ?? connectable.connect(output)
-                connection?.accept(payload)
-                return AnonymousDisposable {
-                    connection?.dispose()
-                }
+        return to { payload, output in
+            connection = connection ?? connectable.connect(output.send)
+            connection?.accept(payload)
+            return AnonymousDisposable {
+                connection?.dispose()
             }
-        ))
+        }
     }
 }

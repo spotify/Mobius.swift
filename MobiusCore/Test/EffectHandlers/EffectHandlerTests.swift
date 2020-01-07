@@ -45,9 +45,14 @@ class EffectHandlerTests: QuickSpec {
             beforeEach {
                 effectHandler = AnyEffectHandler(handle: handleEffect)
                 receivedEvents = []
-                let output = { (event: Event) in receivedEvents.append(event) }
+                let response = Response<Event>(
+                    onSend: { event in
+                        receivedEvents.append(event)
+                    },
+                    onEnd: {}
+                )
                 executeEffect = { effect in
-                    _ = effectHandler.handle(effect, output)
+                    _ = effectHandler.handle(effect, response)
                 }
             }
 
@@ -71,7 +76,8 @@ class EffectHandlerTests: QuickSpec {
                         disposed = true
                     }
                 }
-                effectHandler.handle(.effect1) { _ in }.dispose()
+                let response = Response<Event>(onSend: { _ in }, onEnd: {})
+                effectHandler.handle(.effect1, response).dispose()
 
                 expect(disposed).to(beTrue())
             }
@@ -79,9 +85,10 @@ class EffectHandlerTests: QuickSpec {
     }
 }
 
-private func handleEffect(effect: Effect, output: Consumer<Event>) -> Disposable {
+private func handleEffect(effect: Effect, response: Response<Event>) -> Disposable {
     if effect == .effect1 {
-        output(.eventForEffect1)
+        response.send(.eventForEffect1)
     }
+    response.end()
     return AnonymousDisposable {}
 }

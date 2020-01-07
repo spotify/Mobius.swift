@@ -114,9 +114,10 @@ private class EffectCollaborator {
 
 extension EffectCollaborator {
     func makeEffectHandler<Effect, Event>(replyEvent: Event) -> AnyEffectHandler<Effect, Event> {
-        return AnyEffectHandler<Effect, Event> { _, dispatch in
+        return AnyEffectHandler<Effect, Event> { _, response in
             let cancellationToken = self.asyncDoStuff {
-                dispatch(replyEvent)
+                response.send(replyEvent)
+                response.end()
             }
 
             return AnonymousDisposable {

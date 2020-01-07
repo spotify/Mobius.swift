@@ -47,7 +47,7 @@ class NonReentrancyTests: QuickSpec {
         describe("MobiusLoop") {
             var loop: MobiusLoop<Model, Event, Effect>!
             var messages: [String]!
-            var handleEffect: ((Effect, Consumer<Event>) -> Void)!
+            var handleEffect: ((Effect, Response<Event>) -> Void)!
 
             func log(_ message: String) {
                 messages.append(message)
@@ -113,14 +113,15 @@ class NonReentrancyTests: QuickSpec {
 
             context("when effect handler posts events through consumer") {
                 beforeEach {
-                    handleEffect = { effect, eventConsumer in
+                    handleEffect = { effect, response in
                         log("handle enter - effect: \(effect)")
                         defer {
                             log("handle exit - effect: \(effect)")
                         }
 
-                        eventConsumer(.increment)
-                        eventConsumer(.increment)
+                        response.send(.increment)
+                        response.send(.increment)
+                        response.end()
                     }
                 }
 

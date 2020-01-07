@@ -50,32 +50,24 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
-    ) -> EffectRouter<Input, Output> where Handler.Input == Payload, Handler.Output == Output {
+    ) -> EffectRouter<Input, Output> where Handler.Effect == Payload, Handler.Event == Output {
         let route = Route<Input, Output>(path: path, handler: effectHandler)
         return EffectRouter(routes: self.routes + [route])
     }
 }
 
 private struct Route<Input, Output> {
-    let tryRoute: (Input, @escaping Consumer<Output>) -> Bool
-    let disposable: Disposable
+    let tryRoute: (Input, Response<Output>) -> Disposable?
 
     init<Payload, Handler: EffectHandler>(
         path tryPath: @escaping (Input) -> Payload?,
         handler: Handler
-    ) where Handler.Input == Payload, Handler.Output == Output {
-        var disposables: [Disposable] = []
-        tryRoute = { input, output in
+    ) where Handler.Effect == Payload, Handler.Event == Output {
+        tryRoute = { input, response in
             if let payload = tryPath(input) {
-                let disposable = handler.handle(payload, output)
-                disposables.append(disposable)
-                return true
-            } else {
-                return false
+                return handler.handle(payload, response)
             }
-        }
-        disposable = AnonymousDisposable {
-            disposables.forEach { $0.dispose() }
+            return nil
         }
     }
 }
@@ -110,10 +102,9 @@ private func compose<Effect, Event>(
 private func toSafeConnection<Effect, Event>(
     route: Route<Effect, Event>,
     dispatch: @escaping Consumer<Event>
-) -> PredicatedSafeConnection<Effect, Event> {
-    return PredicatedSafeConnection(
+) -> EffectHandlingConnection<Effect, Event> {
+    return EffectHandlingConnection(
         handleInput: route.tryRoute,
-        output: dispatch,
-        dispose: route.disposable
+        output: dispatch
     )
 }

@@ -33,9 +33,106 @@ private enum Event: Equatable {
     case eventForEffect2
 }
 
+
+class EffectRouterDSLTests1: QuickSpec {
+    // swiftlint:disable function_body_length
+    override func spec() {
+        context("Effect routers based on constants") {
+            it("Supports routing to an effect handler") {
+                var events: [Event] = []
+                var wasDisposed = false
+                let effectHandler = AnyEffectHandler<Effect, Event> { effect, response in
+                    expect(effect).to(equal(.effect1))
+                    response.send(.eventForEffect1)
+                    response.end()
+                    return AnonymousDisposable {
+                        wasDisposed = true
+                    }
+                }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1).to(effectHandler)
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+
+                dslHandler.dispose()
+                expect(wasDisposed).to(beFalse())
+            }
+        }
+    }
+}
+
 class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
+        context("An EffectHandler which always ends as soon as it is called") {
+            var wasDisposed: Bool!
+            var connection: Connection<Int>!
+
+            beforeEach {
+                wasDisposed = false
+                connection = EffectRouter<Int, ()>()
+                    .routeEffects(equalTo: 1).to { effect, response in
+                        response.end()
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
+                    .asConnectable
+                    .connect { _ in }
+            }
+
+            it("should not be disposed if end was called") {
+                connection.accept(1)
+                connection.dispose()
+
+                expect(wasDisposed).to(beFalse())
+            }
+
+            it("should be disposed if end was never called") {
+                connection.dispose()
+
+                expect(wasDisposed).to(beFalse())
+            }
+        }
+
+        context("An EffectHandler which calls end after some time") {
+            var wasDisposed: Bool!
+            var connection: Connection<Int>!
+            var end: (() -> Void)!
+
+            beforeEach {
+                wasDisposed = false
+                end = {}
+                connection = EffectRouter<Int, ()>()
+                    .routeEffects(equalTo: 1).to { effect, response in
+                        end = response.end
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
+                    .asConnectable
+                    .connect { _ in }
+            }
+
+            it("should not be disposed if end was called") {
+                connection.accept(1)
+                end()
+                connection.dispose()
+
+                expect(wasDisposed).to(beFalse())
+            }
+
+            it("should be disposed if end was never called") {
+                connection.accept(1)
+                connection.dispose()
+
+                expect(wasDisposed).to(beTrue())
+            }
+        }
+
         context("Effect routers based on constants") {
             it("Supports routing to an effect handler") {
                 var events: [Event] = []
@@ -53,7 +150,6 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1]))
 
                 dslHandler.dispose()
@@ -74,7 +170,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(effectPerformedCount).to(equal(1))
                 expect(didDispatchEvents).to(beFalse())
             }
@@ -104,6 +199,7 @@ class EffectRouterDSLTests: QuickSpec {
             it("Supports routing to an effect handler") {
                 var events: [Event] = []
                 var wasDisposed = false
+
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
                     .routeEffects(withPayload: payload).to { effect, response in
@@ -117,7 +213,6 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(events).to(equal([.eventForEffect1]))
 
                 dslHandler.dispose()
@@ -138,7 +233,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(performedEffects).to(equal([.effect1]))
                 expect(didDispatchEvents).to(beFalse())
             }

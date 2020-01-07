@@ -18,22 +18,38 @@
 // under the License.
 
 public protocol EffectHandler {
-    associatedtype Input
-    associatedtype Output
+    associatedtype Effect
+    associatedtype Event
 
-    func handle(_ input: Input, _ output: @escaping Consumer<Output>) -> Disposable
+    func handle(
+        _ input: Effect,
+        _ response: Response<Event>
+    )  -> Disposable
 }
 
-public struct AnyEffectHandler<Input, Output>: EffectHandler {
-    private let handler: (Input, @escaping (Output) -> Void) -> Disposable
+public class Response<T> {
+    public let send: (T) -> Void
+    public let end: () -> Void
 
     public init(
-        handle: @escaping (Input, @escaping (Output) -> Void) -> Disposable
+        onSend: @escaping (T) -> Void,
+        onEnd: @escaping () -> Void
+    ) {
+        self.send = onSend
+        self.end = onEnd
+    }
+}
+
+public struct AnyEffectHandler<Effect, Event>: EffectHandler {
+    private let handler: (Effect, Response<Event>) -> Disposable
+
+    public init(
+        handle: @escaping (Effect, Response<Event>) -> Disposable
     ) {
         self.handler = handle
     }
 
-    public func handle(_ input: Input, _ output: @escaping (Output) -> Void) -> Disposable {
-        return handler(input, output)
+    public func handle(_ input: Effect, _ response: Response<Event>) -> Disposable {
+        return self.handler(input, response)
     }
 }
