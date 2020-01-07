@@ -57,8 +57,8 @@ public extension PartialEffectRouter {
         return to { payload, response in
             if let event = eventClosure(payload) {
                 response.send(event)
-                response.end()
             }
+            response.end()
             return AnonymousDisposable {}
         }
     }
@@ -69,8 +69,8 @@ public extension PartialEffectRouter {
         _ connectable: C
     ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
         var connection: Connection<Payload>?
-        return to { payload, output in
-            connection = connection ?? connectable.connect(output.send)
+        return to { payload, response in
+            connection = connection ?? connectable.connect(response.send)
             connection?.accept(payload)
             return AnonymousDisposable {
                 connection?.dispose()
