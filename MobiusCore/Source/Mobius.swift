@@ -47,7 +47,7 @@ public extension Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            initiate: { First(model: $0) },
+            initiate: nil,
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
@@ -57,7 +57,7 @@ public extension Mobius {
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
-        private let initiate: Initiate<Model, Effect>
+        private let initiate: Initiate<Model, Effect>?
         private let eventSource: AnyEventSource<Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
@@ -65,7 +65,7 @@ public extension Mobius {
         fileprivate init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
-            initiate: @escaping Initiate<Model, Effect>,
+            initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
@@ -137,7 +137,20 @@ public extension Mobius {
             )
         }
 
-        public func start(from initialModel: Model) -> MobiusLoop<Model, Event, Effect> {
+        /// Create a `MobiusLoop` from the builder, and optionally dispatch one or more effects
+        ///
+        /// - Parameters:
+        ///   - initialModel: The model the loop should start with.
+        ///   - effects: Zero or more effects to execute immediately.
+        public func start(from initialModel: Model, effects: [Effect] = []) -> MobiusLoop<Model, Event, Effect> {
+            // If no explicit initiator was given, create one that passes the model through unchanged and applies the
+            // given effects.
+            precondition(
+                self.initiate == nil || effects.isEmpty,
+                "A loop cannot use withInitiator and also specify initial effects in start"
+            )
+            let initiate = self.initiate ?? { First(model: $0, effects: effects) }
+
             return MobiusLoop.createLoop(
                 update: update,
                 effectHandler: effectHandler,

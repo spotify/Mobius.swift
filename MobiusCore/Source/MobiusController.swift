@@ -113,7 +113,7 @@ public final class MobiusController<Model, Event, Effect> {
             decoratedBuilder = decoratedBuilder.withInitiate(initiate)
         }
 
-        loopFactory = decoratedBuilder.start
+        loopFactory = { decoratedBuilder.start(from: $0) }
     }
 
     /// Connect a view to this controller.
