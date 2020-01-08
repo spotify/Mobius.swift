@@ -32,16 +32,42 @@ public protocol EffectHandler {
     ) -> Disposable
 }
 
-public class Response<T> {
-    public let send: (T) -> Void
-    public let end: () -> Void
+public final class Response<T> {
+    private let onSend: (T) -> Void
+    private let onEnd: () -> Void
+
+    public var ended: Bool {
+        return _ended.value
+    }
+
+    private let lock = Lock()
+    private let _ended: Synchronized<Bool> = .init(value: false)
 
     public init(
         onSend: @escaping (T) -> Void,
         onEnd: @escaping () -> Void
     ) {
-        self.send = onSend
-        self.end = onEnd
+        self.onSend = onSend
+        self.onEnd = onEnd
+    }
+
+    public func end() {
+        self._ended.mutate {
+            $0 = true
+        }
+        onEnd()
+    }
+
+    public func send(_ output: T) {
+        lock.synchronized {
+            onSend(output)
+        }
+    }
+
+    deinit {
+        if !ended {
+            end()
+        }
     }
 }
 

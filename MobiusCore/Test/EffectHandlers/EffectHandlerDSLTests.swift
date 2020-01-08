@@ -33,6 +33,34 @@ private enum Event: Equatable {
     case eventForEffect2
 }
 
+class Testss: QuickSpec {
+    override func spec() {
+        context("Effect routers based on constants") {
+             it("Supports routing to an effect handler") {
+                 var events: [Event] = []
+                 var wasDisposed = false
+
+                 let dslHandler = EffectRouter<Effect, Event>()
+                     .routeEffects(equalTo: .effect1).to { effect, response in
+                         expect(effect).to(equal(.effect1))
+                         response.send(.eventForEffect1)
+                         return AnonymousDisposable {
+                             wasDisposed = true
+                         }
+                     }
+                     .asConnectable
+                     .connect { events.append($0) }
+
+                 dslHandler.accept(.effect1)
+                 expect(events).to(equal([.eventForEffect1]))
+
+                 dslHandler.dispose()
+                 expect(wasDisposed).to(beTrue())
+             }
+        }
+    }
+}
+
 class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {

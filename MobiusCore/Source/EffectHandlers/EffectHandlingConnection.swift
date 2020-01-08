@@ -21,97 +21,66 @@ import Foundation
 
 class EffectHandlingConnection<Effect, Event>: Disposable {
     private let handleEffect: (Effect, Response<Event>) -> Disposable?
+    private let output: Consumer<Event>
 
     private let lock = Lock()
+
     // Keep track of each received effect's state.
     // When an effect has completed, it should be removed from this dictionary.
     // When disposing this effect handler, all entries must be removed.
-    private var handlingEffects: [UUID: EffectHandlingState<Event>] = [:]
-    private var unsafeOutput: Consumer<Event>?
+    private var handlingEffects: [Int64: EffectHandlingState<Event>] = [:]
+    private var nextID = Int64(0)
 
     init(
         handleInput: @escaping (Effect, Response<Event>) -> Disposable?,
-        output unsafeOutput: @escaping Consumer<Event>
+        output: @escaping Consumer<Event>
     ) {
         self.handleEffect = handleInput
-        self.unsafeOutput = unsafeOutput
+        self.output = output
     }
 
     func handle(_ effect: Effect) -> Bool {
-        let id = UUID()
-        let response = Response(onSend: self.output, onEnd: { [unowned self] in self.delete(id: id) })
-        let effectHandlerState: EffectHandlingState<Event> = .unhandled(response: response)
+        nextID += 1
+        let id = nextID
 
-        create(id: id, state: effectHandlerState)
+        let response = Response(onSend: output, onEnd: { [weak self] in self?.delete(id: id) })
 
         if let disposable = handleEffect(effect, response) {
-            update(id: id) { state in state.withDisposable(disposable) }
+            if !response.ended {
+                create(id: id, response: response, disposable: disposable)
+            }
             return true
         } else {
-            delete(id: id)
             return false
         }
     }
 
     func dispose() {
         lock.synchronized {
-            self.handlingEffects.values.forEach { state in
-                if case .beingHandled(_, let disposable) = state {
-                    disposable.dispose()
+            handlingEffects.values
+                .forEach {
+                    $0.disposable.dispose()
+                    $0.response.end()
                 }
-            }
-            self.handlingEffects = [:]
-            self.unsafeOutput = nil
+
+            handlingEffects = [:]
         }
     }
 
-    private func create(id: UUID, state: EffectHandlingState<Event>) {
+    private func create(id: Int64, response: Response<Event>, disposable: Disposable) {
         lock.synchronized {
-            self.handlingEffects[id] = state
+            handlingEffects[id] = EffectHandlingState(response: response, disposable: disposable)
         }
     }
 
-    private func update(
-        id: UUID,
-        _ transform: (EffectHandlingState<Event>) -> EffectHandlingState<Event>
-    ) {
+    private func delete(id: Int64) {
         lock.synchronized {
-            guard let state = self.handlingEffects[id] else {
-                return
-            }
-            self.handlingEffects[id] = transform(state)
-        }
-    }
-
-    private func delete(id: UUID) {
-        lock.synchronized {
-            _ = self.handlingEffects.removeValue(forKey: id)
-        }
-    }
-
-    private func output(_ event: Event) {
-        lock.synchronized {
-            self.unsafeOutput?(event)
+            handlingEffects[id] = nil
         }
     }
 }
 
-private enum EffectHandlingState<Event> {
-    // The effect handler has been called, but the `handle` function has not yet returned
-    case unhandled(response: Response<Event>)
-    // The handle function has returned, but the effect is still being handled.
-    case beingHandled(response: Response<Event>, disposable: Disposable)
-
-    static func start(withResponse response: Response<Event>) -> EffectHandlingState<Event> {
-        return .unhandled(response: response)
-    }
-
-    func withDisposable(_ disposable: Disposable) -> EffectHandlingState<Event> {
-        switch self {
-        case .unhandled(let response):
-            return .beingHandled(response: response, disposable: disposable)
-        case .beingHandled:
-            fatalError("Implementation error. A disposable has already been set.")
-        }
-    }
+private struct EffectHandlingState<Event> {
+    let response: Response<Event>
+    let disposable: Disposable
 }
