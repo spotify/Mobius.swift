@@ -110,6 +110,12 @@ public final class MobiusController<Model, Event, Effect> {
         loopFactory = builder.withEventConsumerTransformer(flipEventsToLoopQueue).start
     }
 
+    deinit {
+        if running {
+           stop()
+        }
+    }
+
     /// Connect a view to this controller.
     ///
     /// Must be called before `start`. May not be called directly from the update function or an effect handler running
