@@ -27,16 +27,6 @@ public extension EffectRouter where Input: Equatable {
     }
 }
 
-public extension EffectRouter {
-    /// Add a route for effects which satisfy `matching`.
-    /// - Parameter matching: The predicate that will be used to determine if this route should be taken for a given effect.
-    func routeEffects(
-        matching predicate: @escaping (Input) -> Bool
-    ) -> PartialEffectRouter<Input, Input, Output> {
-        return routeEffects(withPayload: { effect in predicate(effect) ? effect : nil })
-    }
-}
-
 public extension PartialEffectRouter {
     /// Route to a side-effecting closure.
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
@@ -62,6 +52,23 @@ public extension PartialEffectRouter {
                 }
             },
             disposable: AnonymousDisposable {}
+        ))
+    }
+
+    /// Route to a side-effecting closure.
+    /// - Parameter connectable: a connectable which will be used to handle effects
+    func to<C: Connectable>(
+        _ connectable: C
+    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
+        var connection: Connection<Payload>?
+        return to(EffectHandler<Payload, Output>(
+            handle: { payload, output in
+                connection = connection ?? connectable.connect(output)
+                connection?.accept(payload)
+            },
+            disposable: AnonymousDisposable {
+                connection?.dispose()
+            }
         ))
     }
 }

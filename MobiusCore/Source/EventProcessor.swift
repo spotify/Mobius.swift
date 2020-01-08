@@ -28,6 +28,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
 
     private var currentModel: Model?
     private var queuedEvents = [Event]()
+    private var disposed = false
 
     public var debugDescription: String {
         return access.guard {
@@ -67,6 +68,8 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
 
     func accept(_ event: Event) {
         access.guard {
+            guard !disposed else { return }
+
             if let current = self.currentModel {
                 let next = self.update.update(model: current, event: event)
 
@@ -83,6 +86,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
 
     func dispose() {
         access.guard {
+            disposed = true
             publisher.dispose()
         }
     }
