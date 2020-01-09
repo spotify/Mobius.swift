@@ -51,38 +51,48 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
     ) -> EffectRouter<Input, Output> where Handler.Effect == Payload, Handler.Event == Output {
-        let route = Route<Input, Output>(extractPayload: path, executePayload: effectHandler.handle)
-        return EffectRouter(routes: self.routes + [route])
+        let connectable = EffectExecutor(handleInput: effectHandler.handle)
+        let route = Route<Input, Output>(extractPayload: path, connectable: connectable)
+        return EffectRouter(routes: routes + [route])
+    }
+
+    /// Route to a Connectable.
+    /// - Parameter connectable: a connectable which will be used to handle effects
+    public func to<C: Connectable>(
+        _ connectable: C
+    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
+        let connectable = ThreadSafeConnectable(connectable: connectable)
+        let route = Route(extractPayload: path, connectable: connectable)
+        return EffectRouter(routes: routes + [route])
     }
 }
 
 private struct Route<Input, Output> {
-    let extractPayload: (Input) -> Any?
-    let executePayload: (Any, Response<Output>) -> Disposable
+    let connect: (@escaping Consumer<Output>) -> ConnectedRoute<Input>
 
-    init<Payload>(
+    init<Payload, Conn: Connectable>(
         extractPayload: @escaping (Input) -> Payload?,
-        executePayload: @escaping (Payload, Response<Output>) -> Disposable
-    ) {
-        self.extractPayload = extractPayload
-        self.executePayload = { effect, response in
-            executePayload(effect as! Payload, response)
+        connectable: Conn
+    ) where Conn.InputType == Payload, Conn.OutputType == Output {
+        connect = { output in
+            let connection = connectable.connect(output)
+            return ConnectedRoute(
+                tryToHandle: { input in
+                    if let payload = extractPayload(input) {
+                        return { connection.accept(payload) }
+                    } else {
+                        return nil
+                    }
+                },
+                disposable: connection
+            )
         }
     }
 }
 
 private struct ConnectedRoute<Input> {
-    let extractPayload: (Input) -> Any?
-    let connection: Connection<Any>
-
-    init<Output>(
-        route: Route<Input, Output>,
-        output: @escaping Consumer<Output>
-    ) {
-        extractPayload = route.extractPayload
-        connection = EffectExecutor(handleInput: route.executePayload)
-            .connect(output)
-    }
+    let tryToHandle: (Input) -> (() -> Void)?
+    let disposable: Disposable
 }
 
 private func compose<Input, Output>(
@@ -90,27 +100,22 @@ private func compose<Input, Output>(
 ) -> AnyConnectable<Input, Output> {
     return AnyConnectable { output in
         let connectedRoutes = routes
-            .map { route in ConnectedRoute(route: route, output: output) }
+            .map { route in route.connect(output) }
 
         return Connection(
             acceptClosure: { effect in
-                let handlers: [() -> Void] = connectedRoutes.compactMap { route in
-                    if let payload = route.extractPayload(effect) {
-                        return { route.connection.accept(payload) }
-                    } else {
-                        return nil
-                    }
-                }
+                let handlers = connectedRoutes
+                    .compactMap { route in route.tryToHandle(effect) }
 
-                if let handle = handlers.first, handlers.count == 1 {
-                    handle()
+                if let handleEffect = handlers.first, handlers.count == 1 {
+                    handleEffect()
                 } else {
                     MobiusHooks.onError("Error: \(handlers.count) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
                 }
             },
             disposeClosure: {
                 connectedRoutes
-                    .forEach { $0.connection.dispose() }
+                    .forEach { route in route.disposable.dispose() }
             }
         )
     }
