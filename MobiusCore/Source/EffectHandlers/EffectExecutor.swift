@@ -50,12 +50,16 @@ class EffectExecutor<Effect, Event>: Connectable {
         }
 
         let response = Response(
+            // Any events produced as a result of handling the effect will be sent to this class's `output` consumer,
+            // unless it has already been disposed.
             onSend: { [weak self] event in self?.output?(event) },
+            // Once an effect has been handled, remove the reference to its response and disposable.
             onEnd: { [weak self] in self?.delete(id: id) }
         )
 
         let disposable = handleEffect(effect, response)
 
+        // If the effect has not yet been handled, store a reference to its response and disposable.
         if !response.ended {
             store(id: id, response: response, disposable: disposable)
         }
@@ -63,12 +67,15 @@ class EffectExecutor<Effect, Event>: Connectable {
 
     func dispose() {
         lock.synchronized {
+            // Dispose any effects currently being handled. We also need to `end` their responses to remove the
+            // references we are keeping to them.
             handlingEffects.values
                 .forEach {
                     $0.disposable.dispose()
                     $0.response.end()
                 }
 
+            // Restore the state of this `Connectable` to its pre-connected state.
             handlingEffects = [:]
             output = nil
         }

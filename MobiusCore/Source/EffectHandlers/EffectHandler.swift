@@ -17,13 +17,22 @@
 // specific language governing permissions and limitations
 // under the License.
 
+/// This protocol defines the contract for an Effect Handler which takes `Effect`s as input, and produces `Event`s as output.
+/// For each incoming `Effect`, zero or more `Event`s can be sent as output using `response.send(Event)`.
+/// When an `Effect` has been completely handled, i.e. that effect will not result in any more events, call `response.end()`.
+///
+/// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
 public protocol EffectHandler {
     associatedtype Effect
     associatedtype Event
 
     /// Handle an `Effect`.
-    /// To output events, call `response.send`
+    /// To output events, call `response.send`.
     /// When you are done handling `input`, be sure to call `response.end()` to prevent memory leaks.
+    /// If it does not make sense to finish handling an effect, you should be using a `Connectable` instead of this protocol.
+    ///
+    /// Note: When being disposed by Mobius, the `Disposable` you return will be called before Mobius calls `response.end()`.
+    /// Note: Mobius will not dispose the returned `Disposable` if `response.end()` has already been called.
     ///
     /// Return a `Disposable` which tears down any resources that is being used by this effect handler.
     func handle(
@@ -32,51 +41,7 @@ public protocol EffectHandler {
     ) -> Disposable
 }
 
-public final class Response<T> {
-    private let onSend: (T) -> Void
-    private let onEnd: () -> Void
-
-    public var ended: Bool {
-        return _ended.value
-    }
-
-    private let lock = Lock()
-    private let _ended: Synchronized<Bool> = .init(value: false)
-
-    public init(
-        onSend: @escaping (T) -> Void,
-        onEnd: @escaping () -> Void
-    ) {
-        self.onSend = onSend
-        self.onEnd = onEnd
-    }
-
-    public func end() {
-        var runOnEnd = false
-        _ended.mutate {
-            runOnEnd = !$0
-            $0 = true
-        }
-        if runOnEnd {
-            onEnd()
-        }
-    }
-
-    public func send(_ output: T) {
-        lock.synchronized {
-            if !ended {
-                onSend(output)
-            }
-        }
-    }
-
-    deinit {
-        if !ended {
-            end()
-        }
-    }
-}
-
+/// A type-erased wrapper of the `EffectHandler` protocol.
 public struct AnyEffectHandler<Effect, Event>: EffectHandler {
     private let handler: (Effect, Response<Event>) -> Disposable
 

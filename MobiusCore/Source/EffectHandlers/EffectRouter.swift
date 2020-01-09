@@ -17,6 +17,27 @@
 // specific language governing permissions and limitations
 // under the License.
 
+/// An `EffectRouter` defines the relationship between the effects in your domain and the constructs which
+/// handle those effects.
+///
+/// To define the relationship between an effect and its handler, you need two parts.
+/// The first is the routing criteria. There are two choices here:
+///  - `.routeEffects(equalTo: constant)` - Routing to effects which are equal to `constant`.
+///  - `.routeEffects(withPayload: extractPayload)` - Routing effects that satisfy
+///     a payload extracting function: `(Effect) -> Payload?`. If this function returns a non-`nil` value,
+///     that route is taken and the non-`nil` value is sent as the input to the route.
+///
+/// These two routing criteria can be matched with one of four types of targets:
+///  - `.to { effect in ... }` - A fire-and-forget style function of type `(Effect) -> Void`.
+///  - `.toEvent { effect in ... }` A function which returns an optional event to send back into
+///     the loop: `(Effect) -> Event?`.
+///  - `.to(EffectHandler)` This should be used for effects which require asynchronous behavior
+///     or produce more than one event, and which have a clear definition of when an effect has been handled.
+///     For example, an effect handler which performs a network request and dispatches an event back into the
+///     loop once it is finished or if it fails.
+///  - `.to(Connectable)` This should be used for effect handlers which do not have a clear definition of
+///     when a given effect has been handled. For example, an effect handler which will continue to produce
+///     events indefinitely once it has been started.
 public struct EffectRouter<Input, Output> {
     private let routes: [Route<Input, Output>]
 
@@ -37,6 +58,10 @@ public struct EffectRouter<Input, Output> {
         return PartialEffectRouter(routes: routes, path: payload)
     }
 
+    /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to handle effects.
+    ///
+    /// Note: Each instance of `Input` must have been linked to exactly one handler. A runtime crash will occur if zero or multiple handlers were found for some
+    /// received input.
     public var asConnectable: AnyConnectable<Input, Output> {
         return compose(routes: routes)
     }
