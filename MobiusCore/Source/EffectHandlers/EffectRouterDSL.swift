@@ -28,8 +28,8 @@ public extension EffectRouter where Input: Equatable {
 }
 
 public extension PartialEffectRouter {
-    /// Route to an `EffectHandler`.
-    /// - Parameter effectHandler: the `EffectHandler` for the route in question.
+    /// Route to the an anonymous  `EffectHandler` defined by the `handle` closure.
+    /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(
         _ handle: @escaping (Payload, Response<Output>) -> Disposable
     ) -> EffectRouter<Input, Output> {

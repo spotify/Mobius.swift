@@ -13,6 +13,7 @@
 		02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40622237425E100BD7ED8 /* EffectRouterTests.swift */; };
 		02CAE47023C75E99009DFF9A /* ThreadSafeConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */; };
 		02CAE47223C76F34009DFF9A /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47123C76F34009DFF9A /* Response.swift */; };
+		02CAE47423C76FA3009DFF9A /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47323C76FA3009DFF9A /* ResponseTests.swift */; };
 		02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
 		02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */; };
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
@@ -258,6 +259,7 @@
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
 		02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeConnectable.swift; sourceTree = "<group>"; };
 		02CAE47123C76F34009DFF9A /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		02CAE47323C76FA3009DFF9A /* ResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTests.swift; sourceTree = "<group>"; };
 		02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSL.swift; sourceTree = "<group>"; };
 		02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerDSLTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
@@ -467,6 +469,7 @@
 				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
 				02C40622237425E100BD7ED8 /* EffectRouterTests.swift */,
 				02CEC48F2379642C00BA1584 /* EffectHandlerDSLTests.swift */,
+				02CAE47323C76FA3009DFF9A /* ResponseTests.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1206,6 +1209,7 @@
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
+				02CAE47423C76FA3009DFF9A /* ResponseTests.swift in Sources */,
 				5BB2887920999AD60043B530 /* CompositeDisposableTests.swift in Sources */,
 				2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */,
 				02CEC4912379643400BA1584 /* EffectHandlerDSLTests.swift in Sources */,
