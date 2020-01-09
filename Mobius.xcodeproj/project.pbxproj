@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
-		02C4061D2373078400BD7ED8 /* EffectHandlingConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectHandlingConnection.swift */; };
+		02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectExecutor.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
 		02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40622237425E100BD7ED8 /* EffectRouterTests.swift */; };
 		02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
@@ -251,7 +251,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		02C4061C2373078400BD7ED8 /* EffectHandlingConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlingConnection.swift; sourceTree = "<group>"; };
+		02C4061C2373078400BD7ED8 /* EffectExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectExecutor.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
 		02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSL.swift; sourceTree = "<group>"; };
@@ -450,7 +450,7 @@
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
 				02C40620237422EF00BD7ED8 /* EffectRouter.swift */,
 				02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */,
-				02C4061C2373078400BD7ED8 /* EffectHandlingConnection.swift */,
+				02C4061C2373078400BD7ED8 /* EffectExecutor.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1140,7 +1140,7 @@
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,
-				02C4061D2373078400BD7ED8 /* EffectHandlingConnection.swift in Sources */,
+				02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */,
 				5BB288192099957D0043B530 /* Consumer.swift in Sources */,
 				2DC2C0A62350CEBE005FFFB2 /* BackwardsCompatibility.swift in Sources */,
 				5BB28826209995810043B530 /* MobiusController.swift in Sources */,

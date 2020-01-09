@@ -19,9 +19,9 @@
 
 import Foundation
 
-class EffectHandlingConnection<Effect, Event>: Disposable {
-    private let handleEffect: (Effect, Response<Event>) -> Disposable?
-    private let output: Consumer<Event>
+class EffectExecutor<Effect, Event>: Connectable {
+    private let handleEffect: (Effect, Response<Event>) -> Disposable
+    private var output: Consumer<Event>?
 
     private let lock = Lock()
 
@@ -31,27 +31,33 @@ class EffectHandlingConnection<Effect, Event>: Disposable {
     private var handlingEffects: [Int64: EffectHandlingState<Event>] = [:]
     private var nextID = Int64(0)
 
-    init(
-        handleInput: @escaping (Effect, Response<Event>) -> Disposable?,
-        output: @escaping Consumer<Event>
-    ) {
+    init(handleInput: @escaping (Effect, Response<Event>) -> Disposable) {
         self.handleEffect = handleInput
-        self.output = output
     }
 
-    func handle(_ effect: Effect) -> Bool {
-        nextID += 1
-        let id = nextID
+    func connect(_ consumer: @escaping Consumer<Event>) -> Connection<Effect> {
+        output = consumer
+        return Connection(
+            acceptClosure: handle,
+            disposeClosure: dispose
+        )
+    }
 
-        let response = Response(onSend: output, onEnd: { [weak self] in self?.delete(id: id) })
+    func handle(_ effect: Effect) {
+        let id: Int64 = lock.synchronized {
+            nextID += 1
+            return nextID
+        }
 
-        if let disposable = handleEffect(effect, response) {
-            if !response.ended {
-                create(id: id, response: response, disposable: disposable)
-            }
-            return true
-        } else {
-            return false
+        let response = Response(
+            onSend: { [weak self] event in self?.output?(event) },
+            onEnd: { [weak self] in self?.delete(id: id) }
+        )
+
+        let disposable = handleEffect(effect, response)
+
+        if !response.ended {
+            store(id: id, response: response, disposable: disposable)
         }
     }
 
@@ -64,10 +70,11 @@ class EffectHandlingConnection<Effect, Event>: Disposable {
                 }
 
             handlingEffects = [:]
+            output = nil
         }
     }
 
-    private func create(id: Int64, response: Response<Event>, disposable: Disposable) {
+    private func store(id: Int64, response: Response<Event>, disposable: Disposable) {
         lock.synchronized {
             handlingEffects[id] = EffectHandlingState(response: response, disposable: disposable)
         }

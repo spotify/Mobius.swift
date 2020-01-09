@@ -52,15 +52,21 @@ public final class Response<T> {
     }
 
     public func end() {
-        self._ended.mutate {
+        var runOnEnd = false
+        _ended.mutate {
+            runOnEnd = !$0
             $0 = true
         }
-        onEnd()
+        if runOnEnd {
+            onEnd()
+        }
     }
 
     public func send(_ output: T) {
         lock.synchronized {
-            onSend(output)
+            if !ended {
+                onSend(output)
+            }
         }
     }
 

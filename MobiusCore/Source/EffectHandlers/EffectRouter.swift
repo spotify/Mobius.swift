@@ -51,60 +51,67 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
     ) -> EffectRouter<Input, Output> where Handler.Effect == Payload, Handler.Event == Output {
-        let route = Route<Input, Output>(path: path, handler: effectHandler)
+        let route = Route<Input, Output>(extractPayload: path, executePayload: effectHandler.handle)
         return EffectRouter(routes: self.routes + [route])
     }
 }
 
 private struct Route<Input, Output> {
-    let tryRoute: (Input, Response<Output>) -> Disposable?
+    let extractPayload: (Input) -> Any?
+    let executePayload: (Any, Response<Output>) -> Disposable
 
-    init<Payload, Handler: EffectHandler>(
-        path tryPath: @escaping (Input) -> Payload?,
-        handler: Handler
-    ) where Handler.Effect == Payload, Handler.Event == Output {
-        tryRoute = { input, response in
-            if let payload = tryPath(input) {
-                return handler.handle(payload, response)
-            }
-            return nil
+    init<Payload>(
+        extractPayload: @escaping (Input) -> Payload?,
+        executePayload: @escaping (Payload, Response<Output>) -> Disposable
+    ) {
+        self.extractPayload = extractPayload
+        self.executePayload = { effect, response in
+            executePayload(effect as! Payload, response)
         }
     }
 }
 
-private func compose<Effect, Event>(
-    routes: [Route<Effect, Event>]
-) -> AnyConnectable<Effect, Event> {
-    return AnyConnectable { dispatch in
-        let routeConnections = routes
-            .map { route in toSafeConnection(route: route, dispatch: dispatch) }
+private struct ConnectedRoute<Input> {
+    let extractPayload: (Input) -> Any?
+    let connection: Connection<Any>
 
-        return Connection(
-            acceptClosure: { effect in
-                let handledCount = routeConnections
-                    .map { $0.handle(effect) }
-                    .filter { $0 }
-                    .count
-
-                if handledCount != 1 {
-                    MobiusHooks.onError("Error: \(handledCount) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
-                }
-            },
-            disposeClosure: {
-                routeConnections.forEach { route in
-                    route.dispose()
-                }
-            }
-        )
+    init<Output>(
+        route: Route<Input, Output>,
+        output: @escaping Consumer<Output>
+    ) {
+        extractPayload = route.extractPayload
+        connection = EffectExecutor(handleInput: route.executePayload)
+            .connect(output)
     }
 }
 
-private func toSafeConnection<Effect, Event>(
-    route: Route<Effect, Event>,
-    dispatch: @escaping Consumer<Event>
-) -> EffectHandlingConnection<Effect, Event> {
-    return EffectHandlingConnection(
-        handleInput: route.tryRoute,
-        output: dispatch
-    )
+private func compose<Input, Output>(
+    routes: [Route<Input, Output>]
+) -> AnyConnectable<Input, Output> {
+    return AnyConnectable { output in
+        let connectedRoutes = routes
+            .map { route in ConnectedRoute(route: route, output: output) }
+
+        return Connection(
+            acceptClosure: { effect in
+                let handlers: [() -> Void] = connectedRoutes.compactMap { route in
+                    if let payload = route.extractPayload(effect) {
+                        return { route.connection.accept(payload) }
+                    } else {
+                        return nil
+                    }
+                }
+
+                if let handle = handlers.first, handlers.count == 1 {
+                    handle()
+                } else {
+                    MobiusHooks.onError("Error: \(handlers.count) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
+                }
+            },
+            disposeClosure: {
+                connectedRoutes
+                    .forEach { $0.connection.dispose() }
+            }
+        )
+    }
 }
