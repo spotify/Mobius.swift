@@ -6,6 +6,8 @@ disabled_rules:
   - todo                        # Disabled while we are filling out the framework; re-enable when we get closer to completion
   - nesting                     # Does not make sense anymore since Swift 4 uses nested `CodingKeys` enums for example
 
+  - implicit_return             # Suddenly started firing for existing code on PRs, should investigate later
+
 opt_in_rules:
   - anyobject_protocol
   - attributes
