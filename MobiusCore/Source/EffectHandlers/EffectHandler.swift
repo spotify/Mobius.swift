@@ -51,6 +51,12 @@ public struct AnyEffectHandler<Effect, Event>: EffectHandler {
         self.handler = handle
     }
 
+    public init<Handler: EffectHandler>(
+        handler: Handler
+    ) where Handler.Effect == Effect, Handler.Event == Event {
+        self.handler = handler.handle
+    }
+
     public func handle(_ input: Effect, _ response: Response<Event>) -> Disposable {
         return self.handler(input, response)
     }
