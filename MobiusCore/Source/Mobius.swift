@@ -21,7 +21,7 @@ import Foundation
 
 public typealias Update<Model, Event, Effect> = (Model, Event) -> Next<Model, Effect>
 
-public typealias Initiator<Model, Effect> = (Model) -> First<Model, Effect>
+public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
 public enum Mobius {}
 
@@ -47,7 +47,7 @@ public extension Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            initiator: { First(model: $0) },
+            initiate: nil,
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
@@ -57,7 +57,7 @@ public extension Mobius {
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
-        private let initiator: Initiator<Model, Effect>
+        private let initiate: Initiate<Model, Effect>?
         private let eventSource: AnyEventSource<Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
@@ -65,14 +65,14 @@ public extension Mobius {
         fileprivate init<C: Connectable>(
             update: @escaping Update<Model, Event, Effect>,
             effectHandler: C,
-            initiator: @escaping Initiator<Model, Effect>,
+            initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where C.InputType == Effect, C.OutputType == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
-            self.initiator = initiator
+            self.initiate = initiate
             self.eventSource = eventSource
             self.logger = logger
             self.eventConsumerTransformer = eventConsumerTransformer
@@ -82,18 +82,18 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: AnyEventSource(eventSource),
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )
         }
 
-        public func withInitiator(_ initiator: @escaping Initiator<Model, Effect>) -> Builder {
+        func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
@@ -104,7 +104,7 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: AnyMobiusLogger(logger)
@@ -130,19 +130,32 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: { consumer in transformer(oldTransfomer(consumer)) },
                 logger: logger
             )
         }
 
-        public func start(from initialModel: Model) -> MobiusLoop<Model, Event, Effect> {
+        /// Create a `MobiusLoop` from the builder, and optionally dispatch one or more effects
+        ///
+        /// - Parameters:
+        ///   - initialModel: The model the loop should start with.
+        ///   - effects: Zero or more effects to execute immediately.
+        public func start(from initialModel: Model, effects: [Effect] = []) -> MobiusLoop<Model, Event, Effect> {
+            // If no explicit initiator was given, create one that passes the model through unchanged and applies the
+            // given effects.
+            precondition(
+                self.initiate == nil || effects.isEmpty,
+                "A loop cannot use withInitiator and also specify initial effects in start"
+            )
+            let initiate = self.initiate ?? { First(model: $0, effects: effects) }
+
             return MobiusLoop.createLoop(
                 update: update,
                 effectHandler: effectHandler,
                 initialModel: initialModel,
-                initiator: initiator,
+                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
@@ -156,27 +169,31 @@ public extension Mobius {
         ///   - qos: The Quality of Service class for the controller’s work queue. Default: `.userInitiated`
         public func makeController(
             from initialModel: Model,
+            initiate: Initiate<Model, Effect>? = nil,
             qos: DispatchQoS.QoSClass = .userInitiated
         ) -> MobiusController<Model, Event, Effect> {
-            return makeController(from: initialModel, loopQueue: .global(qos: qos))
+            return makeController(from: initialModel, initiate: initiate, loopQueue: .global(qos: qos))
         }
 
         /// Create a `MobiusController` from the builder
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
+        ///   - initiate: An optional initiator function to invoke each time the controller’s loop is started.
         ///   - loopQueue: The target queue for the `MobiusController`’s work queue. The controller will dispatch events
         ///     and effects on a serial queue that targets this queue.
         ///   - viewQueue: The queue to use to post to the `MobiusController`’s view connection.
         ///     Default: the main queue.
         public func makeController(
             from initialModel: Model,
+            initiate: Initiate<Model, Effect>? = nil,
             loopQueue: DispatchQueue,
             viewQueue: DispatchQueue = .main
         ) -> MobiusController<Model, Event, Effect> {
             return MobiusController(
                 builder: self,
                 initialModel: initialModel,
+                initiate: initiate,
                 loopQueue: loopQueue,
                 viewQueue: viewQueue
             )

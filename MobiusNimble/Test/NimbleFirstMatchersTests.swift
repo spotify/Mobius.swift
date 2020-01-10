@@ -44,14 +44,14 @@ class NimbleFirstMatchersTests: QuickSpec {
             }
 
             let model = "3"
-            func testInitiator(model: String) -> First<String, String> {
+            func testInitiate(model: String) -> First<String, String> {
                 return First<String, String>(model: model, effects: ["2", "4"])
             }
 
             // Testing through proxy: UpdateSpec
             context("when asserting through predicates that fail") {
                 beforeEach {
-                    InitSpec(testInitiator)
+                    InitSpec(testInitiate)
                         .when("a model")
                         .then(assertThatFirst(haveModel(model + "1"), haveNoEffects()))
                 }

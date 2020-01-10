@@ -21,25 +21,25 @@
 import Nimble
 import Quick
 
-class LoggingInitiatorTests: QuickSpec {
+class LoggingInitiateTests: QuickSpec {
     override func spec() {
-        describe("LoggingInitiator") {
+        describe("LoggingInitiate") {
             var logger: TestMobiusLogger!
-            var loggingInitiator: LoggingInitiator<String, String>!
+            var loggingInitiate: LoggingInitiate<String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()
-                loggingInitiator = LoggingInitiator({ model in First(model: model) }, logger: logger)
+                loggingInitiate = LoggingInitiate({ model in First(model: model) }, logger: logger)
             }
 
             it("should log willInitiate and didInitiate for each initiate attempt") {
-                _ = loggingInitiator.initiate("from this")
+                _ = loggingInitiate.initiate("from this")
 
                 expect(logger.logMessages).to(equal(["willInitiate(from this)", "didInitiate(from this, First<String, String>(model: \"from this\", effects: []))"]))
             }
 
             it("should return init from delegate") {
-                let first = loggingInitiator.initiate("hey")
+                let first = loggingInitiate.initiate("hey")
 
                 expect(first.model).to(equal("hey"))
                 expect(first.effects).to(beEmpty())
