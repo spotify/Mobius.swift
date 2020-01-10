@@ -30,7 +30,7 @@
 /// These two routing criteria can be matched with one of four types of targets:
 ///  - `.to { effect in ... }` - A fire-and-forget style function of type `(Effect) -> Void`.
 ///  - `.toEvent { effect in ... }` A function which returns an optional event to send back into
-///     the loop: `(Effect) -> Event?`.
+///     the loop: `(Effect) -> Event?`. This makes it easy to send a single event caused by the effect.
 ///  - `.to(EffectHandler)` This should be used for effects which require asynchronous behavior
 ///     or produce more than one event, and which have a clear definition of when an effect has been handled.
 ///     For example, an effect handler which performs a network request and dispatches an event back into the
