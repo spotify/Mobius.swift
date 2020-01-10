@@ -20,15 +20,15 @@
 /// Helper to wrap initator functions with log calls.
 ///
 /// Also adds call stack annotation where we call into the client-provided initiator.
-class LoggingInitiator<Model, Effect> {
-    typealias Initiator = MobiusCore.Initiator<Model, Effect>
+class LoggingInitiate<Model, Effect> {
+    typealias Initiate = MobiusCore.Initiate<Model, Effect>
     typealias First = MobiusCore.First<Model, Effect>
 
-    private let realInit: Initiator
+    private let realInit: Initiate
     private let willInit: (Model) -> Void
     private let didInit: (Model, First) -> Void
 
-    init<Logger: MobiusLogger>(_ realInit: @escaping Initiator, logger: Logger)
+    init<Logger: MobiusLogger>(_ realInit: @escaping Initiate, logger: Logger)
     where Logger.Model == Model, Logger.Effect == Effect {
         self.realInit = realInit
         willInit = logger.willInitiate

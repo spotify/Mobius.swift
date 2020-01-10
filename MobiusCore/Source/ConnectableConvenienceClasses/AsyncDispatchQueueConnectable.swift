@@ -19,11 +19,11 @@
 
 import Foundation
 
-/// A connectable adapter which imposes asynchronous dispatch blocks around calls in both directions.
+/// A connectable adapter which imposes asynchronous dispatch blocks around calls to `accept` and `dispose`.
 ///
-/// * Consumers passed to `connect` will be executed on the provided `consumerQueue`
-/// * The underlying connectable’s connections’ `acceptClosure` and `disposeClosure` will be executed on the provided
-///   `acceptQueue`
+/// Creates `Connection`s that forward invocations to `accept` and `dispose` to a connection returned by the underlying
+/// connectable, first switching to the provided `acceptQueue`. In other words, the real `accept` and `dispose` methods
+/// will always be executed asynchronously on the provided queue.
 final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     private let underlyingConnectable: AnyConnectable<InputType, OutputType>
     private let acceptQueue: DispatchQueue

@@ -19,6 +19,9 @@
 
 import Foundation
 
+@available(*, deprecated, message: "use Initiate instead")
+public typealias Initiator<Model, Effect> = Initiate<Model, Effect>
+
 public extension First where Effect: Hashable {
     @available(*, deprecated, message: "use array of effects instead")
     init(model: Model, effects: Set<Effect>) {
@@ -48,6 +51,12 @@ public extension Mobius.Builder {
     @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
     func withEffectQueue(_ effectQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
         return self
+    }
+
+    @available(*, deprecated, message:
+    "initiators are deprecated for raw loops. For MobiusController, pass the initiator to makeController instead")
+    func withInitiator(_ initiate: @escaping Initiate<Model, Effect>) -> Mobius.Builder<Model, Event, Effect> {
+        return withInitiate(initiate)
     }
 }
 

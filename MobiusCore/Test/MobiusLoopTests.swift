@@ -29,7 +29,7 @@ class MobiusLoopTests: QuickSpec {
             var builder: Mobius.Builder<String, String, String>!
             var loop: MobiusLoop<String, String, String>!
             var receivedModels: [String]!
-            var effectHandler: SimpleTestConnectable!
+            var effectHandler: RecordingTestConnectable!
             var modelObserver: Consumer<String>!
 
             beforeEach {
@@ -39,7 +39,7 @@ class MobiusLoopTests: QuickSpec {
 
                 let update = Update<String, String, String> { _, event in Next.next(event) }
 
-                effectHandler = SimpleTestConnectable()
+                effectHandler = RecordingTestConnectable()
 
                 builder = Mobius.loop(update: update, effectHandler: effectHandler)
             }
@@ -258,6 +258,16 @@ class MobiusLoopTests: QuickSpec {
                         let description = String(describing: loop)
                         expect(description).to(equal("Optional(disposed MobiusLoop<String, String, String>!)"))
                     }
+                }
+            }
+
+            context("when starting with effects") {
+                beforeEach {
+                    loop = builder.start(from: "S", effects: ["F1", "F2"])
+                }
+
+                it("should immediately execute the specified events") {
+                    expect(effectHandler.recorder.items).to(contain("F1", "F2"))
                 }
             }
         }

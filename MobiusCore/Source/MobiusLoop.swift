@@ -112,13 +112,13 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         update: Update<Model, Event, Effect>,
         effectHandler: C,
         initialModel: Model,
-        initiator: @escaping Initiator<Model, Effect>,
+        initiate: @escaping Initiate<Model, Effect>,
         eventSource: AnyEventSource<Event>,
         eventConsumerTransformer: ConsumerTransformer<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
         let accessGuard = ConcurrentAccessDetector()
-        let loggingInitiator = LoggingInitiator(initiator, logger: logger)
+        let loggingInitiate = LoggingInitiate(initiate, logger: logger)
         let loggingUpdate = update.logging(logger)
         let workBag = WorkBag(accessGuard: accessGuard)
 
@@ -164,7 +164,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         let nextConnection = nextPublisher.connect(to: nextConsumer)
 
         // everything is hooked up, start processing!
-        eventProcessor.start(from: loggingInitiator.initiate(initialModel))
+        eventProcessor.start(from: loggingInitiate.initiate(initialModel))
 
         return MobiusLoop(
             eventProcessor: eventProcessor,
