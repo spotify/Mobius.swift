@@ -94,6 +94,29 @@ class EffectRouterTests: QuickSpec {
                 expect(disposed1).to(beTrue())
                 expect(disposed2).to(beTrue())
             }
+
+            it("should be possible to connect multiple times if the previous connection was closed") {
+                var events: [Event] = []
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                        .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
+                    .routeEffects(equalTo: .effect2)
+                        .to { effect, response in
+                            response.send(.eventForEffect2)
+                            response.end()
+                            return AnonymousDisposable {}
+                        }
+                    .asConnectable
+
+                let connection1 = router.connect { events.append($0) }
+                connection1.dispose()
+                let connection2 = router.connect { events.append($0) }
+
+                connection1.accept(.effect1)
+                connection2.accept(.effect2)
+
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
+            }
         }
 
         context("Router error cases") {
@@ -133,6 +156,54 @@ class EffectRouterTests: QuickSpec {
 
                 expect(didCrash).to(beTrue())
             }
+
+            it("should not be possible to connect multiple times when routing to `Connectable`s") {
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                        .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
+                    .asConnectable
+
+                let connection1 = router.connect { _ in }
+                let connection2 = router.connect { _ in }
+
+                expect(didCrash).to(beTrue())
+
+                connection1.dispose()
+                connection2.dispose()
+            }
+
+            it("should not be possible to connect multiple times when routing to `EffectHandler`s") {
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect2)
+                        .to { effect, response in
+                            response.end()
+                            return AnonymousDisposable {}
+                        }
+                    .asConnectable
+
+                let connection1 = router.connect { _ in }
+                let connection2 = router.connect { _ in }
+
+                expect(didCrash).to(beTrue())
+
+                connection1.dispose()
+                connection2.dispose()
+            }
         }
+    }
+}
+
+private class TestConnectable: Connectable {
+    private let event: Event
+    private let onDispose: () -> Void
+    init(dispatchEvent event: Event, onDispose: @escaping () -> Void) {
+        self.event = event
+        self.onDispose = onDispose
+    }
+    func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
+        Connection<Effect>(
+            acceptClosure: { _ in consumer(self.event) },
+            disposeClosure: onDispose
+        )
     }
 }

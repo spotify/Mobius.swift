@@ -53,14 +53,14 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { _ in }
             }
 
-            it("should not be disposed if end was called") {
+            it("should not be disposed if `end()` was called") {
                 connection.accept(1)
                 connection.dispose()
 
                 expect(wasDisposed).to(beFalse())
             }
 
-            it("should be disposed if end was never called") {
+            it("should be disposed if the connection is disposed before `end()` is called") {
                 connection.dispose()
 
                 expect(wasDisposed).to(beFalse())
@@ -74,7 +74,7 @@ class EffectRouterDSLTests: QuickSpec {
 
             beforeEach {
                 wasDisposed = false
-                end = {}
+                end = { fail("End should have been set") }
                 connection = EffectRouter<Int, ()>()
                     .routeEffects(equalTo: 1).to { _, response in
                         end = response.end
@@ -86,7 +86,7 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { _ in }
             }
 
-            it("should not be disposed if end was called") {
+            it("should not be disposed if `end()` was called") {
                 connection.accept(1)
                 end()
                 connection.dispose()
@@ -94,7 +94,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(wasDisposed).to(beFalse())
             }
 
-            it("should be disposed if end was never called") {
+            it("should be disposed if `end()` was never called") {
                 connection.accept(1)
                 connection.dispose()
 
@@ -107,7 +107,7 @@ class EffectRouterDSLTests: QuickSpec {
                 var events: [Event] = []
                 var wasDisposed = false
 
-                let dslHandler = EffectRouter<Effect, Event>()
+                let connection = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect1).to { effect, response in
                         expect(effect).to(equal(.effect1))
                         response.send(.eventForEffect1)
@@ -118,10 +118,10 @@ class EffectRouterDSLTests: QuickSpec {
                     .asConnectable
                     .connect { events.append($0) }
 
-                dslHandler.accept(.effect1)
+                connection.accept(.effect1)
                 expect(events).to(equal([.eventForEffect1]))
 
-                dslHandler.dispose()
+                connection.dispose()
                 expect(wasDisposed).to(beTrue())
             }
 

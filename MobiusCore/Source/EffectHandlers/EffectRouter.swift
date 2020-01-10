@@ -20,6 +20,9 @@
 /// An `EffectRouter` defines the relationship between the effects in your domain and the constructs which
 /// handle those effects.
 ///
+/// Note: Each effect in your domain must be linked to exactly one handler. A runtime crash will occur if zero or multiple
+/// handlers were found for some received input.
+///
 /// To define the relationship between an effect and its handler, you need two parts.
 /// The first is the routing criteria. There are two choices here:
 ///  - `.routeEffects(equalTo: constant)` - Routing to effects which are equal to `constant`.
@@ -59,9 +62,6 @@ public struct EffectRouter<Input, Output> {
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to handle effects.
-    ///
-    /// Note: Each instance of `Input` must have been linked to exactly one handler. A runtime crash will occur if zero or multiple handlers were found for some
-    /// received input.
     public var asConnectable: AnyConnectable<Input, Output> {
         return compose(routes: routes)
     }

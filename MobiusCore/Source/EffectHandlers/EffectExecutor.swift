@@ -36,11 +36,18 @@ class EffectExecutor<Effect, Event>: Connectable {
     }
 
     func connect(_ consumer: @escaping Consumer<Event>) -> Connection<Effect> {
-        output = consumer
-        return Connection(
-            acceptClosure: handle,
-            disposeClosure: dispose
-        )
+        return lock.synchronized {
+            guard output == nil else {
+                MobiusHooks.onError("ConnectionLimitExceeded: The Connectable \(type(of: self)) is already connected. Unable to connect more than once")
+                return BrokenConnection.connection()
+            }
+
+            output = consumer
+            return Connection(
+                acceptClosure: handle,
+                disposeClosure: dispose
+            )
+        }
     }
 
     func handle(_ effect: Effect) {
@@ -59,9 +66,9 @@ class EffectExecutor<Effect, Event>: Connectable {
 
         let disposable = handleEffect(effect, response)
 
-        // If the effect has not yet been handled, store a reference to its response and disposable.
-        if !response.ended {
-            store(id: id, response: response, disposable: disposable)
+        store(id: id, response: response, disposable: disposable)
+        if response.ended {
+            delete(id: id)
         }
     }
 
