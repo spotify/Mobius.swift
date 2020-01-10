@@ -104,11 +104,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     /// This should not be used directly, but is useful in constructing asynchronous wrappers around loops (like
     /// `MobiusController`, where the eventConsumerTransformer is used to implement equivalent async-safe assertions).
     public func unguardedDispatchEvent(_ event: Event) {
-        return access.guard {
-            if !disposed {
-                consumeEvent(event)
-            }
-        }
+        consumeEvent(event)
     }
 
     // swiftlint:disable:next function_parameter_count
