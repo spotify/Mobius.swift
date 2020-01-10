@@ -101,7 +101,7 @@ class EffectRouterTests: QuickSpec {
                     .routeEffects(equalTo: .effect1)
                         .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
                     .routeEffects(equalTo: .effect2)
-                        .to { effect, response in
+                        .to { _, response in
                             response.send(.eventForEffect2)
                             response.end()
                             return AnonymousDisposable {}
@@ -175,7 +175,7 @@ class EffectRouterTests: QuickSpec {
             it("should not be possible to connect multiple times when routing to `EffectHandler`s") {
                 let router = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect2)
-                        .to { effect, response in
+                        .to { _, response in
                             response.end()
                             return AnonymousDisposable {}
                         }
