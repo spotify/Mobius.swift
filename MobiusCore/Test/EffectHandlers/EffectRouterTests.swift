@@ -190,6 +190,26 @@ class EffectRouterTests: QuickSpec {
                 connection2.dispose()
             }
         }
+
+        context("Router Disposing on Deinit") {
+            it("should dispose active `EffectHandler`s when deinitializing") {
+                var wasDisposed = false
+                var connection: Connection<Effect>? = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                    .to { _, _ in
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
+                    .asConnectable
+                    .connect { _ in }
+
+                connection?.accept(.effect1)
+                connection = nil
+
+                expect(wasDisposed).toEventually(beTrue())
+            }
+        }
     }
 }
 

@@ -72,4 +72,8 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
             }
         }
     }
+
+    deinit {
+        dispose()
+    }
 }

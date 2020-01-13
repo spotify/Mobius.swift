@@ -99,6 +99,10 @@ class EffectExecutor<Effect, Event>: Connectable {
             handlingEffects[id] = nil
         }
     }
+
+    deinit {
+        dispose()
+    }
 }
 
 private struct EffectHandlingState<Event> {
