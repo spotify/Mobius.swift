@@ -27,11 +27,11 @@ class ResponseTests: QuickSpec {
         describe("Responses") {
             context("Ending a response") {
                 var onEndCalledTimes: Int!
-                var response: Response<Int>!
+                var response: EffectCallback<Int>!
 
                 beforeEach {
                     onEndCalledTimes = 0
-                    response = Response(onSend: { _ in }, onEnd: {
+                    response = EffectCallback(onSend: { _ in }, onEnd: {
                         onEndCalledTimes += 1
                     })
                 }
@@ -51,7 +51,7 @@ class ResponseTests: QuickSpec {
 
                 it("calls `onEnd` when the Response is deinitialized") {
                     var onEndCalled = false
-                    var response: Response<Int>? = Response(onSend: { _ in }, onEnd: {
+                    var response: EffectCallback<Int>? = EffectCallback(onSend: { _ in }, onEnd: {
                         onEndCalled = true
                     })
 
@@ -64,11 +64,11 @@ class ResponseTests: QuickSpec {
 
             context("Sending output") {
                 var output: [Int]!
-                var response: Response<Int>!
+                var response: EffectCallback<Int>!
 
                 beforeEach {
                     output = []
-                    response = Response(onSend: { output.append($0) }, onEnd: {})
+                    response = EffectCallback(onSend: { output.append($0) }, onEnd: {})
                 }
 
                 it("calls `onSend` when `.send` is called with the same argument") {

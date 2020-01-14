@@ -20,7 +20,7 @@
 import Foundation
 
 class EffectExecutor<Effect, Event>: Connectable {
-    private let handleEffect: (Effect, Response<Event>) -> Disposable
+    private let handleEffect: (Effect, EffectCallback<Event>) -> Disposable
     private var output: Consumer<Event>?
 
     private let lock = Lock()
@@ -31,7 +31,7 @@ class EffectExecutor<Effect, Event>: Connectable {
     private var handlingEffects: [Int64: EffectHandlingState<Event>] = [:]
     private var nextID = Int64(0)
 
-    init(handleInput: @escaping (Effect, Response<Event>) -> Disposable) {
+    init(handleInput: @escaping (Effect, EffectCallback<Event>) -> Disposable) {
         self.handleEffect = handleInput
     }
 
@@ -56,30 +56,30 @@ class EffectExecutor<Effect, Event>: Connectable {
             return nextID
         }
 
-        let response = Response(
+        let callback = EffectCallback(
             // Any events produced as a result of handling the effect will be sent to this class's `output` consumer,
             // unless it has already been disposed.
             onSend: { [weak self] event in self?.output?(event) },
-            // Once an effect has been handled, remove the reference to its response and disposable.
+            // Once an effect has been handled, remove the reference to its callback and disposable.
             onEnd: { [weak self] in self?.delete(id: id) }
         )
 
-        let disposable = handleEffect(effect, response)
+        let disposable = handleEffect(effect, callback)
 
-        store(id: id, response: response, disposable: disposable)
-        if response.ended {
+        store(id: id, callback: callback, disposable: disposable)
+        if callback.ended {
             delete(id: id)
         }
     }
 
     func dispose() {
         lock.synchronized {
-            // Dispose any effects currently being handled. We also need to `end` their responses to remove the
+            // Dispose any effects currently being handled. We also need to `end` their callbacks to remove the
             // references we are keeping to them.
             handlingEffects.values
                 .forEach {
                     $0.disposable.dispose()
-                    $0.response.end()
+                    $0.callback.end()
                 }
 
             // Restore the state of this `Connectable` to its pre-connected state.
@@ -88,9 +88,9 @@ class EffectExecutor<Effect, Event>: Connectable {
         }
     }
 
-    private func store(id: Int64, response: Response<Event>, disposable: Disposable) {
+    private func store(id: Int64, callback: EffectCallback<Event>, disposable: Disposable) {
         lock.synchronized {
-            handlingEffects[id] = EffectHandlingState(response: response, disposable: disposable)
+            handlingEffects[id] = EffectHandlingState(callback: callback, disposable: disposable)
         }
     }
 
@@ -106,6 +106,6 @@ class EffectExecutor<Effect, Event>: Connectable {
 }
 
 private struct EffectHandlingState<Event> {
-    let response: Response<Event>
+    let callback: EffectCallback<Event>
     let disposable: Disposable
 }

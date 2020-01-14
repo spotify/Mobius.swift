@@ -47,7 +47,7 @@ class NonReentrancyTests: QuickSpec {
         describe("MobiusLoop") {
             var loop: MobiusLoop<Model, Event, Effect>!
             var messages: [String]!
-            var handleEffect: ((Effect, Response<Event>) -> Void)!
+            var handleEffect: ((Effect, EffectCallback<Event>) -> Void)!
 
             func log(_ message: String) {
                 messages.append(message)

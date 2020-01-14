@@ -12,7 +12,7 @@
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
 		02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40622237425E100BD7ED8 /* EffectRouterTests.swift */; };
 		02CAE47023C75E99009DFF9A /* ThreadSafeConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */; };
-		02CAE47223C76F34009DFF9A /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47123C76F34009DFF9A /* Response.swift */; };
+		02CAE47223C76F34009DFF9A /* EffectCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47123C76F34009DFF9A /* EffectCallback.swift */; };
 		02CAE47423C76FA3009DFF9A /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47323C76FA3009DFF9A /* ResponseTests.swift */; };
 		02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
 		02CEC4912379643400BA1584 /* EffectRouterDSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48F2379642C00BA1584 /* EffectRouterDSLTests.swift */; };
@@ -258,7 +258,7 @@
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
 		02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeConnectable.swift; sourceTree = "<group>"; };
-		02CAE47123C76F34009DFF9A /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		02CAE47123C76F34009DFF9A /* EffectCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectCallback.swift; sourceTree = "<group>"; };
 		02CAE47323C76FA3009DFF9A /* ResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTests.swift; sourceTree = "<group>"; };
 		02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSL.swift; sourceTree = "<group>"; };
 		02CEC48F2379642C00BA1584 /* EffectRouterDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSLTests.swift; sourceTree = "<group>"; };
@@ -458,7 +458,7 @@
 				02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */,
 				02C4061C2373078400BD7ED8 /* EffectExecutor.swift */,
 				02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */,
-				02CAE47123C76F34009DFF9A /* Response.swift */,
+				02CAE47123C76F34009DFF9A /* EffectCallback.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1146,7 +1146,7 @@
 				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				2D3A6973235737430053C95E /* WorkBag.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
-				02CAE47223C76F34009DFF9A /* Response.swift in Sources */,
+				02CAE47223C76F34009DFF9A /* EffectCallback.swift in Sources */,
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,

@@ -31,7 +31,7 @@ public extension PartialEffectRouter {
     /// Route to the an anonymous  `EffectHandler` defined by the `handle` closure.
     /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(
-        _ handle: @escaping (Payload, Response<Output>) -> Disposable
+        _ handle: @escaping (Payload, EffectCallback<Output>) -> Disposable
     ) -> EffectRouter<Input, Output> {
         return to(AnyEffectHandler<Payload, Output>(handle: handle))
     }
@@ -41,9 +41,9 @@ public extension PartialEffectRouter {
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
-        return to { payload, response in
+        return to { payload, callback in
             fireAndForget(payload)
-            response.end()
+            callback.end()
             return AnonymousDisposable {}
         }
     }
@@ -54,11 +54,11 @@ public extension PartialEffectRouter {
     func toEvent(
         _ eventClosure: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {
-        return to { payload, response in
+        return to { payload, callback in
             if let event = eventClosure(payload) {
-                response.send(event)
+                callback.send(event)
             }
-            response.end()
+            callback.end()
             return AnonymousDisposable {}
         }
     }

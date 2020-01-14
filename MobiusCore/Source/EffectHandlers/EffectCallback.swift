@@ -19,12 +19,12 @@
 
 import Foundation
 
-/// A `Response` can send output and signal completion.
+/// An `EffectCallback` can send output and signal completion.
 /// Sending output is done with `.send` and signaling completion is done with `.end`.
 ///
 /// Note: Once `.end` has been called (from any thread), the closure you provide in `onSend` will no longer be called.
 /// Note: The closure you provide in `onEnd` will only be called once when `.end` is called on this object.
-public final class Response<T> {
+public final class EffectCallback<T> {
     private let onSend: (T) -> Void
     private let onEnd: () -> Void
 
