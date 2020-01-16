@@ -24,8 +24,8 @@ import Foundation
 ///
 /// Note: Once `.end` has been called (from any thread), the closure you provide in `onSend` will no longer be called.
 /// Note: The closure you provide in `onEnd` will only be called once when `.end` is called on this object.
-public final class EffectCallback<T> {
-    private let onSend: (T) -> Void
+public final class EffectCallback<Output> {
+    private let onSend: (Output) -> Void
     private let onEnd: () -> Void
 
     public var ended: Bool {
@@ -33,10 +33,10 @@ public final class EffectCallback<T> {
     }
 
     private let lock = Lock()
-    private let _ended: Synchronized<Bool> = .init(value: false)
+    private let _ended = Synchronized<Bool>(value: false)
 
     public init(
-        onSend: @escaping (T) -> Void,
+        onSend: @escaping (Output) -> Void,
         onEnd: @escaping () -> Void
     ) {
         self.onSend = onSend
@@ -54,7 +54,7 @@ public final class EffectCallback<T> {
         }
     }
 
-    public func send(_ output: T) {
+    public func send(_ output: Output) {
         lock.synchronized {
             if !ended {
                 onSend(output)
