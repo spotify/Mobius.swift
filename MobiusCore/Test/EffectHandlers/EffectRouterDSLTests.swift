@@ -60,7 +60,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(wasDisposed).to(beFalse())
             }
 
-            it("should be disposed if the connection is disposed before `end()` is called") {
+            it("should not be disposed if the connection is disposed before `end()` is called") {
                 connection.dispose()
 
                 expect(wasDisposed).to(beFalse())
@@ -165,15 +165,31 @@ class EffectRouterDSLTests: QuickSpec {
         }
 
         context("Effect routers based on payload extracting functions") {
-            it("Supports routing to an effect handler") {
+            it("Supports routing to and receiving events from an effect handler") {
                 var events: [Event] = []
-                var wasDisposed = false
 
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
                     .routeEffects(withPayload: payload).to { effect, callback in
                         expect(effect).to(equal(.effect1))
                         callback.send(.eventForEffect1)
+                        callback.end()
+                        return AnonymousDisposable {}
+                    }
+                    .asConnectable
+                    .connect { events.append($0) }
+
+                dslHandler.accept(.effect1)
+                expect(events).to(equal([.eventForEffect1]))
+            }
+
+            it("Supports routing to and disposing an effect handler") {
+                var events: [Event] = []
+                var wasDisposed = false
+
+                let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(withPayload: payload).to { _, _ in
                         return AnonymousDisposable {
                             wasDisposed = true
                         }
@@ -182,11 +198,9 @@ class EffectRouterDSLTests: QuickSpec {
                     .connect { events.append($0) }
 
                 dslHandler.accept(.effect1)
-                expect(events).to(equal([.eventForEffect1]))
-
                 dslHandler.dispose()
                 expect(wasDisposed).to(beTrue())
-            }
+              }
 
             it("Supports routing to a side-effecting function") {
                 var performedEffects: [Effect] = []
