@@ -30,7 +30,6 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
         self.connectable = AnyConnectable(connectable)
     }
 
-    var isConnected = false
     func connect(_ output: @escaping (Event) -> Void) -> Connection<Effect> {
         return lock.synchronized {
             guard self.output == nil, connection == nil else {
@@ -48,8 +47,8 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     }
 
     private func accept(_ effect: Effect) {
-        if let connection = lock.synchronized(closure: { connection }) {
-            connection.accept(effect)
+        lock.synchronized {
+            connection?.accept(effect)
         }
     }
 

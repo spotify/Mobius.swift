@@ -21,69 +21,69 @@ import MobiusCore
 import Nimble
 import Quick
 
-class ResponseTests: QuickSpec {
+class CallbackTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        describe("Responses") {
-            context("Ending a response") {
+        describe("Callbacks") {
+            context("Ending a Callback") {
                 var onEndCalledTimes: Int!
-                var response: EffectCallback<Int>!
+                var callback: EffectCallback<Int>!
 
                 beforeEach {
                     onEndCalledTimes = 0
-                    response = EffectCallback(onSend: { _ in }, onEnd: {
+                    callback = EffectCallback(onSend: { _ in }, onEnd: {
                         onEndCalledTimes += 1
                     })
                 }
                 it("calls the supplied `onEnd` when `.end()` is called") {
-                    response.end()
+                    callback.end()
 
                     expect(onEndCalledTimes).to(equal(1))
                 }
 
                 it("only calls `onEnd` once when `end` is called") {
-                    response.end()
-                    response.end()
-                    response.end()
+                    callback.end()
+                    callback.end()
+                    callback.end()
 
                     expect(onEndCalledTimes).to(equal(1))
                 }
 
-                it("calls `onEnd` when the Response is deinitialized") {
+                it("calls `onEnd` when the Callback is deinitialized") {
                     var onEndCalled = false
-                    var response: EffectCallback<Int>? = EffectCallback(onSend: { _ in }, onEnd: {
+                    var callback: EffectCallback<Int>? = EffectCallback(onSend: { _ in }, onEnd: {
                         onEndCalled = true
                     })
 
-                    response = nil
+                    callback = nil
 
-                    expect(response).to(beNil())
+                    expect(callback).to(beNil())
                     expect(onEndCalled).toEventually(beTrue())
                 }
             }
 
             context("Sending output") {
                 var output: [Int]!
-                var response: EffectCallback<Int>!
+                var callback: EffectCallback<Int>!
 
                 beforeEach {
                     output = []
-                    response = EffectCallback(onSend: { output.append($0) }, onEnd: {})
+                    callback = EffectCallback(onSend: { output.append($0) }, onEnd: {})
                 }
 
                 it("calls `onSend` when `.send` is called with the same argument") {
-                    response.send(1)
+                    callback.send(1)
                     expect(output).to(equal([1]))
                 }
 
                 it("stops calling `onSend` after `.end` has been called") {
-                    response.send(1)
-                    response.send(2)
+                    callback.send(1)
+                    callback.send(2)
                     expect(output).to(equal([1, 2]))
 
-                    response.end()
+                    callback.end()
 
-                    response.send(3)
+                    callback.send(3)
                     expect(output).to(equal([1, 2]))
                 }
             }

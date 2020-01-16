@@ -49,14 +49,14 @@ class EffectRouterTests: QuickSpec {
                 receivedEvents = []
                 disposed1 = false
                 disposed2 = false
-                let effectHandler1 = AnyEffectHandler<Effect, Event> { _, response in
-                    response.send(.eventForEffect1)
+                let effectHandler1 = AnyEffectHandler<Effect, Event> { _, callback in
+                    callback.send(.eventForEffect1)
                     return AnonymousDisposable {
                         disposed1 = true
                     }
                 }
-                let effectHandler2 = AnyEffectHandler<Effect, Event> { _, response in
-                    response.send(.eventForEffect2)
+                let effectHandler2 = AnyEffectHandler<Effect, Event> { _, callback in
+                    callback.send(.eventForEffect2)
                     return AnonymousDisposable {
                         disposed2 = true
                     }
@@ -101,9 +101,9 @@ class EffectRouterTests: QuickSpec {
                     .routeEffects(equalTo: .effect1)
                         .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
                     .routeEffects(equalTo: .effect2)
-                        .to { _, response in
-                            response.send(.eventForEffect2)
-                            response.end()
+                        .to { _, callback in
+                            callback.send(.eventForEffect2)
+                            callback.end()
                             return AnonymousDisposable {}
                         }
                     .asConnectable
@@ -175,8 +175,8 @@ class EffectRouterTests: QuickSpec {
             it("should not be possible to connect multiple times when routing to `EffectHandler`s") {
                 let router = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect2)
-                        .to { _, response in
-                            response.end()
+                        .to { _, callback in
+                            callback.end()
                             return AnonymousDisposable {}
                         }
                     .asConnectable

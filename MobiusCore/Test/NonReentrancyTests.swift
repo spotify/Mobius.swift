@@ -113,15 +113,15 @@ class NonReentrancyTests: QuickSpec {
 
             context("when effect handler posts events through consumer") {
                 beforeEach {
-                    handleEffect = { effect, response in
+                    handleEffect = { effect, callback in
                         log("handle enter - effect: \(effect)")
                         defer {
                             log("handle exit - effect: \(effect)")
                         }
 
-                        response.send(.increment)
-                        response.send(.increment)
-                        response.end()
+                        callback.send(.increment)
+                        callback.send(.increment)
+                        callback.end()
                     }
                 }
 

@@ -43,8 +43,8 @@ class EffectRouterDSLTests: QuickSpec {
             beforeEach {
                 wasDisposed = false
                 connection = EffectRouter<Int, ()>()
-                    .routeEffects(equalTo: 1).to { _, response in
-                        response.end()
+                    .routeEffects(equalTo: 1).to { _, callback in
+                        callback.end()
                         return AnonymousDisposable {
                             wasDisposed = true
                         }
@@ -76,8 +76,8 @@ class EffectRouterDSLTests: QuickSpec {
                 wasDisposed = false
                 end = { fail("End should have been set") }
                 connection = EffectRouter<Int, ()>()
-                    .routeEffects(equalTo: 1).to { _, response in
-                        end = response.end
+                    .routeEffects(equalTo: 1).to { _, callback in
+                        end = callback.end
                         return AnonymousDisposable {
                             wasDisposed = true
                         }
@@ -108,9 +108,9 @@ class EffectRouterDSLTests: QuickSpec {
                 var wasDisposed = false
 
                 let connection = EffectRouter<Effect, Event>()
-                    .routeEffects(equalTo: .effect1).to { effect, response in
+                    .routeEffects(equalTo: .effect1).to { effect, callback in
                         expect(effect).to(equal(.effect1))
-                        response.send(.eventForEffect1)
+                        callback.send(.eventForEffect1)
                         return AnonymousDisposable {
                             wasDisposed = true
                         }
@@ -171,9 +171,9 @@ class EffectRouterDSLTests: QuickSpec {
 
                 let payload: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(withPayload: payload).to { effect, response in
+                    .routeEffects(withPayload: payload).to { effect, callback in
                         expect(effect).to(equal(.effect1))
-                        response.send(.eventForEffect1)
+                        callback.send(.eventForEffect1)
                         return AnonymousDisposable {
                             wasDisposed = true
                         }
