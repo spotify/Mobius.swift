@@ -200,7 +200,7 @@ class EffectRouterDSLTests: QuickSpec {
                 dslHandler.accept(.effect1)
                 dslHandler.dispose()
                 expect(wasDisposed).to(beTrue())
-              }
+            }
 
             it("Supports routing to a side-effecting function") {
                 var performedEffects: [Effect] = []
