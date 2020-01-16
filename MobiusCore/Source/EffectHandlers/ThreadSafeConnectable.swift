@@ -59,17 +59,13 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     }
 
     private func dispose() {
-        var shouldDispose = false
+        var disposeConnection: (() -> Void)?
         lock.synchronized {
-            shouldDispose = output != nil
             output = nil
+            disposeConnection = connection?.dispose
+            connection = nil
         }
-        if shouldDispose {
-            connection?.dispose()
-            lock.synchronized {
-                connection = nil
-            }
-        }
+        disposeConnection?()
     }
 
     deinit {
