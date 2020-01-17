@@ -28,47 +28,38 @@ public extension EffectRouter where Input: Equatable {
 }
 
 public extension PartialEffectRouter {
+    /// Route to the anonymous  `EffectHandler` defined by the `handle` closure.
+    /// - Parameter handle: A closure which defines an `EffectHandler`.
+    func to(
+        _ handle: @escaping (Payload, EffectCallback<Output>) -> Disposable
+    ) -> EffectRouter<Input, Output> {
+        return to(AnyEffectHandler<Payload, Output>(handle: handle))
+    }
+
     /// Route to a side-effecting closure.
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
     ) -> EffectRouter<Input, Output> {
-        return to(EffectHandler<Payload, Output>(
-            handle: { payload, _ in fireAndForget(payload) },
-            disposable: AnonymousDisposable {}
-        ))
+        return to { payload, callback in
+            fireAndForget(payload)
+            callback.end()
+            return AnonymousDisposable {}
+        }
     }
 
     /// Route to a closure which returns an optional event when given the payload as input.
     /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
     /// `nil`.
     func toEvent(
-        _ eventFunction: @escaping (Payload) -> Output?
+        _ eventClosure: @escaping (Payload) -> Output?
     ) -> EffectRouter<Input, Output> {
-        return to(EffectHandler<Payload, Output>(
-            handle: { payload, dispatch in
-                if let event = eventFunction(payload) {
-                    dispatch(event)
-                }
-            },
-            disposable: AnonymousDisposable {}
-        ))
-    }
-
-    /// Route to a side-effecting closure.
-    /// - Parameter connectable: a connectable which will be used to handle effects
-    func to<C: Connectable>(
-        _ connectable: C
-    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
-        var connection: Connection<Payload>?
-        return to(EffectHandler<Payload, Output>(
-            handle: { payload, output in
-                connection = connection ?? connectable.connect(output)
-                connection?.accept(payload)
-            },
-            disposable: AnonymousDisposable {
-                connection?.dispose()
+        return to { payload, callback in
+            if let event = eventClosure(payload) {
+                callback.send(event)
             }
-        ))
+            callback.end()
+            return AnonymousDisposable {}
+        }
     }
 }

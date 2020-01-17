@@ -17,6 +17,30 @@
 // specific language governing permissions and limitations
 // under the License.
 
+/// An `EffectRouter` defines the relationship between the effects in your domain and the constructs which
+/// handle those effects.
+///
+/// Note: Each effect in your domain must be linked to exactly one handler. A runtime crash will occur if zero or multiple
+/// handlers were found for some received input.
+///
+/// To define the relationship between an effect and its handler, you need two parts.
+/// The first is the routing criteria. There are two choices here:
+///  - `.routeEffects(equalTo: constant)` - Routing to effects which are equal to `constant`.
+///  - `.routeEffects(withPayload: extractPayload)` - Routing effects that satisfy
+///     a payload extracting function: `(Effect) -> Payload?`. If this function returns a non-`nil` value,
+///     that route is taken and the non-`nil` value is sent as the input to the route.
+///
+/// These two routing criteria can be matched with one of four types of targets:
+///  - `.to { effect in ... }` - A fire-and-forget style function of type `(Effect) -> Void`.
+///  - `.toEvent { effect in ... }` A function which returns an optional event to send back into
+///     the loop: `(Effect) -> Event?`. This makes it easy to send a single event caused by the effect.
+///  - `.to(EffectHandler)` This should be used for effects which require asynchronous behavior
+///     or produce more than one event, and which have a clear definition of when an effect has been handled.
+///     For example, an effect handler which performs a network request and dispatches an event back into the
+///     loop once it is finished or if it fails.
+///  - `.to(Connectable)` This should be used for effect handlers which do not have a clear definition of
+///     when a given effect has been handled. For example, an effect handler which will continue to produce
+///     events indefinitely once it has been started.
 public struct EffectRouter<Input, Output> {
     private let routes: [Route<Input, Output>]
 
@@ -37,6 +61,7 @@ public struct EffectRouter<Input, Output> {
         return PartialEffectRouter(routes: routes, path: payload)
     }
 
+    /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to handle effects.
     public var asConnectable: AnyConnectable<Input, Output> {
         return compose(routes: routes)
     }
@@ -48,66 +73,75 @@ public struct PartialEffectRouter<Input, Payload, Output> {
 
     /// Route to an `EffectHandler`.
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
-    public func to(_ effectHandler: EffectHandler<Payload, Output>) -> EffectRouter<Input, Output> {
-        let route = Route<Input, Output>(path: path, handler: effectHandler)
-        return EffectRouter(routes: self.routes + [route])
+    public func to<Handler: EffectHandler>(
+        _ effectHandler: Handler
+    ) -> EffectRouter<Input, Output> where Handler.Effect == Payload, Handler.Event == Output {
+        let connectable = EffectExecutor(handleInput: effectHandler.handle)
+        let route = Route<Input, Output>(extractPayload: path, connectable: connectable)
+        return EffectRouter(routes: routes + [route])
+    }
+
+    /// Route to a Connectable.
+    /// - Parameter connectable: a connectable which will be used to handle effects
+    public func to<C: Connectable>(
+        _ connectable: C
+    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
+        let connectable = ThreadSafeConnectable(connectable: connectable)
+        let route = Route(extractPayload: path, connectable: connectable)
+        return EffectRouter(routes: routes + [route])
     }
 }
 
 private struct Route<Input, Output> {
-    let tryRoute: (Input, @escaping Consumer<Output>) -> Bool
-    let disposable: Disposable
+    let connect: (@escaping Consumer<Output>) -> ConnectedRoute<Input>
 
-    init<Payload>(
-        path tryPath: @escaping (Input) -> Payload?,
-        handler: EffectHandler<Payload, Output>
-    ) {
-        tryRoute = { input, output in
-            if let payload = tryPath(input) {
-                handler.handle(payload, output)
-                return true
-            } else {
-                return false
-            }
+    init<Payload, Conn: Connectable>(
+        extractPayload: @escaping (Input) -> Payload?,
+        connectable: Conn
+    ) where Conn.InputType == Payload, Conn.OutputType == Output {
+        connect = { output in
+            let connection = connectable.connect(output)
+            return ConnectedRoute(
+                tryToHandle: { input in
+                    if let payload = extractPayload(input) {
+                        return { connection.accept(payload) }
+                    } else {
+                        return nil
+                    }
+                },
+                disposable: connection
+            )
         }
-        disposable = handler.disposable
     }
 }
 
-private func compose<Effect, Event>(
-    routes: [Route<Effect, Event>]
-) -> AnyConnectable<Effect, Event> {
-    return AnyConnectable { dispatch in
-        let routeConnections = routes
-            .map { route in toSafeConnection(route: route, dispatch: dispatch) }
+private struct ConnectedRoute<Input> {
+    let tryToHandle: (Input) -> (() -> Void)?
+    let disposable: Disposable
+}
+
+private func compose<Input, Output>(
+    routes: [Route<Input, Output>]
+) -> AnyConnectable<Input, Output> {
+    return AnyConnectable { output in
+        let connectedRoutes = routes
+            .map { route in route.connect(output) }
 
         return Connection(
             acceptClosure: { effect in
-                let handledCount = routeConnections
-                    .map { $0.handle(effect) }
-                    .filter { $0 }
-                    .count
+                let handlers = connectedRoutes
+                    .compactMap { route in route.tryToHandle(effect) }
 
-                if handledCount != 1 {
-                    MobiusHooks.onError("Error: \(handledCount) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
+                if let handleEffect = handlers.first, handlers.count == 1 {
+                    handleEffect()
+                } else {
+                    MobiusHooks.onError("Error: \(handlers.count) EffectHandlers could be found for effect: \(effect). Exactly 1 is required.")
                 }
             },
             disposeClosure: {
-                routeConnections.forEach { route in
-                    route.dispose()
-                }
+                connectedRoutes
+                    .forEach { route in route.disposable.dispose() }
             }
         )
     }
-}
-
-private func toSafeConnection<Effect, Event>(
-    route: Route<Effect, Event>,
-    dispatch: @escaping Consumer<Event>
-) -> PredicatedSafeConnection<Effect, Event> {
-    return PredicatedSafeConnection(
-        handleInput: route.tryRoute,
-        output: dispatch,
-        dispose: route.disposable
-    )
 }

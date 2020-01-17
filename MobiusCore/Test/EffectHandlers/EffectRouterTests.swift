@@ -49,22 +49,18 @@ class EffectRouterTests: QuickSpec {
                 receivedEvents = []
                 disposed1 = false
                 disposed2 = false
-                let effectHandler1 = EffectHandler<Effect, Event>(
-                    handle: { _, dispatch in
-                        dispatch(.eventForEffect1)
-                    },
-                    disposable: AnonymousDisposable {
+                let effectHandler1 = AnyEffectHandler<Effect, Event> { _, callback in
+                    callback.send(.eventForEffect1)
+                    return AnonymousDisposable {
                         disposed1 = true
                     }
-                )
-                let effectHandler2 = EffectHandler<Effect, Event>(
-                    handle: { _, dispatch in
-                        dispatch(.eventForEffect2)
-                    },
-                    disposable: AnonymousDisposable {
+                }
+                let effectHandler2 = AnyEffectHandler<Effect, Event> { _, callback in
+                    callback.send(.eventForEffect2)
+                    return AnonymousDisposable {
                         disposed2 = true
                     }
-                )
+                }
 
                 connection = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect1).to(effectHandler1)
@@ -91,10 +87,35 @@ class EffectRouterTests: QuickSpec {
                 expect(receivedEvents).to(equal([.eventForEffect2]))
             }
 
-            it("should dispose all existing effect handlers when router is disposed") {
+            it("should dispose all started effect handlers when router is disposed") {
+                _ = route(.effect1)
+                _ = route(.effect2)
                 connection.dispose()
                 expect(disposed1).to(beTrue())
                 expect(disposed2).to(beTrue())
+            }
+
+            it("should be possible to connect multiple times if the previous connection was closed") {
+                var events: [Event] = []
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                        .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
+                    .routeEffects(equalTo: .effect2)
+                        .to { _, callback in
+                            callback.send(.eventForEffect2)
+                            callback.end()
+                            return AnonymousDisposable {}
+                        }
+                    .asConnectable
+
+                let connection1 = router.connect { events.append($0) }
+                connection1.dispose()
+                let connection2 = router.connect { events.append($0) }
+
+                connection1.accept(.effect1)
+                connection2.accept(.effect2)
+
+                expect(events).to(equal([.eventForEffect1, .eventForEffect2]))
             }
         }
 
@@ -108,11 +129,10 @@ class EffectRouterTests: QuickSpec {
                 MobiusHooks.setErrorHandler { _, _, _ in
                     didCrash = true
                 }
-                let handler = EffectHandler<Effect, Event>(
-                    handle: { _, _ in },
-                    disposable: AnonymousDisposable {}
-                )
-                let invalidRouter = EffectRouter()
+                let handler = AnyEffectHandler<Effect, Event> { _, _ in
+                    AnonymousDisposable {}
+                }
+                let invalidRouter = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
                     .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
                     .asConnectable
@@ -136,6 +156,74 @@ class EffectRouterTests: QuickSpec {
 
                 expect(didCrash).to(beTrue())
             }
+
+            it("should not be possible to connect multiple times when routing to `Connectable`s") {
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                        .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
+                    .asConnectable
+
+                let connection1 = router.connect { _ in }
+                let connection2 = router.connect { _ in }
+
+                expect(didCrash).to(beTrue())
+
+                connection1.dispose()
+                connection2.dispose()
+            }
+
+            it("should not be possible to connect multiple times when routing to `EffectHandler`s") {
+                let router = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect2)
+                        .to { _, callback in
+                            callback.end()
+                            return AnonymousDisposable {}
+                        }
+                    .asConnectable
+
+                let connection1 = router.connect { _ in }
+                let connection2 = router.connect { _ in }
+
+                expect(didCrash).to(beTrue())
+
+                connection1.dispose()
+                connection2.dispose()
+            }
         }
+
+        context("Router Disposing on Deinit") {
+            it("should dispose active `EffectHandler`s when deinitializing") {
+                var wasDisposed = false
+                var connection: Connection<Effect>? = EffectRouter<Effect, Event>()
+                    .routeEffects(equalTo: .effect1)
+                    .to { _, _ in
+                        return AnonymousDisposable {
+                            wasDisposed = true
+                        }
+                    }
+                    .asConnectable
+                    .connect { _ in }
+
+                connection?.accept(.effect1)
+                connection = nil
+
+                expect(wasDisposed).toEventually(beTrue())
+            }
+        }
+    }
+}
+
+private class TestConnectable: Connectable {
+    private let event: Event
+    private let onDispose: () -> Void
+    init(dispatchEvent event: Event, onDispose: @escaping () -> Void) {
+        self.event = event
+        self.onDispose = onDispose
+    }
+    func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
+        Connection<Effect>(
+            acceptClosure: { _ in consumer(self.event) },
+            disposeClosure: onDispose
+        )
     }
 }

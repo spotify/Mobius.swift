@@ -38,23 +38,22 @@ class EffectHandlerTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("Handling effects with EffectHandler") {
-            var effectHandler: EffectHandler<Effect, Event>!
+            var effectHandler: AnyEffectHandler<Effect, Event>!
             var executeEffect: ((Effect) -> Void)!
             var receivedEvents: [Event]!
 
             beforeEach {
-                effectHandler = EffectHandler(
-                    handle: handleEffect,
-                    disposable: AnonymousDisposable {}
-                )
+                effectHandler = AnyEffectHandler(handle: handleEffect)
                 receivedEvents = []
-                let output = { (event: Event) in receivedEvents.append(event) }
+                let callback = EffectCallback<Event>(
+                    onSend: { event in
+                        receivedEvents.append(event)
+                    },
+                    onEnd: {}
+                )
                 executeEffect = { effect in
-                    effectHandler.handle(effect, output)
+                    _ = effectHandler.handle(effect, callback)
                 }
-            }
-            afterEach {
-                effectHandler.disposable.dispose()
             }
 
             context("When executing effects") {
@@ -70,30 +69,15 @@ class EffectHandlerTests: QuickSpec {
             }
         }
         describe("Disposing EffectHandler") {
-            var effectHandler: EffectHandler<Effect, Event>!
-            var disposed: Bool!
-
-            beforeEach {
-                disposed = false
-                effectHandler = EffectHandler<Effect, Event>(
-                    handle: { _, _ in },
-                    disposable: AnonymousDisposable {
+            it("calls the returned disposable when disposing") {
+                var disposed = false
+                let effectHandler = AnyEffectHandler<Effect, Event> { _, _ in
+                    AnonymousDisposable {
                         disposed = true
                     }
-                )
-            }
-
-            it("calls `stopHandling` when disposed") {
-                effectHandler.disposable.dispose()
-                expect(disposed).to(beTrue())
-            }
-
-            it("disposing is idempotent") {
-                expect(disposed).to(beFalse())
-
-                effectHandler.disposable.dispose()
-                effectHandler.disposable.dispose()
-                effectHandler.disposable.dispose()
+                }
+                let callback = EffectCallback<Event>(onSend: { _ in }, onEnd: {})
+                effectHandler.handle(.effect1, callback).dispose()
 
                 expect(disposed).to(beTrue())
             }
@@ -101,8 +85,10 @@ class EffectHandlerTests: QuickSpec {
     }
 }
 
-private func handleEffect(effect: Effect, output: Consumer<Event>) {
+private func handleEffect(effect: Effect, callback: EffectCallback<Event>) -> Disposable {
     if effect == .effect1 {
-        output(.eventForEffect1)
+        callback.send(.eventForEffect1)
     }
+    callback.end()
+    return AnonymousDisposable {}
 }
