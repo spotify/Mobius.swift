@@ -281,14 +281,12 @@ class MobiusLoopTests: QuickSpec {
             beforeEach {
                 disposed.value = false
                 didReceiveEffect.value = false
-                let effectHandler = EffectHandler<Int, Int>(
-                    handle: { _, _ in
-                        didReceiveEffect.value = true
-                    },
-                    disposable: AnonymousDisposable {
+                let effectHandler = AnyEffectHandler<Int, Int> { _, _ in
+                    didReceiveEffect.value = true
+                    return AnonymousDisposable {
                         disposed.value = true
                     }
-                )
+                }
                 let payload: (Int) -> Int? = { $0 }
                 let effectConnectable = EffectRouter<Int, Int>()
                     .routeEffects(withPayload: payload).to(effectHandler)
@@ -308,6 +306,7 @@ class MobiusLoopTests: QuickSpec {
             }
 
             it("should dispose the EffectHandler when the loop is disposed") {
+                loop.dispatchEvent(1)
                 loop.dispose()
                 expect(disposed.value).toEventually(beTrue())
             }
