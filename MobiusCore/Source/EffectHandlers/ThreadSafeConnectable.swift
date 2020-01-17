@@ -47,14 +47,14 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     }
 
     private func accept(_ effect: Effect) {
-        lock.synchronized {
-            connection?.accept(effect)
+        if let connection = lock.synchronized(closure: { connection }) {
+            connection.accept(effect)
         }
     }
 
     private func dispatch(event: Event) {
-        lock.synchronized {
-            output?(event)
+        if let output = lock.synchronized(closure: { output }) {
+            output(event)
         }
     }
 
