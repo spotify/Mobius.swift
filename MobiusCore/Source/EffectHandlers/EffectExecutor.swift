@@ -67,6 +67,8 @@ class EffectExecutor<Effect, Event>: Connectable {
         let disposable = handleEffect(effect, callback)
 
         store(id: id, callback: callback, disposable: disposable)
+        // We cannot know if `callback.end()` was called before `self.store(..)`. This check ensures that if
+        // the callback was ended early, the reference to it will be deleted.
         if callback.ended {
             delete(id: id)
         }

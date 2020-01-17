@@ -32,7 +32,6 @@ public final class EffectCallback<Output> {
         return _ended.value
     }
 
-    private let lock = Lock()
     private let _ended = Synchronized<Bool>(value: false)
 
     public init(
@@ -55,16 +54,14 @@ public final class EffectCallback<Output> {
     }
 
     public func send(_ output: Output) {
-        lock.synchronized {
-            if !ended {
+        _ended.mutate {
+            if !$0 {
                 onSend(output)
             }
         }
     }
 
     deinit {
-        if !ended {
-            end()
-        }
+        end()
     }
 }
