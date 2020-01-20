@@ -86,6 +86,18 @@ class CallbackTests: QuickSpec {
                     callback.send(3)
                     expect(output).to(equal([1, 2]))
                 }
+
+                it("sends events before ending when using `.end(with:)` with varargs") {
+                    callback.end(with: 1, 2, 3)
+                    expect(output).to(equal([1, 2, 3]))
+                    expect(callback.ended).to(beTrue())
+                }
+
+                it("sends events before ending when using `.end(with:)` with an array") {
+                    callback.end(with: [1, 2, 3])
+                    expect(output).to(equal([1, 2, 3]))
+                    expect(callback.ended).to(beTrue())
+                }
             }
         }
     }

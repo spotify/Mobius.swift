@@ -53,6 +53,17 @@ public final class EffectCallback<Output> {
         }
     }
 
+    public func end(with outputs: Output...) {
+        end(with: outputs)
+    }
+
+    public func end(with outputs: [Output]) {
+        for output in outputs {
+            send(output)
+        }
+        end()
+    }
+
     public func send(_ output: Output) {
         _ended.mutate {
             if !$0 {
