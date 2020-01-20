@@ -19,6 +19,8 @@
 		02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
 		02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */; };
 		02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */; };
+		02D6755323D1E822008200AF /* EnumRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755223D1E822008200AF /* EnumRoute.swift */; };
+		02D6755723D20507008200AF /* EnumRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755423D2049E008200AF /* EnumRouteTests.swift */; };
 		2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */; };
 		2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
@@ -264,6 +266,8 @@
 		02CEC48F2379642C00BA1584 /* EffectRouterDSLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterDSLTests.swift; sourceTree = "<group>"; };
 		02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandler.swift; sourceTree = "<group>"; };
 		02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectHandlerTests.swift; sourceTree = "<group>"; };
+		02D6755223D1E822008200AF /* EnumRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumRoute.swift; sourceTree = "<group>"; };
+		02D6755423D2049E008200AF /* EnumRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumRouteTests.swift; sourceTree = "<group>"; };
 		2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingAdaptors.swift; sourceTree = "<group>"; };
 		2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentAccessDetector.swift; sourceTree = "<group>"; };
 		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
@@ -459,6 +463,7 @@
 				02C4061C2373078400BD7ED8 /* EffectExecutor.swift */,
 				02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */,
 				02CAE47123C76F34009DFF9A /* EffectCallback.swift */,
+				02D6755223D1E822008200AF /* EnumRoute.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -470,6 +475,7 @@
 				02C40622237425E100BD7ED8 /* EffectRouterTests.swift */,
 				02CEC48F2379642C00BA1584 /* EffectRouterDSLTests.swift */,
 				02CAE47323C76FA3009DFF9A /* CallbackTests.swift */,
+				02D6755423D2049E008200AF /* EnumRouteTests.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1169,6 +1175,7 @@
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				5BB2881F209995810043B530 /* BrokenConnection.swift in Sources */,
 				5BB9346420D2A46A00A1FE3A /* EffectRouterBuilder.swift in Sources */,
+				02D6755323D1E822008200AF /* EnumRoute.swift in Sources */,
 				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
@@ -1200,6 +1207,7 @@
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
 				02D0DDC52366F56C00A1CE4C /* EffectHandlerTests.swift in Sources */,
 				5B85AD0220AAA8CA00C4FCD5 /* MobiusHooksTests.swift in Sources */,
+				02D6755723D20507008200AF /* EnumRouteTests.swift in Sources */,
 				5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */,
 				5BB2887B20999AD60043B530 /* ConnectablePublisherTests.swift in Sources */,
 				5BB2887620999AD60043B530 /* NextTests.swift in Sources */,
