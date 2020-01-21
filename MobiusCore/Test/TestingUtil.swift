@@ -82,6 +82,11 @@ class RecordingTestConnectable: Connectable {
         }
     }
 
+    func dispatchSameQueue(_ string: String) {
+        verifyQueue()
+        consumer?(string)
+    }
+
     func accept(_ value: String) {
         verifyQueue()
 

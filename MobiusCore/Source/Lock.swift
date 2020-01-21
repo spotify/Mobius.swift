@@ -54,4 +54,10 @@ final class Synchronized<Value> {
             try closure(&storage)
         }
     }
+
+    func read(in closure: (Value) throws -> Void) rethrows {
+        try lock.sync {
+            try closure(storage)
+        }
+    }
 }
