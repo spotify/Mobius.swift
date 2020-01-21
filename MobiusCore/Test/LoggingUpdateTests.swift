@@ -25,21 +25,21 @@ class LoggingUpdateTests: QuickSpec {
     override func spec() {
         describe("LoggingUpdate") {
             var logger: TestMobiusLogger!
-            var loggingUpdate: LoggingUpdate<String, String, String>!
+            var loggingUpdate: Update<String, String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()
-                loggingUpdate = LoggingUpdate({ model, event in Next(model: model, effects: [event]) }, logger: logger)
+                loggingUpdate = Update { model, event in Next(model: model, effects: [event]) }.logging(logger)
             }
 
             it("should log willUpdate and didUpdate for each update attempt") {
-                _ = loggingUpdate.update("from this", "ee")
+                _ = loggingUpdate.update(model: "from this", event: "ee")
 
                 expect(logger.logMessages).to(equal(["willUpdate(from this, ee)", "didUpdate(from this, ee, (\"from this\", [\"ee\"]))"]))
             }
 
             it("should return update from delegate") {
-                let next = loggingUpdate.update("hey", "event/effect")
+                let next = loggingUpdate.update(model: "hey", event: "event/effect")
 
                 expect(next.model).to(equal("hey"))
                 expect(next.effects).to(equal(["event/effect"]))

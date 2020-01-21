@@ -42,8 +42,8 @@ class XCTestNextMatchersTests: QuickSpec {
                 failMessages = []
             }
 
-            func testUpdate(model: String, event: String) -> Next<String, String> {
-                return .next("some model", effects: ["some effect"])
+            let testUpdate = Update<String, String, String> { _, _ in
+                .next("some model", effects: ["some effect"])
             }
 
             // Testing through proxy: UpdateSpec

@@ -43,7 +43,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
     }
 
     init(
-        update: @escaping Update<Model, Event, Effect>,
+        update: Update<Model, Event, Effect>,
         publisher: ConnectablePublisher<Next<Model, Effect>>,
         accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()
     ) {
@@ -71,7 +71,7 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
             guard !disposed else { return }
 
             if let current = self.currentModel {
-                let next = self.update(current, event)
+                let next = self.update.update(model: current, event: event)
 
                 if let newModel = next.model {
                     self.currentModel = newModel

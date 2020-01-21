@@ -56,7 +56,7 @@ class NonReentrancyTests: QuickSpec {
             beforeEach {
                 messages = []
 
-                let update: Update<Model, Event, Effect> = { model, event in
+                let update = Update<Model, Event, Effect> { model, event in
                     log("update enter - model: \(model) event: \(event)")
                     defer {
                         log("update exit - model: \(model) event: \(event)")

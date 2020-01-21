@@ -50,35 +50,18 @@ class LoggingInitiate<Model, Effect> {
     }
 }
 
-/// Helper to wrap update functions with log calls.
-///
-/// Also adds call stack annotation where we call into the client-provided update.
-class LoggingUpdate<Model, Event, Effect> {
-    typealias Update = MobiusCore.Update<Model, Event, Effect>
-    typealias Next = MobiusCore.Next<Model, Effect>
-
-    private let realUpdate: Update
-    private let willUpdate: (Model, Event) -> Void
-    private let didUpdate: (Model, Event, Next) -> Void
-
-    init<Logger: MobiusLogger>(_ realUpdate: @escaping Update, logger: Logger)
-    where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
-        self.realUpdate = realUpdate
-        willUpdate = logger.willUpdate
-        didUpdate = logger.didUpdate
-    }
-
-    func update(_ model: Model, _ event: Event) -> Next {
-        willUpdate(model, event)
-        let result = invokeUpdate(model: model, event: event)
-        didUpdate(model, event, result)
-
-        return result
-    }
-
+extension Update {
+    /// Helper to wrap update functions with log calls.
+    ///
+    /// Also adds call stack annotation where we call into the client-provided update.
     @inline(never)
     @_silgen_name("__MOBIUS_IS_CALLING_AN_UPDATE_FUNCTION__")
-    private func invokeUpdate(model: Model, event: Event) -> Next {
-        return realUpdate(model, event)
+    func logging<L: MobiusLogger>(_ logger: L) -> Update where L.Model == Model, L.Event == Event, L.Effect == Effect {
+        return Update { model, event in
+            logger.willUpdate(model: model, event: event)
+            let next = self.update(model: model, event: event)
+            logger.didUpdate(model: model, event: event, next: next)
+            return next
+        }
     }
 }

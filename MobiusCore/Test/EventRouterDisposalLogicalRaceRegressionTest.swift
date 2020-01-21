@@ -69,8 +69,8 @@ class EventRouterDisposalLogicalRaceRegressionTest: QuickSpec {
                     errorThrown = true
                 })
 
-                func update(model: Model, event: Event) -> Next<Model, Effect> {
-                    return .dispatchEffects([.effect1])
+                let update = Update<Model, Event, Effect> { _, _ in
+                    .dispatchEffects([.effect1])
                 }
 
                 controller = Mobius.loop(update: update, effectHandler: effectHandler)

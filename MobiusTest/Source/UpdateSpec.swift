@@ -24,7 +24,7 @@ public struct UpdateSpec<Model, Event, Effect> {
 
     private let update: Update<Model, Event, Effect>
 
-    public init(_ update: @escaping Update<Model, Event, Effect>) {
+    public init(_ update: Update<Model, Event, Effect>) {
         self.update = update
     }
 
@@ -36,7 +36,7 @@ public struct UpdateSpec<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let model: Model
 
-        init(_ update: @escaping Update<Model, Event, Effect>, _ model: Model) {
+        init(_ update: Update<Model, Event, Effect>, _ model: Model) {
             self.update = update
             self.model = model
         }
@@ -51,7 +51,7 @@ public struct UpdateSpec<Model, Event, Effect> {
         private let model: Model
         private let events: [Event]
 
-        init(_ update: @escaping Update<Model, Event, Effect>, _ model: Model, _ events: [Event]) {
+        init(_ update: Update<Model, Event, Effect>, _ model: Model, _ events: [Event]) {
             self.update = update
             self.model = model
             self.events = events
@@ -62,7 +62,7 @@ public struct UpdateSpec<Model, Event, Effect> {
             var lastModel = model
 
             for event in events {
-                lastNext = update(lastModel, event)
+                lastNext = update.update(model: lastModel, event: event)
                 lastModel = lastNext?.model ?? lastModel
             }
 

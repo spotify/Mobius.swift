@@ -111,7 +111,7 @@ class UpdateSpecTests: QuickSpec {
         }
     }
 
-    func myUpdate(_ model: MyModel, _ event: MyEvent) -> Next<MyModel, MyEffect> {
+    let myUpdate = Update<MyModel, MyEvent, MyEffect> { model, event in
         switch event {
         case .didTapButton:
             return Next.next(MyModel(buttonClicked: !model.buttonClicked, count: model.count + 1))

@@ -19,7 +19,18 @@
 
 import Foundation
 
-public typealias Update<Model, Event, Effect> = (Model, Event) -> Next<Model, Effect>
+/// A wrapper around an update function.
+public struct Update<Model, Event, Effect> {
+    private let update: (Model, Event) -> Next<Model, Effect>
+
+    public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
+        self.update = update
+    }
+
+    public func update(model: Model, event: Event) -> Next<Model, Effect> {
+        return self.update(model, event)
+    }
+}
 
 public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
@@ -41,7 +52,7 @@ public extension Mobius {
     ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
     static func loop<Model, Event, Effect, C: Connectable>(
-        update: @escaping Update<Model, Event, Effect>,
+        update: Update<Model, Event, Effect>,
         effectHandler: C
     ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
         return Builder(
@@ -54,6 +65,22 @@ public extension Mobius {
         )
     }
 
+    /// A convenience version of `loop` that takes an unwrapped update function.
+    ///
+    /// - Parameters:
+    ///   - update: the update function of the loop
+    ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
+    /// - Returns: a `Builder` instance that you can further configure before starting the loop
+    static func loop<Model, Event, Effect, C: Connectable>(
+        update: @escaping (Model, Event) -> Next<Model, Effect>,
+        effectHandler: C
+    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+        return self.loop(
+            update: Update(update),
+            effectHandler: effectHandler
+        )
+    }
+
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
@@ -63,7 +90,7 @@ public extension Mobius {
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
         fileprivate init<C: Connectable>(
-            update: @escaping Update<Model, Event, Effect>,
+            update: Update<Model, Event, Effect>,
             effectHandler: C,
             initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
