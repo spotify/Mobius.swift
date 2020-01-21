@@ -21,6 +21,7 @@ import Foundation
 
 /// An `EffectCallback` can send output and signal completion.
 /// Sending output is done with `.send` and signaling completion is done with `.end`.
+/// You can also end in conjunction with sending output using `.end(with:)`
 ///
 /// Note: Once `.end` has been called (from any thread), the closure you provide in `onSend` will no longer be called.
 /// Note: The closure you provide in `onEnd` will only be called once when `.end` is called on this object.
@@ -51,6 +52,17 @@ public final class EffectCallback<Output> {
         if runOnEnd {
             onEnd()
         }
+    }
+
+    public func end(with outputs: Output...) {
+        end(with: outputs)
+    }
+
+    public func end(with outputs: [Output]) {
+        for output in outputs {
+            send(output)
+        }
+        end()
     }
 
     public func send(_ output: Output) {
