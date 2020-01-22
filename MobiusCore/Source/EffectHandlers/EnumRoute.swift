@@ -20,7 +20,7 @@
 import Darwin
 
 public extension EffectRouter {
-    func routeEnumCase<Payload>(
+    func routeCase<Payload>(
         _ enumCase: @escaping (Payload) -> Input
     ) -> PartialEffectRouter<Input, Payload, Output> {
         return routeEffects(withPayload: { effect in

@@ -57,7 +57,7 @@ class PayloadExtractionRouteTests: QuickSpec {
             it("supports unwrapping an effect with a string") {
                 var unwrapped: String?
                 let handler = EffectRouter<Effect, Event>()
-                    .routeEnumCase(Effect.effectWithString)
+                    .routeCase(Effect.effectWithString)
                         .to { payload in unwrapped = payload }
                     .asConnectable
                     .connect { _ in }
@@ -71,7 +71,7 @@ class PayloadExtractionRouteTests: QuickSpec {
                 var leftUnwrapped: String?
                 var rightUnwrapped: Int?
                 let handler = EffectRouter<Effect, Event>()
-                    .routeEnumCase(Effect.effectWithTuple)
+                    .routeCase(Effect.effectWithTuple)
                     .to { payload in
                         let (left, right) = payload
                         leftUnwrapped = left
@@ -89,7 +89,7 @@ class PayloadExtractionRouteTests: QuickSpec {
             it("supports unwrapping an indirect type") {
                 var result: String?
                 let handler = EffectRouter<List, Event>()
-                    .routeEnumCase(List.singleton)
+                    .routeCase(List.singleton)
                     .to { payload in
                         result = payload
                     }
