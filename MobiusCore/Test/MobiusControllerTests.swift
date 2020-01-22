@@ -142,6 +142,17 @@ class MobiusControllerTests: QuickSpec {
                             controller.start()
                             expect(controller.running).to(beTrue())
                         }
+                        it("should ignore events sent while view disposal is pending") {
+                            self.viewQueue.sync {
+                                controller.stop()
+                                // Sending an event via the view connection here is valid, because the view connection has
+                                // not yet been disposed; that disposal is pending in a block enqueued on the view queue by
+                                // AsyncDispatchQueueConnectable’s asynchronous disposal block
+                                view.dispatchSameQueue("late event")
+                            }
+
+                            expect(errorThrown).to(beFalse())
+                        }
                     }
                 }
 
