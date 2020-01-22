@@ -35,70 +35,67 @@ private indirect enum List: Equatable {
     case singleton(String)
 }
 
+private func unwrap<Input, Payload, Output>(
+    effect: Input,
+    usingRoute partialRouter: PartialEffectRouter<Input, Payload, Output>
+) -> Payload? {
+    var payload: Payload?
+    let handler = partialRouter
+        .to { unwrappedPayload in
+            payload = unwrappedPayload
+        }
+        .asConnectable
+        .connect { _ in }
+
+    handler.accept(effect)
+    handler.dispose()
+    return payload
+}
+
 class PayloadExtractionRouteTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         context("Different types of enums being unwrapped") {
             it("supports routing to an effect with nothing to unwrap") {
-                var receivedEffect: Effect?
-                let handler = EffectRouter<Effect, Effect>()
-                    .routeCase(.justEffect)
-                        .to { effect in
-                            receivedEffect = effect
-                        }
-                    .asConnectable
-                    .connect { _ in }
+                let route = EffectRouter<Effect, Never>()
+                    .routeCase(Effect.justEffect)
 
-                handler.accept(.justEffect)
-                expect(receivedEffect).to(equal(.justEffect))
-                handler.dispose()
+                let result = unwrap(effect: .justEffect, usingRoute: route)
+
+                expect(result).to(equal(.justEffect))
             }
 
             it("supports unwrapping an effect with a string") {
-                var unwrapped: String?
-                let handler = EffectRouter<Effect, Event>()
+                let route = EffectRouter<Effect, Never>()
                     .routeCase(Effect.effectWithString)
-                        .to { payload in unwrapped = payload }
-                    .asConnectable
-                    .connect { _ in }
 
-                handler.accept(.effectWithString("Test"))
-                expect(unwrapped).to(equal("Test"))
-                handler.dispose()
+                let result = unwrap(effect: .effectWithString("test"), usingRoute: route)
+
+                expect(result).to(equal("test"))
             }
 
             it("supports unwrapping an effect with a tuple") {
-                var leftUnwrapped: String?
-                var rightUnwrapped: Int?
-                let handler = EffectRouter<Effect, Event>()
+                let route = EffectRouter<Effect, Never>()
                     .routeCase(Effect.effectWithTuple)
-                    .to { payload in
-                        let (left, right) = payload
-                        leftUnwrapped = left
-                        rightUnwrapped = right
-                    }
-                    .asConnectable
-                    .connect { _ in }
 
-                handler.accept(.effectWithTuple(left: "Test", right: 1))
-                expect(leftUnwrapped).to(equal("Test"))
-                expect(rightUnwrapped).to(equal(1))
-                handler.dispose()
+                if let (leftUnwrapped, rightUnwrapped) = unwrap(
+                    effect: .effectWithTuple(left: "Test", right: 1),
+                    usingRoute: route
+                ) {
+                    expect(leftUnwrapped).to(equal("Test"))
+                    expect(rightUnwrapped).to(equal(1))
+                } else {
+                    fail("Unable to unwrap containing a tuple.")
+                }
             }
 
             it("supports unwrapping an indirect type") {
-                var result: String?
-                let handler = EffectRouter<List, Event>()
+                let route = EffectRouter<List, Never>()
                     .routeCase(List.singleton)
-                    .to { payload in
-                        result = payload
-                    }
-                    .asConnectable
-                    .connect { _ in }
 
-                handler.accept(.singleton("Test"))
+                let result = unwrap(effect: .singleton("Test"), usingRoute: route)
+
                 expect(result).to(equal("Test"))
-                handler.dispose()
             }
         }
     }
