@@ -21,6 +21,8 @@ import MobiusCore
 import Nimble
 import Quick
 
+// swiftlint:disable type_body_length file_length
+
 private typealias Event = ()
 
 private enum Effect: Equatable {
@@ -34,6 +36,7 @@ private indirect enum List: Equatable {
 }
 
 class PayloadExtractionRouteTests: QuickSpec {
+    // swiftlint:disable function_body_length
     override func spec() {
         context("Different types of enums being unwrapped") {
             it("supports routing to an effect with nothing to unwrap") {
