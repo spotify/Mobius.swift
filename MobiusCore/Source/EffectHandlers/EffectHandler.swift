@@ -33,11 +33,10 @@ public protocol EffectHandler {
     /// To output events, call `callback.send`.
     /// Call `callback.end()` once the effect has been handled to prevent memory leaks.
     ///
-    /// This returns a `Disposable` which tears down any resources used to handle this effect. This `Disposable` will
+    /// This returns a `Disposable` which cancels the handling of this effect. This `Disposable` will
     /// not be called if `callback.end()` has already been called.
     ///
     /// Note: If it does not make sense to finish handling an effect, you should be using a `Connectable` instead of this protocol.
-    /// Note: When being disposed by Mobius, the `Disposable` you return will be called before Mobius calls `callback.end()`.
     /// Note: Mobius will not dispose the returned `Disposable` if `callback.end()` has already been called.
     /// - Parameter input: The effect being handled
     /// - Parameter callback: The `EffectCallback` used to communicate with the associated Mobius loop.
