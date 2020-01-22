@@ -32,8 +32,14 @@ public extension EffectRouter {
 public extension EffectRouter where Input: Equatable {
     func routeCase(
         _ enumCase: Input
-    ) -> PartialEffectRouter<Input, Input, Output> {
-        return routeEffects(equalTo: enumCase)
+    ) -> PartialEffectRouter<Input, Void, Output> {
+        return routeEffects(withPayload: { effect in
+            if enumCase == effect {
+                return ()
+            } else {
+                return nil
+            }
+        })
     }
 }
 

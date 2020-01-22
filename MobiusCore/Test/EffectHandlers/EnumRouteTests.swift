@@ -60,9 +60,9 @@ class PayloadExtractionRouteTests: QuickSpec {
                 let route = EffectRouter<Effect, Never>()
                     .routeCase(Effect.justEffect)
 
-                let result = unwrap(effect: .justEffect, usingRoute: route)
+                let result: Void? = unwrap(effect: .justEffect, usingRoute: route)
 
-                expect(result).to(equal(.justEffect))
+                expect(result).to(beVoid())
             }
 
             it("supports unwrapping an effect with a string") {
