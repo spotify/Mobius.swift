@@ -33,7 +33,7 @@ public protocol EffectHandler {
     /// To output events, call `callback.send`.
     /// Call `callback.end()` once the effect has been handled to prevent memory leaks.
     ///
-    /// This returns a `Disposable` which tears down any resources that is being used by this effect handler. This `Disposable` will
+    /// This returns a `Disposable` which tears down any resources used to handle this effect. This `Disposable` will
     /// not be called if `callback.end()` has already been called.
     ///
     /// Note: If it does not make sense to finish handling an effect, you should be using a `Connectable` instead of this protocol.
