@@ -28,6 +28,10 @@ public struct UpdateSpec<Model, Event, Effect> {
         self.update = update
     }
 
+    public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
+        self.init(Update(update))
+    }
+
     public func given(_ model: Model) -> When {
         return When(update, model)
     }
