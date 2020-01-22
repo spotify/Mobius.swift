@@ -57,7 +57,7 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
         let connection = underlyingConnectable.connect { [disposalStatus] value in
             // Don’t forward if we’re currently waiting to dispose the connection.
             //
-            // NOTE: the underlying consumer must be called inside the criticial region accessing disposalStatus, or we
+            // NOTE: the underlying consumer must be called inside the critical region accessing disposalStatus, or we
             // could potentially enter the .pendingDispose state before or during the consumer call. This means that the
             // underlying consumer must not call our connection’s acceptClosure or disposeClosure, or it will deadlock.
             //
