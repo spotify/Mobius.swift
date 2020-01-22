@@ -24,9 +24,18 @@ import Foundation
 /// Creates `Connection`s that forward invocations to `accept` and `dispose` to a connection returned by the underlying
 /// connectable, first switching to the provided `acceptQueue`. In other words, the real `accept` and `dispose` methods
 /// will always be executed asynchronously on the provided queue.
+///
+/// If the connection’s consumer is invoked between the Connectable’s `dispose` and the underlying asynchronous
+/// `dispose`, the call will not be forwarded.
 final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     private let underlyingConnectable: AnyConnectable<InputType, OutputType>
     private let acceptQueue: DispatchQueue
+
+    private enum DisposalStatus: Equatable {
+        case notDisposed
+        case pendingDispose
+        case disposed
+    }
 
     init(
         _ underlyingConnectable: AnyConnectable<InputType, OutputType>,
@@ -44,7 +53,23 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     }
 
     func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
-        let connection = underlyingConnectable.connect(consumer)
+        let disposalStatus = Synchronized(value: DisposalStatus.notDisposed)
+
+        let connection = underlyingConnectable.connect { value in
+            // Don’t forward if we’re currently waiting to dispose the connection.
+            //
+            // NOTE: the underlying consumer must be called inside the critical region accessing disposalStatus, or we
+            // could potentially enter the .pendingDispose state before or during the consumer call. This means that the
+            // underlying consumer must not call our connection’s acceptClosure or disposeClosure, or it will deadlock.
+            //
+            // This is OK in our existing use case because the underlying consumer is always flipEventsToLoopQueue from
+            // MobiusController’s initializer, which enters the actual Mobius loop asynchronously. If we exposed this
+            // class, it would be a scary edge case.
+            disposalStatus.read { status in
+                guard status != .pendingDispose else { return }
+                consumer(value)
+            }
+        }
 
         return Connection(
             acceptClosure: { [acceptQueue] input in
@@ -53,8 +78,14 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
                 }
             },
             disposeClosure: { [acceptQueue] in
+                guard disposalStatus.compareAndSwap(expected: .notDisposed, with: .pendingDispose) else {
+                    MobiusHooks.onError("cannot dispose more than once")
+                    return
+                }
+
                 acceptQueue.async {
                     connection.dispose()
+                    disposalStatus.value = .disposed
                 }
             }
         )
