@@ -36,7 +36,6 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
         case pendingDispose
         case disposed
     }
-    private var disposalStatus = Synchronized(value: DisposalStatus.notDisposed)
 
     init(
         _ underlyingConnectable: AnyConnectable<InputType, OutputType>,
@@ -54,7 +53,9 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     }
 
     func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
-        let connection = underlyingConnectable.connect { [disposalStatus] value in
+        let disposalStatus = Synchronized(value: DisposalStatus.notDisposed)
+
+        let connection = underlyingConnectable.connect { value in
             // Don’t forward if we’re currently waiting to dispose the connection.
             //
             // NOTE: the underlying consumer must be called inside the critical region accessing disposalStatus, or we
@@ -76,8 +77,12 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
                     connection.accept(input)
                 }
             },
-            disposeClosure: { [acceptQueue, disposalStatus] in
-                disposalStatus.value = .pendingDispose
+            disposeClosure: { [acceptQueue] in
+                guard disposalStatus.compareAndSwap(expected: .notDisposed, with: .pendingDispose) else {
+                    MobiusHooks.onError("cannot dispose more than once")
+                    return
+                }
+
                 acceptQueue.async {
                     connection.dispose()
                     disposalStatus.value = .disposed
