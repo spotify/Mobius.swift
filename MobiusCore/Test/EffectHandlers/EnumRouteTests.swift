@@ -40,7 +40,7 @@ class PayloadExtractionRouteTests: QuickSpec {
     override func spec() {
         context("Different types of enums being unwrapped") {
             it("supports routing to an effect with nothing to unwrap") {
-                var receivedEffect: Effect? = nil
+                var receivedEffect: Effect?
                 let handler = EffectRouter<Effect, Effect>()
                     .routeCase(.justEffect)
                         .to { effect in
@@ -55,7 +55,7 @@ class PayloadExtractionRouteTests: QuickSpec {
             }
 
             it("supports unwrapping an effect with a string") {
-                var unwrapped: String? = nil
+                var unwrapped: String?
                 let handler = EffectRouter<Effect, Event>()
                     .routeEnumCase(Effect.effectWithString)
                         .to { payload in unwrapped = payload }
@@ -68,8 +68,8 @@ class PayloadExtractionRouteTests: QuickSpec {
             }
 
             it("supports unwrapping an effect with a tuple") {
-                var leftUnwrapped: String? = nil
-                var rightUnwrapped: Int? = nil
+                var leftUnwrapped: String?
+                var rightUnwrapped: Int?
                 let handler = EffectRouter<Effect, Event>()
                     .routeEnumCase(Effect.effectWithTuple)
                     .to { payload in
@@ -87,7 +87,7 @@ class PayloadExtractionRouteTests: QuickSpec {
             }
 
             it("supports unwrapping an indirect type") {
-                var result: String? = nil
+                var result: String?
                 let handler = EffectRouter<List, Event>()
                     .routeEnumCase(List.singleton)
                     .to { payload in
