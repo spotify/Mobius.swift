@@ -32,7 +32,7 @@ public final class EffectCallback<Output> {
 
     /// Determine if this callback has been ended.
     /// This can be called safely from any thread.
-    /// Note: Once this variable is `false`, it will never be `true` again.
+    /// Note: Once this variable is `true`, it will never be `false` again.
     public var ended: Bool {
         return _ended.value
     }
