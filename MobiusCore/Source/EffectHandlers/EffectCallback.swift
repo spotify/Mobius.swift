@@ -24,7 +24,7 @@ import Foundation
 /// Sending output is done with `.send` and signaling completion is done with `.end`. You can also end in conjunction
 /// with sending output using `.end(with:)`.
 ///
-/// Note: Once `.end` has been called (from any thread), all operations on this object will be no-ops.
+/// Note: Once either `.end` or  `.end(with:)`  have been called (from any thread), all operations on this object will be no-ops.
 /// Note: The closure provided in `onEnd` will only be called once when `.end` is called on this object.
 public final class EffectCallback<Output> {
     private let onSend: (Output) -> Void
@@ -52,7 +52,7 @@ public final class EffectCallback<Output> {
         self.onEnd = onEnd
     }
 
-    /// Invalidate this callback, and deinit the associated `EffectHandler`.
+    /// Invalidate this callback.
     /// Note: any calls to `end`, `end(with:)` or `send(_:)` will be no-ops after this function has been called.
     public func end() {
         var runOnEnd = false
@@ -66,24 +66,31 @@ public final class EffectCallback<Output> {
     }
 
     /// Send a number of events to the Mobius loop, then `end()` this callback.
-    /// Note: Calling this function after calling `.end()` is a no-op.
+    /// Note: After calling this function, all operations on this object will be no-ops.
     /// - Parameter outputs: The events which should be sent to the loop.
     public func end(with outputs: Output...) {
         end(with: outputs)
     }
 
-    /// Send a number of events to the Mobius loop, then `end()` this callback.
-    /// Note: Calling this function after calling `.end()` is a no-op.
+    /// Send a number of events to the Mobius loop and `end()` this callback.
+    /// Note: After calling this function, all operations on this object will be no-ops.
     /// - Parameter outputs: The events which should be sent to the loop.
     public func end(with outputs: [Output]) {
-        for output in outputs {
-            send(output)
+        var runOnEnd = false
+        _ended.mutate {
+            runOnEnd = !$0
+            $0 = true
         }
-        end()
+        for output in outputs {
+            onSend(output)
+        }
+        if runOnEnd {
+            onEnd()
+        }
     }
 
     /// Send an event to the Mobius loop.
-    /// Note: Calling this function after calling `.end()` is a no-op.
+    /// Note: Calling this function after calling `.end()` or `.end(with:)` is a no-op.
     /// - Parameter output: the event that should be sent to the loop.
     public func send(_ output: Output) {
         _ended.mutate {
