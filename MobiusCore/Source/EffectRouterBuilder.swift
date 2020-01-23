@@ -46,7 +46,7 @@ public struct EffectRouterBuilder<Input, Output> {
         self.connectables = connectables
     }
 
-    func addConnectable<C: Connectable>(_ connectable: C, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output {
+    func addConnectable<C: Connectable>(_ connectable: C, predicate: @escaping (Input) -> Bool) -> EffectRouterBuilder<Input, Output> where C.Input == Input, C.Output == Output {
         let handler = (connect: connectable.connect, predicate: predicate)
         return EffectRouterBuilder<Input, Output>(connectables: connectables + [handler])
     }

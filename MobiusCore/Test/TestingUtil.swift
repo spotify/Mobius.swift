@@ -41,9 +41,6 @@ extension MobiusLoop {
 }
 
 class SimpleTestConnectable: Connectable {
-    typealias InputType = String
-    typealias OutputType = String
-
     var disposed = false
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
@@ -52,9 +49,6 @@ class SimpleTestConnectable: Connectable {
 }
 
 class RecordingTestConnectable: Connectable {
-    typealias InputType = String
-    typealias OutputType = String
-
     private(set) var consumer: Consumer<String>?
 
     private(set) var recorder: Recorder<String>

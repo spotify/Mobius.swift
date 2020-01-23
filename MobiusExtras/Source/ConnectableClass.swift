@@ -33,8 +33,8 @@ import MobiusCore
 ///
 /// - Attention: Should not be used directly. Instead a subclass should be used which overrides the
 /// `handle` and `disposed` functions
-open class ConnectableClass<InputType, OutputType>: Connectable {
-    private var consumer: Consumer<OutputType>?
+open class ConnectableClass<Input, Output>: Connectable {
+    private var consumer: Consumer<Output>?
 
     private let lock = NSRecursiveLock()
     var handleError = { (message: String) -> Void in
@@ -48,7 +48,7 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
     ///
     /// - Attention: This class will throw an error to the MobiusHooks error handler if a connection has not been
     /// established before a call to this function is made. Setting up a connection is usually handled by the MobiusLoop
-    public final func send(_ output: OutputType) {
+    public final func send(_ output: Output) {
         lock.lock()
         defer {
             lock.unlock()
@@ -66,7 +66,7 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
     ///
     /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
     /// error handler.
-    open func handle(_ input: InputType) {
+    open func handle(_ input: Input) {
         handleError("The function `\(#function)` must be overridden in subclass \(type(of: self))")
     }
 
@@ -78,7 +78,7 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
         handleError("The function `\(#function)` must be overridden in subclass \(type(of: self))")
     }
 
-    public final func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
+    public final func connect(_ consumer: @escaping (Output) -> Void) -> Connection<Input> {
         lock.lock()
         defer {
             lock.unlock()
@@ -93,7 +93,7 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
         return Connection(acceptClosure: self.accept, disposeClosure: self.dispose)
     }
 
-    private func accept(_ input: InputType) {
+    private func accept(_ input: Input) {
         // The construct of consumerSet is there to release the lock asap.
         // We dont know what goes on in the overriden `handle` function...
         var consumerSet: Bool = false

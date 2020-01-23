@@ -393,9 +393,6 @@ private func handleEffect(effect: Int, dispatch: @escaping Consumer<Int>) {
 }
 
 private class TestFilteredConnectable: Connectable, EffectPredicate {
-    typealias InputType = String
-    typealias OutputType = String
-
     var outputHandler: Consumer<String>?
     var queueLabel: String?
     var receivedString: String?

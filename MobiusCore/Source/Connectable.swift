@@ -27,8 +27,8 @@ import Foundation
 /// Alternatively used in `MobiusController.connectView(_:)` to connect a view to the controller. In that case, the
 /// incoming values will be models, and the outgoing values will be events.
 public protocol Connectable {
-    associatedtype InputType
-    associatedtype OutputType
+    associatedtype Input
+    associatedtype Output
 
     /// Create a new connection that accepts input values and sends outgoing values to a supplied consumer.
     ///
@@ -41,24 +41,24 @@ public protocol Connectable {
     ///
     /// - Parameter consumer: the consumer that the new connection should use to emit values
     /// - Returns: a new connection
-    func connect(_ consumer: @escaping Consumer<OutputType>) -> Connection<InputType>
+    func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input>
 }
 
 /// Type-erased wrapper for `Connectable`s
-public final class AnyConnectable<InputType, OutputType>: Connectable {
-    private let connectClosure: (@escaping Consumer<OutputType>) -> Connection<InputType>
+public final class AnyConnectable<Input, Output>: Connectable {
+    private let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
 
     /// Creates a type-erased `Connectable` that wraps the given instance.
-    public init<C: Connectable>(_ connectable: C) where C.InputType == InputType, C.OutputType == OutputType {
+    public init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
         connectClosure = connectable.connect
     }
 
     /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.
-    public init(_ connectable: @escaping (@escaping Consumer<OutputType>) -> Connection<InputType>) {
+    public init(_ connectable: @escaping (@escaping Consumer<Output>) -> Connection<Input>) {
         connectClosure = connectable
     }
 
-    public func connect(_ consumer: @escaping Consumer<OutputType>) -> Connection<InputType> {
+    public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {
         return connectClosure(consumer)
     }
 }

@@ -404,9 +404,6 @@ class MobiusControllerTests: QuickSpec {
 }
 
 class MockConnectable: Connectable {
-    typealias InputType = String
-    typealias OutputType = String
-
     var disposed = false
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {

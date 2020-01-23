@@ -133,7 +133,7 @@ public extension EffectRouterBuilder {
     /// - Parameters:
     ///   - connectable: The `Connectable` which handles an effect
     /// - Returns: This builder.
-    func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output, C.Effect == Input {
+    func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.Input == Input, C.Output == Output, C.Effect == Input {
         return addConnectable(connectable, predicate: connectable.canAccept)
     }
 
@@ -160,9 +160,17 @@ public extension EffectRouterBuilder {
     }
 }
 
+public extension Connectable {
+    @available(*, deprecated, message: "use Input instead")
+    typealias InputType = Input
+
+    @available(*, deprecated, message: "use Output instead")
+    typealias OutputType = Output
+}
+
 public extension BrokenConnection {
     @available(*, deprecated)
-    static func accept(_ value: ValueType) {
+    static func accept(_ value: Value) {
         _accept(value)
     }
 

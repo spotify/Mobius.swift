@@ -315,9 +315,6 @@ class MobiusLoopTests: QuickSpec {
 }
 
 private class EagerEffectHandler: Connectable {
-    typealias InputType = String
-    typealias OutputType = String
-
     func connect(_ consumer: @escaping Consumer<String>) -> Connection<String> {
         consumer("one")
         consumer("two")
@@ -340,9 +337,6 @@ private class TestEventProcessor<Model, Event, Effect>: EventProcessor<Model, Ev
 }
 
 private class TestConnectableProtocolImpl: Connectable {
-    typealias InputType = String
-    typealias OutputType = String
-
     func connect(_: @escaping (String) -> Void) -> Connection<String> {
         return Connection(acceptClosure: { _ in }, disposeClosure: {})
     }

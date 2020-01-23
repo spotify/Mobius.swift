@@ -26,7 +26,7 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
 
     init<Conn: Connectable>(
         connectable: Conn
-    ) where Conn.InputType == Effect, Conn.OutputType == Event {
+    ) where Conn.Input == Effect, Conn.Output == Event {
         self.connectable = AnyConnectable(connectable)
     }
 

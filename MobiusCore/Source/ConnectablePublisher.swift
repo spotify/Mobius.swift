@@ -19,13 +19,13 @@
 
 import Foundation
 
-/// Internal class that provides a 'publisher' for connectables; that is, something that you can post values to, and that
-/// will broadcast posted values to all connections. It also retains a current value, and will post that value to new
-/// connections.
-class ConnectablePublisher<ValueType>: Disposable {
+/// Internal class that provides a 'publisher' for connectables; that is, something that you can post values to, and
+/// that will broadcast posted values to all connections. It also retains a current value, and will post that value to
+/// new connections.
+class ConnectablePublisher<Value>: Disposable {
     private let access: ConcurrentAccessDetector
-    private var connections = [UUID: Connection<ValueType>]()
-    private var currentValue: ValueType?
+    private var connections = [UUID: Connection<Value>]()
+    private var currentValue: Value?
     private var _disposed = false
 
     init(accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()) {
@@ -36,8 +36,8 @@ class ConnectablePublisher<ValueType>: Disposable {
         return access.guard { _disposed }
     }
 
-    func post(_ value: ValueType) {
-        let connections: [Connection<ValueType>] = access.guard {
+    func post(_ value: Value) {
+        let connections: [Connection<Value>] = access.guard {
             guard !disposed else {
                 // Callers are responsible for ensuring post is never entered after dispose.
                 MobiusHooks.onError("cannot accept values when disposed")
@@ -55,12 +55,12 @@ class ConnectablePublisher<ValueType>: Disposable {
     }
 
     @discardableResult
-    func connect(to outputConsumer: @escaping Consumer<ValueType>) -> Connection<ValueType> {
-        return access.guard { () -> Connection<ValueType> in
+    func connect(to outputConsumer: @escaping Consumer<Value>) -> Connection<Value> {
+        return access.guard { () -> Connection<Value> in
             guard !_disposed else {
                 // Callers are responsible for ensuring connect is never entered after dispose.
                 MobiusHooks.onError("cannot add connections when disposed")
-                return BrokenConnection<ValueType>.connection()
+                return BrokenConnection<Value>.connection()
             }
 
             let uuid = UUID()
@@ -77,7 +77,7 @@ class ConnectablePublisher<ValueType>: Disposable {
     }
 
     func dispose() {
-        let connections: [Connection<ValueType>] = access.guard {
+        let connections: [Connection<Value>] = access.guard {
             guard !_disposed else { return [] }
 
             _disposed = true
