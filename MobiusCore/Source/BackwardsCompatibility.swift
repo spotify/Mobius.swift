@@ -162,3 +162,8 @@ public extension BrokenConnection {
 
 @available(*, deprecated)
 public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
+
+public extension Connection {
+    @available(*, deprecated, message: "use Value instead")
+    typealias ValueType = Value
+}
