@@ -23,12 +23,13 @@ import Foundation
 public struct First<Model, Effect> {
     /// The initial model object that should be used.
     public let model: Model
+
     /// An optional set of effects to initially dispatch.
     ///
     /// If empty, no effects will be dispatched.
     public let effects: [Effect]
 
-    /// Initialize a `First` object with the given model and
+    /// Create a `First` with the given model and effects.
     ///
     /// - Parameters:
     ///   - model: The initial model.
