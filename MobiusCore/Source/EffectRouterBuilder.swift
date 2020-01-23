@@ -19,7 +19,7 @@
 
 import Foundation
 
-private typealias PredicatedConnectable<Input, Output> = (connect: ConnectClosure<Input, Output>, predicate: (Input) -> Bool)
+private typealias PredicatedConnectable<Input, Output> = (connect: (@escaping Consumer<Output>) -> Connection<Input>, predicate: (Input) -> Bool)
 private typealias PredicatedConnection<Input> = (connection: Connection<Input>, predicate: (Input) -> Bool)
 
 /// Builder for an effect handler that routes to different sub-handlers based on effect type.

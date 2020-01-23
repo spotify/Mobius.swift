@@ -159,3 +159,6 @@ public extension BrokenConnection {
         _dispose()
     }
 }
+
+@available(*, deprecated)
+public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
