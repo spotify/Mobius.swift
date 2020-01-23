@@ -67,11 +67,6 @@ public extension Next {
     }
 }
 
-public extension Next {
-    /// A Boolean indicating whether the `Next` object has any effects or not.
-    var hasEffects: Bool { return !effects.isEmpty }
-}
-
 extension Next: Equatable where Model: Equatable, Effect: Equatable {
     public static func == (lhs: Next<Model, Effect>, rhs: Next<Model, Effect>) -> Bool {
         return lhs.model == rhs.model && lhs.effects == rhs.effects

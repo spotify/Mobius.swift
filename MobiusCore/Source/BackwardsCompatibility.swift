@@ -22,12 +22,24 @@ import Foundation
 @available(*, deprecated, message: "use Initiate instead")
 public typealias Initiator<Model, Effect> = Initiate<Model, Effect>
 
+public extension First {
+    /// A Boolean indicating whether the `First` object has any effects or not.
+    @available(*, deprecated, message: "use !effects.isEmpty instead")
+    var hasEffects: Bool { return !effects.isEmpty }
+}
+
 public extension First where Effect: Hashable {
     @available(*, deprecated, message: "use array of effects instead")
     init(model: Model, effects: Set<Effect>) {
         self.model = model
         self.effects = Array(effects)
     }
+}
+
+public extension Next {
+    /// A Boolean indicating whether the `Next` object has any effects or not.
+    @available(*, deprecated, message: "use !effects.isEmpty instead")
+    var hasEffects: Bool { return !effects.isEmpty }
 }
 
 public extension Next where Effect: Hashable {

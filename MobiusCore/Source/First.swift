@@ -39,8 +39,3 @@ public struct First<Model, Effect> {
         self.effects = effects
     }
 }
-
-public extension First {
-    /// A Boolean indicating whether the `First` object has any effects or not.
-    var hasEffects: Bool { return !effects.isEmpty }
-}
