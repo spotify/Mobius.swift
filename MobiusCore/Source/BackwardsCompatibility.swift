@@ -147,3 +147,15 @@ public extension EffectRouterBuilder {
         return addConnectable(connectable, predicate: action.canAccept)
     }
 }
+
+public extension BrokenConnection {
+    @available(*, deprecated)
+    static func accept(_ value: ValueType) {
+        _accept(value)
+    }
+
+    @available(*, deprecated)
+    static func dispose() {
+        _dispose()
+    }
+}

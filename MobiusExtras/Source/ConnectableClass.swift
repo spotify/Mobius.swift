@@ -86,11 +86,11 @@ open class ConnectableClass<InputType, OutputType>: Connectable {
 
         guard self.consumer == nil else {
             handleError("ConnectionLimitExceeded: The Connectable \(type(of: self)) is already connected. Unable to connect more than once")
-            return BrokenConnection<InputType>.connection()
+            return BrokenConnection.connection()
         }
 
         self.consumer = consumer
-        return Connection<InputType>(acceptClosure: self.accept, disposeClosure: self.dispose)
+        return Connection(acceptClosure: self.accept, disposeClosure: self.dispose)
     }
 
     private func accept(_ input: InputType) {
