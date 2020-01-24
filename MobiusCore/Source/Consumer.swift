@@ -20,7 +20,7 @@
 import Foundation
 
 /// A function that can receive values of some type.
-public typealias Consumer<ValueType> = (ValueType) -> Void
+public typealias Consumer<Value> = (Value) -> Void
 
 /// A function that can transform a Consumer.
-public typealias ConsumerTransformer<ValueType> = (@escaping Consumer<ValueType>) -> Consumer<ValueType>
+public typealias ConsumerTransformer<Value> = (@escaping Consumer<Value>) -> Consumer<Value>

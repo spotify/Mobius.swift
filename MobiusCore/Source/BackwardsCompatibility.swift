@@ -22,12 +22,24 @@ import Foundation
 @available(*, deprecated, message: "use Initiate instead")
 public typealias Initiator<Model, Effect> = Initiate<Model, Effect>
 
+public extension First {
+    /// A Boolean indicating whether the `First` object has any effects or not.
+    @available(*, deprecated, message: "use !effects.isEmpty instead")
+    var hasEffects: Bool { return !effects.isEmpty }
+}
+
 public extension First where Effect: Hashable {
     @available(*, deprecated, message: "use array of effects instead")
     init(model: Model, effects: Set<Effect>) {
         self.model = model
         self.effects = Array(effects)
     }
+}
+
+public extension Next {
+    /// A Boolean indicating whether the `Next` object has any effects or not.
+    @available(*, deprecated, message: "use !effects.isEmpty instead")
+    var hasEffects: Bool { return !effects.isEmpty }
 }
 
 public extension Next where Effect: Hashable {
@@ -121,7 +133,7 @@ public extension EffectRouterBuilder {
     /// - Parameters:
     ///   - connectable: The `Connectable` which handles an effect
     /// - Returns: This builder.
-    func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.InputType == Input, C.OutputType == Output, C.Effect == Input {
+    func addConnectable<C: Connectable & EffectPredicate>(_ connectable: C) -> EffectRouterBuilder<Input, Output> where C.Input == Input, C.Output == Output, C.Effect == Input {
         return addConnectable(connectable, predicate: connectable.canAccept)
     }
 
@@ -146,4 +158,32 @@ public extension EffectRouterBuilder {
         let connectable = ClosureConnectable<Input, Output>(action.run, queue: queue)
         return addConnectable(connectable, predicate: action.canAccept)
     }
+}
+
+public extension Connectable {
+    @available(*, deprecated, message: "use Input instead")
+    typealias InputType = Input
+
+    @available(*, deprecated, message: "use Output instead")
+    typealias OutputType = Output
+}
+
+public extension BrokenConnection {
+    @available(*, deprecated)
+    static func accept(_ value: Value) {
+        _accept(value)
+    }
+
+    @available(*, deprecated)
+    static func dispose() {
+        _dispose()
+    }
+}
+
+@available(*, deprecated)
+public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
+
+public extension Connection {
+    @available(*, deprecated, message: "use Value instead")
+    typealias ValueType = Value
 }

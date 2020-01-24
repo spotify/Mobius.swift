@@ -22,9 +22,6 @@ import Foundation
 /// Baseclass for creating an action based `connectable`. Invoking the `connection` functions
 /// will block the current thread until done.
 open class ActionConnectable<Input, Output>: Connectable {
-    public typealias InputType = Input
-    public typealias OutputType = Output
-
     private var innerConnectable: ClosureConnectable<Input, Output>
 
     /// Initialise with an action (no input, no output)

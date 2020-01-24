@@ -70,7 +70,7 @@ public func hasNoEffects<Model, Effect>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        if first.hasEffects {
+        if !first.effects.isEmpty {
             return .failure(
                 message: "Expected no effects, got <\(first.effects)>",
                 file: file,

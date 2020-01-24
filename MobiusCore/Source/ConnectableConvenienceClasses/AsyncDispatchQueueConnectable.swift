@@ -27,8 +27,8 @@ import Foundation
 ///
 /// If the connection’s consumer is invoked between the Connectable’s `dispose` and the underlying asynchronous
 /// `dispose`, the call will not be forwarded.
-final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
-    private let underlyingConnectable: AnyConnectable<InputType, OutputType>
+final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
+    private let underlyingConnectable: AnyConnectable<Input, Output>
     private let acceptQueue: DispatchQueue
 
     private enum DisposalStatus: Equatable {
@@ -38,7 +38,7 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     }
 
     init(
-        _ underlyingConnectable: AnyConnectable<InputType, OutputType>,
+        _ underlyingConnectable: AnyConnectable<Input, Output>,
         acceptQueue: DispatchQueue
     ) {
         self.underlyingConnectable = underlyingConnectable
@@ -48,11 +48,11 @@ final class AsyncDispatchQueueConnectable<InputType, OutputType>: Connectable {
     convenience init<C: Connectable>(
         _ underlyingConnectable: C,
         acceptQueue: DispatchQueue
-    ) where C.InputType == InputType, C.OutputType == OutputType {
+    ) where C.Input == Input, C.Output == Output {
         self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue)
     }
 
-    func connect(_ consumer: @escaping (OutputType) -> Void) -> Connection<InputType> {
+    func connect(_ consumer: @escaping (Output) -> Void) -> Connection<Input> {
         let disposalStatus = Synchronized(value: DisposalStatus.notDisposed)
 
         let connection = underlyingConnectable.connect { value in

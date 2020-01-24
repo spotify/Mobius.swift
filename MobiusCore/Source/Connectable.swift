@@ -21,47 +21,40 @@ import Foundation
 
 /// API for something that can be connected to be part of a MobiusLoop.
 ///
-/// Primarily used in `Mobius.loop(update:effectHandler:)` to define the effect handler of a
-/// Mobius loop. In that case, the incoming values will be effects, and the outgoing values will be
-/// events that should be sent back to the loop.
+/// Primarily used in `Mobius.loop(update:effectHandler:)` to define the effect handler of a Mobius loop. In that case,
+/// the incoming values will be effects, and the outgoing values will be events that should be sent back to the loop.
 ///
-/// Alternatively used in `MobiusController.connect(view:)` to connect a view to the
-/// controller. In that case, the incoming values will be models, and the outgoing values will be
-/// events.
-///
-/// Create a new connection that accepts input values and sends outgoing values to a supplied
-/// consumer.
-///
-/// Must return a new `Connection` that accepts incoming values. After `dispose()` is called on
-/// the returned `Connection`, the connection must be broken, and no more values may be sent
-/// to the output consumer.
-///
-/// Every call to this method should create a new independent connection that can be disposed of
-/// individually without affecting the other connections. If your Connectable doesn't support this,
-/// it should throw an exception if someone tries to connect a second
-/// time before disposing of the first connection.
-/// - Parameter output: the consumer that the new connection should use to emit values
-/// - Returns: a new connection
+/// Alternatively used in `MobiusController.connectView(_:)` to connect a view to the controller. In that case, the
+/// incoming values will be models, and the outgoing values will be events.
 public protocol Connectable {
-    associatedtype InputType
-    associatedtype OutputType
+    associatedtype Input
+    associatedtype Output
 
-    func connect(_ consumer: @escaping Consumer<OutputType>) -> Connection<InputType>
+    /// Create a new connection that accepts input values and sends outgoing values to a supplied consumer.
+    ///
+    /// Must return a new `Connection` that accepts incoming values. After `dispose()` is called on the returned
+    /// `Connection`, the connection must be broken, and no more values may be sent to the output consumer.
+    ///
+    /// Every call to this method should create a new independent connection that can be disposed of individually
+    /// without affecting the other connections. If your `Connectable` doesn't support this, it should assert if someone
+    /// tries to connect a second time before disposing of the first connection.
+    ///
+    /// - Parameter consumer: the consumer that the new connection should use to emit values
+    /// - Returns: a new connection
+    func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input>
 }
 
-public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
-
+/// Type-erased wrapper for `Connectable`s
 public final class AnyConnectable<Input, Output>: Connectable {
-    public typealias InputType = Input
-    public typealias OutputType = Output
+    private let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
 
-    private let connectClosure: ConnectClosure<Input, Output>
-
-    public init<C: Connectable>(_ connectable: C) where C.InputType == Input, C.OutputType == Output {
+    /// Creates a type-erased `Connectable` that wraps the given instance.
+    public init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
         connectClosure = connectable.connect
     }
 
-    public init(_ connectable: @escaping ConnectClosure<Input, Output>) {
+    /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.
+    public init(_ connectable: @escaping (@escaping Consumer<Output>) -> Connection<Input>) {
         connectClosure = connectable
     }
 

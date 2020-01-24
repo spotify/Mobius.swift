@@ -19,16 +19,24 @@
 
 import Foundation
 
-public enum BrokenConnection<ValueType> {
-    public static func accept(_ value: ValueType) {
+/// A helper to construct `Connection`s that will fail when used.
+///
+/// `BrokenConnection.connection()` is used when functions return `Connection` fail an assertion. The resulting
+/// connection will trigger an assertion whenever its `accept` or `dispose` methods are called.
+public enum BrokenConnection<Value> {
+    static func _accept(_ value: Value) {
         MobiusHooks.onError("'accept' called on invalid connection")
     }
 
-    public static func dispose() {
+    static func _dispose() {
         MobiusHooks.onError("'dispose' called on invalid connection")
     }
 
-    public static func connection() -> Connection<ValueType> {
-        return Connection(acceptClosure: accept, disposeClosure: dispose)
+    /// Construct a broken connection.
+    ///
+    /// The resulting connection will trigger an assertion whenever its `accept` or `dispose` methods are
+    /// called.
+    public static func connection() -> Connection<Value> {
+        return Connection(acceptClosure: _accept, disposeClosure: _dispose)
     }
 }

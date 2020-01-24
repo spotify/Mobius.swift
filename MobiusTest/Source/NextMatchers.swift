@@ -102,7 +102,7 @@ public func hasModel<Model: Equatable, Effect>(_ expected: Model, file: StaticSt
 /// - Returns: a `Predicate` that matches `Next` instances with no effects.
 public func hasNoEffects<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
-        if next.hasEffects {
+        if !next.effects.isEmpty {
             return .failure(
                 message: "Expected no effects. Got: <\(next.effects)>",
                 file: file,

@@ -20,11 +20,8 @@
 import Foundation
 
 class ClosureConnectable<Input, Output>: Connectable {
-    public typealias InputType = Input
-    public typealias OutputType = Output
-
     private var queue: DispatchQueue?
-    private var output: Consumer<OutputType>?
+    private var output: Consumer<Output>?
     private let closure: (Input) -> Output?
     private let lock = Lock()
 
@@ -64,7 +61,7 @@ class ClosureConnectable<Input, Output>: Connectable {
     }
 
     func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {
-        return lock.synchronized { () -> Connection<InputType> in
+        return lock.synchronized { () -> Connection<Input> in
             self.output = consumer
             return Connection(
                 acceptClosure: { input in

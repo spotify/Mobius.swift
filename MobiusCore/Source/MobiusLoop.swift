@@ -116,7 +116,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         eventSource: AnyEventSource<Event>,
         eventConsumerTransformer: ConsumerTransformer<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
-    ) -> MobiusLoop where C.InputType == Effect, C.OutputType == Event {
+    ) -> MobiusLoop where C.Input == Effect, C.Output == Event {
         let accessGuard = ConcurrentAccessDetector()
         let loggingInitiate = LoggingInitiate(initiate, logger: logger)
         let loggingUpdate = update.logging(logger)

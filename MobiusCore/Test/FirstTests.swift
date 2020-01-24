@@ -45,38 +45,6 @@ class FirstTests: QuickSpec {
                     expect(sut.effects).toNot(contain(Effect.refresh))
                 }
             }
-
-            describe("hasEffects") {
-                context("when the object has multiple effects") {
-                    beforeEach {
-                        sut = First<String, Effect>(model: "1", effects: [.send, .refresh])
-                    }
-
-                    it("should return true") {
-                        expect(sut.hasEffects).to(beTrue())
-                    }
-                }
-
-                context("when the object has one effect") {
-                    beforeEach {
-                        sut = First<String, Effect>(model: "1", effects: [.refresh])
-                    }
-
-                    it("should return true") {
-                        expect(sut.hasEffects).to(beTrue())
-                    }
-                }
-
-                context("when the object does not have any effects") {
-                    beforeEach {
-                        sut = First<String, Effect>(model: "1", effects: [])
-                    }
-
-                    it("should return true") {
-                        expect(sut.hasEffects).to(beFalse())
-                    }
-                }
-            }
         }
     }
 }

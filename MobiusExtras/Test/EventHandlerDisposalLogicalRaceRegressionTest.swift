@@ -111,7 +111,7 @@ private class EffectHandler: ConnectableClass<Effect, Event>, EffectPredicate {
         cancellationToken = nil
     }
 
-    typealias Effect = InputType
+    typealias Effect = Input
 }
 
 // Stand-in for an object that does something asynchronous and cancellable, e.g. fetch data.

@@ -54,7 +54,7 @@ public extension Mobius {
     static func loop<Model, Event, Effect, C: Connectable>(
         update: Update<Model, Event, Effect>,
         effectHandler: C
-    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+    ) -> Builder<Model, Event, Effect> where C.Input == Effect, C.Output == Event {
         return Builder(
             update: update,
             effectHandler: effectHandler,
@@ -74,7 +74,7 @@ public extension Mobius {
     static func loop<Model, Event, Effect, C: Connectable>(
         update: @escaping (Model, Event) -> Next<Model, Effect>,
         effectHandler: C
-    ) -> Builder<Model, Event, Effect> where C.InputType == Effect, C.OutputType == Event {
+    ) -> Builder<Model, Event, Effect> where C.Input == Effect, C.Output == Event {
         return self.loop(
             update: Update(update),
             effectHandler: effectHandler
@@ -96,7 +96,7 @@ public extension Mobius {
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
-        ) where C.InputType == Effect, C.OutputType == Event {
+        ) where C.Input == Effect, C.Output == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
             self.initiate = initiate

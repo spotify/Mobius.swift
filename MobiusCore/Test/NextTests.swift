@@ -125,42 +125,6 @@ class NextTests: QuickSpec {
                 }
             }
 
-            describe("hasEffects") {
-                context("when the Next has multiple effects") {
-                    beforeEach {
-                        sut = Next.dispatchEffects([.send, .refresh])
-                    }
-
-                    it("should return true") {
-                        expect(sut.hasEffects).to(beTrue())
-                    }
-                }
-
-                context("when the Next has one effect") {
-                    beforeEach {
-                        sut = Next.dispatchEffects([.refresh])
-                    }
-
-                    it("should return true") {
-                        expect(sut.hasEffects).to(beTrue())
-                    }
-                }
-
-                context("when the Next does not have any effects") {
-                    it("should return false") {
-                        expect(Next<String, Effect>.next("foo", effects: []).hasEffects).to(beFalse())
-                    }
-
-                    it("should return false for a change with nil effects") {
-                        expect(Next<String, Effect>.dispatchEffects([]).hasEffects).to(beFalse())
-                    }
-
-                    it("should return false for a noChange") {
-                        expect(Next<String, Effect>.noChange.hasEffects).to(beFalse())
-                    }
-                }
-            }
-
             describe("Equatable") {
                 context("when the model type is equatable") {
                     let model1 = "some text"

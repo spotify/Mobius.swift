@@ -22,9 +22,6 @@ import Foundation
 /// Baseclass for creating a consumer based `connectable`. Invoking the `connection` functions
 /// will block the current thread until done.
 open class ConsumerConnectable<Input, Output>: Connectable {
-    public typealias InputType = Input
-    public typealias OutputType = Output
-
     private var innerConnectable: ClosureConnectable<Input, Output>
 
     /// Initialise with a consumer (input, no output)

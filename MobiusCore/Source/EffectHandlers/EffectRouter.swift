@@ -85,7 +85,7 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     /// - Parameter connectable: a connectable which will be used to handle effects
     public func to<C: Connectable>(
         _ connectable: C
-    ) -> EffectRouter<Input, Output> where C.InputType == Payload, C.OutputType == Output {
+    ) -> EffectRouter<Input, Output> where C.Input == Payload, C.Output == Output {
         let connectable = ThreadSafeConnectable(connectable: connectable)
         let route = Route(extractPayload: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])
@@ -98,7 +98,7 @@ private struct Route<Input, Output> {
     init<Payload, Conn: Connectable>(
         extractPayload: @escaping (Input) -> Payload?,
         connectable: Conn
-    ) where Conn.InputType == Payload, Conn.OutputType == Output {
+    ) where Conn.Input == Payload, Conn.Output == Output {
         connect = { output in
             let connection = connectable.connect(output)
             return ConnectedRoute(
