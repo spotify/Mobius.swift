@@ -26,10 +26,10 @@ public extension EventSource {
     /// - Parameters:
     ///   - map: Translation function to apply to the forwarded events.
     /// - Returns: An `EventSource` that translates and forwards event from the receiver.
-    func map<T>(_ map: @escaping (Event) -> T) -> AnyEventSource<T> {
+    func map<NewEvent>(transform: @escaping (Event) -> NewEvent) -> AnyEventSource<NewEvent> {
         return AnyEventSource { mappedEventConsumer in
             self.subscribe { originalEvent in
-                let mappedEvent = map(originalEvent)
+                let mappedEvent = transform(originalEvent)
                 mappedEventConsumer(mappedEvent)
             }
         }

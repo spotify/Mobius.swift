@@ -37,7 +37,7 @@ private indirect enum List: Equatable {
 
 private func unwrap<Input, Payload, Output>(
     effect: Input,
-    usingRoute partialRouter: PartialEffectRouter<Input, Payload, Output>
+    usingRoute partialRouter: _PartialEffectRouter<Input, Payload, Output>
 ) -> Payload? {
     var payload: Payload?
     let handler = partialRouter

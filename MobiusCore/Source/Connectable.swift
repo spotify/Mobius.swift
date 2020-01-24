@@ -49,8 +49,8 @@ public final class AnyConnectable<Input, Output>: Connectable {
     private let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
 
     /// Creates a type-erased `Connectable` that wraps the given instance.
-    public init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
-        connectClosure = connectable.connect
+    public convenience init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
+        self.init(connectable.connect)
     }
 
     /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.

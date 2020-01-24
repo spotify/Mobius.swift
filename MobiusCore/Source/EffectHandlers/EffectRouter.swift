@@ -41,14 +41,14 @@
 ///  - `.to(Connectable)` This should be used for effect handlers which do not have a clear definition of
 ///     when a given effect has been handled. For example, an effect handler which will continue to produce
 ///     events indefinitely once it has been started.
-public struct EffectRouter<Input, Output> {
-    private let routes: [Route<Input, Output>]
+public struct EffectRouter<Effect, Event> {
+    private let routes: [Route<Effect, Event>]
 
     public init() {
         routes = []
     }
 
-    fileprivate init(routes: [Route<Input, Output>]) {
+    fileprivate init(routes: [Route<Effect, Event>]) {
         self.routes = routes
     }
 
@@ -56,28 +56,28 @@ public struct EffectRouter<Input, Output> {
     /// non-`nil` this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is returned.
     /// - Parameter withPayload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
     public func routeEffects<Payload>(
-        withPayload payload: @escaping (Input) -> Payload?
-    ) -> PartialEffectRouter<Input, Payload, Output> {
-        return PartialEffectRouter(routes: routes, path: payload)
+        withPayload payload: @escaping (Effect) -> Payload?
+    ) -> _PartialEffectRouter<Effect, Payload, Event> {
+        return _PartialEffectRouter(routes: routes, path: payload)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to handle effects.
-    public var asConnectable: AnyConnectable<Input, Output> {
+    public var asConnectable: AnyConnectable<Effect, Event> {
         return compose(routes: routes)
     }
 }
 
-public struct PartialEffectRouter<Input, Payload, Output> {
-    fileprivate let routes: [Route<Input, Output>]
-    fileprivate let path: (Input) -> Payload?
+public struct _PartialEffectRouter<Effect, Payload, Event> {
+    fileprivate let routes: [Route<Effect, Event>]
+    fileprivate let path: (Effect) -> Payload?
 
     /// Route to an `EffectHandler`.
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
-    ) -> EffectRouter<Input, Output> where Handler.Effect == Payload, Handler.Event == Output {
+    ) -> EffectRouter<Effect, Event> where Handler.Effect == Payload, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
-        let route = Route<Input, Output>(extractPayload: path, connectable: connectable)
+        let route = Route<Effect, Event>(extractPayload: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])
     }
 
@@ -85,7 +85,7 @@ public struct PartialEffectRouter<Input, Payload, Output> {
     /// - Parameter connectable: a connectable which will be used to handle effects
     public func to<C: Connectable>(
         _ connectable: C
-    ) -> EffectRouter<Input, Output> where C.Input == Payload, C.Output == Output {
+    ) -> EffectRouter<Effect, Event> where C.Input == Payload, C.Output == Event {
         let connectable = ThreadSafeConnectable(connectable: connectable)
         let route = Route(extractPayload: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])

@@ -17,30 +17,30 @@
 // specific language governing permissions and limitations
 // under the License.
 
-public extension EffectRouter where Input: Equatable {
+public extension EffectRouter where Effect: Equatable {
     /// Add a route for effects which are equal to `equalTo`.
     /// - Parameter `equalTo`: the effect that should be handled by this route
     func routeEffects(
-        equalTo constant: Input
-    ) -> PartialEffectRouter<Input, Input, Output> {
+        equalTo constant: Effect
+    ) -> _PartialEffectRouter<Effect, Effect, Event> {
         return routeEffects(withPayload: { effect in effect == constant ? effect : nil })
     }
 }
 
-public extension PartialEffectRouter {
+public extension _PartialEffectRouter {
     /// Route to the anonymous  `EffectHandler` defined by the `handle` closure.
     /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(
-        _ handle: @escaping (Payload, EffectCallback<Output>) -> Disposable
-    ) -> EffectRouter<Input, Output> {
-        return to(AnyEffectHandler<Payload, Output>(handle: handle))
+        _ handle: @escaping (Payload, EffectCallback<Event>) -> Disposable
+    ) -> EffectRouter<Effect, Event> {
+        return to(AnyEffectHandler<Payload, Event>(handle: handle))
     }
 
     /// Route to a side-effecting closure.
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
-    ) -> EffectRouter<Input, Output> {
+    ) -> EffectRouter<Effect, Event> {
         return to { payload, callback in
             fireAndForget(payload)
             callback.end()
@@ -52,8 +52,8 @@ public extension PartialEffectRouter {
     /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
     /// `nil`.
     func toEvent(
-        _ eventClosure: @escaping (Payload) -> Output?
-    ) -> EffectRouter<Input, Output> {
+        _ eventClosure: @escaping (Payload) -> Event?
+    ) -> EffectRouter<Effect, Event> {
         return to { payload, callback in
             if let event = eventClosure(payload) {
                 callback.send(event)

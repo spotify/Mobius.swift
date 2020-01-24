@@ -21,18 +21,18 @@ import Darwin
 
 public extension EffectRouter {
     func routeCase<Payload>(
-        _ enumCase: @escaping (Payload) -> Input
-    ) -> PartialEffectRouter<Input, Payload, Output> {
+        _ enumCase: @escaping (Payload) -> Effect
+    ) -> _PartialEffectRouter<Effect, Payload, Event> {
         return routeEffects(withPayload: { effect in
-            UnwrapEnum<Input, Payload>.extract(case: enumCase, from: effect)
+            UnwrapEnum<Effect, Payload>.extract(case: enumCase, from: effect)
         })
     }
 }
 
-public extension EffectRouter where Input: Equatable {
+public extension EffectRouter where Effect: Equatable {
     func routeCase(
-        _ enumCase: Input
-    ) -> PartialEffectRouter<Input, Void, Output> {
+        _ enumCase: Effect
+    ) -> _PartialEffectRouter<Effect, Void, Event> {
         return routeEffects(withPayload: { effect in
             if enumCase == effect {
                 return ()
