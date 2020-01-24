@@ -26,7 +26,9 @@ import Nimble
 ///
 /// - Parameter predicates: matchers an array of `Predicate`, all of which must match
 /// - Returns: an `Assert` that applies all the matchers
-public func assertThatNext<Model, Event, Effect>(_ predicates: Nimble.Predicate<Next<Model, Effect>>...) -> UpdateSpec<Model, Event, Effect>.Assert {
+public func assertThatNext<Model, Event, Effect>(
+    _ predicates: Nimble.Predicate<Next<Model, Effect>>...
+) -> UpdateSpec<Model, Event, Effect>.Assert {
     return { (result: UpdateSpec.Result) in
         predicates.forEach({ predicate in
             expect(result.lastNext).to(predicate)
@@ -53,7 +55,10 @@ public func haveNoModel<Model, Effect>() -> Nimble.Predicate<Next<Model, Effect>
         if let model = next.model {
             actualDescription = String(describing: model)
         }
-        return Nimble.PredicateResult(bool: next.model == nil, message: .expectedCustomValueTo("have no model", "<\(actualDescription)>"))
+        return Nimble.PredicateResult(
+            bool: next.model == nil,
+            message: .expectedCustomValueTo("have no model", "<\(actualDescription)>")
+        )
     })
 }
 
@@ -82,7 +87,10 @@ public func haveModel<Model: Equatable, Effect>(_ expected: Model) -> Nimble.Pre
 
         let expectedDescription = String(describing: expected)
         let actualDescription = String(describing: nextModel)
-        return Nimble.PredicateResult(bool: nextModel == expected, message: .expectedCustomValueTo("be <\(expectedDescription)>", "<\(actualDescription)>"))
+        return Nimble.PredicateResult(
+            bool: nextModel == expected,
+            message: .expectedCustomValueTo("be <\(expectedDescription)>", "<\(actualDescription)>")
+        )
     })
 }
 
@@ -112,7 +120,10 @@ public func haveEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimbl
         let actualDescription = String(describing: next.effects)
         return Nimble.PredicateResult(
             bool: expected.allSatisfy(next.effects.contains),
-            message: .expectedCustomValueTo("contain <\(expectedDescription)>", "<\(actualDescription)> (order doesn't matter)")
+            message: .expectedCustomValueTo(
+                "contain <\(expectedDescription)>",
+                "<\(actualDescription)> (order doesn't matter)"
+            )
         )
     })
 }

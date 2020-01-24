@@ -19,8 +19,8 @@
 
 import Foundation
 
-/// Internal class that manages the atomic state updates and notifications of model changes when processing of events via
-/// the Update function.
+/// Internal class that manages the atomic state updates and notifications of model changes when processing of events
+/// via the Update function.
 class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
     let update: Update<Model, Event, Effect>
     let publisher: ConnectablePublisher<Next<Model, Effect>>

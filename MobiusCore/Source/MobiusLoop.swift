@@ -170,7 +170,11 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             eventProcessor: eventProcessor,
             consumeEvent: consumeEvent,
             modelPublisher: modelPublisher,
-            disposable: CompositeDisposable(disposables: [eventSourceDisposable, nextConnection, effectHandlerConnection]),
+            disposable: CompositeDisposable(disposables: [
+                eventSourceDisposable,
+                nextConnection,
+                effectHandlerConnection,
+            ]),
             accessGuard: accessGuard,
             workBag: workBag
         )

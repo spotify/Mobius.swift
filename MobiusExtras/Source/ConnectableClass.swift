@@ -20,19 +20,18 @@
 import Foundation
 import MobiusCore
 
-/// Superclass that allows for easy implementation of a Mobius loop `Connectable` as described above
+/// Abstract superclass that allows for easy implementation of a Mobius loop `Connectable`
 ///
-/// This class automatically handles creation of `Connection`. Any subclass should override the following functions
+/// - Attention: Should not be used directly. Instead a subclass should be used which overrides the `handle` and
+/// `disposed` functions.
 ///
-/// `handle`: this function handles any input (i.e. T.Effects). If a `T.Event` is should be sent to the loop,
-/// it should be passed to the `send` function which will pass it to the Mobius loop
+/// This class automatically handles creation of `Connection`. Any subclass should override the following functions:
+///   - `handle`: this function handles any input (i.e. T.Effects). If a `T.Event` is should be sent to the loop,
+///      it should be passed to the `send` function which will pass it to the Mobius loop
 ///
-/// `disposed`: this function is called when the loop has disposed of the `Connectable`. Any resources used by the
-/// subclass should be freed here. When this function is called, the base class has already released all its resources
-/// so no further functions should be run on the base class.
-///
-/// - Attention: Should not be used directly. Instead a subclass should be used which overrides the
-/// `handle` and `disposed` functions
+///   - `disposed`: this function is called when the loop has disposed of the `Connectable`. Any resources used by the
+///     subclass should be freed here. When this function is called, the base class has already released all its
+///     resources so no further functions should be run on the base class.
 open class ConnectableClass<Input, Output>: Connectable {
     private var consumer: Consumer<Output>?
 
@@ -54,7 +53,12 @@ open class ConnectableClass<Input, Output>: Connectable {
             lock.unlock()
         }
         guard let consumer = consumer else {
-            // handleError("\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set. Send should only be used once the Connectable has been properly connected.")
+            #if false // Disabled because of flakiness and because public use of this class is being phased out.
+            handleError(
+                "\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set." +
+                "Send should only be used once the Connectable has been properly connected."
+            )
+            #endif
             return
         }
 
@@ -85,7 +89,10 @@ open class ConnectableClass<Input, Output>: Connectable {
         }
 
         guard self.consumer == nil else {
-            handleError("ConnectionLimitExceeded: The Connectable \(type(of: self)) is already connected. Unable to connect more than once")
+            handleError(
+                "Connection limit exceeded: The Connectable \(type(of: self)) is already connected. " +
+                "Unable to connect more than once"
+            )
             return BrokenConnection.connection()
         }
 

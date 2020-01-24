@@ -32,7 +32,7 @@ public protocol EventSource: AnyObject {
     /// `Disposable` is disposed. Multiple such subscriptions can be in place concurrently for a
     /// given event source, without affecting each other.
     ///
-    /// - Parameter eventConsumer: the consumer that should receive events from the source
-    /// - Returns: a `Disposable` used to stop the source from emitting any more events to this consumer
+    /// - Parameter eventConsumer: the consumer that should receive events from the source.
+    /// - Returns: a `Disposable` used to stop the source from emitting any more events to this consumer.
     func subscribe(consumer: @escaping Consumer<Event>) -> Disposable
 }

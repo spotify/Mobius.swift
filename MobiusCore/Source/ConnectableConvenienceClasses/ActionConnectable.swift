@@ -19,14 +19,15 @@
 
 import Foundation
 
-/// Baseclass for creating an action based `connectable`. Invoking the `connection` functions
-/// will block the current thread until done.
+/// Base class for creating an action based `connectable`.
+///
+/// Invoking the `connection` functions will block the current thread until done.
 open class ActionConnectable<Input, Output>: Connectable {
     private var innerConnectable: ClosureConnectable<Input, Output>
 
-    /// Initialise with an action (no input, no output)
+    /// Initialise with an action (no input, no output).
     ///
-    /// - Parameter action: Called when the `connection` `accept` function is called
+    /// - Parameter action: Called when the `connection`’s `accept` function is called.
     public init(_ action: @escaping () -> Void) {
         innerConnectable = ClosureConnectable<Input, Output>({ _ in
             action()

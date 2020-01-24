@@ -17,9 +17,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
-/// This protocol defines the contract for an Effect Handler which takes `Effect`s as input, and produces `Event`s as output.
-/// For each incoming `Effect`, zero or more `Event`s can be sent as output using `callback.send(Event)`.
-/// When an `Effect` has been completely handled, i.e. that effect will not result in any more events, call `callback.end()`.
+/// This protocol defines the contract for an Effect Handler which takes `Effect`s as input, and produces `Event`s as
+/// output.
+///
+/// For each incoming `Effect`, zero or more `Event`s can be sent as output using `callback.send(Event)`. When an
+/// `Effect` has been completely handled, i.e. that effect will not result in any more events, call `callback.end()`.
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
 public protocol EffectHandler {
@@ -27,12 +29,15 @@ public protocol EffectHandler {
     associatedtype Event
 
     /// Handle an `Effect`.
-    /// To output events, call `callback.send`.
-    /// When you are done handling `input`, be sure to call `callback.end()` to prevent memory leaks.
-    /// If it does not make sense to finish handling an effect, you should be using a `Connectable` instead of this protocol.
     ///
-    /// Note: When being disposed by Mobius, the `Disposable` you return will be called before Mobius calls `callback.end()`.
-    /// Note: Mobius will not dispose the returned `Disposable` if `callback.end()` has already been called.
+    /// To output events, call `callback.send`.
+    ///
+    /// When you are done handling `input`, be sure to call `callback.end()` to prevent memory leaks. If it does not
+    /// make sense to finish handling an effect, you should be using a `Connectable` instead of this protocol.
+    ///
+    /// - Note: When being disposed by Mobius, the `Disposable` you return will be called before Mobius calls
+    /// `callback.end()`.
+    /// - Note: Mobius will not dispose the returned `Disposable` if `callback.end()` has already been called.
     ///
     /// Return a `Disposable` which tears down any resources that is being used by this effect handler.
     func handle(

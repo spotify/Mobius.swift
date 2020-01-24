@@ -18,8 +18,9 @@
 // under the License.
 
 public extension EffectRouter where Effect: Equatable {
-    /// Add a route for effects which are equal to `equalTo`.
-    /// - Parameter `equalTo`: the effect that should be handled by this route
+    /// Add a route for effects which are equal to `constant`.
+    ///
+    /// - Parameter `constant`: the effect that should be handled by this route.
     func routeEffects(
         equalTo constant: Effect
     ) -> _PartialEffectRouter<Effect, Effect, Event> {
@@ -29,6 +30,7 @@ public extension EffectRouter where Effect: Equatable {
 
 public extension _PartialEffectRouter {
     /// Route to the anonymous  `EffectHandler` defined by the `handle` closure.
+    ///
     /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(
         _ handle: @escaping (Payload, EffectCallback<Event>) -> Disposable
@@ -37,6 +39,7 @@ public extension _PartialEffectRouter {
     }
 
     /// Route to a side-effecting closure.
+    ///
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
         _ fireAndForget: @escaping (Payload) -> Void
@@ -49,8 +52,9 @@ public extension _PartialEffectRouter {
     }
 
     /// Route to a closure which returns an optional event when given the payload as input.
-    /// - Parameter eventFunction: a function which returns an optional event given some input. No events will be propagated if this function returns
-    /// `nil`.
+    ///
+    /// - Parameter eventClosure: a function which returns an optional event given some input. No events will be
+    ///   propagated if this function returns `nil`.
     func toEvent(
         _ eventClosure: @escaping (Payload) -> Event?
     ) -> EffectRouter<Effect, Event> {
