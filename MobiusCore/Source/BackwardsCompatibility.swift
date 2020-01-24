@@ -192,3 +192,7 @@ public extension AnyEventSource {
     @available(*, deprecated, message: "use Event instead")
     typealias AnEvent = Event
 }
+
+/// The `NoEffect` type can be used to signal that some data passing through a Mobius loop cannot have any effects.
+@available(*, deprecated, message: "use Never instead")
+public typealias NoEffect = Never
