@@ -76,7 +76,7 @@ class CallbackTests: QuickSpec {
                     expect(output).to(equal([1]))
                 }
 
-                it("stops calling `onSend` after `.end` has been called") {
+                it("stops calling `onSend` when `send`ing after `.end` has been called") {
                     callback.send(1)
                     callback.send(2)
                     expect(output).to(equal([1, 2]))
@@ -85,6 +85,22 @@ class CallbackTests: QuickSpec {
 
                     callback.send(3)
                     expect(output).to(equal([1, 2]))
+                }
+
+                it("stops calling `onSend` when using `end(with:)` after `.end` has been called") {
+                    callback.end()
+                    callback.end(with: 2)
+                    expect(output).to(equal([]))
+                }
+
+                it("`end(with:)` is idempotent") {
+                    callback.end(with: 1, 2, 3)
+                    expect(callback.ended).to(beTrue())
+                    expect(output).to(equal([1, 2, 3]))
+
+                    callback.end(with: 1, 2, 3)
+                    expect(callback.ended).to(beTrue())
+                    expect(output).to(equal([1, 2, 3]))
                 }
 
                 it("sends events before ending when using `.end(with:)` with varargs") {

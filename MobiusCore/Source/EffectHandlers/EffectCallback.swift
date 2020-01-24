@@ -76,15 +76,15 @@ public final class EffectCallback<Output> {
     /// Note: After calling this function, all operations on this object will be no-ops.
     /// - Parameter outputs: The events which should be sent to the loop.
     public func end(with outputs: [Output]) {
-        var runOnEnd = false
+        var shouldRun = false
         _ended.mutate {
-            runOnEnd = !$0
+            shouldRun = !$0
             $0 = true
         }
-        for output in outputs {
-            onSend(output)
-        }
-        if runOnEnd {
+        if shouldRun {
+            for output in outputs {
+                onSend(output)
+            }
             onEnd()
         }
     }
