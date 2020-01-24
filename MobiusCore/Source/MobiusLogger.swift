@@ -75,13 +75,15 @@ public extension MobiusLogger {
 class NoopLogger<Model, Event, Effect>: MobiusLogger {}
 
 /// Type-erased `MobiusLogger`.
-public class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {
+public final class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {
     private let willInitiateClosure: (Model) -> Void
     private let didInitiateClosure: (Model, First<Model, Effect>) -> Void
     private let willUpdateClosure: (Model, Event) -> Void
     private let didUpdateClosure: (Model, Event, Next<Model, Effect>) -> Void
 
-    public init<L: MobiusLogger>(_ base: L) where L.Model == Model, L.Event == Event, L.Effect == Effect {
+    public init<Logger: MobiusLogger>(
+        _ base: Logger
+    ) where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
         willInitiateClosure = base.willInitiate
         didInitiateClosure = base.didInitiate
         willUpdateClosure = base.willUpdate
