@@ -32,7 +32,7 @@ public final class AnonymousDisposable: MobiusCore.Disposable {
 
     /// Create an `AnonymousDisposable` that will run the provided closure when disposed.
     ///
-    /// - Warning: The given _disposer_ **closure will be discarded** as soon as the resources have been disposed.
+    /// - Warning: The given `disposer` closure **will be discarded** as soon as the resources have been disposed.
     ///
     /// - Parameter disposer: The code which disposes of the resources.
     public init(disposer: @escaping () -> Void) {

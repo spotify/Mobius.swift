@@ -19,14 +19,15 @@
 
 import Foundation
 
-/// Baseclass for creating a function based `connectable`. Invoking the `connection` functions
-/// will block the current thread until done.
+/// Base class for creating a function based `connectable`.
+///
+/// Invoking the `connection` functions will block the current thread until done.
 open class BlockingFunctionConnectable<Input, Output>: Connectable {
     private var innerConnectable: ClosureConnectable<Input, Output>
 
     /// Initialise with a function (input, output).
     ///
-    /// - Parameter function: Called when the `connection` `accept` function is called
+    /// - Parameter function: Called when the `connection`’s `accept` function is called.
     public init(_ function: @escaping (Input) -> Output) {
         innerConnectable = ClosureConnectable<Input, Output>(function)
     }

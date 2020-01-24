@@ -85,12 +85,17 @@ public func hasModel<Model, Effect>(file: StaticString = #file, line: UInt = #li
 
 /// - Parameter expected: the expected model
 /// - Returns: a `Predicate` that matches `Next` instances with a model that is equal to the supplied one.
-public func hasModel<Model: Equatable, Effect>(_ expected: Model, file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+public func hasModel<Model: Equatable, Effect>(
+    _ expected: Model,
+    file: StaticString = #file,
+    line: UInt = #line
+) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.model
         if actual != expected {
             return .failure(
-                message: "Expected final Next to have model: <\(String(describing: expected))>. Got: <\(String(describing: actual))>",
+                message: "Expected final Next to have model: <\(String(describing: expected))>. " +
+                    "Got: <\(String(describing: actual))>",
                 file: file,
                 line: line
             )
@@ -100,7 +105,10 @@ public func hasModel<Model: Equatable, Effect>(_ expected: Model, file: StaticSt
 }
 
 /// - Returns: a `Predicate` that matches `Next` instances with no effects.
-public func hasNoEffects<Model, Effect>(file: StaticString = #file, line: UInt = #line) -> NextPredicate<Model, Effect> {
+public func hasNoEffects<Model, Effect>(
+    file: StaticString = #file,
+    line: UInt = #line
+) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         if !next.effects.isEmpty {
             return .failure(
