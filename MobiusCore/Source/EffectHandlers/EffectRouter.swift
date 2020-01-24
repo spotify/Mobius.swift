@@ -57,8 +57,8 @@ public struct EffectRouter<Input, Output> {
     /// - Parameter withPayload: a function which returns a non-`nil` value if this route should be taken, and `nil` if a different route should be taken.
     public func routeEffects<Payload>(
         withPayload payload: @escaping (Input) -> Payload?
-    ) -> PartialEffectRouter<Input, Payload, Output> {
-        return PartialEffectRouter(routes: routes, path: payload)
+    ) -> _PartialEffectRouter<Input, Payload, Output> {
+        return _PartialEffectRouter(routes: routes, path: payload)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to handle effects.
@@ -67,7 +67,7 @@ public struct EffectRouter<Input, Output> {
     }
 }
 
-public struct PartialEffectRouter<Input, Payload, Output> {
+public struct _PartialEffectRouter<Input, Payload, Output> {
     fileprivate let routes: [Route<Input, Output>]
     fileprivate let path: (Input) -> Payload?
 

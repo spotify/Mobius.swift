@@ -22,12 +22,12 @@ public extension EffectRouter where Input: Equatable {
     /// - Parameter `equalTo`: the effect that should be handled by this route
     func routeEffects(
         equalTo constant: Input
-    ) -> PartialEffectRouter<Input, Input, Output> {
+    ) -> _PartialEffectRouter<Input, Input, Output> {
         return routeEffects(withPayload: { effect in effect == constant ? effect : nil })
     }
 }
 
-public extension PartialEffectRouter {
+public extension _PartialEffectRouter {
     /// Route to the anonymous  `EffectHandler` defined by the `handle` closure.
     /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(

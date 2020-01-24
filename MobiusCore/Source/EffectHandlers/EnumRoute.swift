@@ -22,7 +22,7 @@ import Darwin
 public extension EffectRouter {
     func routeCase<Payload>(
         _ enumCase: @escaping (Payload) -> Input
-    ) -> PartialEffectRouter<Input, Payload, Output> {
+    ) -> _PartialEffectRouter<Input, Payload, Output> {
         return routeEffects(withPayload: { effect in
             UnwrapEnum<Input, Payload>.extract(case: enumCase, from: effect)
         })
@@ -32,7 +32,7 @@ public extension EffectRouter {
 public extension EffectRouter where Input: Equatable {
     func routeCase(
         _ enumCase: Input
-    ) -> PartialEffectRouter<Input, Void, Output> {
+    ) -> _PartialEffectRouter<Input, Void, Output> {
         return routeEffects(withPayload: { effect in
             if enumCase == effect {
                 return ()
