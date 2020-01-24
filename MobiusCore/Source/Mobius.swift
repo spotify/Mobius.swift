@@ -49,12 +49,12 @@ public extension Mobius {
     ///
     /// - Parameters:
     ///   - update: the `Update` function of the loop
-    ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
+    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, C: Connectable>(
+    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
         update: Update<Model, Event, Effect>,
-        effectHandler: C
-    ) -> Builder<Model, Event, Effect> where C.Input == Effect, C.Output == Event {
+        effectHandler: EffectHandler
+    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
         return Builder(
             update: update,
             effectHandler: effectHandler,
@@ -69,12 +69,12 @@ public extension Mobius {
     ///
     /// - Parameters:
     ///   - update: the update function of the loop
-    ///   - effectHandler: an instance conforming to the `ConnectableProtocol`. Will be used to handle effects by the loop
+    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, C: Connectable>(
+    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
         update: @escaping (Model, Event) -> Next<Model, Effect>,
-        effectHandler: C
-    ) -> Builder<Model, Event, Effect> where C.Input == Effect, C.Output == Event {
+        effectHandler: EffectHandler
+    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
         return self.loop(
             update: Update(update),
             effectHandler: effectHandler
@@ -89,14 +89,14 @@ public extension Mobius {
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
-        fileprivate init<C: Connectable>(
+        fileprivate init<EffectHandler: Connectable>(
             update: Update<Model, Event, Effect>,
-            effectHandler: C,
+            effectHandler: EffectHandler,
             initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
-        ) where C.Input == Effect, C.Output == Event {
+        ) where EffectHandler.Input == Effect, EffectHandler.Output == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
             self.initiate = initiate
@@ -105,7 +105,7 @@ public extension Mobius {
             self.eventConsumerTransformer = eventConsumerTransformer
         }
 
-        public func withEventSource<ES: EventSource>(_ eventSource: ES) -> Builder where ES.Event == Event {
+        public func withEventSource<Source: EventSource>(_ eventSource: Source) -> Builder where Source.Event == Event {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
@@ -127,7 +127,9 @@ public extension Mobius {
             )
         }
 
-        public func withLogger<L: MobiusLogger>(_ logger: L) -> Builder where L.Model == Model, L.Event == Event, L.Effect == Effect {
+        public func withLogger<Logger: MobiusLogger>(
+            _ logger: Logger
+        ) -> Builder where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,

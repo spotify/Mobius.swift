@@ -108,15 +108,15 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     }
 
     // swiftlint:disable:next function_parameter_count
-    static func createLoop<C: Connectable>(
+    static func createLoop<EffectHandler: Connectable>(
         update: Update<Model, Event, Effect>,
-        effectHandler: C,
+        effectHandler: EffectHandler,
         initialModel: Model,
         initiate: @escaping Initiate<Model, Effect>,
         eventSource: AnyEventSource<Event>,
         eventConsumerTransformer: ConsumerTransformer<Event>,
         logger: AnyMobiusLogger<Model, Event, Effect>
-    ) -> MobiusLoop where C.Input == Effect, C.Output == Event {
+    ) -> MobiusLoop where EffectHandler.Input == Effect, EffectHandler.Output == Event {
         let accessGuard = ConcurrentAccessDetector()
         let loggingInitiate = LoggingInitiate(initiate, logger: logger)
         let loggingUpdate = update.logging(logger)

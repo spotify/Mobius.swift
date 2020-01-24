@@ -132,7 +132,9 @@ public final class MobiusController<Model, Event, Effect> {
     /// make the view stop emitting events.
     ///
     /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if the controller already is connected
-    public func connectView<C: Connectable>(_ connectable: C) where C.Input == Model, C.Output == Event {
+    public func connectView<ViewConnectable: Connectable>(
+        _ connectable: ViewConnectable
+    ) where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
         state.mutateIfStopped(elseError: "cannot connect to a running controller") { state in
             guard state.viewConnectable == nil else {
                 MobiusHooks.onError("controller only supports connecting one view")
