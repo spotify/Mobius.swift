@@ -187,3 +187,8 @@ public extension Connection {
     @available(*, deprecated, message: "use Value instead")
     typealias ValueType = Value
 }
+
+public extension AnyEventSource {
+    @available(*, deprecated, message: "use Event instead")
+    typealias AnEvent = Event
+}
