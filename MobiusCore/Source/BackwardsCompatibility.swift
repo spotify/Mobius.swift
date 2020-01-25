@@ -19,7 +19,7 @@
 
 import Foundation
 
-@available(*, deprecated, message: "use Initiate instead")
+@available(*, deprecated, renamed: "Initiate")
 public typealias Initiator<Model, Effect> = Initiate<Model, Effect>
 
 public extension First {
@@ -73,7 +73,7 @@ public extension Mobius.Builder {
 }
 
 public extension MobiusLoop {
-    @available(*, deprecated, message: "use latestModel instead")
+    @available(*, deprecated, renamed: "latestModel")
     func getMostRecentModel() -> Model? {
         return latestModel
     }
@@ -90,12 +90,12 @@ public extension MobiusController {
         )
     }
 
-    @available(*, deprecated, message: "use model instead")
+    @available(*, deprecated, renamed: "model")
     func getModel() -> Model {
         return model
     }
 
-    @available(*, deprecated, message: "use running instead")
+    @available(*, deprecated, renamed: "running")
     var isRunning: Bool { return running }
 }
 
@@ -161,10 +161,10 @@ public extension EffectRouterBuilder {
 }
 
 public extension Connectable {
-    @available(*, deprecated, message: "use Input instead")
+    @available(*, deprecated, renamed: "Input")
     typealias InputType = Input
 
-    @available(*, deprecated, message: "use Output instead")
+    @available(*, deprecated, renamed: "Output")
     typealias OutputType = Output
 }
 
@@ -184,15 +184,15 @@ public extension BrokenConnection {
 public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
 
 public extension Connection {
-    @available(*, deprecated, message: "use Value instead")
+    @available(*, deprecated, renamed: "Value")
     typealias ValueType = Value
 }
 
 public extension AnyEventSource {
-    @available(*, deprecated, message: "use Event instead")
+    @available(*, deprecated, renamed: "Event")
     typealias AnEvent = Event
 }
 
 /// The `NoEffect` type can be used to signal that some data passing through a Mobius loop cannot have any effects.
-@available(*, deprecated, message: "use Never instead")
+@available(*, deprecated, renamed: "Never")
 public typealias NoEffect = Never

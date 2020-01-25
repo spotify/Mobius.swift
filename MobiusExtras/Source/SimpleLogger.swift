@@ -56,5 +56,5 @@ public class SimpleLogger<Model, Event, Effect>: MobiusLogger {
     }
 }
 
-@available(*, deprecated, message: "use SimpleLogger instead")
+@available(*, deprecated, renamed: "SimpleLogger")
 typealias ConsoleLogger = SimpleLogger
