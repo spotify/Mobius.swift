@@ -121,7 +121,7 @@ private func beep() {
 }
 
 let effectHandler = EffectRouter<CounterEffect, CounterEvent>()
-    .routeEffects(equalTo: .playSound).to { _ in beep() }
+    .routeCase(CounterEffect.playSound).to { beep() }
     .asConnectable
 ```
 
