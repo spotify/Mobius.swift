@@ -101,7 +101,7 @@ private class EffectCollaborator {
         var cancelled = false
 
         DispatchQueue.global().asyncAfter(deadline: .now()) {
-            if !cancelLock.sync { cancelled } {
+            if !cancelLock.sync(execute: { cancelled }) {
                 closure()
             }
         }
