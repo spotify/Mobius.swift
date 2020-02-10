@@ -30,6 +30,11 @@ public struct Update<Model, Event, Effect> {
     public func update(model: Model, event: Event) -> Next<Model, Effect> {
         return self.update(model, event)
     }
+
+    @inlinable
+    public func callAsFunction(model: Model, event: Event) -> Next<Model, Effect> {
+        return update(model: model, event: event)
+    }
 }
 
 public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
