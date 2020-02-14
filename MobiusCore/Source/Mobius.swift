@@ -20,23 +20,41 @@
 import Foundation
 
 /// A wrapper around an update function.
+///
+/// The [update function] is the core of a Mobius loop. It takes a model and an event, and produces an updated model and
+/// a list of effects.
+///
+/// The Update function is declarative, in the sense that it declares what should happen, but doesn’t actually do
+/// anything itself. It returns a `Next` that describes the desired changes – possibly a new `Model`, and possibly some
+/// `Effect`s that should be executed – but actually changing the `Model` and executing the `Effect`s happens elsewhere.
+///
+/// The `Update` struct is intended to simplify compositional construction of update functions, but Mobius itself
+/// doesn’t currently provide any utilities for this kind of workflow. It is possible to pass a plain function (of type
+/// `(Model, Event) -> Next<Model, Effect>` to the Mobius loop instead of explicitly creating an `Update` struct.
+///
+/// [update function]: https://github.com/spotify/Mobius.swift/wiki/Concepts#update-function
 public struct Update<Model, Event, Effect> {
     private let update: (Model, Event) -> Next<Model, Effect>
 
+    /// Creates an `Update` struct wrapping the provided function.
     public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
         self.update = update
     }
 
+    /// Invokes the update function.
     public func update(model: Model, event: Event) -> Next<Model, Effect> {
         return self.update(model, event)
     }
 
+    /// Invokes the update function.
     @inlinable
     public func callAsFunction(model: Model, event: Event) -> Next<Model, Effect> {
         return update(model: model, event: event)
     }
 }
 
+/// Deprecated. A function used to normalize the initial model of a loop and optionally issue effects when the loop
+/// is started.
 public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
 public enum Mobius {}
@@ -86,6 +104,11 @@ public extension Mobius {
         )
     }
 
+    /// A `Builder` represents a set of options for a Mobius loop.
+    ///
+    /// Create a builder using `Mobius.loop`, then optionally configure it with the various `with...` methods. Finally,
+    /// call `start` to create a `MobiusLoop` (single-threaded), or `makeController` to create a `MobiusController`
+    /// (runs on a background queue, can be stopped and resumed).
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
@@ -110,6 +133,20 @@ public extension Mobius {
             self.eventConsumerTransformer = eventConsumerTransformer
         }
 
+        /// Return a copy of this builder with a new [event source].
+        ///
+        /// If a `MobiusLoop` is created from the builder by calling `start`, the event source will be subscribed to
+        /// immediately, and the subscription will be disposed when the loop is disposed.
+        ///
+        /// If a `MobiusController` is created by calling `makeController`, the controller will subscribe to the event
+        ///  source each time `start` is called on the controller, and dispose the subscription when `stop` is called.
+        ///
+        /// - Note: The event source will replace any existing event source.
+        ///
+        /// - Parameter eventSource: The event source to set on the new builder.
+        /// - Returns: An updated Builder.
+        ///
+        /// [event source]: https://github.com/spotify/Mobius.swift/wiki/Event-Source
         public func withEventSource<Source: EventSource>(_ eventSource: Source) -> Builder where Source.Event == Event {
             return Builder(
                 update: update,
@@ -121,17 +158,12 @@ public extension Mobius {
             )
         }
 
-        func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiate: initiate,
-                eventSource: eventSource,
-                eventConsumerTransformer: eventConsumerTransformer,
-                logger: logger
-            )
-        }
-
+        /// Return a copy of this builder with a new logger.
+        ///
+        /// - Note: The logger will replace any existing logger.
+        ///
+        /// - Parameter logger: The logger to set on the new builder.
+        /// - Returns: An updated Builder.
         public func withLogger<Logger: MobiusLogger>(
             _ logger: Logger
         ) -> Builder where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
@@ -145,7 +177,6 @@ public extension Mobius {
             )
         }
 
-
         /// Add a function to transform the event consumers, i.e. functions that take an event and pass it to the
         /// loop’s processing logic. If multiple transformers are supplied, they will be applied in the order they
         /// were specified.
@@ -156,6 +187,8 @@ public extension Mobius {
         /// events to a particular queue or thread. However, correctly managing the logic around this while also
         /// handling loop teardown is tricky; it is recommended that you use `MobiusController` for this purpose, or
         /// at least refer to its implementation.
+        ///
+        /// - Note: The transformer will replace any existing event consumer transformer.
         ///
         /// - Parameter transformer: The transformation to apply to event consumers.
         /// - Returns: An updated Builder.
@@ -171,7 +204,7 @@ public extension Mobius {
             )
         }
 
-        /// Create a `MobiusLoop` from the builder, and optionally dispatch one or more effects
+        /// Create a `MobiusLoop` from the builder, and optionally dispatch one or more effects.
         ///
         /// - Parameters:
         ///   - initialModel: The model the loop should start with.
@@ -196,7 +229,7 @@ public extension Mobius {
             )
         }
 
-        /// Create a `MobiusController` from the builder
+        /// Create a `MobiusController` from the builder.
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
@@ -209,7 +242,7 @@ public extension Mobius {
             return makeController(from: initialModel, initiate: initiate, loopQueue: .global(qos: qos))
         }
 
-        /// Create a `MobiusController` from the builder
+        /// Create a `MobiusController` from the builder.
         ///
         /// - Parameters:
         ///   - initialModel: The initial default model of the `MobiusController`
@@ -230,6 +263,18 @@ public extension Mobius {
                 initiate: initiate,
                 loopQueue: loopQueue,
                 viewQueue: viewQueue
+            )
+        }
+
+        /// Internal; called by `MobiusController` and a BackwardsCompatibility.swift extension
+        func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
+            return Builder(
+                update: update,
+                effectHandler: effectHandler,
+                initiate: initiate,
+                eventSource: eventSource,
+                eventConsumerTransformer: eventConsumerTransformer,
+                logger: logger
             )
         }
     }
