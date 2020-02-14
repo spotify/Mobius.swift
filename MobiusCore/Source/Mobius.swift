@@ -54,15 +54,16 @@ public extension Mobius {
     ///
     /// - Parameters:
     ///   - update: the `Update` function of the loop
-    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
+    ///   - effectHandler: the entity that will be used by the loop to handle effects. May be an `EffectRouter`, or any
+    ///     instance conforming to `Connectable` with `Effect` as input and `Event` as output.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+    static func loop<Model, Event, Effect, EffectHandler: _EffectHandlerConvertible>(
         update: Update<Model, Event, Effect>,
         effectHandler: EffectHandler
-    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+    ) -> Builder<Model, Event, Effect> where EffectHandler._EHEffect == Effect, EffectHandler._EHEvent == Event {
         return Builder(
             update: update,
-            effectHandler: effectHandler,
+            effectHandler: effectHandler._asEffectHandlerConnectable(),
             initiate: nil,
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
@@ -74,12 +75,13 @@ public extension Mobius {
     ///
     /// - Parameters:
     ///   - update: the update function of the loop
-    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
+    ///   - effectHandler: the entity that will be used by the loop to handle effects. May be an `EffectRouter`, or any
+    ///     instance conforming to `Connectable` with `Effect` as input and `Event` as output.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+    static func loop<Model, Event, Effect, EffectHandler: _EffectHandlerConvertible>(
         update: @escaping (Model, Event) -> Next<Model, Effect>,
         effectHandler: EffectHandler
-    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+    ) -> Builder<Model, Event, Effect> where EffectHandler._EHEffect == Effect, EffectHandler._EHEvent == Event {
         return self.loop(
             update: Update(update),
             effectHandler: effectHandler
@@ -94,16 +96,16 @@ public extension Mobius {
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
-        fileprivate init<EffectHandler: Connectable>(
+        fileprivate init(
             update: Update<Model, Event, Effect>,
-            effectHandler: EffectHandler,
+            effectHandler: AnyConnectable<Effect, Event>,
             initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
-        ) where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+        ) {
             self.update = update
-            self.effectHandler = AnyConnectable(effectHandler)
+            self.effectHandler = effectHandler
             self.initiate = initiate
             self.eventSource = eventSource
             self.logger = logger
@@ -233,4 +235,14 @@ public extension Mobius {
             )
         }
     }
+}
+
+/// Implementation detail, do not use.
+///
+/// This protocol is used for parameters that may be either an `EffectRouter` or a `Connectable`.
+public protocol _EffectHandlerConvertible {
+    associatedtype _EHEffect
+    associatedtype _EHEvent
+
+    func _asEffectHandlerConnectable() -> AnyConnectable<_EHEffect, _EHEvent>
 }

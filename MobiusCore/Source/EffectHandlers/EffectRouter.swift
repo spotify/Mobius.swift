@@ -72,6 +72,12 @@ public struct EffectRouter<Effect, Event> {
     }
 }
 
+extension EffectRouter: _EffectHandlerConvertible {
+    public func _asEffectHandlerConnectable() -> AnyConnectable<Effect, Event> {
+        return compose(routes: routes)
+    }
+}
+
 public struct _PartialEffectRouter<Effect, Payload, Event> {
     fileprivate let routes: [Route<Effect, Event>]
     fileprivate let path: (Effect) -> Payload?
