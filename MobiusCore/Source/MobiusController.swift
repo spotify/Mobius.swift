@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+// swiftlint:disable:file_length
+
 import Foundation
 
 /// Defines a controller that can be used to start and stop MobiusLoops.
