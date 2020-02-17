@@ -22,6 +22,7 @@
 		02D6755323D1E822008200AF /* EnumRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755223D1E822008200AF /* EnumRoute.swift */; };
 		02D6755723D20507008200AF /* EnumRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755423D2049E008200AF /* EnumRouteTests.swift */; };
 		2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */; };
+		2D24D15323FAE746005D175E /* AnonymousDisposableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */; };
 		2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
@@ -267,6 +268,7 @@
 		02D6755223D1E822008200AF /* EnumRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumRoute.swift; sourceTree = "<group>"; };
 		02D6755423D2049E008200AF /* EnumRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumRouteTests.swift; sourceTree = "<group>"; };
 		2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingAdaptors.swift; sourceTree = "<group>"; };
+		2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymousDisposableTests.swift; sourceTree = "<group>"; };
 		2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentAccessDetector.swift; sourceTree = "<group>"; };
 		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
 		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				02D0DDC12366F46600A1CE4C /* EffectHandlers */,
 				5B1F1045211036FC0067193C /* ConnectableConvenienceClassesTests */,
 				5B4A369C21107F0D00279C7D /* EventSources */,
+				2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */,
 				5BB2885620999ACE0043B530 /* AnyConnectionTests.swift */,
 				5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */,
 				5BB2885120999ACE0043B530 /* BrokenConnectionTests.swift */,
@@ -1205,6 +1208,7 @@
 				5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */,
 				5BB2887B20999AD60043B530 /* ConnectablePublisherTests.swift in Sources */,
 				5BB2887620999AD60043B530 /* NextTests.swift in Sources */,
+				2D24D15323FAE746005D175E /* AnonymousDisposableTests.swift in Sources */,
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
 				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
