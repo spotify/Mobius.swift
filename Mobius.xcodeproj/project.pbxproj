@@ -33,6 +33,7 @@
 		2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */; };
 		2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */; };
 		2D896047238C150A00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */; };
+		2DA9A41E23FAEA4800BF5534 /* AnyEffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9A41D23FAEA4800BF5534 /* AnyEffectHandlerTests.swift */; };
 		2DB61AFD23A8F485009E55DB /* NonReentrancyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DB61AFC23A8F485009E55DB /* NonReentrancyTests.swift */; };
 		2DC2C0A62350CEBE005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
 		2DC2C0A72350CEC1005FFFB2 /* BackwardsCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */; };
@@ -275,6 +276,7 @@
 		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AsyncDispatchQueueConnectable.swift; path = ConnectableConvenienceClasses/AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
 		2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventRouterDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
 		2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHandlerDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
+		2DA9A41D23FAEA4800BF5534 /* AnyEffectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEffectHandlerTests.swift; sourceTree = "<group>"; };
 		2DB61AFC23A8F485009E55DB /* NonReentrancyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonReentrancyTests.swift; sourceTree = "<group>"; };
 		2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackwardsCompatibility.swift; sourceTree = "<group>"; };
 		2DDF54BF229BDB4700D05861 /* CompositeEventSourceBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompositeEventSourceBuilder.swift; sourceTree = "<group>"; };
@@ -470,6 +472,7 @@
 		02D0DDC12366F46600A1CE4C /* EffectHandlers */ = {
 			isa = PBXGroup;
 			children = (
+				2DA9A41D23FAEA4800BF5534 /* AnyEffectHandlerTests.swift */,
 				02D0DDC22366F49200A1CE4C /* EffectHandlerTests.swift */,
 				02C40622237425E100BD7ED8 /* EffectRouterTests.swift */,
 				02CEC48F2379642C00BA1584 /* EffectRouterDSLTests.swift */,
@@ -1212,6 +1215,7 @@
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
 				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
+				2DA9A41E23FAEA4800BF5534 /* AnyEffectHandlerTests.swift in Sources */,
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
