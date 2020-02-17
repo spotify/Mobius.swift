@@ -17,8 +17,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// swiftlint:disable:file_length
-
 import Foundation
 
 /// Defines a controller that can be used to start and stop MobiusLoops.
@@ -49,30 +47,6 @@ public final class MobiusController<Model, Event, Effect> {
         loopQueue loopTargetQueue: DispatchQueue,
         viewQueue: DispatchQueue
     ) {
-        /*
-         Ownership graph after initing:
-
-                     ┏━━━━━━━━━━━━┓
-                ┌────┨ controller ┠────────┬──┐
-                │    ┗━━━━━━━━━━┯━┛        │  │
-         ┏━━━━━━┷━━━━━━┓    ┏━━━┷━━━━━━━┓  │  │
-         ┃ loopFactory ┃    ┃ viewQueue ┃  │  │
-         ┗━━━━━━━━━┯━━━┛    ┗━━━━━━━━━━━┛  │  │
-              ┏━━━━┷━━━━━━━━━━━━━━━━━━┓    │  │
-              ┃ flipEventsToLoopQueue ┃ ┌──┘  │
-              ┗━━━━━━━━━━━━━━┯━━━━━━┯━┛ │     │
-                             │    ┏━┷━━━┷━┓   │
-                             │    ┃ state ┃   │
-                             │    ┗━┯━━━━━┛   │
-                             │      │ ┌───────┘
-                           ┏━┷━━━━━━┷━┷┓
-                           ┃ loopQueue ┃
-                           ┗━━━━━━━━━━━┛
-
-         In order to construct this bottom-up and fulfil definitive initialization requirements, state and loopQueue are
-         duplicated in local variables.
-         */
-
         // The internal loopQueue is a serial queue targeting the provided queue, so that targeting a concurrent queue
         // doesn’t result in concurrent work on the underlying MobiusLoop. This behaviour is documented on
         // `Mobius.Builder.makeController`.
