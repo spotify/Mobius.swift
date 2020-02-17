@@ -55,16 +55,30 @@ public extension Next where Effect: Hashable {
 }
 
 public extension Mobius.Builder {
+    /// `MobiusLoop` no longer has built-in knowledge of dispatch queues. If you need to work with a loop
+    /// asynchronously, use `MobiusController`.
+    ///
+    /// `Mobius.Builder.makeController` has a form which lets you specify a queue for it to operate the loop on. There
+    /// are no longer separate event and effect queues.
     @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
     func withEventQueue(_ eventQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
         return self
     }
 
+    /// `MobiusLoop` no longer has built-in knowledge of dispatch queues. If you need to work with a loop
+    /// asynchronously, use `MobiusController`.
+    ///
+    /// `Mobius.Builder.makeController` has a form which lets you specify a queue for it to operate the loop on. There
+    /// are no longer separate event and effect queues.
     @available(*, unavailable, message: "handle dispatching manually, or use MobiusController")
     func withEffectQueue(_ effectQueue: DispatchQueue) -> Mobius.Builder<Model, Event, Effect> {
         return self
     }
 
+    /// For `MobiusLoop`s, explicit initiators are no longer supported. You can now pass a list of effects directly to
+    /// `Mobius.Builder.start`, along with the correct initial model.
+    ///
+    /// For `MobiusController`s, `initiate` is an optional argument to `Mobius.Builder.makeController`.
     @available(*, deprecated, message:
     "initiators are deprecated for raw loops. For MobiusController, pass the initiator to makeController instead")
     func withInitiator(_ initiate: @escaping Initiate<Model, Effect>) -> Mobius.Builder<Model, Event, Effect> {
