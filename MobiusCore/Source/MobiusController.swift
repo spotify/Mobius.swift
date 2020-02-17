@@ -125,8 +125,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Connect a view to this controller.
     ///
-    /// Must be called before `start`. May not be called directly from the update function or an effect handler running
-    /// on the controller’s loop queue.
+    /// May not be called while the loop is running.
     ///
     /// The `Connectable` will be given an event consumer, which the view should use to send events to the `MobiusLoop`.
     /// The view should also return a `Connection` that accepts models and renders them. Disposing the connection should
@@ -149,7 +148,7 @@ public final class MobiusController<Model, Event, Effect> {
         }
     }
 
-    /// Disconnect UI from this controller.
+    /// Disconnect the connected view from this controller.
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
@@ -171,21 +170,26 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
-    /// - Attention: fails via `MobiusHooks.onError` if the loop already is running or no view has been connected
+    /// - Attention: fails via `MobiusHooks.onError` if the loop already is running.
     public func start() {
         state.transitionToRunning(elseError: "cannot start a running controller") { stoppedState in
-            guard let viewConnectable = stoppedState.viewConnectable else {
-                MobiusHooks.onError("not connected, cannot start controller")
-                return nil
+            let loop = loopFactory(stoppedState.modelToStartFrom)
+
+            var disposables: [Disposable] = [loop]
+
+            if let viewConnectable = stoppedState.viewConnectable {
+                // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
+                // that “unguarded” refers to, and also (of course) flips to the loop queue.
+                let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
+                loop.addObserver(viewConnection.accept)
+                disposables.append(viewConnection)
             }
 
-            let loop = loopFactory(stoppedState.modelToStartFrom)
-            // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
-            // that “unguarded” refers to, and also (of course) flips to the loop queue.
-            let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
-            loop.addObserver(viewConnection.accept)
-
-            return RunningState(loop: loop, viewConnectable: viewConnectable, viewConnection: viewConnection)
+            return RunningState(
+                loop: loop,
+                viewConnectable: stoppedState.viewConnectable,
+                disposables: CompositeDisposable(disposables: disposables)
+            )
         }
     }
 
@@ -202,8 +206,7 @@ public final class MobiusController<Model, Event, Effect> {
         state.transitionToStopped(elseError: "cannot stop a controller that isn't running") { runningState in
             let model = runningState.loop.latestModel
 
-            runningState.loop.dispose()
-            runningState.viewConnection.dispose()
+            runningState.disposables.dispose()
 
             return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
         }
@@ -247,8 +250,8 @@ public final class MobiusController<Model, Event, Effect> {
 
     private struct RunningState {
         var loop: Loop
-        var viewConnectable: ViewConnectable
-        var viewConnection: ViewConnection
+        var viewConnectable: ViewConnectable?
+        var disposables: CompositeDisposable
     }
 
     // State machine representing the two states of a controller, stopped and running.
