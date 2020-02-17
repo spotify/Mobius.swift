@@ -59,9 +59,9 @@ public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
 public enum Mobius {}
 
-// MARK: - Building a Mobius Loop
-
 public extension Mobius {
+
+    // MARK: - Creating a Mobius Loop builder
 
     /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
     ///
@@ -71,16 +71,16 @@ public extension Mobius {
     /// Once done configuring the loop you can start the loop using `start(from:)`.
     ///
     /// - Parameters:
-    ///   - update: the `Update` function of the loop
-    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
+    ///   - update: the update function of the loop.
+    ///   - effectHandler: the `EffectRouter` that will be used by the loop to handle effects.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+    static func loop<Model, Event, Effect>(
         update: Update<Model, Event, Effect>,
-        effectHandler: EffectHandler
-    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+        effectHandler: EffectRouter<Effect, Event>
+    ) -> Builder<Model, Event, Effect> {
         return Builder(
             update: update,
-            effectHandler: effectHandler,
+            effectHandler: effectHandler.asConnectable,
             initiate: nil,
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
@@ -88,11 +88,66 @@ public extension Mobius {
         )
     }
 
-    /// A convenience version of `loop` that takes an unwrapped update function.
+    /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
+    ///
+    /// The builder is immutable. When setting various properties, a new instance of a builder will be returned.
+    /// It is therefore recommended to chain the loop configuration functions
+    ///
+    /// Once done configuring the loop you can start the loop using `start(from:)`.
     ///
     /// - Parameters:
-    ///   - update: the update function of the loop
-    ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
+    ///   - update: the update function of the loop.
+    ///   - effectHandler: the entity that will be used by the loop to handle effects. An instance conforming to
+    ///     `Connectable` with `Effect` as input and `Event` as output. **Note:** there is an overload which takes an
+    ///     `EffectRouter` instead, which should be preferred in most cases.
+    /// - Returns: a `Builder` instance that you can further configure before starting the loop.
+    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+        update: Update<Model, Event, Effect>,
+        effectHandler: EffectHandler
+    ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+        return Builder(
+            update: update,
+            effectHandler: AnyConnectable(effectHandler),
+            initiate: nil,
+            eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
+            eventConsumerTransformer: { $0 },
+            logger: AnyMobiusLogger(NoopLogger())
+        )
+    }
+
+    /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
+    ///
+    /// The builder is immutable. When setting various properties, a new instance of a builder will be returned.
+    /// It is therefore recommended to chain the loop configuration functions
+    ///
+    /// Once done configuring the loop you can start the loop using `start(from:)`.
+    ///
+    /// - Parameters:
+    ///   - update: the update function of the loop.
+    ///   - effectHandler: the `EffectRouter` that will be used by the loop to handle effects.
+    /// - Returns: a `Builder` instance that you can further configure before starting the loop
+    static func loop<Model, Event, Effect>(
+        update: @escaping (Model, Event) -> Next<Model, Effect>,
+        effectHandler: EffectRouter<Effect, Event>
+    ) -> Builder<Model, Event, Effect> {
+        return self.loop(
+            update: Update(update),
+            effectHandler: effectHandler
+        )
+    }
+
+    /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
+    ///
+    /// The builder is immutable. When setting various properties, a new instance of a builder will be returned.
+    /// It is therefore recommended to chain the loop configuration functions
+    ///
+    /// Once done configuring the loop you can start the loop using `start(from:)`.
+    ///
+    /// - Parameters:
+    ///   - update: the update function of the loop.
+    ///   - effectHandler: the entity that will be used by the loop to handle effects. An instance conforming to
+    ///     `Connectable` with `Effect` as input and `Event` as output. **Note:** there is an overload which takes an
+    ///     `EffectRouter` instead, which should be preferred in most cases.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
     static func loop<Model, Event, Effect, EffectHandler: Connectable>(
         update: @escaping (Model, Event) -> Next<Model, Effect>,
@@ -117,21 +172,23 @@ public extension Mobius {
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
-        fileprivate init<EffectHandler: Connectable>(
+        fileprivate init(
             update: Update<Model, Event, Effect>,
-            effectHandler: EffectHandler,
+            effectHandler: AnyConnectable<Effect, Event>,
             initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
-        ) where EffectHandler.Input == Effect, EffectHandler.Output == Event {
+        ) {
             self.update = update
-            self.effectHandler = AnyConnectable(effectHandler)
+            self.effectHandler = effectHandler
             self.initiate = initiate
             self.eventSource = eventSource
             self.logger = logger
             self.eventConsumerTransformer = eventConsumerTransformer
         }
+
+        // MARK: - Configuring the builder
 
         /// Return a copy of this builder with a new [event source].
         ///
@@ -203,6 +260,8 @@ public extension Mobius {
                 logger: logger
             )
         }
+
+        // MARK: - Creating a loop
 
         /// Create a `MobiusLoop` from the builder, and optionally dispatch one or more effects.
         ///
