@@ -19,7 +19,7 @@
 
 import Foundation
 
-class EffectExecutor<Effect, Event>: Connectable {
+final class EffectExecutor<Effect, Event>: Connectable {
     private let handleEffect: (Effect, EffectCallback<Event>) -> Disposable
     private var output: Consumer<Event>?
 
