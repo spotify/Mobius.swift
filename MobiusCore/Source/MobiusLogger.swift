@@ -72,7 +72,7 @@ public extension MobiusLogger {
     func didUpdate(model: Model, event: Event, next: Next<Model, Effect>) {}
 }
 
-class NoopLogger<Model, Event, Effect>: MobiusLogger {}
+final class NoopLogger<Model, Event, Effect>: MobiusLogger {}
 
 /// Type-erased `MobiusLogger`.
 public final class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {

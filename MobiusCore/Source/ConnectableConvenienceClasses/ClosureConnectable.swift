@@ -19,7 +19,7 @@
 
 import Foundation
 
-class ClosureConnectable<Input, Output>: Connectable {
+final class ClosureConnectable<Input, Output>: Connectable {
     private var queue: DispatchQueue?
     private var output: Consumer<Output>?
     private let closure: (Input) -> Output?

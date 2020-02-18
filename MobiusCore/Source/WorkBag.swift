@@ -29,7 +29,7 @@ import Foundation
 /// work is only processed in the outermost invocation. This avoids surprising reentrancy in effect handlers (for
 /// example, if the recursion check is removed, the effect handler in `SequencingTests` will enqueue events 2 and 3
 /// multiple times).
-class WorkBag {
+final class WorkBag {
     typealias WorkItem = () -> Void
 
     private var queue = [WorkItem]()
