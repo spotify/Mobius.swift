@@ -3,9 +3,8 @@
 import MobiusCore
 
 enum ___VARIABLE_productName___Logic {
-    static func initiator(_ model: ___VARIABLE_productName___Model) -> First<___VARIABLE_productName___Model, ___VARIABLE_productName___Effect> {
-        let model = ___VARIABLE_productName___Model()
-        let effects = Set<___VARIABLE_productName___Effect>()
+    static func initiate(_ model: ___VARIABLE_productName___Model) -> First<___VARIABLE_productName___Model, ___VARIABLE_productName___Effect> {
+        let effects = [___VARIABLE_productName___Effect]()
         return First(model: model, effects: effects)
     }
 
