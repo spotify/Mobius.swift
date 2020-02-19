@@ -23,7 +23,7 @@ copyTemplates() {
 }
 
 printHelp() {
-    echo "Usage: $0 [--install remove]"
+    echo "Usage: $0 [--install --remove]"
 }
 
 if [[ $ARGUMENTS == *--remove* ]]; then

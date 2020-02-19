@@ -22,7 +22,7 @@ import Foundation
 /// Internal class that provides a 'publisher' for connectables; that is, something that you can post values to, and
 /// that will broadcast posted values to all connections. It also retains a current value, and will post that value to
 /// new connections.
-class ConnectablePublisher<Value>: Disposable {
+final class ConnectablePublisher<Value>: Disposable {
     private let access: ConcurrentAccessDetector
     private var connections = [UUID: Connection<Value>]()
     private var currentValue: Value?
