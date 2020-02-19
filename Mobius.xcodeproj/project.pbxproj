@@ -29,6 +29,7 @@
 		2D3A6973235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
 		2D3A6974235737430053C95E /* WorkBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A6972235737430053C95E /* WorkBag.swift */; };
 		2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69752359EAA00053C95E /* WorkBagTests.swift */; };
+		2D3EEB9623FADA9E006E478A /* AsyncStartStopStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */; };
 		2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */; };
 		2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */; };
 		2D896047238C150A00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */; };
@@ -270,6 +271,7 @@
 		2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentAccessDetector.swift; sourceTree = "<group>"; };
 		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
 		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
+		2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStartStopStateMachine.swift; sourceTree = "<group>"; };
 		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AsyncDispatchQueueConnectable.swift; path = ConnectableConvenienceClasses/AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
 		2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventRouterDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
 		2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHandlerDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
@@ -615,6 +617,7 @@
 				5B1F1038210F5E7D0067193C /* ConnectableConvenienceClasses */,
 				5BB287BC209995410043B530 /* Disposables */,
 				5B4A369821107D0E00279C7D /* EventSources */,
+				2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */,
 				2DC2C0A52350CEBE005FFFB2 /* BackwardsCompatibility.swift */,
 				5BB287C1209995410043B530 /* BrokenConnection.swift */,
 				5B237EB9209C4F3C00764576 /* Connectable.swift */,
@@ -1149,6 +1152,7 @@
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
 				02CAE47223C76F34009DFF9A /* EffectCallback.swift in Sources */,
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
+				2D3EEB9623FADA9E006E478A /* AsyncStartStopStateMachine.swift in Sources */,
 				2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,
 				02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */,

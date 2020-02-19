@@ -261,6 +261,12 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.start()
                         controller.stop()
+                        expect(errorThrown).to(beFalse())
+                    }
+                    it("should allow starting a stopping without a connected view") {
+                        controller.start()
+                        controller.stop()
+                        expect(errorThrown).to(beFalse())
                     }
                     it("should allow dispatching an event from the event source immediately") {
                         controller.connectView(view)
@@ -287,10 +293,6 @@ class MobiusControllerTests: QuickSpec {
                 }
                 #if arch(x86_64) || arch(arm64)
                 describe("error handling") {
-                    it("should not allow starting initially") {
-                        controller.start()
-                        expect(errorThrown).to(beTrue())
-                    }
                     it("should not allow starting a running controller") {
                         controller.connectView(view)
                         controller.start()
