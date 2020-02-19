@@ -20,7 +20,7 @@
 /// Helper to wrap initator functions with log calls.
 ///
 /// Also adds call stack annotation where we call into the client-provided initiator.
-class LoggingInitiate<Model, Effect> {
+final class LoggingInitiate<Model, Effect> {
     typealias Initiate = MobiusCore.Initiate<Model, Effect>
     typealias First = MobiusCore.First<Model, Effect>
 

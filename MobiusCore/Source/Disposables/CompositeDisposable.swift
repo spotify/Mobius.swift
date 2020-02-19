@@ -21,7 +21,7 @@ import Foundation
 
 /// A CompositeDisposable holds onto the provided disposables and disposes all of them once its `dispose` method is
 /// called.
-public class CompositeDisposable {
+public final class CompositeDisposable {
     private var disposables: [Disposable]
     private let lock = DispatchQueue(label: "Mobius.CompositeDisposable")
 

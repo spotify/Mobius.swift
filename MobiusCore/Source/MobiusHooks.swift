@@ -19,11 +19,11 @@
 
 import Foundation
 
-/// Adds a hook-in point for handling fatal errors when using Mobius. Fatal errors are
-/// programmer mistakes; incorrect usage of Mobius APIs. The default behaviour is to
-/// crash the application through invoking the `defaultErrorHandler` function defined in this
-/// class. If that is not the desired behaviour, you can override it through the `setErrorHandler`
-/// method.
+/// Adds a hook-in point for handling fatal errors when using Mobius. Fatal errors are programmer mistakes; incorrect
+/// usage of Mobius APIs.
+///
+/// The default behaviour is to crash the application through invoking the `defaultErrorHandler` function defined in
+/// this enum. If that is not the desired behaviour, you can override it through the `setErrorHandler` method.
 public enum MobiusHooks {
     public typealias ErrorHandler = (String, StaticString, UInt) -> Void
 
