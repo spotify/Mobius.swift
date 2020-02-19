@@ -74,20 +74,28 @@ public extension MobiusLogger {
 
 final class NoopLogger<Model, Event, Effect>: MobiusLogger {}
 
-/// Type-erased `MobiusLogger`.
+/// Type-erased wrapper for `MobiusLogger`s
 public final class AnyMobiusLogger<Model, Event, Effect>: MobiusLogger {
     private let willInitiateClosure: (Model) -> Void
     private let didInitiateClosure: (Model, First<Model, Effect>) -> Void
     private let willUpdateClosure: (Model, Event) -> Void
     private let didUpdateClosure: (Model, Event, Next<Model, Effect>) -> Void
 
+    /// Creates a type-erased `MobiusLogger` that wraps the given instance.
     public init<Logger: MobiusLogger>(
-        _ base: Logger
+        _ logger: Logger
     ) where Logger.Model == Model, Logger.Event == Event, Logger.Effect == Effect {
-        willInitiateClosure = base.willInitiate
-        didInitiateClosure = base.didInitiate
-        willUpdateClosure = base.willUpdate
-        didUpdateClosure = base.didUpdate
+        if let anyLogger = logger as? AnyMobiusLogger {
+            willInitiateClosure = anyLogger.willInitiateClosure
+            didInitiateClosure = anyLogger.didInitiateClosure
+            willUpdateClosure = anyLogger.willUpdateClosure
+            didUpdateClosure = anyLogger.didUpdateClosure
+        } else {
+            willInitiateClosure = logger.willInitiate
+            didInitiateClosure = logger.didInitiate
+            willUpdateClosure = logger.willUpdate
+            didUpdateClosure = logger.didUpdate
+        }
     }
 
     public func willInitiate(model: Model) {
