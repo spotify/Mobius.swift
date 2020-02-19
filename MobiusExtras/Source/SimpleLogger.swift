@@ -20,7 +20,7 @@
 import Foundation
 import MobiusCore
 
-public class SimpleLogger<Model, Event, Effect>: MobiusLogger {
+public final class SimpleLogger<Model, Event, Effect>: MobiusLogger {
     private let prefix: String
     private let consumer: Consumer<String>
 

@@ -50,12 +50,20 @@ public final class AnyConnectable<Input, Output>: Connectable {
 
     /// Creates a type-erased `Connectable` that wraps the given instance.
     public convenience init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
-        self.init(connectable.connect)
+        let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
+
+        if let anyConnectable = connectable as? AnyConnectable {
+            connectClosure = anyConnectable.connectClosure
+        } else {
+            connectClosure = connectable.connect
+        }
+
+        self.init(connectClosure)
     }
 
     /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.
-    public init(_ connectable: @escaping (@escaping Consumer<Output>) -> Connection<Input>) {
-        connectClosure = connectable
+    public init(_ connect: @escaping (@escaping Consumer<Output>) -> Connection<Input>) {
+        connectClosure = connect
     }
 
     public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {

@@ -27,6 +27,10 @@ public final class AnonymousDisposable: MobiusCore.Disposable {
 
     /// Creates a type-erased `AnonymousDisposable` that wraps the given instance.
     public convenience init<Disposable: MobiusCore.Disposable>(_ base: Disposable) {
+        // Note: This doesn’t use the thunk-avoiding pattern of the `Any...` wrappers, because it would break the
+        // single-disposal guarantee that `AnonymousDisposable` adds. This could be handled by making the contents of
+        // `dispose` a closure we set up in `init(disposer:)`, but that doesn’t seem motivated without evidence that
+        // recursive wrapping of `AnonymousDisposable` is a common thing.
         self.init(disposer: base.dispose)
     }
 

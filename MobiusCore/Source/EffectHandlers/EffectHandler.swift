@@ -48,23 +48,31 @@ public protocol EffectHandler {
 
 /// A type-erased wrapper of the `EffectHandler` protocol.
 public struct AnyEffectHandler<Effect, Event>: EffectHandler {
-    private let handler: (Effect, EffectCallback<Event>) -> Disposable
+    private let handleClosure: (Effect, EffectCallback<Event>) -> Disposable
 
     /// Creates an anonymous `EffectHandler` that implements `handle` with the provided closure.
     ///
     /// - Parameter handle: An effect handler `handle` function; see the documentation for `EffectHandler.handle`.
     public init(handle: @escaping (Effect, EffectCallback<Event>) -> Disposable) {
-        self.handler = handle
+        self.handleClosure = handle
     }
 
     /// Creates a type-erased `EffectHandler` that wraps the given instance.
     public init<Handler: EffectHandler>(
         handler: Handler
     ) where Handler.Effect == Effect, Handler.Event == Event {
-        self.init(handle: handler.handle)
+        let handleClosure: (Effect, EffectCallback<Event>) -> Disposable
+
+        if let anyHandler = handler as? AnyEffectHandler {
+            handleClosure = anyHandler.handleClosure
+        } else {
+            handleClosure = handler.handle
+        }
+
+        self.init(handle: handleClosure)
     }
 
     public func handle(_ input: Effect, _ callback: EffectCallback<Event>) -> Disposable {
-        return self.handler(input, callback)
+        return self.handleClosure(input, callback)
     }
 }
