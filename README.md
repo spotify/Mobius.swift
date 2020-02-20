@@ -17,7 +17,7 @@ This repository contains the core Mobius framework and add-ons for common develo
 | Environment | details     |
 | ----------- |-------------|
 | 📱 iOS      | 10.0+      |
-| 🛠 Xcode    | 10.1+       |
+| 🛠 Xcode    | 11.0+       |
 | 🐦 Language | Swift 5.0  |
 
 ## Installation
@@ -143,7 +143,7 @@ This covers the fundamentals of Mobius. To learn more, head on over to our [wiki
 
 ## Status
 
-Mobius.swift is in alpha status. We are beginning to use the framework internally and may still make breaking API changes. The abstractions for threading are the main thing we want to revisit before we feel confident in a 1.0 release. The core concepts of an `update` function with `Model`s, `Event`s, and `Effect`s are not going to change. Please note that this project may be combined with the [Mobius Java repository](https://github.com/spotify/mobius) in the near future.
+Mobius.swift is in nearing a 1.0 release. We use the framework internally in deployed features, but have recently made a number of breaking changes. The current master branch breaks compatibility with the previous 0.2.0 release and contains deprecated backwards-compatbility wrappers for some of the smaller changes. Once the current development phase is stabilized these deprecated versions will be removed, and that will be Mobius 1.0.
 
 ## Development
 1. Clone
