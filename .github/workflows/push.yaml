@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/cache@v1
       with:
         path: Carthage
@@ -25,7 +25,7 @@ jobs:
   spm:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - uses: actions/cache@v1
       with:
         path: .build
