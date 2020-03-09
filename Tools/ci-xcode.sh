@@ -27,7 +27,7 @@ do_carthage_bootstrap
 #
 # Build frameworks and libraries in release mode
 #
-heading "Building for Device"
+heading "Building for Device (Release)"
 xcb build \
   -scheme ZZZ_MOBIUS_ALL \
   -destination generic/platform=iOS \
@@ -35,7 +35,7 @@ xcb build \
   -derivedDataPath build/DD/Build || \
   fail "Build for Device Failed"
 
-heading "Building for Simulator"
+heading "Building for Simulator (Release)"
 xcb build \
   -scheme ZZZ_MOBIUS_ALL \
   -sdk iphonesimulator \
@@ -48,8 +48,13 @@ xcb build \
 #
 heading "Running Tests"
 
-SIM_DEVICE="iPhone 7"
-SIM_OS=`xcrun simctl list runtimes | grep iOS | awk '{print $2}' | tail -n 1`
+if ! sh -c 'xcrun simctl list devices | grep -q mobius-tester' ; then
+  echo "Creating mobius-tester device"
+  LATEST_RUNTIME=`xcrun simctl list runtimes | grep iOS | awk '{print $NF}' | tail -n 1`
+  xcrun simctl create "mobius-tester" \
+    "com.apple.CoreSimulator.SimDeviceType.iPhone-7" \
+    "$LATEST_RUNTIME" || fail "Failed to create simulator for testing"
+fi
 
 rm -rf build/TestBundle
 TEST_DERIVED_DATA_DIR="build/DD/Test"
@@ -60,7 +65,7 @@ xcb test \
   -enableCodeCoverage YES \
   -resultBundlePath build/TestBundle \
   -derivedDataPath "$TEST_DERIVED_DATA_DIR" \
-  -destination "platform=iOS Simulator,name=$SIM_DEVICE,OS=$SIM_OS" || \
+  -destination "platform=iOS Simulator,name=mobius-tester" || \
   fail "Test Run Failed"
 
 process_coverage -D "$TEST_DERIVED_DATA_DIR" -F ios
