@@ -152,6 +152,15 @@
 		5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB9346520D3CAA600A1FE3A /* EffectRouterBuilderTests.swift */; };
 		5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCF5F0020F3620700721C0D /* ConnectableClass.swift */; };
 		5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCF5F0220F3621900721C0D /* ConnectableClassTests.swift */; };
+		699F46422416D01700389BB3 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
+		699F46432416D01700389BB3 /* EffectRouterDSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */; };
+		699F46442416D01700389BB3 /* EffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectExecutor.swift */; };
+		699F46452416D01700389BB3 /* ThreadSafeConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */; };
+		699F46462416D01700389BB3 /* EffectCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CAE47123C76F34009DFF9A /* EffectCallback.swift */; };
+		699F46472416D01700389BB3 /* EnumRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755223D1E822008200AF /* EnumRoute.swift */; };
+		699F46482416D01700389BB3 /* AsyncStartStopStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */; };
+		699F46492416D01700389BB3 /* AsyncDispatchQueueConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */; };
+		699F464A2416D01700389BB3 /* LoggingAdaptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */; };
 		69C12F7B222F24EA00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7C222F25B400DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
@@ -1090,6 +1099,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				699F46422416D01700389BB3 /* EffectRouter.swift in Sources */,
+				699F46432416D01700389BB3 /* EffectRouterDSL.swift in Sources */,
+				699F46442416D01700389BB3 /* EffectExecutor.swift in Sources */,
+				699F46452416D01700389BB3 /* ThreadSafeConnectable.swift in Sources */,
+				699F46462416D01700389BB3 /* EffectCallback.swift in Sources */,
+				699F46472416D01700389BB3 /* EnumRoute.swift in Sources */,
+				699F46482416D01700389BB3 /* AsyncStartStopStateMachine.swift in Sources */,
+				699F46492416D01700389BB3 /* AsyncDispatchQueueConnectable.swift in Sources */,
+				699F464A2416D01700389BB3 /* LoggingAdaptors.swift in Sources */,
 				2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */,
 				2DF4C30120DBDD5800A4B6DE /* MobiusHooks.swift in Sources */,
 				2D3A6974235737430053C95E /* WorkBag.swift in Sources */,
