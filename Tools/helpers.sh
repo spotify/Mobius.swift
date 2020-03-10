@@ -78,7 +78,7 @@ process_coverage() {
   build/codecov.sh -X xcodellvm $CODECOV_EXTRA "$@"
 }
 
-if [[ -n "$TRAVIS_BUILD_ID" || -n "$GITHUB_WORKFLOW" ]]; then
+if [[ -n "$GITHUB_WORKFLOW" ]]; then
   echo "CI Detected"
   export IS_CI=1
 fi
