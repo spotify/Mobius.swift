@@ -7,7 +7,7 @@ source "$(dirname "$0")/helpers.sh"
 # We don't want to check it in otherwise Carthage also builds it needlessly.
 cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodeproj/xcshareddata/xcschemes"
 
-# Only install tools when running on travis
+# Only install tools when running in CI
 if [[ "$IS_CI" == "1" ]]; then
   heading "Installing Tools"
   brew install carthage
