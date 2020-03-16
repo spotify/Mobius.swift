@@ -43,9 +43,10 @@ playground.xcworkspace
 .swiftpm/
 
 # Carthage
-Carthage/Checkouts/*
+**/Carthage/Checkouts/*
 !Carthage/Checkouts/xcconfigs
-Carthage/Build
+**/Carthage/Build
+Tools/BuildSystemTests/MobiusCarthageTest/Cartfile.resolved
 
 # Codecov
 *.coverage.txt
