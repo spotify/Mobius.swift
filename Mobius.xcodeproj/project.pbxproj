@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		020415FD242226C0009EE9BB /* MobiusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020415FC242226C0009EE9BB /* MobiusViewController.swift */; };
 		0204160024222B8E009EE9BB /* MobiusViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020415FE24222A47009EE9BB /* MobiusViewControllerTests.swift */; };
+		0204160124223E38009EE9BB /* MobiusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020415FC242226C0009EE9BB /* MobiusViewController.swift */; };
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectExecutor.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
@@ -1154,6 +1155,7 @@
 				3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */,
 				2DF4C42420DBDF1B00A4B6DE /* SimpleLogger.swift in Sources */,
 				02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */,
+				0204160124223E38009EE9BB /* MobiusViewController.swift in Sources */,
 				5B1F104E21105CB10067193C /* EventSource+Extensions.swift in Sources */,
 				2D3A696D2355AED90053C95E /* Lock.swift in Sources */,
 			);
