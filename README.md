@@ -26,6 +26,8 @@ Mobius.swift supports most popular dependency managers. Choose your preferred me
 
 <details><summary>Swift Package Manager</summary>
 
+Mobius can be built for all Apple platforms using the Swift Package Manager.
+
 Add the following entry to your `Package.swift`:
 ```swift
 .package(url: "https://github.com/spotify/Mobius.swift.git", .upToNextMajor(from: "0.2.0"))
@@ -33,6 +35,8 @@ Add the following entry to your `Package.swift`:
 </details>
 
 <details><summary>CocoaPods</summary>
+
+Mobius can only be built for iOS using CocoaPods. For other platforms, please use Swift Package Manager.
 
 Add the following entry in your `Podfile`:
 ```ruby
@@ -48,6 +52,8 @@ pod 'MobiusTest', '0.2.0'
 </details>
 
 <details><summary>Carthage</summary>
+
+Mobius can only be built for iOS using Carthage. For other platforms, please use Swift Package Manager.
 
 Add the following entry in your `Cartfile`:
 ```
