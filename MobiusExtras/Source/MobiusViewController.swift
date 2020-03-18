@@ -55,23 +55,24 @@ public extension UIViewController {
 
 private class MobiusHolder<Model, Event, Effect>: UIViewController {
     private let controller: MobiusController<Model, Event, Effect>
-    private let weakConnectableDelegate: WeakConnectableDelegate<Model>
-    private let weakConnectable: WeakConnectable<Model, Event>
+    // swiftlint:disable weak_delegate
+    private let connectableDelegate: WeakConnectableDelegate<Model>
+    private let connectable: WeakConnectable<Model, Event>
 
     init(
         controller: MobiusController<Model, Event, Effect>,
         onModelChange: @escaping (Model) -> Void
     ) {
         self.controller = controller
-        self.weakConnectable = WeakConnectable()
-        self.weakConnectableDelegate = WeakConnectableDelegate<Model>(
+        self.connectable = WeakConnectable()
+        self.connectableDelegate = WeakConnectableDelegate<Model>(
             onModelChange: { model in
                 onModelChange(model)
             }
         )
-        self.weakConnectable.delegate = self.weakConnectableDelegate
+        self.connectable.delegate = self.connectableDelegate
         super.init(nibName: nil, bundle: nil)
-        controller.connectView(weakConnectable)
+        controller.connectView(connectable)
         controller.start()
     }
 
@@ -80,7 +81,7 @@ private class MobiusHolder<Model, Event, Effect>: UIViewController {
     }
 
     func handleEvent(_ event: Event) {
-        weakConnectable.send(event)
+        connectable.send(event)
     }
 
     deinit {

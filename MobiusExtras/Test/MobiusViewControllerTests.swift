@@ -40,7 +40,7 @@ final class MobiusViewControllerTests: QuickSpec {
                 expect(viewController.controller.running).to(beFalse())
                 expect(viewController.children.count).to(equal(0))
             }
- 
+
             it("forwards model changes to `onModelChange`") {
                 var model = ""
                 let viewController = ViewController(onModelChange: { newModel in
