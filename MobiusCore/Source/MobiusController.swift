@@ -156,7 +156,7 @@ public final class MobiusController<Model, Event, Effect> {
         do {
             try state.mutate { stoppedState in
                 guard stoppedState.viewConnectable == nil else {
-                    throw Error.message("\(Self.debugTag): only one view may be connected at a time")
+                    throw ErrorMessage(message: "\(Self.debugTag): only one view may be connected at a time")
                 }
 
                 stoppedState.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
@@ -180,7 +180,7 @@ public final class MobiusController<Model, Event, Effect> {
         do {
             try state.mutate { stoppedState in
                 guard stoppedState.viewConnectable != nil else {
-                    throw Error.message("\(Self.debugTag): no view connected, cannot disconnect")
+                    throw ErrorMessage(message: "\(Self.debugTag): no view connected, cannot disconnect")
                 }
 
                 stoppedState.viewConnectable = nil
@@ -293,17 +293,14 @@ public final class MobiusController<Model, Event, Effect> {
     }
 
     /// Simple error that just carries an error message out of a closure for us
-    private enum Error: Swift.Error {
-        case message(String)
+    private struct ErrorMessage: Error {
+        let message: String
     }
 
-    /// If `error` is an `Error.message`, return its payload; otherwise, return the provided default message.
+    /// If `error` is an `ErrorMessage`, return its payload; otherwise, return the provided default message.
     private func errorMessage(_ error: Swift.Error, default defaultMessage: String) -> String {
-        if let myError = error as? Error {
-            switch myError {
-            case .message(let content):
-                return content
-            }
+        if let errorMessage = error as? ErrorMessage {
+            return errorMessage.message
         } else {
             return defaultMessage
         }
