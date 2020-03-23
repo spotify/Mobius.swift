@@ -23,6 +23,9 @@
 		02D6755723D20507008200AF /* EnumRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D6755423D2049E008200AF /* EnumRouteTests.swift */; };
 		2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */; };
 		2D24D15323FAE746005D175E /* AnonymousDisposableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */; };
+		2D25B99924337B0E0077FB07 /* TestingErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D25B99824337B0E0077FB07 /* TestingErrorHandler.swift */; };
+		2D25B9AE24337C690077FB07 /* libMobiusThrowableAssertion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D25B99E24337BCC0077FB07 /* libMobiusThrowableAssertion.a */; };
+		2D25B9B124337C720077FB07 /* libMobiusThrowableAssertion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D25B99E24337BCC0077FB07 /* libMobiusThrowableAssertion.a */; };
 		2D3A69662354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A69672354AC820053C95E /* ConcurrentAccessDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */; };
 		2D3A696D2355AED90053C95E /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
@@ -32,6 +35,9 @@
 		2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A69752359EAA00053C95E /* WorkBagTests.swift */; };
 		2D3EEB9623FADA9E006E478A /* AsyncStartStopStateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */; };
 		2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */; };
+		2D405B7624337E5600A39BD4 /* MobiusThrowableAssertion.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D25B9AB24337C580077FB07 /* MobiusThrowableAssertion.m */; };
+		2D405B7824337E9F00A39BD4 /* MobiusThrowableAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25B9AA24337C580077FB07 /* MobiusThrowableAssertion.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2D405B7924337EAB00A39BD4 /* module.modulemap in Headers */ = {isa = PBXBuildFile; fileRef = 2D25B9A724337C580077FB07 /* module.modulemap */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D587360238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */; };
 		2D896047238C150A00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D896045238C14DF00BBC372 /* EventHandlerDisposalLogicalRaceRegressionTest.swift */; };
 		2DA9A41E23FAEA4800BF5534 /* AnyEffectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DA9A41D23FAEA4800BF5534 /* AnyEffectHandlerTests.swift */; };
@@ -179,6 +185,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2D25B9AC24337C650077FB07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D25B99D24337BCC0077FB07;
+			remoteInfo = MobiusThrowableAssertion;
+		};
+		2D25B9AF24337C700077FB07 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D25B99D24337BCC0077FB07;
+			remoteInfo = MobiusThrowableAssertion;
+		};
 		2DF4C53B20DBE08E00A4B6DE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 2D9A2FAC205C06FA00B1A332 /* Project object */;
@@ -265,6 +285,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2D25B99C24337BCC0077FB07 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		02C4061C2373078400BD7ED8 /* EffectExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectExecutor.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
@@ -280,6 +312,11 @@
 		02D6755423D2049E008200AF /* EnumRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumRouteTests.swift; sourceTree = "<group>"; };
 		2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingAdaptors.swift; sourceTree = "<group>"; };
 		2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymousDisposableTests.swift; sourceTree = "<group>"; };
+		2D25B99824337B0E0077FB07 /* TestingErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingErrorHandler.swift; sourceTree = "<group>"; };
+		2D25B99E24337BCC0077FB07 /* libMobiusThrowableAssertion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusThrowableAssertion.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D25B9A724337C580077FB07 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		2D25B9AA24337C580077FB07 /* MobiusThrowableAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MobiusThrowableAssertion.h; sourceTree = "<group>"; };
+		2D25B9AB24337C580077FB07 /* MobiusThrowableAssertion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MobiusThrowableAssertion.m; sourceTree = "<group>"; };
 		2D3A69652354AC820053C95E /* ConcurrentAccessDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentAccessDetector.swift; sourceTree = "<group>"; };
 		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
 		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
@@ -391,10 +428,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2D25B99B24337BCC0077FB07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B3AA33820975248003F35C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D25B9AE24337C690077FB07 /* libMobiusThrowableAssertion.a in Frameworks */,
 				5BB28845209997BF0043B530 /* Quick.framework in Frameworks */,
 				5B3AA3C120975635003F35C3 /* Nimble.framework in Frameworks */,
 				5B3AA3C5209757AC003F35C3 /* Foundation.framework in Frameworks */,
@@ -455,6 +500,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D25B9B124337C720077FB07 /* libMobiusThrowableAssertion.a in Frameworks */,
 				69C12F7C222F25B400DC4F9E /* MobiusCore.framework in Frameworks */,
 				DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */,
 				DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */,
@@ -493,6 +539,32 @@
 			path = EffectHandlers;
 			sourceTree = "<group>";
 		};
+		2D25B99F24337BCC0077FB07 /* MobiusThrowableAssertion */ = {
+			isa = PBXGroup;
+			children = (
+				2D25B9A824337C580077FB07 /* Source */,
+			);
+			path = MobiusThrowableAssertion;
+			sourceTree = "<group>";
+		};
+		2D25B9A824337C580077FB07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				2D25B9A924337C580077FB07 /* include */,
+				2D25B9AB24337C580077FB07 /* MobiusThrowableAssertion.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		2D25B9A924337C580077FB07 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				2D25B9A724337C580077FB07 /* module.modulemap */,
+				2D25B9AA24337C580077FB07 /* MobiusThrowableAssertion.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		2D9A2FAB205C06FA00B1A332 = {
 			isa = PBXGroup;
 			children = (
@@ -500,6 +572,7 @@
 				5BB287E3209995420043B530 /* MobiusExtras */,
 				5BB2888B20999B2E0043B530 /* MobiusTest */,
 				5B80EDD02125A18800F87129 /* MobiusNimble */,
+				2D25B99F24337BCC0077FB07 /* MobiusThrowableAssertion */,
 				DDC7035820A0A30800DBD519 /* Build System */,
 				5B3AA33320975248003F35C3 /* Products */,
 				5B3AA3B820975510003F35C3 /* Frameworks */,
@@ -542,6 +615,7 @@
 				5B80EDCF2125A18800F87129 /* MobiusNimble.framework */,
 				5B80EDD72125A18800F87129 /* MobiusNimbleTests.xctest */,
 				5B80EDF52125A32200F87129 /* libMobiusNimble.a */,
+				2D25B99E24337BCC0077FB07 /* libMobiusThrowableAssertion.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -729,6 +803,7 @@
 				5BB2885820999ACE0043B530 /* MobiusLoopTests.swift */,
 				5BB2885420999ACE0043B530 /* NextTests.swift */,
 				2DB61AFC23A8F485009E55DB /* NonReentrancyTests.swift */,
+				2D25B99824337B0E0077FB07 /* TestingErrorHandler.swift */,
 				5BB2884D20999ACE0043B530 /* TestingUtil.swift */,
 				2D3A69752359EAA00053C95E /* WorkBagTests.swift */,
 			);
@@ -804,7 +879,37 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		2D405B7724337E9A00A39BD4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D405B7824337E9F00A39BD4 /* MobiusThrowableAssertion.h in Headers */,
+				2D405B7924337EAB00A39BD4 /* module.modulemap in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		2D25B99D24337BCC0077FB07 /* MobiusThrowableAssertion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D25B9A624337BCC0077FB07 /* Build configuration list for PBXNativeTarget "MobiusThrowableAssertion" */;
+			buildPhases = (
+				2D405B7724337E9A00A39BD4 /* Headers */,
+				2D25B99A24337BCC0077FB07 /* Sources */,
+				2D25B99B24337BCC0077FB07 /* Frameworks */,
+				2D25B99C24337BCC0077FB07 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MobiusThrowableAssertion;
+			productName = MobiusThrowableAssertion;
+			productReference = 2D25B99E24337BCC0077FB07 /* libMobiusThrowableAssertion.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		2DF4C2F420DBDD4700A4B6DE /* MobiusCore-static-ios */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DF4C2FB20DBDD4700A4B6DE /* Build configuration list for PBXNativeTarget "MobiusCore-static-ios" */;
@@ -877,6 +982,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D25B9AD24337C650077FB07 /* PBXTargetDependency */,
 				5B3AA33E20975248003F35C3 /* PBXTargetDependency */,
 			);
 			name = MobiusCoreTests;
@@ -997,6 +1103,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D25B9B024337C700077FB07 /* PBXTargetDependency */,
 				DD710DD720A0BD240047A7EC /* PBXTargetDependency */,
 			);
 			name = MobiusExtrasTests;
@@ -1013,6 +1120,10 @@
 				LastSwiftUpdateCheck = 0940;
 				LastUpgradeCheck = 0940;
 				TargetAttributes = {
+					2D25B99D24337BCC0077FB07 = {
+						CreatedOnToolsVersion = 11.4;
+						ProvisioningStyle = Automatic;
+					};
 					2DF4C2F420DBDD4700A4B6DE = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Automatic;
@@ -1090,11 +1201,20 @@
 				5B80EDCE2125A18800F87129 /* MobiusNimble */,
 				5B80EDF42125A32200F87129 /* MobiusNimble-static-ios */,
 				5B80EDD62125A18800F87129 /* MobiusNimbleTests */,
+				2D25B99D24337BCC0077FB07 /* MobiusThrowableAssertion */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2D25B99A24337BCC0077FB07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D405B7624337E5600A39BD4 /* MobiusThrowableAssertion.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DF4C2F120DBDD4700A4B6DE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1240,6 +1360,7 @@
 				2DA9A41E23FAEA4800BF5534 /* AnyEffectHandlerTests.swift in Sources */,
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
 				5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */,
+				2D25B99924337B0E0077FB07 /* TestingErrorHandler.swift in Sources */,
 				5BB9346620D3CAA600A1FE3A /* EffectRouterBuilderTests.swift in Sources */,
 				02CAE47423C76FA3009DFF9A /* CallbackTests.swift in Sources */,
 				5BB2887920999AD60043B530 /* CompositeDisposableTests.swift in Sources */,
@@ -1328,6 +1449,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2D25B9AD24337C650077FB07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D25B99D24337BCC0077FB07 /* MobiusThrowableAssertion */;
+			targetProxy = 2D25B9AC24337C650077FB07 /* PBXContainerItemProxy */;
+		};
+		2D25B9B024337C700077FB07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D25B99D24337BCC0077FB07 /* MobiusThrowableAssertion */;
+			targetProxy = 2D25B9AF24337C700077FB07 /* PBXContainerItemProxy */;
+		};
 		2DF4C53C20DBE08E00A4B6DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2DF4C2F420DBDD4700A4B6DE /* MobiusCore-static-ios */;
@@ -1391,6 +1522,128 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		2D25B9A424337BCC0077FB07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2FNC3A47ZF;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MODULEMAP_FILE = MobiusThrowableAssertion/Source/module.modulemap;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2D25B9A524337BCC0077FB07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 2FNC3A47ZF;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				MODULEMAP_FILE = MobiusThrowableAssertion/Source/module.modulemap;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRIVATE_HEADERS_FOLDER_PATH = include;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		2D9A2FB0205C06FB00B1A332 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F76222F223700DC4F9E /* Debug.xcconfig */;
@@ -1800,6 +2053,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2D25B9A624337BCC0077FB07 /* Build configuration list for PBXNativeTarget "MobiusThrowableAssertion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D25B9A424337BCC0077FB07 /* Debug */,
+				2D25B9A524337BCC0077FB07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		2D9A2FAF205C06FA00B1A332 /* Build configuration list for PBXProject "Mobius" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

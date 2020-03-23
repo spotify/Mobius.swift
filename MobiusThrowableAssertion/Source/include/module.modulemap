@@ -1,0 +1,4 @@
+module MobiusThrowableAssertion {
+    header "MobiusThrowableAssertion.h"
+    export *
+}

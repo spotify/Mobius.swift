@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -50,17 +50,11 @@ class EventHandlerDisposalLogicalRaceRegressionTest: QuickSpec {
         describe("Effect Handler connection") {
             var controller: MobiusController<Model, Event, Effect>!
             var effectHandler: EffectHandler!
-            var errorThrown: Bool!
             var eventSource: TestEventSource!
 
             beforeEach {
                 effectHandler = EffectHandler()
                 eventSource = TestEventSource()
-
-                errorThrown = false
-                MobiusHooks.setErrorHandler({ _, _, _ in
-                    errorThrown = true
-                })
 
                 let update = Update<Model, Event, Effect> { _, _ in
                     .dispatchEffects([.effect1])
@@ -73,15 +67,10 @@ class EventHandlerDisposalLogicalRaceRegressionTest: QuickSpec {
                 controller.connectView(ActionConnectable {})
             }
 
-            afterEach {
-                MobiusHooks.setDefaultErrorHandler()
-            }
-
             it("allows stopping a loop immediately after dispatching an event") {
                 controller.start()
                 eventSource.dispatchEvent(.event1)
                 controller.stop()
-                expect(errorThrown).to(beFalse())
             }
         }
     }
