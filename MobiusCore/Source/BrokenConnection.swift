@@ -25,11 +25,11 @@ import Foundation
 /// connection will trigger an assertion whenever its `accept` or `dispose` methods are called.
 public enum BrokenConnection<Value> {
     static func _accept(_ value: Value) {
-        MobiusHooks.onError("'accept' called on invalid connection")
+        MobiusHooks.errorHandler("'accept' called on invalid connection of \(Value.self)", #file, #line)
     }
 
     static func _dispose() {
-        MobiusHooks.onError("'dispose' called on invalid connection")
+        MobiusHooks.errorHandler("'dispose' called on invalid connection of \(Value.self)", #file, #line)
     }
 
     /// Construct a broken connection.

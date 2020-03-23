@@ -142,9 +142,11 @@ private func compose<Input, Output>(
                 if let handleEffect = handlers.first, handlers.count == 1 {
                     handleEffect()
                 } else {
-                    MobiusHooks.onError(
+                    MobiusHooks.errorHandler(
                         "Error: \(handlers.count) EffectHandlers could be found for effect: \(effect). " +
-                        "Exactly 1 is required."
+                        "Exactly 1 is required.",
+                        #file,
+                        #line
                     )
                 }
             },

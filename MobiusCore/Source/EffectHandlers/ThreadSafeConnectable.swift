@@ -33,9 +33,11 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     func connect(_ output: @escaping (Event) -> Void) -> Connection<Effect> {
         return lock.synchronized {
             guard self.output == nil, connection == nil else {
-                MobiusHooks.onError(
+                MobiusHooks.errorHandler(
                     "Connection limit exceeded: The Connectable \(type(of: self)) is already connected. " +
-                    "Unable to connect more than once"
+                    "Unable to connect more than once",
+                    #file,
+                    #line
                 )
                 return BrokenConnection.connection()
             }
