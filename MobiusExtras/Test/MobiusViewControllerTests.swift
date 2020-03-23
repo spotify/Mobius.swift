@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#if canImport(UIKit)
+
 import Foundation
 import MobiusCore
 import MobiusExtras
@@ -86,3 +88,4 @@ private class ViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 }
+#endif

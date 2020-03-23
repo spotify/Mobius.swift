@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+#if canImport(UIKit)
+
 import MobiusCore
 import UIKit
 
@@ -112,3 +114,5 @@ private final class WeakConnectableDelegate<Model> {
         self.onModelChange = onModelChange
     }
 }
+
+#endif
