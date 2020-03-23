@@ -1,0 +1,269 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2D3500B8241FAC0E00FEF0C7 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3500B4241FAC0E00FEF0C7 /* MobiusCore.framework */; };
+		2D3500B9241FAC0E00FEF0C7 /* MobiusExtras.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3500B5241FAC0E00FEF0C7 /* MobiusExtras.framework */; };
+		2D3500BA241FAC0E00FEF0C7 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3500B6241FAC0E00FEF0C7 /* MobiusTest.framework */; };
+		2D3500BD241FAC9700FEF0C7 /* MobiusNimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3500B3241FAC0E00FEF0C7 /* MobiusNimble.framework */; };
+		2D3500BE241FAC9B00FEF0C7 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D3500BB241FAC3D00FEF0C7 /* Nimble.framework */; };
+		2D35A2D4241F8FE400C344AC /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D35A2B7241F8C2700C344AC /* Test.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2D35A2DB241F8FE400C344AC /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		2D3500B3241FAC0E00FEF0C7 /* MobiusNimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobiusNimble.framework; path = Carthage/Build/iOS/MobiusNimble.framework; sourceTree = "<group>"; };
+		2D3500B4241FAC0E00FEF0C7 /* MobiusCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobiusCore.framework; path = Carthage/Build/iOS/MobiusCore.framework; sourceTree = "<group>"; };
+		2D3500B5241FAC0E00FEF0C7 /* MobiusExtras.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobiusExtras.framework; path = Carthage/Build/iOS/MobiusExtras.framework; sourceTree = "<group>"; };
+		2D3500B6241FAC0E00FEF0C7 /* MobiusTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobiusTest.framework; path = Carthage/Build/iOS/MobiusTest.framework; sourceTree = "<group>"; };
+		2D3500BB241FAC3D00FEF0C7 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		2D35A2B7241F8C2700C344AC /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		2D35A2DF241F8FE400C344AC /* libMobiusCarthageTest_iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusCarthageTest_iOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2D35A2D5241F8FE400C344AC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D3500BE241FAC9B00FEF0C7 /* Nimble.framework in Frameworks */,
+				2D3500BD241FAC9700FEF0C7 /* MobiusNimble.framework in Frameworks */,
+				2D3500B9241FAC0E00FEF0C7 /* MobiusExtras.framework in Frameworks */,
+				2D3500B8241FAC0E00FEF0C7 /* MobiusCore.framework in Frameworks */,
+				2D3500BA241FAC0E00FEF0C7 /* MobiusTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2D3500AF241FABCB00FEF0C7 /* Carthage Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2D3500B0241FABDC00FEF0C7 /* iOS */,
+			);
+			name = "Carthage Frameworks";
+			sourceTree = "<group>";
+		};
+		2D3500B0241FABDC00FEF0C7 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				2D3500B4241FAC0E00FEF0C7 /* MobiusCore.framework */,
+				2D3500B5241FAC0E00FEF0C7 /* MobiusExtras.framework */,
+				2D3500B3241FAC0E00FEF0C7 /* MobiusNimble.framework */,
+				2D3500B6241FAC0E00FEF0C7 /* MobiusTest.framework */,
+				2D3500BB241FAC3D00FEF0C7 /* Nimble.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		2D35A2AB241F8C2700C344AC = {
+			isa = PBXGroup;
+			children = (
+				2D3500AF241FABCB00FEF0C7 /* Carthage Frameworks */,
+				2D35A2B6241F8C2700C344AC /* SharedSource */,
+				2D35A2B5241F8C2700C344AC /* Products */,
+				2D35A2C3241F8CFD00C344AC /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2D35A2B5241F8C2700C344AC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D35A2DF241F8FE400C344AC /* libMobiusCarthageTest_iOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2D35A2B6241F8C2700C344AC /* SharedSource */ = {
+			isa = PBXGroup;
+			children = (
+				2D35A2B7241F8C2700C344AC /* Test.swift */,
+			);
+			name = SharedSource;
+			path = ../SharedSource;
+			sourceTree = "<group>";
+		};
+		2D35A2C3241F8CFD00C344AC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2D35A2CB241F8FE400C344AC /* MobiusCarthageTest_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D35A2DC241F8FE400C344AC /* Build configuration list for PBXNativeTarget "MobiusCarthageTest_iOS" */;
+			buildPhases = (
+				2D35A2D3241F8FE400C344AC /* Sources */,
+				2D35A2D5241F8FE400C344AC /* Frameworks */,
+				2D35A2DB241F8FE400C344AC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MobiusCarthageTest_iOS;
+			productName = MobiusCarthageTest;
+			productReference = 2D35A2DF241F8FE400C344AC /* libMobiusCarthageTest_iOS.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2D35A2AC241F8C2700C344AC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1140;
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = Spotify;
+			};
+			buildConfigurationList = 2D35A2AF241F8C2700C344AC /* Build configuration list for PBXProject "MobiusCarthageTest" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2D35A2AB241F8C2700C344AC;
+			productRefGroup = 2D35A2B5241F8C2700C344AC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2D35A2CB241F8FE400C344AC /* MobiusCarthageTest_iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2D35A2D3241F8FE400C344AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D35A2D4241F8FE400C344AC /* Test.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2D35A2B9241F8C2700C344AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Debug;
+		};
+		2D35A2BA241F8C2700C344AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TVOS_DEPLOYMENT_TARGET = 10.0;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+			};
+			name = Release;
+		};
+		2D35A2DD241F8FE400C344AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2FNC3A47ZF;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2D35A2DE241F8FE400C344AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2FNC3A47ZF;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D35A2AF241F8C2700C344AC /* Build configuration list for PBXProject "MobiusCarthageTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D35A2B9241F8C2700C344AC /* Debug */,
+				2D35A2BA241F8C2700C344AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D35A2DC241F8FE400C344AC /* Build configuration list for PBXNativeTarget "MobiusCarthageTest_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D35A2DD241F8FE400C344AC /* Debug */,
+				2D35A2DE241F8FE400C344AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2D35A2AC241F8C2700C344AC /* Project object */;
+}
