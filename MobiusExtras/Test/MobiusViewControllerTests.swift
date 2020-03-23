@@ -30,7 +30,15 @@ final class MobiusViewControllerTests: QuickSpec {
                 let viewController = ViewController(onModelChange: { _ in })
 
                 expect(viewController.controller.running).to(beTrue())
-                expect(viewController.children.count).to(equal(1))
+            }
+
+            it("stops the Mobius Controller when the View Controller is deinitialized") {
+                var viewController: ViewController? = ViewController(onModelChange: { _ in })
+                let controller = viewController!.controller
+
+                viewController = nil
+
+                expect(controller.running).to(beFalse())
             }
 
             it("stops the Mobius Controller when the View Controller's connection is disposed") {

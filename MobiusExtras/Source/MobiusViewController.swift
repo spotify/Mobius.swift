@@ -29,9 +29,6 @@ public extension UIViewController {
     /// Note: You should not be calling `start`, `connectView`, `stop`, or `disconnectView` on the `MobiusController`
     /// when using this extension.
     ///
-    /// Note: The `MobiusController` will be placed in a `UIViewController` and added as a child `UIViewController` to
-    ///  this `UIViewController`.
-    ///
     /// - Parameter controller: The `MobiusController` that shuold be attached
     /// - Parameter onModelChange: A closure which is called whenever the loop's model changes.
     func useMobius<Model, Event, Effect>(
@@ -39,21 +36,26 @@ public extension UIViewController {
         modelChanged onModelChange: @escaping (Model) -> Void
     ) -> Connection<Event> {
         let holder = MobiusHolder(controller: controller, onModelChange: onModelChange)
-        addChild(holder)
-        holder.didMove(toParent: self)
+
+        objc_setAssociatedObject(
+            self,
+            .init("Mobius-Controller-Holder-Key"),
+            holder,
+            .OBJC_ASSOCIATION_RETAIN
+        )
+
         return Connection(
             acceptClosure: { [unowned holder] event in
                 holder.handleEvent(event)
             },
             disposeClosure: { [unowned holder] in
-                holder.willMove(toParent: nil)
-                holder.removeFromParent()
+                holder.dispose()
             }
         )
     }
 }
 
-private class MobiusHolder<Model, Event, Effect>: UIViewController {
+private final class MobiusHolder<Model, Event, Effect> {
     private let controller: MobiusController<Model, Event, Effect>
     // swiftlint:disable weak_delegate
     private let connectableDelegate: WeakConnectableDelegate<Model>
@@ -71,24 +73,23 @@ private class MobiusHolder<Model, Event, Effect>: UIViewController {
             }
         )
         self.connectable.delegate = self.connectableDelegate
-        super.init(nibName: nil, bundle: nil)
         controller.connectView(connectable)
         controller.start()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     func handleEvent(_ event: Event) {
         connectable.send(event)
     }
 
-    deinit {
+    func dispose() {
         if controller.running {
             controller.stop()
             controller.disconnectView()
         }
+    }
+
+    deinit {
+        dispose()
     }
 }
 
