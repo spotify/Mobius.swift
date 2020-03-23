@@ -27,7 +27,9 @@ import Foundation
 public enum MobiusHooks {
     public typealias ErrorHandler = (String, StaticString, UInt) -> Void
 
-    private static var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
+    /// Internal: we prefer to call `errorHandler` directly, without abstractions, to minimize the depth of crash
+    /// stack traces. This requires that `#file` and `#line` are passed explicitly.
+    static private(set) var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
 
     public static func setErrorHandler(_ newErrorHandler: @escaping ErrorHandler) {
         errorHandler = newErrorHandler
@@ -35,10 +37,6 @@ public enum MobiusHooks {
 
     public static func setDefaultErrorHandler() {
         errorHandler = defaultErrorHandler
-    }
-
-    static func onError(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
-        errorHandler(message, file, line)
     }
 
     public static func defaultErrorHandler(_ message: String = "", file: StaticString = #file, line: UInt = #line) {

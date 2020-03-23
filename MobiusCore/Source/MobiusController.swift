@@ -107,7 +107,7 @@ public final class MobiusController<Model, Event, Effect> {
         func flipEventsToLoopQueue(consumer: @escaping Consumer<Event>) -> Consumer<Event> {
             return { event in
                 guard state.running else {
-                    MobiusHooks.onError("cannot accept events when stopped")
+                    MobiusHooks.errorHandler("\(Self.debugTag): cannot accept events when stopped", #file, #line)
                     return
                 }
 
@@ -148,38 +148,49 @@ public final class MobiusController<Model, Event, Effect> {
     /// The view should also return a `Connection` that accepts models and renders them. Disposing the connection should
     /// make the view stop emitting events.
     ///
-    /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if the controller already is connected
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if the controller already is
+    ///              connected
     public func connectView<ViewConnectable: Connectable>(
         _ connectable: ViewConnectable
     ) where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
-        state.mutateIfStopped(elseError: "cannot connect to a running controller") { state in
-            guard state.viewConnectable == nil else {
-                MobiusHooks.onError("controller only supports connecting one view")
-                return
-            }
+        do {
+            try state.mutate { stoppedState in
+                guard stoppedState.viewConnectable == nil else {
+                    throw ErrorMessage(message: "\(Self.debugTag): only one view may be connected at a time")
+                }
 
-            state.viewConnectable = AsyncDispatchQueueConnectable(
-                connectable,
-                acceptQueue: viewQueue
-            )
-        }
+                stoppedState.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
+            }
+        } catch {
+           MobiusHooks.errorHandler(
+               errorMessage(error, default: "\(Self.debugTag): cannot connect a view while running"),
+               #file,
+               #line
+           )
+       }
     }
 
     /// Disconnect the connected view from this controller.
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
-    /// - Attention: fails via `MobiusHooks.onError` if the loop is running or if there isn't anything to disconnect
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if there isn't anything to
+    /// disconnect
     public func disconnectView() {
-        state.mutateIfStopped(
-            elseError: "cannot disconnect from a running controller; call stop first"
-        ) { stoppedState in
-            guard stoppedState.viewConnectable != nil else {
-                MobiusHooks.onError("not connected, cannot disconnect view from controller")
-                return
-            }
+        do {
+            try state.mutate { stoppedState in
+                guard stoppedState.viewConnectable != nil else {
+                    throw ErrorMessage(message: "\(Self.debugTag): no view connected, cannot disconnect")
+                }
 
-            stoppedState.viewConnectable = nil
+                stoppedState.viewConnectable = nil
+            }
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot disconnect view while running; call stop first"),
+                #file,
+                #line
+            )
         }
     }
 
@@ -187,25 +198,33 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
-    /// - Attention: fails via `MobiusHooks.onError` if the loop already is running.
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop already is running.
     public func start() {
-        state.transitionToRunning(elseError: "cannot start a running controller") { stoppedState in
-            let loop = loopFactory(stoppedState.modelToStartFrom)
+        do {
+            try state.transitionToRunning { stoppedState in
+                let loop = loopFactory(stoppedState.modelToStartFrom)
 
-            var disposables: [Disposable] = [loop]
+                var disposables: [Disposable] = [loop]
 
-            if let viewConnectable = stoppedState.viewConnectable {
-                // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
-                // that “unguarded” refers to, and also (of course) flips to the loop queue.
-                let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
-                loop.addObserver(viewConnection.accept)
-                disposables.append(viewConnection)
+                if let viewConnectable = stoppedState.viewConnectable {
+                    // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
+                    // that “unguarded” refers to, and also (of course) flips to the loop queue.
+                    let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
+                    loop.addObserver(viewConnection.accept)
+                    disposables.append(viewConnection)
+                }
+
+                return RunningState(
+                    loop: loop,
+                    viewConnectable: stoppedState.viewConnectable,
+                    disposables: CompositeDisposable(disposables: disposables)
+                )
             }
-
-            return RunningState(
-                loop: loop,
-                viewConnectable: stoppedState.viewConnectable,
-                disposables: CompositeDisposable(disposables: disposables)
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot start a while already running"),
+                #file,
+                #line
             )
         }
     }
@@ -218,14 +237,22 @@ public final class MobiusController<Model, Event, Effect> {
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     /// To stop the loop as an effect, dispatch to a different queue.
     ///
-    /// - Attention: fails via `MobiusHooks.onError` if the loop isn't running
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop isn't running
     public func stop() {
-        state.transitionToStopped(elseError: "cannot stop a controller that isn't running") { runningState in
-            let model = runningState.loop.latestModel
+        do {
+            try state.transitionToStopped { runningState in
+                let model = runningState.loop.latestModel
 
-            runningState.disposables.dispose()
+                runningState.disposables.dispose()
 
-            return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
+                return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
+            }
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot stop a controller while not running"),
+                #file,
+                #line
+            )
         }
     }
 
@@ -234,10 +261,18 @@ public final class MobiusController<Model, Event, Effect> {
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Parameter model: the model with the state the controller should start from
-    /// - Attention: fails via `MobiusHooks.onError` if the loop is running
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running
     public func replaceModel(_ model: Model) {
-        state.mutateIfStopped(elseError: "cannot replace the model of a running loop") { state in
-            state.modelToStartFrom = model
+        do {
+            try state.mutate { stoppedState in
+                stoppedState.modelToStartFrom = model
+            }
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot replace model while running"),
+                #file,
+                #line
+            )
         }
     }
 
@@ -255,5 +290,23 @@ public final class MobiusController<Model, Event, Effect> {
                 return state.loop.latestModel
             }
         }
+    }
+
+    /// Simple error that just carries an error message out of a closure for us
+    private struct ErrorMessage: Error {
+        let message: String
+    }
+
+    /// If `error` is an `ErrorMessage`, return its payload; otherwise, return the provided default message.
+    private func errorMessage(_ error: Swift.Error, default defaultMessage: String) -> String {
+        if let errorMessage = error as? ErrorMessage {
+            return errorMessage.message
+        } else {
+            return defaultMessage
+        }
+    }
+
+    private static var debugTag: String {
+        return "MobiusController<\(Model.self), \(Event.self), \(Effect.self)>"
     }
 }
