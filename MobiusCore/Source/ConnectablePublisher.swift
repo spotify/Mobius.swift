@@ -40,7 +40,7 @@ final class ConnectablePublisher<Value>: Disposable {
         let connections: [Connection<Value>] = access.guard {
             guard !disposed else {
                 // Callers are responsible for ensuring post is never entered after dispose.
-                MobiusHooks.onError("cannot accept values when disposed")
+                MobiusHooks.errorHandler("cannot accept values when disposed", #file, #line)
                 return []
             }
 
@@ -59,7 +59,7 @@ final class ConnectablePublisher<Value>: Disposable {
         return access.guard { () -> Connection<Value> in
             guard !_disposed else {
                 // Callers are responsible for ensuring connect is never entered after dispose.
-                MobiusHooks.onError("cannot add connections when disposed")
+                MobiusHooks.errorHandler("cannot add connections when disposed", #file, #line)
                 return BrokenConnection<Value>.connection()
             }
 
