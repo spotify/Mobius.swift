@@ -29,7 +29,7 @@ public extension UIViewController {
     /// Note: You should not be calling `start`, `connectView`, `stop`, or `disconnectView` on the `MobiusController`
     /// when using this extension.
     ///
-    /// - Parameter controller: The `MobiusController` that shuold be attached
+    /// - Parameter controller: The `MobiusController` that should be attached
     /// - Parameter onModelChange: A closure which is called whenever the loop's model changes.
     func useMobius<Model, Event, Effect>(
         controller: MobiusController<Model, Event, Effect>,
