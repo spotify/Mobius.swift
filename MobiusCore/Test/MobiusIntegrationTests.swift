@@ -55,8 +55,9 @@ class MobiusIntegrationTests: QuickSpec {
 
             // swiftlint:disable:next quick_discouraged_call
             let receivedModels = Synchronized<[String]?>(value: nil)
-            var builder: Mobius.Builder<String, String, String>!
             var loop: MobiusLoop<String, String, String>!
+            var effectHandler: IntegrationTestEffectHandler!
+            var eventSource: AnyEventSource<String>!
 
             var eventSourceEventConsumer: Consumer<String>!
             var modelConsumer: Consumer<String>!
@@ -70,19 +71,15 @@ class MobiusIntegrationTests: QuickSpec {
                     }
                 }
 
-                let logic = TestLogic()
 
-                let effectHandler = IntegrationTestEffectHandler()
+                effectHandler = IntegrationTestEffectHandler()
                 receivedEffects = effectHandler.recorder
 
                 let subscribe = { (consumer: @escaping Consumer<String>) -> Disposable in
                     eventSourceEventConsumer = consumer
                     return TestDisposable()
                 }
-
-                builder = Mobius.loop(update: logic.update, effectHandler: effectHandler)
-                    .withInitiator(logic.initiate)
-                    .withEventSource(AnyEventSource<String>(subscribe))
+                eventSource = AnyEventSource(subscribe)
             }
 
             afterEach {
@@ -90,9 +87,18 @@ class MobiusIntegrationTests: QuickSpec {
                 loop = nil
             }
 
+            func buildLoop(from model: String) -> MobiusLoop<String, String, String> {
+                let logic = TestLogic()
+
+                let first = logic.initiate(model: model)
+                return Mobius.loop(update: logic.update, effectHandler: effectHandler)
+                    .withEventSource(eventSource)
+                    .start(from: first.model, effects: first.effects)
+            }
+
             context("given the loop isn't started") {
                 it("should call initiate on start") {
-                    loop = builder.start(from: "start")
+                    loop = buildLoop(from: "start")
 
                     loop.addObserver(modelConsumer)
 
@@ -103,7 +109,7 @@ class MobiusIntegrationTests: QuickSpec {
 
             context("given the loop is started") {
                 beforeEach {
-                    loop = builder.start(from: "start")
+                    loop = buildLoop(from: "start")
                     loop.addObserver(modelConsumer)
 
                     // clear out startup noise
