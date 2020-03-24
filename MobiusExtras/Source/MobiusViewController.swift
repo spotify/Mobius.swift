@@ -24,20 +24,22 @@ import UIKit
 
 public extension UIViewController {
     /// Attach a `MobiusController` to this `UIViewController`.
-    /// A `Connection` is returned which can be used to post events to the loop.
-    /// The `MobiusController` will start when this function is called, and stop when this `UIViewController` is
-    /// initialized or when the returned `Connection` is disposed.
+    /// The `connectable` you provide will be connected to the `MobiusController`.
+    /// This function returns a `Disposable` which can be disposed to stop the `MobiusController`. If this disposable
+    /// is never disposed, the `MobiusController` will stop when this `UIViewController` is deinitialized.
     ///
     /// Note: You should not be calling `start`, `connectView`, `stop`, or `disconnectView` on the `MobiusController`
     /// when using this extension.
     ///
+    /// Note: You must keep a strong reference to the `connectable` for as long as you want the loop to exist.
+    ///
     /// - Parameter controller: The `MobiusController` that should be attached
-    /// - Parameter onModelChange: A closure which is called whenever the loop's model changes.
-    func useMobius<Model, Event, Effect>(
+    /// - Parameter connectable: The `Connectable` which should be connected to `controller`
+    func useMobius<Model, Event, Effect, Conn: Connectable>(
         controller: MobiusController<Model, Event, Effect>,
-        modelChanged onModelChange: @escaping (Model) -> Void
-    ) -> Connection<Event> {
-        let holder = MobiusHolder(controller: controller, onModelChange: onModelChange)
+        connectable: Conn
+    ) -> Disposable where Conn.Input == Model, Conn.Output == Event {
+        let holder = MobiusHolder(controller: controller, connectable: AnyConnectable(connectable))
 
         objc_setAssociatedObject(
             self,
@@ -46,41 +48,22 @@ public extension UIViewController {
             .OBJC_ASSOCIATION_RETAIN
         )
 
-        return Connection(
-            acceptClosure: { [unowned holder] event in
-                holder.handleEvent(event)
-            },
-            disposeClosure: { [unowned holder] in
-                holder.dispose()
-            }
-        )
+        return AnonymousDisposable {
+            holder.dispose()
+        }
     }
 }
 
 private final class MobiusHolder<Model, Event, Effect> {
     private let controller: MobiusController<Model, Event, Effect>
-    // swiftlint:disable weak_delegate
-    private let connectableDelegate: WeakConnectableDelegate<Model>
-    private let connectable: WeakConnectable<Model, Event>
 
     init(
         controller: MobiusController<Model, Event, Effect>,
-        onModelChange: @escaping (Model) -> Void
+        connectable: AnyConnectable<Model, Event>
     ) {
         self.controller = controller
-        self.connectable = WeakConnectable()
-        self.connectableDelegate = WeakConnectableDelegate<Model>(
-            onModelChange: { model in
-                onModelChange(model)
-            }
-        )
-        self.connectable.delegate = self.connectableDelegate
-        controller.connectView(connectable)
+        controller.connectView(WeakConnectable(connectable: connectable))
         controller.start()
-    }
-
-    func handleEvent(_ event: Event) {
-        connectable.send(event)
     }
 
     func dispose() {
@@ -95,23 +78,28 @@ private final class MobiusHolder<Model, Event, Effect> {
     }
 }
 
-private final class WeakConnectable<Model, Event>: ConnectableClass<Model, Event> {
-    weak var delegate: WeakConnectableDelegate<Model>?
+private final class WeakConnectable<Model, Event>: Connectable {
+    weak var connectable: AnyConnectable<Model, Event>?
+    var connection: Connection<Model>?
 
-    override func handle(_ model: Model) {
-        delegate?.onModelChange(model)
+    init(connectable: AnyConnectable<Model, Event>) {
+        self.connectable = connectable
     }
 
-    override func onDispose() {
-        delegate = nil
+    func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Model> {
+        self.connection = connectable?.connect(consumer)
+        return Connection(
+            acceptClosure: { [weak connection] model in
+                connection?.accept(model)
+            },
+            disposeClosure: { [weak connection] in
+                connection?.dispose()
+            }
+        )
     }
-}
 
-private final class WeakConnectableDelegate<Model> {
-    let onModelChange: (Model) -> Void
-
-    init(onModelChange: @escaping (Model) -> Void) {
-        self.onModelChange = onModelChange
+    deinit {
+        connection?.dispose()
     }
 }
 

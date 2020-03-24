@@ -46,7 +46,7 @@ final class MobiusViewControllerTests: QuickSpec {
             it("stops the Mobius Controller when the View Controller's connection is disposed") {
                 let viewController = ViewController(onModelChange: { _ in })
 
-                viewController.connection.dispose()
+                viewController.disposable.dispose()
                 expect(viewController.controller.running).to(beFalse())
                 expect(viewController.children.count).to(equal(0))
             }
@@ -57,9 +57,9 @@ final class MobiusViewControllerTests: QuickSpec {
                     model = newModel
                 })
 
-                viewController.connection.accept("1")
-                viewController.connection.accept("2")
-                viewController.connection.accept("3")
+                viewController.output("1")
+                viewController.output("2")
+                viewController.output("3")
 
                 expect(model).toEventually(equal("123"))
             }
@@ -71,16 +71,27 @@ private let update = Update<String, String, String> { model, event in
     .next(model + event)
 }
 private let effectHandler = EffectRouter<String, String>().asConnectable
-private class ViewController: UIViewController {
+private class ViewController: UIViewController, Connectable {
     let controller = Mobius.loop(update: update, effectHandler: effectHandler)
         .makeController(from: "")
-    var connection: Connection<String>!
+    let onModelChange: Consumer<String>
+    var disposable: Disposable!
+    var output: Consumer<String>!
 
-    init(onModelChange: @escaping (String) -> Void) {
+    init(onModelChange: @escaping Consumer<String>) {
+        self.onModelChange = onModelChange
         super.init(nibName: nil, bundle: nil)
-        connection = useMobius(
+        disposable = useMobius(
             controller: controller,
-            modelChanged: onModelChange
+            connectable: self
+        )
+    }
+
+    func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
+        output = consumer
+        return Connection(
+            acceptClosure: self.onModelChange,
+            disposeClosure: {}
         )
     }
 
