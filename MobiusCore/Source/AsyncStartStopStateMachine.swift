@@ -39,6 +39,10 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
         case transitioningToStopped
     }
 
+    enum Error: Swift.Error {
+        case wrongState
+    }
+
     private let rawState = Synchronized(value: RawState.stopped)
     private let queue: DispatchQueue
 
@@ -76,15 +80,15 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
         }
     }
 
-    /// Mutate the stopped state, assuming we’re currently stopped. If not, fail with the provided error message.
-    func mutateIfStopped(elseError error: String, _ closure: (inout StoppedState) -> Void) {
+    /// Mutate the stopped state, assuming we’re currently stopped. If not, throw `Error.wrongState`.
+    func mutate(by closure: (inout StoppedState) throws -> Void) throws {
         dispatchPrecondition(condition: .notOnQueue(queue))
-        queue.sync {
+        try queue.sync {
             switch snapshot() {
             case .running:
-                MobiusHooks.onError(error)
+                throw Error.wrongState
             case .stopped(var state):
-                closure(&state)
+                try closure(&state)
                 stoppedState = state
             }
         }
@@ -93,21 +97,21 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
     /// Transition from a stopped state to a running state, assuming we’re currently stopped. If not, fail with the
     /// provided error message.
     ///
-    /// The `transition` closure may return nil to indicate failure, in which case the state remains unchanged. This
-    /// behaviour isn’t desired but is forced by our error hooking mechanism – if `transition` calls
-    /// `MobiusHooks.onError` it should then return `nil`.
-    func transitionToRunning(elseError error: String, _ transition: (StoppedState) -> RunningState?) {
+    /// If the `transition` closure throws an error, the state remains unchanged.
+    func transitionToRunning(by transition: (StoppedState) throws -> RunningState) throws {
         dispatchPrecondition(condition: .notOnQueue(queue))
-        queue.sync {
+        try queue.sync {
             switch snapshot() {
             case .running:
-                MobiusHooks.onError(error)
+                throw Error.wrongState
             case .stopped(let stoppedState):
                 rawState.value = .transitioningToRunning
-                if let runningState = transition(stoppedState) {
+                do {
+                    let runningState = try transition(stoppedState)
                     become(running: runningState)
-                } else {
+                } catch {
                     rawState.value = .stopped
+                    throw error
                 }
             }
         }
@@ -116,21 +120,21 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
     /// Transition from a running state to a stopped state, assuming we’re currently running. If not, fail with the
     /// provided error message.
     ///
-    /// The `transition` closure may return nil to indicate failure, in which case the state remains unchanged. This
-    /// behaviour isn’t desired but is forced by our error hooking mechanism – if `transition` calls
-    /// `MobiusHooks.onError` it should then return `nil`.
-    func transitionToStopped(elseError error: String, _ transition: (RunningState) -> StoppedState?) {
+    /// If the `transition` closure throws an error, the state remains unchanged.
+    func transitionToStopped(by transition: (RunningState) throws -> StoppedState) throws {
         dispatchPrecondition(condition: .notOnQueue(queue))
-        queue.sync {
+        try queue.sync {
             switch snapshot() {
             case .stopped:
-                MobiusHooks.onError(error)
+            throw Error.wrongState
             case .running(let runningState):
                 rawState.value = .transitioningToStopped
-                if let stoppedState = transition(runningState) {
+                do {
+                    let stoppedState = try transition(runningState)
                     become(stopped: stoppedState)
-                } else {
+                } catch {
                     rawState.value = .running
+                    throw error
                 }
             }
         }

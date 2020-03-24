@@ -99,12 +99,12 @@ private func dispatchAccept<Input>(_ connections: [PredicatedConnection<Input>],
     let responders = selectConnections(connections, respondingTo: input)
 
     if responders.count > 1 {
-        MobiusHooks.onError("More than one effect handler handling effect: \(input)")
+        MobiusHooks.errorHandler("More than one effect handler handling effect: \(input)", #file, #line)
         return
     }
 
     guard let (connection, _) = responders.first else {
-        MobiusHooks.onError("No effect handler is handling the effect: \(input)")
+        MobiusHooks.errorHandler("No effect handler is handling the effect: \(input)", #file, #line)
         return
     }
 
