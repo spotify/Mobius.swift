@@ -27,107 +27,72 @@ class MobiusIntegrationTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("Mobius integration tests") {
-            struct TestLogic {
-                func initiate(model: String) -> First<String, String> {
-                    switch model {
-                    case "start":
-                        return First(model: "init", effects: ["trigger loading"])
-                    default:
-                        fatalError("unexpected model \(model)")
-                    }
-                }
-
-                let update = Update<String, String, String> { _, event in
-                    switch event {
-                    case "button pushed":
-                        return Next.next("pushed")
-                    case "trigger effect":
-                        return Next.next("triggered", effects: ["leads to event"])
-                    case "effect feedback":
-                        return Next.next("done")
-                    case "from source":
-                        return Next.next("event sourced")
-                    default:
-                        fatalError("unexpected event \(event)")
-                    }
-                }
-            }
-
-            // swiftlint:disable:next quick_discouraged_call
-            let receivedModels = Synchronized<[String]?>(value: nil)
-            var builder: Mobius.Builder<String, String, String>!
-            var loop: MobiusLoop<String, String, String>!
-
-            var eventSourceEventConsumer: Consumer<String>!
-            var modelConsumer: Consumer<String>!
-            var receivedEffects: Recorder<String>!
-
-            beforeEach {
-                receivedModels.value = []
-                modelConsumer = { model in
-                    receivedModels.mutate {
-                        $0!.append(model)
-                    }
-                }
-
-                let logic = TestLogic()
-
-                let effectHandler = IntegrationTestEffectHandler()
-                receivedEffects = effectHandler.recorder
-
-                let subscribe = { (consumer: @escaping Consumer<String>) -> Disposable in
-                    eventSourceEventConsumer = consumer
-                    return TestDisposable()
-                }
-
-                builder = Mobius.loop(update: logic.update, effectHandler: effectHandler)
-                    .withInitiator(logic.initiate)
-                    .withEventSource(AnyEventSource<String>(subscribe))
-            }
-
-            afterEach {
-                loop.dispose()
-                loop = nil
-            }
-
-            context("given the loop isn't started") {
-                it("should call initiate on start") {
-                    loop = builder.start(from: "start")
-
-                    loop.addObserver(modelConsumer)
-
-                    expect(receivedModels.value).to(equal(["init"]))
-                    expect(receivedEffects.items).to(equal(["trigger loading"]))
+            let update = Update<String, String, String> { _, event in
+                switch event {
+                case "button pushed":
+                    return Next.next("pushed")
+                case "trigger effect":
+                    return Next.next("triggered", effects: ["leads to event"])
+                case "effect feedback":
+                    return Next.next("done")
+                case "from source":
+                    return Next.next("event sourced")
+                default:
+                    fatalError("unexpected event \(event)")
                 }
             }
 
             context("given the loop is started") {
+                var loop: MobiusLoop<String, String, String>!
+                var eventSourceEventConsumer: Consumer<String>!
+                var receivedModels: Recorder<String>!
+                var receivedEffects: Recorder<String>!
+
                 beforeEach {
-                    loop = builder.start(from: "start")
-                    loop.addObserver(modelConsumer)
+                    let effectHandler = IntegrationTestEffectHandler()
+                    receivedEffects = effectHandler.recorder
+
+                    let eventSource = AnyEventSource<String> { consumer in
+                        eventSourceEventConsumer = consumer
+                        return TestDisposable()
+                    }
+
+                    loop = Mobius.loop(update: update, effectHandler: effectHandler)
+                        .withEventSource(eventSource)
+                        .start(from: "init", effects: ["trigger loading"])
+
+                    receivedModels = Recorder()
+                    loop.addObserver { model in
+                        receivedModels.append(model)
+                    }
 
                     // clear out startup noise
-                    receivedModels.value = []
+                    receivedModels.clear()
                     receivedEffects.clear()
+                }
+
+                afterEach {
+                    loop.dispose()
+                    loop = nil
                 }
 
                 it("should be possible for the UI to push events and receive models") {
                     loop.dispatchEvent("button pushed")
 
-                    expect(receivedModels.value).to(equal(["pushed"]))
+                    expect(receivedModels.items).to(equal(["pushed"]))
                 }
 
                 it("should be possible for effect handler to receive effects and send events") {
                     loop.dispatchEvent("trigger effect")
 
-                    expect(receivedModels.value).toEventually(equal(["triggered", "done"]))
+                    expect(receivedModels.items).toEventually(equal(["triggered", "done"]))
                     expect(receivedEffects.items).to(equal(["leads to event"]))
                 }
 
                 it("should be possible for event sources to send events") {
                     eventSourceEventConsumer("from source")
 
-                    expect(receivedModels.value).to(equal(["event sourced"]))
+                    expect(receivedModels.items).to(equal(["event sourced"]))
                 }
             }
         }
