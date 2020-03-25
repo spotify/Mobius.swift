@@ -18,35 +18,34 @@
 // under the License.
 
 #if canImport(UIKit)
-
 import MobiusCore
 import UIKit
 
 public extension UIViewController {
     /// Attach a `MobiusController` to this `UIViewController`.
     /// The `connectable` you provide will be connected to the `MobiusController`.
-    /// This function returns a `Disposable` which can be disposed to stop the `MobiusController`. If this disposable
-    /// is never disposed, the `MobiusController` will stop when this `UIViewController` is deinitialized.
+    /// The `MobiusController` will be started when `viewDidAppear` is called, and be stopped when
+    /// `viewDidDisappear` is called. This function returns a `Disposable`, which can be disposed to stop the
+    /// `MobiusController` early.
     ///
     /// Note: You should not be calling `start`, `connectView`, `stop`, or `disconnectView` on the `MobiusController`
     /// when using this extension.
     ///
-    /// Note: You must keep a strong reference to the `connectable` for as long as you want the loop to exist.
+    /// Note: Calling this method will add a `UIViewController` as a child of the current `UIViewController`. A subview
+    /// will also be added to the current `UIViewController`'s view.
     ///
     /// - Parameter controller: The `MobiusController` that should be attached
     /// - Parameter connectable: The `Connectable` which should be connected to `controller`
+    @discardableResult
     func useMobius<Model, Event, Effect, Conn: Connectable>(
         controller: MobiusController<Model, Event, Effect>,
         connectable: Conn
     ) -> Disposable where Conn.Input == Model, Conn.Output == Event {
-        let holder = MobiusHolder(controller: controller, connectable: AnyConnectable(connectable))
+        let holder = MobiusHolder(controller: controller, connectable: connectable)
 
-        objc_setAssociatedObject(
-            self,
-            .init("Mobius-Controller-Holder-Key"),
-            holder,
-            .OBJC_ASSOCIATION_RETAIN
-        )
+        addChild(holder)
+        view.addSubview(holder.view)
+        holder.didMove(toParent: self)
 
         return AnonymousDisposable {
             holder.dispose()
@@ -54,16 +53,38 @@ public extension UIViewController {
     }
 }
 
-private final class MobiusHolder<Model, Event, Effect> {
+private final class MobiusHolder<Model, Event, Effect>: UIViewController {
     private let controller: MobiusController<Model, Event, Effect>
+    private var connectable: UnownedConnectable<Model, Event>
 
-    init(
+    init<Conn: Connectable>(
         controller: MobiusController<Model, Event, Effect>,
-        connectable: AnyConnectable<Model, Event>
-    ) {
+        connectable: Conn
+    ) where Conn.Input == Model, Conn.Output == Event {
         self.controller = controller
-        controller.connectView(WeakConnectable(connectable: connectable))
-        controller.start()
+        self.connectable = UnownedConnectable(connectable: connectable)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func loadView() {
+        view = UIView(frame: .zero)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !controller.running {
+            controller.connectView(connectable)
+            controller.start()
+        }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        dispose()
     }
 
     func dispose() {
@@ -78,29 +99,21 @@ private final class MobiusHolder<Model, Event, Effect> {
     }
 }
 
-private final class WeakConnectable<Model, Event>: Connectable {
-    weak var connectable: AnyConnectable<Model, Event>?
-    var connection: Connection<Model>?
+private final class UnownedConnectable<Model, Event>: Connectable {
+    private let _connect: (@escaping Consumer<Event>) -> Connection<Model>
 
-    init(connectable: AnyConnectable<Model, Event>) {
-        self.connectable = connectable
+    init<Conn: Connectable>(
+        connectable: Conn
+    ) where Conn.Input == Model, Conn.Output == Event {
+        let unownedConnectable = connectable as AnyObject
+        self._connect = { [unowned unownedConnectable] in
+            // swiftlint:disable force_cast
+            (unownedConnectable as! Conn).connect($0)
+        }
     }
 
-    func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Model> {
-        self.connection = connectable?.connect(consumer)
-        return Connection(
-            acceptClosure: { [weak connection] model in
-                connection?.accept(model)
-            },
-            disposeClosure: { [weak connection] in
-                connection?.dispose()
-            }
-        )
-    }
-
-    deinit {
-        connection?.dispose()
+    func connect(_ consumer: @escaping Consumer<Event>) -> Connection<Model> {
+        return _connect(consumer)
     }
 }
-
 #endif

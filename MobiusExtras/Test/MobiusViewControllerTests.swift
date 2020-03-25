@@ -28,27 +28,44 @@ import Quick
 final class MobiusViewControllerTests: QuickSpec {
     override func spec() {
         context("View Controller using Mobius") {
-            it("starts the Mobius Controller when the View Controller is initialized") {
+            it("starts the Mobius Controller when viewDidAppear is called") {
                 let viewController = ViewController(onModelChange: { _ in })
+
+                expect(viewController.children.count).to(equal(1))
+                guard let child = viewController.children.first else {
+                    fail()
+                    return
+                }
+
+                child.viewDidAppear(false)
 
                 expect(viewController.controller.running).to(beTrue())
+                child.viewDidDisappear(false)
             }
 
-            it("stops the Mobius Controller when the View Controller is deinitialized") {
-                var viewController: ViewController? = ViewController(onModelChange: { _ in })
-                let controller = viewController!.controller
-
-                viewController = nil
-
-                expect(controller.running).to(beFalse())
-            }
-
-            it("stops the Mobius Controller when the View Controller's connection is disposed") {
+            it("stops the Mobius Controller when viewDidDisappear is called") {
                 let viewController = ViewController(onModelChange: { _ in })
 
-                viewController.disposable.dispose()
+                guard let child = viewController.children.first else {
+                    fail()
+                    return
+                }
+
+                child.viewDidAppear(false)
+                child.viewDidDisappear(false)
+
                 expect(viewController.controller.running).to(beFalse())
-                expect(viewController.children.count).to(equal(0))
+            }
+
+            it("stops the Mobius Controller when disposed") {
+                let viewController = ViewController(onModelChange: { _ in })
+                guard let disposable = viewController.disposable else {
+                    fail()
+                    return
+                }
+                disposable.dispose()
+
+                expect(viewController.controller.running).to(beFalse())
             }
 
             it("forwards model changes to `onModelChange`") {
@@ -57,11 +74,18 @@ final class MobiusViewControllerTests: QuickSpec {
                     model = newModel
                 })
 
-                viewController.output("1")
-                viewController.output("2")
-                viewController.output("3")
+                guard let child = viewController.children.first else {
+                      fail()
+                      return
+                }
+
+                child.viewDidAppear(false)
+                viewController.output?("1")
+                viewController.output?("2")
+                viewController.output?("3")
 
                 expect(model).toEventually(equal("123"))
+                child.viewDidDisappear(false)
             }
         }
     }
@@ -75,13 +99,14 @@ private class ViewController: UIViewController, Connectable {
     let controller = Mobius.loop(update: update, effectHandler: effectHandler)
         .makeController(from: "")
     let onModelChange: Consumer<String>
-    var disposable: Disposable!
-    var output: Consumer<String>!
+    var disposable: Disposable?
+    var output: Consumer<String>?
 
     init(onModelChange: @escaping Consumer<String>) {
         self.onModelChange = onModelChange
         super.init(nibName: nil, bundle: nil)
-        disposable = useMobius(
+
+        self.disposable = useMobius(
             controller: controller,
             connectable: self
         )
