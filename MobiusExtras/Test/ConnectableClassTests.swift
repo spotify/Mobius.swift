@@ -76,7 +76,7 @@ class ConnectableTests: QuickSpec {
                     }
                 }
 
-                context("to which some input is sent") {
+                context("when some input is sent") {
                     it("should call handle in the subclass with the input") {
                         let testData = "a string"
                         connection.accept(testData)
@@ -84,8 +84,8 @@ class ConnectableTests: QuickSpec {
                     }
                 }
 
-                context("on which dispose is called") {
-                    it("should call disposed in the subclass") {
+                context("when dispose is called") {
+                    it("should call onDispose in the subclass") {
                         connection.dispose()
                         expect(sut.disposeCounter).to(equal(1))
                     }
