@@ -63,7 +63,6 @@ open class ConnectableClass<Input, Output>: Connectable {
         }
 
         consumer(output)
-
     }
 
     /// Called when the `Connectable` receives input to allow the subclass to react to it.
