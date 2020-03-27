@@ -69,6 +69,10 @@ class ConnectableTests: QuickSpec {
                     sut.handleError = handleError
                 }
 
+                it("should call onConnect") {
+                    expect(sut.connectCounter).to(equal(1))
+                }
+
                 context("when a connection has already been created") {
                     it("should fail") {
                         _ = sut.connect({ _ in })
@@ -139,6 +143,11 @@ private class SubclassedConnectableClass: ConnectableClass<String, String> {
     var handledStrings = [String]()
     override func handle(_ input: String) {
         handledStrings.append(input)
+    }
+
+    var connectCounter = 0
+    override func onConnect() {
+        connectCounter += 1
     }
 
     var disposeCounter = 0

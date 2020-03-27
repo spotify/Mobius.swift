@@ -73,7 +73,13 @@ open class ConnectableClass<Input, Output>: Connectable {
         handleError("The function `\(#function)` must be overridden in subclass \(type(of: self))")
     }
 
-    /// Called when its being disposed. This function should release any resources used by the subclass.
+    /// Called when the connection is being established. This function can be used to allocate and initialize any
+    /// resources used by the subclass.
+    ///
+    /// - Note: This function is optional to override by subclasses.
+    open func onConnect() {}
+
+    /// Called when the connection is being disposed. This function should release any resources used by the subclass.
     ///
     /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
     /// error handler.
@@ -96,6 +102,7 @@ open class ConnectableClass<Input, Output>: Connectable {
         }
 
         self.consumer = consumer
+        onConnect()
         return Connection(acceptClosure: self.accept, disposeClosure: self.dispose)
     }
 
