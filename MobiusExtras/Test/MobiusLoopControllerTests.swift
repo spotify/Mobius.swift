@@ -17,8 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import MobiusExtras
 import MobiusCore
+import MobiusExtras
 import Nimble
 import Quick
 
@@ -85,7 +85,7 @@ final class MobiusLoopControllerTests: QuickSpec {
 
 private func makeController() -> MobiusLoopController<Int, Int, Int> {
     return Mobius.loop(
-        update: Update<Int, Int, Int>  { model, event in
+        update: Update<Int, Int, Int> { model, event in
             .next(model + event)
         },
         effectHandler: EffectRouter().asConnectable
