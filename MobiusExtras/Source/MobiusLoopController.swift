@@ -19,7 +19,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#if canImport(UIKit)
 import MobiusCore
 import UIKit
 
@@ -110,4 +109,3 @@ private final class UnownedConnectable<Model, Event>: Connectable {
         return _connect(consumer)
     }
 }
-#endif
