@@ -288,12 +288,11 @@ class MobiusLoopTests: QuickSpec {
                     }
                 }
                 let payload: (Int) -> Int? = { $0 }
-                let effectConnectable = EffectRouter<Int, Int>()
+                let effectRouter = EffectRouter<Int, Int>()
                     .routeEffects(withPayload: payload).to(effectHandler)
-                    .asConnectable
                 let update = Update { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
                 loop = Mobius
-                    .loop(update: update, effectHandler: effectConnectable)
+                    .loop(update: update, effectHandler: effectRouter)
                     .start(from: 0)
             }
             afterEach {

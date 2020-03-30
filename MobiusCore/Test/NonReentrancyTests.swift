@@ -75,11 +75,10 @@ class NonReentrancyTests: QuickSpec {
                     return AnonymousDisposable {}
                 }
 
-                let effectConnectable = EffectRouter<Effect, Event>()
+                let effectRouter = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .testEffect).to(testEffectHandler)
-                    .asConnectable
 
-                loop = Mobius.loop(update: update, effectHandler: effectConnectable)
+                loop = Mobius.loop(update: update, effectHandler: effectRouter)
                     .start(from: 0)
             }
 
