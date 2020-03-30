@@ -69,6 +69,10 @@ class ConnectableTests: QuickSpec {
                     sut.handleError = handleError
                 }
 
+                it("should call onConnect") {
+                    expect(sut.connectCounter).to(equal(1))
+                }
+
                 context("when a connection has already been created") {
                     it("should fail") {
                         _ = sut.connect({ _ in })
@@ -76,7 +80,7 @@ class ConnectableTests: QuickSpec {
                     }
                 }
 
-                context("to which some input is sent") {
+                context("when some input is sent") {
                     it("should call handle in the subclass with the input") {
                         let testData = "a string"
                         connection.accept(testData)
@@ -84,8 +88,8 @@ class ConnectableTests: QuickSpec {
                     }
                 }
 
-                context("on which dispose is called") {
-                    it("should call disposed in the subclass") {
+                context("when dispose is called") {
+                    it("should call onDispose in the subclass") {
                         connection.dispose()
                         expect(sut.disposeCounter).to(equal(1))
                     }
@@ -139,6 +143,11 @@ private class SubclassedConnectableClass: ConnectableClass<String, String> {
     var handledStrings = [String]()
     override func handle(_ input: String) {
         handledStrings.append(input)
+    }
+
+    var connectCounter = 0
+    override func onConnect() {
+        connectCounter += 1
     }
 
     var disposeCounter = 0
