@@ -52,3 +52,11 @@ private class ErrorHandlerConfiguration: QuickConfiguration {
         }
     }
 }
+
+private extension String {
+    init(_ staticString: StaticString) {
+        self = staticString.withUTF8Buffer {
+            String(decoding: $0, as: UTF8.self)
+        }
+    }
+}
