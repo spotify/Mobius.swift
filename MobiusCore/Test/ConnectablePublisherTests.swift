@@ -130,29 +130,6 @@ class ConnectablePublisherTests: QuickSpec {
                         it("should refuse connections") {
                             expect(_ = publisher.connect(to: consumer)).to(raiseError())
                         }
-
-                        context("when error handling does not cause a crash") {
-                            var errorMessage: String?
-                            beforeEach {
-                                MobiusHooks.setErrorHandler({ (message: String?, _, _) in
-                                    errorMessage = message
-                                })
-                            }
-
-                            afterEach {
-                                MobiusHooks.setDefaultErrorHandler()
-                            }
-
-                            it("should return a broken connection") {
-                                let connection = publisher.connect(to: consumer)
-                                connection.dispose()
-                                expect(errorMessage).toNot(beNil())
-
-                                errorMessage = nil
-                                connection.accept("Some string")
-                                expect(errorMessage).toNot(beNil())
-                            }
-                        }
                     }
 
                     context("when trying to post") {

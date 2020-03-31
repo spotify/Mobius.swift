@@ -80,7 +80,6 @@ final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
             disposeClosure: { [acceptQueue] in
                 guard disposalStatus.compareAndSwap(expected: .notDisposed, with: .pendingDispose) else {
                     MobiusHooks.errorHandler("cannot dispose more than once", #file, #line)
-                    return
                 }
 
                 acceptQueue.async {

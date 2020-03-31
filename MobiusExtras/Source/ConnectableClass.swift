@@ -107,7 +107,6 @@ open class ConnectableClass<Input, Output>: Connectable {
                 #file,
                 #line
             )
-            return BrokenConnection.connection()
         }
 
         self.consumer = consumer
@@ -128,7 +127,6 @@ open class ConnectableClass<Input, Output>: Connectable {
                 #file,
                 #line
             )
-            return
         }
 
         handle(input)
