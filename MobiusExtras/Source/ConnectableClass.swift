@@ -36,9 +36,6 @@ open class ConnectableClass<Input, Output>: Connectable {
     private var consumer: Consumer<Output>?
 
     private let lock = NSRecursiveLock()
-    var handleError = { (message: String) -> Void in
-        fatalError(message)
-    }
 
     public init() {}
 
@@ -54,9 +51,11 @@ open class ConnectableClass<Input, Output>: Connectable {
         }
         guard let consumer = consumer else {
             #if false // Disabled because of flakiness and because public use of this class is being phased out.
-            handleError(
+            MobiusHooks.errorHandler(
                 "\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set." +
-                "Send should only be used once the Connectable has been properly connected."
+                "Send should only be used once the Connectable has been properly connected.",
+                #file,
+                #line
             )
             #endif
             return
@@ -70,7 +69,11 @@ open class ConnectableClass<Input, Output>: Connectable {
     /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
     /// error handler.
     open func handle(_ input: Input) {
-        handleError("The function `\(#function)` must be overridden in subclass \(type(of: self))")
+        MobiusHooks.errorHandler(
+            "The function `\(#function)` must be overridden in subclass \(type(of: self))",
+            #file,
+            #line
+        )
     }
 
     /// Called when the connection is being established. This function can be used to allocate and initialize any
@@ -84,7 +87,11 @@ open class ConnectableClass<Input, Output>: Connectable {
     /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
     /// error handler.
     open func onDispose() {
-        handleError("The function `\(#function)` must be overridden in subclass \(type(of: self))")
+        MobiusHooks.errorHandler(
+            "The function `\(#function)` must be overridden in subclass \(type(of: self))",
+            #file,
+            #line
+        )
     }
 
     public final func connect(_ consumer: @escaping (Output) -> Void) -> Connection<Input> {
@@ -94,9 +101,11 @@ open class ConnectableClass<Input, Output>: Connectable {
         }
 
         guard self.consumer == nil else {
-            handleError(
+            MobiusHooks.errorHandler(
                 "Connection limit exceeded: The Connectable \(type(of: self)) is already connected. " +
-                "Unable to connect more than once"
+                "Unable to connect more than once",
+                #file,
+                #line
             )
             return BrokenConnection.connection()
         }
@@ -114,7 +123,11 @@ open class ConnectableClass<Input, Output>: Connectable {
         consumerSet = consumer != nil
         lock.unlock()
         guard consumerSet else {
-            handleError("\(type(of: self)) is unable to handle \(type(of: input)) before any consumer has been set")
+            MobiusHooks.errorHandler(
+                "\(type(of: self)) is unable to handle \(type(of: input)) before any consumer has been set",
+                #file,
+                #line
+            )
             return
         }
 

@@ -29,7 +29,7 @@ public enum MobiusHooks {
 
     /// Internal: we prefer to call `errorHandler` directly, without abstractions, to minimize the depth of crash
     /// stack traces. This requires that `#file` and `#line` are passed explicitly.
-    static private(set) var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
+    public private(set) static var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
 
     public static func setErrorHandler(_ newErrorHandler: @escaping ErrorHandler) {
         errorHandler = newErrorHandler
