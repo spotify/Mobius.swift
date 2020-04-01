@@ -182,18 +182,6 @@ public extension Connectable {
     typealias OutputType = Output
 }
 
-public extension BrokenConnection {
-    @available(*, deprecated)
-    static func accept(_ value: Value) {
-        _accept(value)
-    }
-
-    @available(*, deprecated)
-    static func dispose() {
-        _dispose()
-    }
-}
-
 @available(*, deprecated)
 public typealias ConnectClosure<InputType, OutputType> = (@escaping Consumer<OutputType>) -> Connection<InputType>
 

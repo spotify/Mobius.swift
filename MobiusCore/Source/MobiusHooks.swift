@@ -25,11 +25,11 @@ import Foundation
 /// The default behaviour is to crash the application through invoking the `defaultErrorHandler` function defined in
 /// this enum. If that is not the desired behaviour, you can override it through the `setErrorHandler` method.
 public enum MobiusHooks {
-    public typealias ErrorHandler = (String, StaticString, UInt) -> Void
+    public typealias ErrorHandler = (String, StaticString, UInt) -> Never
 
     /// Internal: we prefer to call `errorHandler` directly, without abstractions, to minimize the depth of crash
     /// stack traces. This requires that `#file` and `#line` are passed explicitly.
-    static private(set) var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
+    public private(set) static var errorHandler: ErrorHandler = MobiusHooks.defaultErrorHandler
 
     public static func setErrorHandler(_ newErrorHandler: @escaping ErrorHandler) {
         errorHandler = newErrorHandler
@@ -39,7 +39,7 @@ public enum MobiusHooks {
         errorHandler = defaultErrorHandler
     }
 
-    public static func defaultErrorHandler(_ message: String = "", file: StaticString = #file, line: UInt = #line) {
+    public static func defaultErrorHandler(_ message: String = "", file: StaticString, line: UInt) -> Never {
         Thread.callStackSymbols.forEach { (symbol: String) in
             print(symbol)
         }

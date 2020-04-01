@@ -45,7 +45,6 @@ final class ConnectablePublisher<Value>: Disposable {
                     #file,
                     #line
                 )
-                return []
             }
 
             currentValue = value
@@ -68,7 +67,6 @@ final class ConnectablePublisher<Value>: Disposable {
                     #file,
                     #line
                 )
-                return BrokenConnection<Value>.connection()
             }
 
             let uuid = UUID()

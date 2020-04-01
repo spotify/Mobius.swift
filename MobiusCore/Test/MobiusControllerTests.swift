@@ -36,7 +36,6 @@ class MobiusControllerTests: QuickSpec {
             var view: RecordingTestConnectable!
             var eventSource: TestEventSource<String>!
             var effectHandler: RecordingTestConnectable!
-            var errorThrown: Bool!
             var activateInitiator: Bool!
 
             func clearViewRecorder() {
@@ -73,15 +72,6 @@ class MobiusControllerTests: QuickSpec {
                         loopQueue: self.loopQueue,
                         viewQueue: self.viewQueue
                     )
-
-                errorThrown = false
-                MobiusHooks.setErrorHandler({ _, _, _ in
-                    errorThrown = true
-                })
-            }
-
-            afterEach {
-                MobiusHooks.setDefaultErrorHandler()
             }
 
             describe("connecting") {
@@ -150,8 +140,6 @@ class MobiusControllerTests: QuickSpec {
                                 // AsyncDispatchQueueConnectable’s asynchronous disposal block
                                 view.dispatchSameQueue("late event")
                             }
-
-                            expect(errorThrown).to(beFalse())
                         }
                     }
                 }
@@ -183,17 +171,14 @@ class MobiusControllerTests: QuickSpec {
 
                 describe("error handling") {
                     it("should not allow connecting twice") {
-                        controller.connectView(view)
-                        controller.connectView(view)
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.connectView(view)).toNot(raiseError())
+                        expect(controller.connectView(view)).to(raiseError())
                     }
                     it("should not allow connecting after starting") {
                         controller.connectView(view)
                         controller.start()
-                        controller.connectView(view)
 
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.connectView(view)).to(raiseError())
                     }
                 }
             }
@@ -233,8 +218,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.start()
 
-                        controller.disconnectView()
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.disconnectView()).to(raiseError())
                     }
                 }
 
@@ -242,15 +226,12 @@ class MobiusControllerTests: QuickSpec {
                 describe("error handling") {
                     it("should not allow disconnecting while running") {
                         controller.start()
-                        controller.disconnectView()
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.disconnectView()).to(raiseError())
                     }
                     it("should not allow disconnecting without a connection") {
+                        controller.connectView(view)
                         controller.disconnectView()
-                        controller.disconnectView()
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.disconnectView()).to(raiseError())
                     }
                 }
                 #endif
@@ -261,12 +242,10 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.start()
                         controller.stop()
-                        expect(errorThrown).to(beFalse())
                     }
                     it("should allow starting a stopping without a connected view") {
                         controller.start()
                         controller.stop()
-                        expect(errorThrown).to(beFalse())
                     }
                     it("should allow dispatching an event from the event source immediately") {
                         controller.connectView(view)
@@ -275,7 +254,6 @@ class MobiusControllerTests: QuickSpec {
                         controller.stop()
 
                         expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
-                        expect(errorThrown).to(beFalse())
                     }
                     it("should execute the initiator on each start") {
                         activateInitiator = true
@@ -288,7 +266,6 @@ class MobiusControllerTests: QuickSpec {
                         // Note that there’s no "S" – the initiator takes effect before the model is ever published.
                         expect(view.recorder.items).toEventually(equal(["S-init", "S-init-init"]))
                         expect(effectHandler.recorder.items).toEventually(equal(["initEffect", "initEffect"]))
-                        expect(errorThrown).to(beFalse())
                     }
                 }
                 #if arch(x86_64) || arch(arm64)
@@ -296,21 +273,16 @@ class MobiusControllerTests: QuickSpec {
                     it("should not allow starting a running controller") {
                         controller.connectView(view)
                         controller.start()
-                        controller.start()
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.start()).to(raiseError())
                     }
                     it("should not allow stopping a loop before connecting") {
-                        controller.stop()
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.stop()).to(raiseError())
                     }
                     it("should not allow stopping a stopped controller") {
                         controller.connectView(view)
                         controller.start()
                         controller.stop()
-                        controller.stop()
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.stop()).to(raiseError())
                     }
                 }
                 #endif
@@ -371,9 +343,7 @@ class MobiusControllerTests: QuickSpec {
                     it("should not allow replacing the model when running") {
                         controller.connectView(view)
                         controller.start()
-                        controller.replaceModel("nononono")
-
-                        expect(errorThrown).to(beTrue())
+                        expect(controller.replaceModel("nononono")).to(raiseError())
                     }
                 }
                 #endif

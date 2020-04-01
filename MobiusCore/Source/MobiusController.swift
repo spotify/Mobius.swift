@@ -108,7 +108,6 @@ public final class MobiusController<Model, Event, Effect> {
             return { event in
                 guard state.running else {
                     MobiusHooks.errorHandler("\(Self.debugTag): cannot accept events when stopped", #file, #line)
-                    return
                 }
 
                 loopQueue.async {
