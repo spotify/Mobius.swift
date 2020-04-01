@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -120,15 +120,10 @@ class EffectRouterTests: QuickSpec {
         }
 
         context("Router error cases") {
-            var didCrash: Bool!
             var route: Consumer<Effect>!
             var dispose: (() -> Void)!
 
             beforeEach {
-                didCrash = false
-                MobiusHooks.setErrorHandler { _, _, _ in
-                    didCrash = true
-                }
                 let handler = AnyEffectHandler<Effect, Event> { _, _ in
                     AnonymousDisposable {}
                 }
@@ -146,15 +141,11 @@ class EffectRouterTests: QuickSpec {
             }
 
             it("should crash if more than 1 effect handler could be found") {
-                route(.multipleHandlersForThisEffect)
-
-                expect(didCrash).to(beTrue())
+                expect(route(.multipleHandlersForThisEffect)).to(raiseError())
             }
 
             it("should crash if no effect handlers could be found") {
-                route(.noHandlersForThisEffect)
-
-                expect(didCrash).to(beTrue())
+                expect(route(.noHandlersForThisEffect)).to(raiseError())
             }
 
             it("should not be possible to connect multiple times when routing to `Connectable`s") {
@@ -163,13 +154,14 @@ class EffectRouterTests: QuickSpec {
                         .to(TestConnectable(dispatchEvent: .eventForEffect1, onDispose: {}))
                     .asConnectable
 
-                let connection1 = router.connect { _ in }
-                let connection2 = router.connect { _ in }
+                var connection1: Connection<Effect>?
+                var connection2: Connection<Effect>?
 
-                expect(didCrash).to(beTrue())
+                expect(connection1 = router.connect { _ in }).toNot(raiseError())
+                expect(connection2 = router.connect { _ in }).to(raiseError())
 
-                connection1.dispose()
-                connection2.dispose()
+                connection1?.dispose()
+                connection2?.dispose()
             }
 
             it("should not be possible to connect multiple times when routing to `EffectHandler`s") {
@@ -181,13 +173,14 @@ class EffectRouterTests: QuickSpec {
                         }
                     .asConnectable
 
-                let connection1 = router.connect { _ in }
-                let connection2 = router.connect { _ in }
+                var connection1: Connection<Effect>?
+                var connection2: Connection<Effect>?
 
-                expect(didCrash).to(beTrue())
+                expect(connection1 = router.connect { _ in }).toNot(raiseError())
+                expect(connection2 = router.connect { _ in }).to(raiseError())
 
-                connection1.dispose()
-                connection2.dispose()
+                connection1?.dispose()
+                connection2?.dispose()
             }
         }
 

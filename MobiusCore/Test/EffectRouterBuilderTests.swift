@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -103,36 +103,20 @@ class EffectRouterBuilderTests: QuickSpec {
                 }
 
                 context("when that effect is dispatched") {
-                    var mobiusError: String?
-                    beforeEach {
-                        MobiusHooks.setErrorHandler({ (error: String, _, _) in
-                            mobiusError = error
-                        })
-
-                        sut.build().connect(outputHandler).accept(effect)
-                    }
-
                     it("should generate an error in the error handler") {
-                        expect(mobiusError).toNot(beNil())
+                        let connection = sut.build().connect(outputHandler)
+                        expect(connection.accept(effect)).to(raiseError())
                     }
                 }
             }
 
             context("when adding no effect handler for an effect") {
                 context("when that effect is dispatched") {
-                    var mobiusError: String?
-
                     let effect = "Effect"
-                    beforeEach {
-                        MobiusHooks.setErrorHandler({ (error: String, _, _) in
-                            mobiusError = error
-                        })
-
-                        sut.build().connect(outputHandler).accept(effect)
-                    }
 
                     it("should generate an error in the error handler") {
-                        expect(mobiusError).toNot(beNil())
+                        let connection = sut.build().connect(outputHandler)
+                        expect(connection.accept(effect)).to(raiseError())
                     }
                 }
             }

@@ -92,7 +92,6 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
             guard !disposed else {
                 // Callers are responsible for ensuring dispatchEvent is never entered after dispose.
                 MobiusHooks.errorHandler("\(Self.debugTag): event submitted after dispose", #file, #line)
-                return
             }
 
             unguardedDispatchEvent(event)

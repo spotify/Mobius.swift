@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -117,24 +117,13 @@ class MobiusLoopTests: QuickSpec {
             }
 
             describe("dispose integration tests") {
-                var errorThrown: Bool!
                 beforeEach {
                     loop = builder.start(from: "disposable")
-                    errorThrown = false
-                    MobiusHooks.setErrorHandler({ _, _, _ in
-                        errorThrown = true
-                    })
-                }
-
-                afterEach {
-                    MobiusHooks.setDefaultErrorHandler()
                 }
 
                 it("should allow disposing immediately after an effect") {
                     loop.dispatchEvent("event")
                     loop.dispose()
-
-                    expect(errorThrown).to(beFalse())
                 }
 
                 it("should dispose effect handler connection on dispose") {
@@ -145,9 +134,7 @@ class MobiusLoopTests: QuickSpec {
 
                 it("should disallow events post dispose") {
                     loop.dispose()
-                    loop.dispatchEvent("nnooooo!!!")
-
-                    expect(errorThrown).to(beTrue())
+                    expect(loop.dispatchEvent("nnooooo!!!")).to(raiseError())
                 }
             }
 

@@ -24,9 +24,18 @@ let package = Package(
         .target(name: "MobiusExtras", dependencies: ["MobiusCore"], path: "MobiusExtras/Source"),
         .target(name: "MobiusNimble", dependencies: ["MobiusCore", "MobiusTest", "Nimble"], path: "MobiusNimble/Source"),
         .target(name: "MobiusTest", dependencies: ["MobiusCore"], path: "MobiusTest/Source"),
+        .target(name: "MobiusThrowableAssertion", path: "MobiusThrowableAssertion/Source"),
 
-        .testTarget(name: "MobiusCoreTests", dependencies: ["MobiusCore", "Nimble", "Quick"], path: "MobiusCore/Test"),
-        .testTarget(name: "MobiusExtrasTests", dependencies: ["MobiusExtras", "Nimble", "Quick"], path: "MobiusExtras/Test"),
+        .testTarget(
+            name: "MobiusCoreTests",
+            dependencies: ["MobiusCore", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            path: "MobiusCore/Test"
+        ),
+        .testTarget(
+            name: "MobiusExtrasTests",
+            dependencies: ["MobiusCore", "MobiusExtras", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            path: "MobiusExtras/Test"
+        ),
         .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", "Quick"], path: "MobiusNimble/Test"),
         .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick", "Nimble"], path: "MobiusTest/Test"),
     ],
