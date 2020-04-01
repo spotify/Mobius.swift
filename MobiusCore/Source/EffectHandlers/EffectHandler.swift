@@ -25,8 +25,10 @@
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
 public protocol EffectHandler {
-    associatedtype Effect
-    associatedtype Event
+    associatedtype Input
+    associatedtype Output
+    typealias Effect = Input
+    typealias Event = Output
 
     /// Handle an `Effect`.
     ///
