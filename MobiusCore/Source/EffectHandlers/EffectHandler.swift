@@ -17,18 +17,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
-/// This protocol defines the contract for an Effect Handler which takes `Effect`s as input, and produces `Event`s as
-/// output.
+/// This protocol defines the contract for an Effect Handler which takes `EffectParameters` as input, and produces
+/// `Event`s as output.
 ///
-/// For each incoming `Effect`, zero or more `Event`s can be sent as output using `callback.send(Event)`. When an
-/// `Effect` has been completely handled, i.e. that effect will not result in any more events, call `callback.end()`.
+/// For each incoming effect parameter, zero or more `Event`s can be sent as output using `callback.send(Event)`. When
+/// an the effect parameters have been completely handled, i.e. that effect will not result in any more events, call
+/// `callback.end()`.
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
 public protocol EffectHandler {
-    associatedtype Input
-    associatedtype Output
-    typealias Effect = Input
-    typealias Event = Output
+    associatedtype EffectParameters
+    associatedtype Event
 
     /// Handle an `Effect`.
     ///
@@ -43,27 +42,27 @@ public protocol EffectHandler {
     /// - Parameter input: The effect being handled
     /// - Parameter callback: The `EffectCallback` used to communicate with the associated Mobius loop.
     func handle(
-        _ input: Effect,
+        _ input: EffectParameters,
         _ callback: EffectCallback<Event>
     ) -> Disposable
 }
 
 /// A type-erased wrapper of the `EffectHandler` protocol.
-public struct AnyEffectHandler<Effect, Event>: EffectHandler {
-    private let handleClosure: (Effect, EffectCallback<Event>) -> Disposable
+public struct AnyEffectHandler<EffectParameters, Event>: EffectHandler {
+    private let handleClosure: (EffectParameters, EffectCallback<Event>) -> Disposable
 
     /// Creates an anonymous `EffectHandler` that implements `handle` with the provided closure.
     ///
     /// - Parameter handle: An effect handler `handle` function; see the documentation for `EffectHandler.handle`.
-    public init(handle: @escaping (Effect, EffectCallback<Event>) -> Disposable) {
+    public init(handle: @escaping (EffectParameters, EffectCallback<Event>) -> Disposable) {
         self.handleClosure = handle
     }
 
     /// Creates a type-erased `EffectHandler` that wraps the given instance.
     public init<Handler: EffectHandler>(
         handler: Handler
-    ) where Handler.Effect == Effect, Handler.Event == Event {
-        let handleClosure: (Effect, EffectCallback<Event>) -> Disposable
+    ) where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
+        let handleClosure: (EffectParameters, EffectCallback<Event>) -> Disposable
 
         if let anyHandler = handler as? AnyEffectHandler {
             handleClosure = anyHandler.handleClosure
@@ -74,7 +73,7 @@ public struct AnyEffectHandler<Effect, Event>: EffectHandler {
         self.init(handle: handleClosure)
     }
 
-    public func handle(_ input: Effect, _ callback: EffectCallback<Event>) -> Disposable {
+    public func handle(_ input: EffectParameters, _ callback: EffectCallback<Event>) -> Disposable {
         return self.handleClosure(input, callback)
     }
 }

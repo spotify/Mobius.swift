@@ -81,7 +81,7 @@ public struct _PartialEffectRouter<Effect, Payload, Event> {
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
-    ) -> EffectRouter<Effect, Event> where Handler.Effect == Payload, Handler.Event == Event {
+    ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == Payload, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
         let route = Route<Effect, Event>(extractPayload: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])
