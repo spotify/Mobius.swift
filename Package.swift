@@ -16,8 +16,8 @@ let package = Package(
         .library(name: "MobiusTest", targets: ["MobiusTest"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Nimble", from: "8.0.0"),
-        .package(url: "https://github.com/Quick/Quick", from: "2.1.0"),
+        .package(url: "https://github.com/Quick/Nimble", from: "8.0.7"),
+        .package(url: "https://github.com/Quick/Quick", from: "2.2.0"),
     ],
     targets: [
         .target(name: "MobiusCore", path: "MobiusCore/Source"),
