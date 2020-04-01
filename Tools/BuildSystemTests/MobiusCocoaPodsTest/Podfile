@@ -1,0 +1,9 @@
+target 'MobiusCocoaPodsTest' do
+    platform :ios, '10.0'
+
+    pod 'MobiusCore', :path => '../../../'
+    pod 'MobiusExtras', :path => '../../../'
+    pod 'MobiusNimble', :path => '../../../'
+    pod 'MobiusTest', :path => '../../../'
+    pod 'Nimble', '~> 8.0.7'
+end
