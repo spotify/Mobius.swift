@@ -48,5 +48,10 @@ playground.xcworkspace
 **/Carthage/Build
 Tools/BuildSystemTests/MobiusCarthageTest/Cartfile.resolved
 
+# Cocoapods test
+Tools/BuildSystemTests/MobiusCocoaPodsTest/MobiusCocoaPodsTest.xcworkspace/
+Tools/BuildSystemTests/MobiusCocoaPodsTest/Pods/
+Tools/BuildSystemTests/MobiusCocoaPodsTest/Podfile.lock
+
 # Codecov
 *.coverage.txt

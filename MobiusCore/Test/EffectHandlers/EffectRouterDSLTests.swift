@@ -253,7 +253,6 @@ class EffectRouterDSLTests: QuickSpec {
                     }
 
                 dslHandler.accept(.effect1)
-                dslHandler.accept(.effect2)
                 expect(dispatchedEvents).to(equal([.eventForEffect1]))
             }
         }

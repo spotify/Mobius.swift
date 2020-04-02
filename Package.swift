@@ -16,17 +16,26 @@ let package = Package(
         .library(name: "MobiusTest", targets: ["MobiusTest"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/Quick/Nimble", from: "8.0.0"),
-        .package(url: "https://github.com/Quick/Quick", from: "2.1.0"),
+        .package(url: "https://github.com/Quick/Nimble", from: "8.0.7"),
+        .package(url: "https://github.com/Quick/Quick", from: "2.2.0"),
     ],
     targets: [
         .target(name: "MobiusCore", path: "MobiusCore/Source"),
         .target(name: "MobiusExtras", dependencies: ["MobiusCore"], path: "MobiusExtras/Source"),
         .target(name: "MobiusNimble", dependencies: ["MobiusCore", "MobiusTest", "Nimble"], path: "MobiusNimble/Source"),
         .target(name: "MobiusTest", dependencies: ["MobiusCore"], path: "MobiusTest/Source"),
+        .target(name: "MobiusThrowableAssertion", path: "MobiusThrowableAssertion/Source"),
 
-        .testTarget(name: "MobiusCoreTests", dependencies: ["MobiusCore", "Nimble", "Quick"], path: "MobiusCore/Test"),
-        .testTarget(name: "MobiusExtrasTests", dependencies: ["MobiusExtras", "Nimble", "Quick"], path: "MobiusExtras/Test"),
+        .testTarget(
+            name: "MobiusCoreTests",
+            dependencies: ["MobiusCore", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            path: "MobiusCore/Test"
+        ),
+        .testTarget(
+            name: "MobiusExtrasTests",
+            dependencies: ["MobiusCore", "MobiusExtras", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            path: "MobiusExtras/Test"
+        ),
         .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", "Quick"], path: "MobiusNimble/Test"),
         .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick", "Nimble"], path: "MobiusTest/Test"),
     ],

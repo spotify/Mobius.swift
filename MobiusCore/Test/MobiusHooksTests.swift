@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -34,15 +34,14 @@ class MobiusHooksTests: QuickSpec {
                 var errorCalledOnLine: UInt!
 
                 beforeEach {
-                    MobiusHooks.setErrorHandler({ (message: String, file: StaticString, line: UInt) in
+                    errorCalledOnLine = #line + 1
+                    expect(MobiusHooks.errorHandler(someString, #file, #line)).to(raiseError { message, file, line in
                         errorMessage = message
-                        errorFile = String(file)
+                        errorFile = file
                         errorLine = line
                     })
-
-                    errorCalledOnLine = #line + 1
-                    MobiusHooks.errorHandler(someString, #file, #line)
                 }
+
                 it("should use that error handler when an error occurs") {
                     expect(errorMessage).to(match(someString))
                 }
@@ -56,14 +55,6 @@ class MobiusHooksTests: QuickSpec {
                     expect(errorLine).to(equal(errorCalledOnLine))
                 }
             }
-        }
-    }
-}
-
-private extension String {
-    init(_ staticString: StaticString) {
-        self = staticString.withUTF8Buffer {
-            String(decoding: $0, as: UTF8.self)
         }
     }
 }

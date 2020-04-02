@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Spotify AB.
+// Copyright (c) 2020 Spotify AB.
 //
 // Licensed to the Apache Software Foundation (ASF) under one
 // or more contributor license agreements.  See the NOTICE file
@@ -24,32 +24,21 @@ import Quick
 class BrokenConnectionTests: QuickSpec {
     override func spec() {
         var connection: Connection<Int>!
-        var errorThrown: Bool!
 
-        describe("BrokenAnyConnection") {
+        describe("BrokenConnection") {
             beforeEach {
                 connection = BrokenConnection<Int>.connection()
-                errorThrown = false
-                MobiusHooks.setErrorHandler({ _, _, _ in
-                    errorThrown = true
-                })
-            }
-
-            afterEach {
-                MobiusHooks.setDefaultErrorHandler()
             }
 
             context("when calling accept value") {
                 it("should trigger the error handler") {
-                    connection.accept(3)
-                    expect(errorThrown).to(beTrue())
+                    expect(connection.accept(3)).to(raiseError())
                 }
             }
 
             context("when attempting to dispose") {
                 it("should trigger the error handler") {
-                    connection.dispose()
-                    expect(errorThrown).to(beTrue())
+                    expect(connection.dispose()).to(raiseError())
                 }
             }
         }

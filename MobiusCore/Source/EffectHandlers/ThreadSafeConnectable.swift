@@ -39,7 +39,6 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
                     #file,
                     #line
                 )
-                return BrokenConnection.connection()
             }
             self.output = output
             connection = connectable.connect(self.dispatch)

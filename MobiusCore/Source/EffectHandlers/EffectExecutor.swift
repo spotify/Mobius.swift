@@ -44,7 +44,6 @@ final class EffectExecutor<Effect, Event>: Connectable {
                     #file,
                     #line
                 )
-                return BrokenConnection.connection()
             }
 
             output = consumer

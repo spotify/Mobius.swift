@@ -18,6 +18,7 @@
 // under the License.
 
 import MobiusCore
+import MobiusThrowableAssertion
 import Nimble
 import Quick
 
@@ -27,13 +28,19 @@ class ConnectableTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         describe("ConnectableClass") {
-            var errorThrown: Bool = false
-            let handleError = { (_: String) -> Void in
-                errorThrown = true
+            beforeEach {
+                MobiusHooks.setErrorHandler { message, file, line in
+                    MobiusThrowableAssertion(message: message, file: "\(file)", line: line).throw()
+                }
             }
 
-            beforeEach {
-                errorThrown = false
+            afterEach {
+                MobiusHooks.setDefaultErrorHandler()
+            }
+
+            func catchError(in closure: () -> Void) -> Bool {
+                let exception = MobiusThrowableAssertion.catch(in: closure)
+                return exception != nil
             }
 
             context("when attempting to use the base class directly") {
@@ -41,19 +48,22 @@ class ConnectableTests: QuickSpec {
 
                 beforeEach {
                     sut = ConnectableClass()
-                    sut.handleError = handleError
                 }
 
                 context("when attempting to use handle") {
                     it("should cause a mobius error") {
-                        sut.handle("something")
+                        let errorThrown = catchError {
+                            sut.handle("something")
+                        }
                         expect(errorThrown).to(beTrue())
                     }
                 }
 
                 context("when attempting to use disposed") {
                     it("should cause a mobius error") {
-                        sut.onDispose()
+                        let errorThrown = catchError {
+                            sut.onDispose()
+                        }
                         expect(errorThrown).to(beTrue())
                     }
                 }
@@ -66,7 +76,6 @@ class ConnectableTests: QuickSpec {
                 beforeEach {
                     sut = SubclassedConnectableClass()
                     connection = sut.connect({ _ in })
-                    sut.handleError = handleError
                 }
 
                 it("should call onConnect") {
@@ -75,7 +84,9 @@ class ConnectableTests: QuickSpec {
 
                 context("when a connection has already been created") {
                     it("should fail") {
-                        _ = sut.connect({ _ in })
+                        let errorThrown = catchError {
+                            _ = sut.connect({ _ in })
+                        }
                         expect(errorThrown).to(beTrue())
                     }
                 }
@@ -95,8 +106,10 @@ class ConnectableTests: QuickSpec {
                     }
 
                     it("should have removed the consumer") {
-                        connection.dispose()
-                        connection.accept("Pointless")
+                        let errorThrown = catchError {
+                            connection.dispose()
+                            connection.accept("Pointless")
+                        }
                         expect(errorThrown).to(beTrue())
                     }
                 }
@@ -107,11 +120,12 @@ class ConnectableTests: QuickSpec {
                     var sut: SubclassedConnectableClass!
                     beforeEach {
                         sut = SubclassedConnectableClass()
-                        sut.handleError = handleError
                     }
 
                     xit("should cause a mobius error") {
-                        sut.send("Some string")
+                        let errorThrown = catchError {
+                            sut.send("Some string")
+                        }
                         expect(errorThrown).to(beTrue())
                     }
                 }
