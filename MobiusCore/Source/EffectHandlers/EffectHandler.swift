@@ -20,9 +20,9 @@
 /// This protocol defines the contract for an Effect Handler which takes `EffectParameters` as input, and produces
 /// `Event`s as output.
 ///
-/// For each incoming effect parameter, zero or more `Event`s can be sent as output using `callback.send(Event)`. Once
-/// the effect parameters have been completely handled (i.e. when the handler will not produce any more events) call
-/// `callback.end()`.
+/// For each input to the `handle` function, zero or more `Event`s can be sent as output using `callback.send(Event)`.
+/// Once the effect parameters have been completely handled (i.e. when the handler will not produce any more events)
+/// call `callback.end()`.
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
 public protocol EffectHandler {
