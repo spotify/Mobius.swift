@@ -26,7 +26,7 @@ import Foundation
 ///
 /// Alternatively used in `MobiusController.connectView(_:)` to connect a view to the controller. In that case, the
 /// incoming values will be models, and the outgoing values will be events.
-public protocol Connectable {
+public protocol Connectable: _EffectHandlerConvertible {
     associatedtype Input
     associatedtype Output
 
@@ -42,6 +42,12 @@ public protocol Connectable {
     /// - Parameter consumer: the consumer that the new connection should use to emit values
     /// - Returns: a new connection
     func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input>
+}
+
+public extension Connectable {
+    func _asEffectHandlerConnectable() -> AnyConnectable<Input, Output> {
+        return AnyConnectable(self)
+    }
 }
 
 /// Type-erased wrapper for `Connectable`s
