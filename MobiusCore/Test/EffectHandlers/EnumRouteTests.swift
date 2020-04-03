@@ -35,24 +35,24 @@ private indirect enum List: Equatable {
     case singleton(String)
 }
 
-private func unwrap<Input, Payload, Output>(
+private func unwrap<Input, Parameters, Output>(
     effect: Input,
-    usingRoute partialRouter: _PartialEffectRouter<Input, Payload, Output>
-) -> Payload? {
-    var payload: Payload?
+    usingRoute partialRouter: _PartialEffectRouter<Input, Parameters, Output>
+) -> Parameters? {
+    var parameters: Parameters?
     let handler = partialRouter
-        .to { unwrappedPayload in
-            payload = unwrappedPayload
+        .to { unwrappedParameters in
+            parameters = unwrappedParameters
         }
         .asConnectable
         .connect { _ in }
 
     handler.accept(effect)
     handler.dispose()
-    return payload
+    return parameters
 }
 
-class PayloadExtractionRouteTests: QuickSpec {
+class ParameterExtractionRouteTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
         context("Different types of enums being unwrapped") {

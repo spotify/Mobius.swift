@@ -26,14 +26,14 @@
 /// To define the relationship between an effect and its handler, you need two parts. The first is the routing criteria.
 ///  There are two choices here:
 ///  - `.routeEffects(equalTo: constant)` - Routing to effects which are equal to `constant`.
-///  - `.routeEffects(withPayload: extractPayload)` - Routing effects that satisfy
-///     a payload extracting function: `(Effect) -> Payload?`. If this function returns a non-`nil` value,
+///  - `.routeEffects(withParameters: extractParameters)` - Routing effects that satisfy
+///     a parameter extracting function: `(Effect) -> EffectParameters?`. If this function returns a non-`nil` value,
 ///     that route is taken and the non-`nil` value is sent as the input to the route.
 ///
 /// These two routing criteria can be matched with one of four types of targets:
-///  - `.to { effect in ... }`: A fire-and-forget style function of type `(Effect) -> Void`.
+///  - `.to { effect in ... }`: A fire-and-forget style function of type `(EffectParameters) -> Void`.
 ///  - `.toEvent { effect in ... }`: A function which returns an optional event to send back into the loop:
-///    `(Effect) -> Event?`. This makes it easy to send a single event caused by the effect.
+///    `(EffectParameters) -> Event?`. This makes it easy to send a single event caused by the effect.
 ///  - `.to(EffectHandler)`: This should be used for effects which require asynchronous behavior or produce more than
 ///     one event, and which have a clear definition of when an effect has been handled. For example, an effect handler
 ///     which performs a network request and dispatches an event back into the loop once it is finished or if it fails.
@@ -51,18 +51,18 @@ public struct EffectRouter<Effect, Event> {
         self.routes = routes
     }
 
-    /// Add a route for effects which satisfy `withPayload`.
+    /// Add a route for effects which satisfy `extractParameters`.
     ///
-    /// `payloadExtractor` is a function which returns an optional value for a given effect. If this value is non-`nil`,
-    /// this route will be taken with that non-`nil` value as input. A different route will be taken if `nil` is
-    /// returned.
+    /// `extractParameters` is a function which returns an optional value for a given effect. If this value is
+    /// non-`nil`, this route will be taken with that non-`nil` value as input. A different route will be taken if `nil`
+    /// is returned.
     ///
-    /// - Parameter payloadExtractor: a function which returns a non-`nil` value if this route should be taken, and
+    /// - Parameter extractParameters: a function which returns a non-`nil` value if this route should be taken, and
     ///   `nil` if a different route should be taken.
-    public func routeEffects<Payload>(
-        withPayload payloadExtractor: @escaping (Effect) -> Payload?
-    ) -> _PartialEffectRouter<Effect, Payload, Event> {
-        return _PartialEffectRouter(routes: routes, path: payloadExtractor)
+    public func routeEffects<EffectParameters>(
+        withParameters extractParameters: @escaping (Effect) -> EffectParameters?
+    ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
+        return _PartialEffectRouter(routes: routes, path: extractParameters)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to
@@ -72,18 +72,22 @@ public struct EffectRouter<Effect, Event> {
     }
 }
 
-public struct _PartialEffectRouter<Effect, Payload, Event> {
+/// A `_PartialEffectRouter` represents the state between a `routeEffects` call and the corresponding `to` or `toEvent`.
+///
+/// Every `routeEffects` should be followed immediately by a `to` or `toEvent`, and client code should not refer to the
+/// `_PartialEffectRouter` type directly.
+public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     fileprivate let routes: [Route<Effect, Event>]
-    fileprivate let path: (Effect) -> Payload?
+    fileprivate let path: (Effect) -> EffectParameters?
 
     /// Route to an `EffectHandler`.
     ///
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
-    ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == Payload, Handler.Event == Event {
+    ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
-        let route = Route<Effect, Event>(extractPayload: path, connectable: connectable)
+        let route = Route<Effect, Event>(extractParameters: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])
     }
 
@@ -92,9 +96,9 @@ public struct _PartialEffectRouter<Effect, Payload, Event> {
     /// - Parameter connectable: a connectable which will be used to handle effects.
     public func to<C: Connectable>(
         _ connectable: C
-    ) -> EffectRouter<Effect, Event> where C.Input == Payload, C.Output == Event {
+    ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
         let connectable = ThreadSafeConnectable(connectable: connectable)
-        let route = Route(extractPayload: path, connectable: connectable)
+        let route = Route(extractParameters: path, connectable: connectable)
         return EffectRouter(routes: routes + [route])
     }
 }
@@ -102,16 +106,16 @@ public struct _PartialEffectRouter<Effect, Payload, Event> {
 private struct Route<Input, Output> {
     let connect: (@escaping Consumer<Output>) -> ConnectedRoute<Input>
 
-    init<Payload, Conn: Connectable>(
-        extractPayload: @escaping (Input) -> Payload?,
+    init<EffectParameters, Conn: Connectable>(
+        extractParameters: @escaping (Input) -> EffectParameters?,
         connectable: Conn
-    ) where Conn.Input == Payload, Conn.Output == Output {
+    ) where Conn.Input == EffectParameters, Conn.Output == Output {
         connect = { output in
             let connection = connectable.connect(output)
             return ConnectedRoute(
                 tryToHandle: { input in
-                    if let payload = extractPayload(input) {
-                        return { connection.accept(payload) }
+                    if let parameters = extractParameters(input) {
+                        return { connection.accept(parameters) }
                     } else {
                         return nil
                     }

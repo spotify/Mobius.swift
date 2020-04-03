@@ -274,9 +274,9 @@ class MobiusLoopTests: QuickSpec {
                         disposed.value = true
                     }
                 }
-                let payload: (Int) -> Int? = { $0 }
+                let parameterExtractor: (Int) -> Int? = { $0 }
                 let effectConnectable = EffectRouter<Int, Int>()
-                    .routeEffects(withPayload: payload).to(effectHandler)
+                    .routeEffects(withParameters: parameterExtractor).to(effectHandler)
                     .asConnectable
                 let update = Update { (_: Int, _: Int) -> Next<Int, Int> in Next.dispatchEffects([1]) }
                 loop = Mobius

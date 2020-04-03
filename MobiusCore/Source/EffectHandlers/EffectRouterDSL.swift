@@ -24,7 +24,7 @@ public extension EffectRouter where Effect: Equatable {
     func routeEffects(
         equalTo constant: Effect
     ) -> _PartialEffectRouter<Effect, Effect, Event> {
-        return routeEffects(withPayload: { effect in effect == constant ? effect : nil })
+        return routeEffects(withParameters: { effect in effect == constant ? effect : nil })
     }
 }
 
@@ -33,33 +33,33 @@ public extension _PartialEffectRouter {
     ///
     /// - Parameter handle: A closure which defines an `EffectHandler`.
     func to(
-        _ handle: @escaping (Payload, EffectCallback<Event>) -> Disposable
+        _ handle: @escaping (EffectParameters, EffectCallback<Event>) -> Disposable
     ) -> EffectRouter<Effect, Event> {
-        return to(AnyEffectHandler<Payload, Event>(handle: handle))
+        return to(AnyEffectHandler<EffectParameters, Event>(handle: handle))
     }
 
     /// Route to a side-effecting closure.
     ///
     /// - Parameter fireAndForget: a function which given some input carries out a side effect.
     func to(
-        _ fireAndForget: @escaping (Payload) -> Void
+        _ fireAndForget: @escaping (EffectParameters) -> Void
     ) -> EffectRouter<Effect, Event> {
-        return to { payload, callback in
-            fireAndForget(payload)
+        return to { parameters, callback in
+            fireAndForget(parameters)
             callback.end()
             return AnonymousDisposable {}
         }
     }
 
-    /// Route to a closure which returns an optional event when given the payload as input.
+    /// Route to a closure which returns an optional event when given the parameters as input.
     ///
     /// - Parameter eventClosure: a function which returns an optional event given some input. No events will be
     ///   propagated if this function returns `nil`.
     func toEvent(
-        _ eventClosure: @escaping (Payload) -> Event?
+        _ eventClosure: @escaping (EffectParameters) -> Event?
     ) -> EffectRouter<Effect, Event> {
-        return to { payload, callback in
-            if let event = eventClosure(payload) {
+        return to { parameters, callback in
+            if let event = eventClosure(parameters) {
                 callback.send(event)
             }
             callback.end()
