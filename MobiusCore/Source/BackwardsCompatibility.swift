@@ -113,33 +113,33 @@ public extension MobiusController {
     var isRunning: Bool { return running }
 }
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol EffectPredicate {
     associatedtype Effect
     func canAccept(_ effect: Effect) -> Bool
 }
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol ConnectableWithPredicate: Connectable, EffectPredicate {}
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol ConsumerWithPredicate: EffectPredicate {
     func accept(_ effect: Effect)
 }
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol ActionWithPredicate: EffectPredicate {
     func run()
 }
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public protocol FunctionWithPredicate: EffectPredicate {
     associatedtype Event
 
     func apply(_ effect: Effect) -> Event
 }
 
-//@available(*, deprecated, message: "use `EffectRouter` instead")
+@available(*, deprecated, message: "use `EffectRouter` instead")
 public extension EffectRouterBuilder {
     /// Add a filtered `Connectable` for handling effects of a given type. The `Connectable` `Connection` will be invoked for
     /// each incoming effect object that passes its `canAccept` call.
