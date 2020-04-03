@@ -29,7 +29,7 @@ public protocol EffectHandler {
     associatedtype EffectParameters
     associatedtype Event
 
-    /// Handle some `EffectParameters`.
+    /// Handle an effect with `EffectParameters` as its associated values.
     ///
     /// To output events, call `callback.send`.
     /// Call `callback.end()` once the input has been handled to prevent memory leaks.
