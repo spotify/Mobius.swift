@@ -21,7 +21,7 @@
 /// `Event`s as output.
 ///
 /// For each input to the `handle` function, zero or more `Event`s can be sent as output using `callback.send(Event)`.
-/// Once the effect parameters have been completely handled (i.e. when the handler will not produce any more events)
+/// Once the effect has been completely handled (i.e. when the handler will not produce any more events)
 /// call `callback.end()`.
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
@@ -74,7 +74,7 @@ public struct AnyEffectHandler<EffectParameters, Event>: EffectHandler {
         self.init(handle: handleClosure)
     }
 
-    public func handle(_ input: EffectParameters, _ callback: EffectCallback<Event>) -> Disposable {
-        return self.handleClosure(input, callback)
+    public func handle(_ parameters: EffectParameters, _ callback: EffectCallback<Event>) -> Disposable {
+        return self.handleClosure(parameters, callback)
     }
 }
