@@ -30,7 +30,7 @@ Mobius can be built for all Apple platforms using the Swift Package Manager.
 
 Add the following entry to your `Package.swift`:
 ```swift
-.package(url: "https://github.com/spotify/Mobius.swift.git", .upToNextMajor(from: "0.2.0"))
+.package(url: "https://github.com/spotify/Mobius.swift.git", .upToNextMajor(from: "0.3.0"))
 ```
 </details>
 
@@ -40,14 +40,14 @@ Mobius can only be built for iOS using CocoaPods. For other platforms, please us
 
 Add the following entry in your `Podfile`:
 ```ruby
-pod 'MobiusCore', '0.2.0'
+pod 'MobiusCore', '0.3.0'
 ```
 
 Optionally, you can also choose to integrate `MobiusExtras`, `MobiusNimble` or `MobiusTest`:
 ```ruby
-pod 'MobiusExtras', '0.2.0'
-pod 'MobiusNimble', '0.2.0'
-pod 'MobiusTest', '0.2.0'
+pod 'MobiusExtras', '0.3.0'
+pod 'MobiusNimble', '0.3.0'
+pod 'MobiusTest', '0.3.0'
 ```
 </details>
 
@@ -57,7 +57,7 @@ Mobius can only be built for iOS using Carthage. For other platforms, please use
 
 Add the following entry in your `Cartfile`:
 ```
-github "spotify/Mobius.swift" "0.2.0"
+github "spotify/Mobius.swift" "0.3.0"
 ```
 
 There are some additional steps to take as explained in the [Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
@@ -149,7 +149,7 @@ This covers the fundamentals of Mobius. To learn more, head on over to our [wiki
 
 ## Status
 
-Mobius.swift is in nearing a 1.0 release. We use the framework internally in deployed features, but have recently made a number of breaking changes. The current master branch breaks compatibility with the previous 0.2.0 release and contains deprecated backwards-compatbility wrappers for some of the smaller changes. Once the current development phase is stabilized these deprecated versions will be removed, and that will be Mobius 1.0.
+Mobius.swift is in nearing a 1.0 release. We use the framework internally in deployed features, but have recently made a number of breaking changes. Release 0.3.0 breaks compatibility with the previous 0.2.0 release and contains deprecated backwards-compatbility wrappers for some of the smaller changes. These deprecated versions will be removed, and some other additive changes made, to form Mobius 1.0.
 
 ## Development
 1. Clone
