@@ -41,12 +41,6 @@ public final class InitSpec<Model, Effect> {
             self.initiate = initiate
         }
 
-        // It’s unclear why this was public; the replacement isn’t.
-        @available(*, deprecated, message: "use InitSpec.then instead")
-        public init(_ model: Model, initiator: @escaping Initiate<Model, Effect>) {
-            self.init(model, initiate: initiator)
-        }
-
         public func then(_ assertion: AssertFirst<Model, Effect>) {
             let first = initiate(model)
             assertion(first)

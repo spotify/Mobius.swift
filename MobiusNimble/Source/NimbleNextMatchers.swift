@@ -127,8 +127,3 @@ public func haveEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimbl
         )
     })
 }
-
-@available(*, deprecated, message: "use array of effects instead")
-public func haveEffects<Model, Effect: Hashable>(_ expected: Set<Effect>) -> Nimble.Predicate<Next<Model, Effect>> {
-    return haveEffects(Array(expected))
-}

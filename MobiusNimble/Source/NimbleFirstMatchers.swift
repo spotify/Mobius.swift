@@ -97,8 +97,3 @@ public func haveEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble
         )
     })
 }
-
-@available(*, deprecated, message: "use array of effects instead")
-public func haveEffects<Model, Effect: Equatable>(_ effects: Set<Effect>) -> Nimble.Predicate<First<Model, Effect>> {
-    return haveEffects(Array(effects))
-}

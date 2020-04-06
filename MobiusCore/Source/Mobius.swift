@@ -53,8 +53,7 @@ public struct Update<Model, Event, Effect> {
     }
 }
 
-/// Deprecated. A function used to normalize the initial model of a loop and optionally issue effects when the loop
-/// is started.
+/// A function used to normalize the initial model of a loop and optionally issue effects when the loop is started.
 public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
 public enum Mobius {}
@@ -266,7 +265,7 @@ public extension Mobius {
             )
         }
 
-        /// Internal; called by `MobiusController` and a BackwardsCompatibility.swift extension
+        /// Internal; called by `MobiusController`
         func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
             return Builder(
                 update: update,
