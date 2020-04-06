@@ -80,7 +80,6 @@ public extension Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            initiate: nil,
             eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
@@ -111,7 +110,6 @@ public extension Mobius {
     struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
-        private let initiate: Initiate<Model, Effect>?
         private let eventSource: AnyEventSource<Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
@@ -119,14 +117,12 @@ public extension Mobius {
         fileprivate init<EffectHandler: Connectable>(
             update: Update<Model, Event, Effect>,
             effectHandler: EffectHandler,
-            initiate: Initiate<Model, Effect>?,
             eventSource: AnyEventSource<Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where EffectHandler.Input == Effect, EffectHandler.Output == Event {
             self.update = update
             self.effectHandler = AnyConnectable(effectHandler)
-            self.initiate = initiate
             self.eventSource = eventSource
             self.logger = logger
             self.eventConsumerTransformer = eventConsumerTransformer
@@ -150,7 +146,6 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiate: initiate,
                 eventSource: AnyEventSource(eventSource),
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
@@ -169,7 +164,6 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: AnyMobiusLogger(logger)
@@ -196,7 +190,6 @@ public extension Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                initiate: initiate,
                 eventSource: eventSource,
                 eventConsumerTransformer: { consumer in transformer(oldTransfomer(consumer)) },
                 logger: logger
@@ -209,19 +202,11 @@ public extension Mobius {
         ///   - initialModel: The model the loop should start with.
         ///   - effects: Zero or more effects to execute immediately.
         public func start(from initialModel: Model, effects: [Effect] = []) -> MobiusLoop<Model, Event, Effect> {
-            // If no explicit initiator was given, create one that passes the model through unchanged and applies the
-            // given effects.
-            precondition(
-                self.initiate == nil || effects.isEmpty,
-                "A loop cannot use withInitiator and also specify initial effects in start"
-            )
-            let initiate = self.initiate ?? { First(model: $0, effects: effects) }
-
             return MobiusLoop.createLoop(
                 update: update,
                 effectHandler: effectHandler,
                 initialModel: initialModel,
-                initiate: initiate,
+                effects: effects,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
@@ -260,20 +245,9 @@ public extension Mobius {
                 builder: self,
                 initialModel: initialModel,
                 initiate: initiate,
+                logger: logger,
                 loopQueue: loopQueue,
                 viewQueue: viewQueue
-            )
-        }
-
-        /// Internal; called by `MobiusController`
-        func withInitiate(_ initiate: @escaping Initiate<Model, Effect>) -> Builder {
-            return Builder(
-                update: update,
-                effectHandler: effectHandler,
-                initiate: initiate,
-                eventSource: eventSource,
-                eventConsumerTransformer: eventConsumerTransformer,
-                logger: logger
             )
         }
     }

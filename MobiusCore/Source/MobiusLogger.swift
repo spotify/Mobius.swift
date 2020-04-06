@@ -25,15 +25,19 @@ public protocol MobiusLogger {
     associatedtype Event
     associatedtype Effect
 
-    ///  Called right before the `Initiate` function is called.
+    /// Called right before the `Initiate` function is called.
     ///
-    ///  This method mustn't block, as it'll hinder the loop from running. It will be called on the
-    ///  same thread as the `Initiate` function.
+    /// This method is only called for `MobiusController`-managed loops.
+    ///
+    /// This method mustn't block, as it'll hinder the loop from running. It will be called on the
+    /// same thread as the `Initiate` function.
     ///
     /// - Parameter model: the model that will be passed to the initiate function
     func willInitiate(model: Model)
 
     /// Called right after the `Initiate` function is called.
+    ///
+    /// This method is only called for `MobiusController`-managed loops.
     ///
     /// This method mustn't block, as it'll hinder the loop from running. It will be called on the
     /// same thread as the initiate function.
