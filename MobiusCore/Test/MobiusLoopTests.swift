@@ -177,10 +177,6 @@ class MobiusLoopTests: QuickSpec {
                         .start(from: "begin")
                 }
 
-                it("should log startup") {
-                    expect(logger.logMessages).toEventually(equal(["willInitiate(begin)", "didInitiate(begin, First<String, String>(model: \"begin\", effects: []))"]))
-                }
-
                 it("should log updates") {
                     logger.clear()
 

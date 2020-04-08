@@ -52,11 +52,11 @@ class EventProcessor<Model, Event, Effect>: Disposable, CustomDebugStringConvert
         access = accessGuard
     }
 
-    func start(from first: First<Model, Effect>) {
+    func start(from model: Model, effects: [Effect]) {
         access.guard {
-            currentModel = first.model
+            currentModel = model
 
-            publisher.post(Next.next(first.model, effects: first.effects))
+            publisher.post(Next.next(model, effects: effects))
 
             for event in queuedEvents {
                 accept(event)

@@ -58,6 +58,7 @@ public final class MobiusController<Model, Event, Effect> {
         builder: Mobius.Builder<Model, Event, Effect>,
         initialModel: Model,
         initiate: Initiate<Model, Effect>? = nil,
+        logger: AnyMobiusLogger<Model, Event, Effect>,
         loopQueue loopTargetQueue: DispatchQueue,
         viewQueue: DispatchQueue
     ) {
@@ -125,12 +126,21 @@ public final class MobiusController<Model, Event, Effect> {
             }
         }
 
-        var decoratedBuilder = builder.withEventConsumerTransformer(flipEventsToLoopQueue)
+        // Wrap initiator (if any) in a logger
+        let actualInitiate: Initiate<Model, Effect>
         if let initiate = initiate {
-            decoratedBuilder = decoratedBuilder.withInitiate(initiate)
+            actualInitiate = LoggingInitiate(initiate, logger: logger).initiate
+        } else {
+            actualInitiate = { First(model: $0) }
         }
 
-        loopFactory = { decoratedBuilder.start(from: $0) }
+        let decoratedBuilder = builder
+            .withEventConsumerTransformer(flipEventsToLoopQueue)
+
+        loopFactory = { model in
+            let first = actualInitiate(model)
+            return decoratedBuilder.start(from: first.model, effects: first.effects)
+        }
     }
 
     deinit {
