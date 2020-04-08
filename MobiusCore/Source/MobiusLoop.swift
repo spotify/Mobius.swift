@@ -19,39 +19,77 @@
 
 import Foundation
 
-/// - Callout(Instantiating): Use `Mobius.loop(update:effectHandler:)` to create an instance.
-public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStringConvertible {
-    private let eventProcessor: EventProcessor<Model, Event, Effect>
-    private let consumeEvent: Consumer<Event>
-    private let modelPublisher: ConnectablePublisher<Model>
-    private let disposable: Disposable
-    private var disposed = false
-    private var access: ConcurrentAccessDetector
+/// A `MobiusLoop` is the core encapsulation of business logic in Mobius.
+///
+/// It stores a current model, applies incoming events, processes the resulting effects, and broadcasts model changes
+/// to observers.
+///
+/// Use `Mobius.loop(update:effectHandler:)` to create an instance.
+public final class MobiusLoop<Model, Event, Effect>: Disposable {
+    private var access = ConcurrentAccessDetector()
     private var workBag: WorkBag
 
-    public var debugDescription: String {
-        return access.guard {
-            if disposed {
-                return "disposed \(type(of: self))!"
-            }
-            return "\(type(of: self)) \(eventProcessor)"
-        }
-    }
+    private var effectConnection: Connection<Effect>! = nil
+    private var consumeEvent: Consumer<Event>! = nil
+    private let modelPublisher: ConnectablePublisher<Model>
+
+    private var model: Model
+
+    private var disposable: CompositeDisposable?
 
     init(
-        eventProcessor: EventProcessor<Model, Event, Effect>,
-        consumeEvent: @escaping Consumer<Event>,
-        modelPublisher: ConnectablePublisher<Model>,
-        disposable: Disposable,
-        accessGuard: ConcurrentAccessDetector,
-        workBag: WorkBag
+        model: Model,
+        update: Update<Model, Event, Effect>,
+        eventSource: AnyEventSource<Event>,
+        eventConsumerTransformer: ConsumerTransformer<Event>,
+        effectHandler: AnyConnectable<Effect, Event>,
+        effects: [Effect],
+        logger: AnyMobiusLogger<Model, Event, Effect>
     ) {
-        self.eventProcessor = eventProcessor
-        self.consumeEvent = consumeEvent
-        self.modelPublisher = modelPublisher
-        self.disposable = disposable
-        self.access = accessGuard
+        let loggingUpdate = update.logging(logger)
+
+        let workBag = WorkBag(accessGuard: access)
         self.workBag = workBag
+
+        self.model = model
+        self.modelPublisher = ConnectablePublisher<Model>()
+
+        // consumeEvent is the closure that processes an event and handles the model and effect updates. It needs to
+        // be a closure so that it can be transformed by eventConsumerTransformer, and to handle ownership correctly:
+        // consumeEvent holds on to the update function and workbag, and also holds self while its work bag submission
+        // is queued.
+        //
+        // Originally the processNext(...) invocation was wrapped in a method, but that just spread things out more.
+        let consumeEvent = eventConsumerTransformer { [unowned self] event in
+            // Note: captures self strongly until the block is serviced by the workBag
+            let processNext = self.processNext
+            workBag.submit {
+                processNext(loggingUpdate.update(model: self.model, event: event))
+            }
+            workBag.service()
+        }
+        self.consumeEvent = consumeEvent
+
+        // These must be set up after consumeEvent, which refers to self; that’s why they need to be IUOs.
+        self.effectConnection = effectHandler.connect(consumeEvent)
+        let eventSourceDisposable = eventSource.subscribe(consumer: consumeEvent)
+
+        self.disposable = CompositeDisposable(disposables: [
+            effectConnection,
+            modelPublisher,
+            eventSourceDisposable
+        ])
+
+        // Prime the modelPublisher, and queue up any initial effects.
+        processNext(.next(model, effects: effects))
+
+        // When we’re fully initialized, we can process any initial effects plus events that may have been queued up
+        // by the effect handler or event source when we connected to them.
+        workBag.start()
+    }
+
+    deinit {
+        dispose()
     }
 
     /// Add an observer of model changes to this loop. If `getMostRecentModel()` is non-nil,
@@ -69,29 +107,30 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     }
 
     public func dispose() {
-        return access.guard {
-            if !disposed {
-                modelPublisher.dispose()
-                eventProcessor.dispose()
-                disposable.dispose()
-                disposed = true
-            }
+        access.guard {
+            let disposable = self.disposable
+            self.disposable = nil
+            disposable?.dispose()
         }
     }
 
-    deinit {
-        dispose()
-    }
-
+    /// Extract the latest model from the loop.
+    ///
+    /// This property is discouraged; in general, it is preferable to add an observer with `addObserver`.
     public var latestModel: Model {
-        return access.guard { eventProcessor.latestModel }
+        return access.guard { model }
     }
 
+    /// Send an event to the loop.
+    ///
+    /// This method is discouraged; in general, it’s preferable to inject events from an `EventSource` or `EffectHandler`.
+    ///
+    /// - Parameter event: The event to dispatch.
     public func dispatchEvent(_ event: Event) {
         return access.guard {
             guard !disposed else {
                 // Callers are responsible for ensuring dispatchEvent is never entered after dispose.
-                MobiusHooks.errorHandler("\(Self.debugTag): event submitted after dispose", #file, #line)
+                MobiusHooks.errorHandler("\(debugTag): event submitted after dispose", #file, #line)
             }
 
             unguardedDispatchEvent(event)
@@ -101,84 +140,52 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
     /// Like `dispatchEvent`, but without asserting that the loop hasn’t been disposed.
     ///
     /// This should not be used directly, but is useful in constructing asynchronous wrappers around loops (like
-    /// `MobiusController`, where the eventConsumerTransformer is used to implement equivalent async-safe assertions).
+    /// `MobiusController`, where the `eventConsumerTransformer` is used to implement equivalent async-safe assertions).
     public func unguardedDispatchEvent(_ event: Event) {
         consumeEvent(event)
     }
 
-    // swiftlint:disable:next function_parameter_count
-    static func createLoop<EffectHandler: Connectable>(
-        update: Update<Model, Event, Effect>,
-        effectHandler: EffectHandler,
-        initialModel: Model,
-        effects: [Effect],
-        eventSource: AnyEventSource<Event>,
-        eventConsumerTransformer: ConsumerTransformer<Event>,
-        logger: AnyMobiusLogger<Model, Event, Effect>
-    ) -> MobiusLoop where EffectHandler.Input == Effect, EffectHandler.Output == Event {
-        let accessGuard = ConcurrentAccessDetector()
-        let loggingUpdate = update.logging(logger)
-        let workBag = WorkBag(accessGuard: accessGuard)
+    // MARK: - Implemenation details
 
-        // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and
-        // dispatch models and effects to the right places
-        let nextPublisher = ConnectablePublisher<Next<Model, Effect>>(accessGuard: accessGuard)
+    /// Apply a `Next`:
+    ///
+    /// * Store the new model, if any, in self.model
+    /// * Post the new model, if any, to observers
+    /// * Queue up any effects in the workBag
+    /// * Service the workBag
+    private func processNext(_ next: Next<Model, Effect>) {
+        if let newModel = next.model {
+            model = newModel
+            modelPublisher.post(model)
+        }
 
-        // event processor: process events, publish Next:s, retain current model
-        let eventProcessor = EventProcessor(
-            update: loggingUpdate,
-            publisher: nextPublisher,
-            accessGuard: accessGuard
-        )
-
-        let consumeEvent = eventConsumerTransformer { event in
+        for effect in next.effects {
             workBag.submit {
-                eventProcessor.accept(event)
+                self.effectConnection.accept(effect)
             }
-            workBag.service()
         }
-
-        // effect handler: handle effects, push events to the event processor
-        let effectHandlerConnection = effectHandler.connect(consumeEvent)
-
-        let eventSourceDisposable = eventSource.subscribe(consumer: consumeEvent)
-
-        // model observer support
-        let modelPublisher = ConnectablePublisher<Model>()
-
-        // ensure model updates get published and effects dispatched to the effect handler
-        let nextConsumer: Consumer<Next<Model, Effect>> = { next in
-            if let model = next.model {
-                modelPublisher.post(model)
-            }
-
-            next.effects.forEach({ (effect: Effect) in
-                workBag.submit {
-                    effectHandlerConnection.accept(effect)
-                }
-            })
-            workBag.service()
-        }
-        let nextConnection = nextPublisher.connect(to: nextConsumer)
-
-        // everything is hooked up, start processing!
-        eventProcessor.start(from: initialModel, effects: effects)
-
-        return MobiusLoop(
-            eventProcessor: eventProcessor,
-            consumeEvent: consumeEvent,
-            modelPublisher: modelPublisher,
-            disposable: CompositeDisposable(disposables: [
-                eventSourceDisposable,
-                nextConnection,
-                effectHandlerConnection,
-            ]),
-            accessGuard: accessGuard,
-            workBag: workBag
-        )
+        workBag.service()
     }
 
-    private static var debugTag: String {
-        return "MobiusLoop<\(Model.self), \(Event.self), \(Effect.self)>"
+    /// Test whether the loop has been disposed.
+    private var disposed: Bool {
+        return disposable == nil
+    }
+
+    /// A string to identify the MobiusLoop; currently the type name including type arguments.
+    fileprivate var debugTag: String {
+        return "\(type(of: self))"
+    }
+}
+
+extension MobiusLoop: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return access.guard {
+            if disposed {
+                return "disposed \(debugTag)!"
+            }
+
+            return "\(debugTag){ \(String(reflecting: model)) }"
+        }
     }
 }
