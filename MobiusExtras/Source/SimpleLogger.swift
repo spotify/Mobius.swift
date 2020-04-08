@@ -55,6 +55,3 @@ public final class SimpleLogger<Model, Event, Effect>: MobiusLogger {
         }
     }
 }
-
-@available(*, deprecated, renamed: "SimpleLogger")
-typealias ConsoleLogger = SimpleLogger
