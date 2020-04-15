@@ -37,7 +37,7 @@ class InitSpecTests: QuickSpec {
                     testModel = UUID().uuidString
                     testEffects = ["1", "2", "3"]
                     initiate = { (model: String) in
-                        First<String, String>(model: model + model, effects: testEffects)
+                        First(model: model + model, effects: testEffects)
                     }
 
                     spec = InitSpec(initiate)

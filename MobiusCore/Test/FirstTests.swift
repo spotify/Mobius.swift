@@ -33,7 +33,7 @@ class FirstTests: QuickSpec {
 
             describe("public initializer") {
                 beforeEach {
-                    sut = First<String, Effect>(model: "a", effects: [.send])
+                    sut = First(model: "a", effects: [.send])
                 }
 
                 it("should set the model property") {

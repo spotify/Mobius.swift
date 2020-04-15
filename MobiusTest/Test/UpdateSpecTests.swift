@@ -43,7 +43,7 @@ enum MyEffect {
 class UpdateSpecTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
-        let updateSpec = UpdateSpec<MyModel, MyEvent, MyEffect>(myUpdate)
+        let updateSpec = UpdateSpec(myUpdate)
 
         describe("UpdateSpec") {
             describe("single events") {

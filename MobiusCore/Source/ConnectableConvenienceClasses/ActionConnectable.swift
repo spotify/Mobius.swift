@@ -29,7 +29,7 @@ open class ActionConnectable<Input, Output>: Connectable {
     ///
     /// - Parameter action: Called when the `connection`’s `accept` function is called.
     public init(_ action: @escaping () -> Void) {
-        innerConnectable = ClosureConnectable<Input, Output>({ _ in
+        innerConnectable = ClosureConnectable({ _ in
             action()
         })
     }

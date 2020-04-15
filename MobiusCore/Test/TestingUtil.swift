@@ -44,7 +44,7 @@ class SimpleTestConnectable: Connectable {
     var disposed = false
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
-        return Connection<String>(acceptClosure: { _ in }, disposeClosure: { [weak self] in self?.disposed = true })
+        return Connection(acceptClosure: { _ in }, disposeClosure: { [weak self] in self?.disposed = true })
     }
 }
 
@@ -58,7 +58,7 @@ class RecordingTestConnectable: Connectable {
     private let expectedQueue: DispatchQueue?
 
     init(expectedQueue: DispatchQueue? = nil) {
-        recorder = Recorder<String>()
+        recorder = Recorder()
         self.expectedQueue = expectedQueue
     }
 

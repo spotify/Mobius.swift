@@ -29,7 +29,7 @@ open class ConsumerConnectable<Input, Output>: Connectable {
     ///
     /// - Parameter consumer: Called when the `connection`’s `accept` function is called.
     public init(_ consumer: @escaping Consumer<Input>) {
-        innerConnectable = ClosureConnectable<Input, Output>(consumer)
+        innerConnectable = ClosureConnectable(consumer)
     }
 
     public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {

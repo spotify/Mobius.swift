@@ -37,7 +37,7 @@ class AnyEffectHandlerTests: QuickSpec {
 
             sharedExamples("expected AnyEffectHandler behaviour") {
                 it("invokes send and end") {
-                    let callback = EffectCallback<Event>(
+                    let callback = EffectCallback(
                         onSend: { receivedEvents.append("e-" + $0) },
                         onEnd: { receivedEvents.append("end") }
                     )
