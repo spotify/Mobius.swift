@@ -45,7 +45,7 @@ class EffectHandlerTests: QuickSpec {
             beforeEach {
                 effectHandler = AnyEffectHandler(handle: handleEffect)
                 receivedEvents = []
-                let callback = EffectCallback<Event>(
+                let callback = EffectCallback(
                     onSend: { event in
                         receivedEvents.append(event)
                     },

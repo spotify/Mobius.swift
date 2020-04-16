@@ -32,7 +32,7 @@ class ConnectionTests: QuickSpec {
                 beforeEach {
                     let acceptClosure = { (value: Int) in acceptValue = value }
                     let disposeClosure = { disposeCalled = true }
-                    connection = Connection<Int>(acceptClosure: acceptClosure, disposeClosure: disposeClosure)
+                    connection = Connection(acceptClosure: acceptClosure, disposeClosure: disposeClosure)
                 }
 
                 afterEach {

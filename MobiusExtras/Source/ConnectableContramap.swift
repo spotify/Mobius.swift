@@ -34,7 +34,7 @@ public extension Connectable {
             )
         }
 
-        let contramapped = AnyConnectable<NewInput, Output>(newConnectClosure)
+        let contramapped = AnyConnectable(newConnectClosure)
 
         return contramapped
     }

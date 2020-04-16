@@ -29,7 +29,7 @@ open class BlockingFunctionConnectable<Input, Output>: Connectable {
     ///
     /// - Parameter function: Called when the `connection`’s `accept` function is called.
     public init(_ function: @escaping (Input) -> Output) {
-        innerConnectable = ClosureConnectable<Input, Output>(function)
+        innerConnectable = ClosureConnectable(function)
     }
 
     public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {

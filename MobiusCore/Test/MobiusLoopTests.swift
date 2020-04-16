@@ -148,8 +148,8 @@ class MobiusLoopTests: QuickSpec {
                         update: Update { _, _ in .noChange },
                         publisher: ConnectablePublisher()
                     )
-                    modelPublisher = ConnectablePublisher<String>()
-                    disposable = ConnectablePublisher<String>()
+                    modelPublisher = ConnectablePublisher()
+                    disposable = ConnectablePublisher()
 
                     loop = MobiusLoop(
                         eventProcessor: eventProcessor,
