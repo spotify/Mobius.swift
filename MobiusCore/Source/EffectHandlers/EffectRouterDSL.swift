@@ -35,7 +35,7 @@ public extension _PartialEffectRouter {
     func to(
         _ handle: @escaping (EffectParameters, EffectCallback<Event>) -> Disposable
     ) -> EffectRouter<Effect, Event> {
-        return to(AnyEffectHandler<EffectParameters, Event>(handle: handle))
+        return to(AnyEffectHandler(handle: handle))
     }
 
     /// Route to a side-effecting closure.

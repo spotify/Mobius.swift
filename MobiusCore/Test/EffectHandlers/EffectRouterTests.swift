@@ -187,7 +187,7 @@ class EffectRouterTests: QuickSpec {
         context("Router Disposing on Deinit") {
             it("should dispose active `EffectHandler`s when deinitializing") {
                 var wasDisposed = false
-                var connection: Connection<Effect>? = EffectRouter<Effect, Event>()
+                var connection: Connection? = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .effect1)
                     .to { _, _ in
                         return AnonymousDisposable {
@@ -214,7 +214,7 @@ private class TestConnectable: Connectable {
         self.onDispose = onDispose
     }
     func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
-        Connection<Effect>(
+        Connection(
             acceptClosure: { _ in consumer(self.event) },
             disposeClosure: onDispose
         )

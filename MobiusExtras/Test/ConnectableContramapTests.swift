@@ -43,7 +43,7 @@ class ConnectableContramapTests: QuickSpec {
             }
 
             beforeEach {
-                connectable = AnyConnectable<String, String>({ (consumer: @escaping Consumer<String>) -> Connection<String> in
+                connectable = AnyConnectable({ (consumer: @escaping Consumer<String>) -> Connection<String> in
                     Connection(acceptClosure: consumer, disposeClosure: dispose)
                 })
 

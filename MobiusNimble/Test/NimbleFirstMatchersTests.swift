@@ -45,7 +45,7 @@ class NimbleFirstMatchersTests: QuickSpec {
 
             let model = "3"
             func testInitiate(model: String) -> First<String, String> {
-                return First<String, String>(model: model, effects: ["2", "4"])
+                return First(model: model, effects: ["2", "4"])
             }
 
             // Testing through proxy: UpdateSpec
