@@ -18,10 +18,13 @@
 // under the License.
 
 import MobiusCore
+import MobiusExtras
 import XCTest
 
 /// Test cases that reproduce the Getting Started section of the GitHub wiki
 class WikiTutorialTest: XCTestCase {
+    // swiftlint:disable function_body_length
+
     func testWikiCreatingALoop() {
         // Dummy implementation of print()
         var printedValues: [String] = []
