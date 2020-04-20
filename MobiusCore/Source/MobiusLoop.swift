@@ -52,7 +52,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
         self.workBag = workBag
 
         self.model = model
-        self.modelPublisher = ConnectablePublisher<Model>()
+        self.modelPublisher = ConnectablePublisher<Model>(accessGuard: access)
 
         // consumeEvent is the closure that processes an event and handles the model and effect updates. It needs to
         // be a closure so that it can be transformed by eventConsumerTransformer, and to handle ownership correctly:
