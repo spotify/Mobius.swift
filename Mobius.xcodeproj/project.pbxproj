@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		025BB529244DA65100E80BD2 /* ConnectableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB528244DA65100E80BD2 /* ConnectableMap.swift */; };
+		025BB52C244DA6BF00E80BD2 /* ConnectableMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB52A244DA68500E80BD2 /* ConnectableMapTests.swift */; };
+		025BB52D244DA6C400E80BD2 /* ConnectableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB528244DA65100E80BD2 /* ConnectableMap.swift */; };
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectExecutor.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
@@ -289,6 +292,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		025BB528244DA65100E80BD2 /* ConnectableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableMap.swift; sourceTree = "<group>"; };
+		025BB52A244DA68500E80BD2 /* ConnectableMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableMapTests.swift; sourceTree = "<group>"; };
 		02C4061C2373078400BD7ED8 /* EffectExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectExecutor.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
@@ -748,6 +753,7 @@
 				5BB287E8209995420043B530 /* SimpleLogger.swift */,
 				DD748322212DB525008EEECD /* Copyable.swift */,
 				5B1F104C21105CAD0067193C /* EventSource+Extensions.swift */,
+				025BB528244DA65100E80BD2 /* ConnectableMap.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -840,6 +846,7 @@
 				5B9CE80621199D4400DB79A7 /* ConnectableContramapTests.swift */,
 				DD748324212DEEC1008EEECD /* CopyableTests.swift */,
 				5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */,
+				025BB52A244DA68500E80BD2 /* ConnectableMapTests.swift */,
 				2DA1E89D2449F1ED00D240B7 /* WikiTutorialTest.swift */,
 			);
 			path = Test;
@@ -1244,6 +1251,7 @@
 				3EE5AF052110BF2E00CF8CA8 /* ConnectableClass.swift in Sources */,
 				2DF4C42420DBDF1B00A4B6DE /* SimpleLogger.swift in Sources */,
 				02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */,
+				025BB52D244DA6C400E80BD2 /* ConnectableMap.swift in Sources */,
 				5B1F104E21105CB10067193C /* EventSource+Extensions.swift in Sources */,
 				2D3A696D2355AED90053C95E /* Lock.swift in Sources */,
 			);
@@ -1347,6 +1355,7 @@
 				5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */,
 				5B1F104D21105CAD0067193C /* EventSource+Extensions.swift in Sources */,
 				DDA64A6720A0AD2D00150355 /* SimpleLogger.swift in Sources */,
+				025BB529244DA65100E80BD2 /* ConnectableMap.swift in Sources */,
 				5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */,
 				2D3A696E2355AED90053C95E /* Lock.swift in Sources */,
 			);
@@ -1409,6 +1418,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD748325212DEEC1008EEECD /* CopyableTests.swift in Sources */,
+				025BB52C244DA6BF00E80BD2 /* ConnectableMapTests.swift in Sources */,
 				5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */,
 				5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */,
 				2DA1E8A12449FBC500D240B7 /* WikiTutorialTest.swift in Sources */,
