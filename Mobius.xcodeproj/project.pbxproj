@@ -10,6 +10,9 @@
 		025BB529244DA65100E80BD2 /* ConnectableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB528244DA65100E80BD2 /* ConnectableMap.swift */; };
 		025BB52C244DA6BF00E80BD2 /* ConnectableMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB52A244DA68500E80BD2 /* ConnectableMapTests.swift */; };
 		025BB52D244DA6C400E80BD2 /* ConnectableMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 025BB528244DA65100E80BD2 /* ConnectableMap.swift */; };
+		027D4519244DE4D100375BB5 /* EffectRouterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D4518244DE4D100375BB5 /* EffectRouterSpec.swift */; };
+		027D451C244DE7C600375BB5 /* EffectRouterSpecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D451A244DE7C000375BB5 /* EffectRouterSpecTests.swift */; };
+		027D451D244DE7CD00375BB5 /* EffectRouterSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D4518244DE4D100375BB5 /* EffectRouterSpec.swift */; };
 		02BED1BB21DD20D20093FB47 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		02C4061D2373078400BD7ED8 /* EffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C4061C2373078400BD7ED8 /* EffectExecutor.swift */; };
 		02C40621237422EF00BD7ED8 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
@@ -297,6 +300,8 @@
 /* Begin PBXFileReference section */
 		025BB528244DA65100E80BD2 /* ConnectableMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableMap.swift; sourceTree = "<group>"; };
 		025BB52A244DA68500E80BD2 /* ConnectableMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectableMapTests.swift; sourceTree = "<group>"; };
+		027D4518244DE4D100375BB5 /* EffectRouterSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterSpec.swift; sourceTree = "<group>"; };
+		027D451A244DE7C000375BB5 /* EffectRouterSpecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterSpecTests.swift; sourceTree = "<group>"; };
 		02C4061C2373078400BD7ED8 /* EffectExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectExecutor.swift; sourceTree = "<group>"; };
 		02C40620237422EF00BD7ED8 /* EffectRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouter.swift; sourceTree = "<group>"; };
 		02C40622237425E100BD7ED8 /* EffectRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectRouterTests.swift; sourceTree = "<group>"; };
@@ -821,6 +826,7 @@
 				5B5F11B8213805C000911A57 /* MatcherUtils.swift */,
 				5B19F71A21254CCD00074AD7 /* NextMatchers.swift */,
 				5BB288A420999B750043B530 /* UpdateSpec.swift */,
+				027D4518244DE4D100375BB5 /* EffectRouterSpec.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -842,6 +848,7 @@
 				5B19F71D21255F9600074AD7 /* NextMatchersTests.swift */,
 				5B57E8BD2125AD09001AFC71 /* TestUtil.swift */,
 				5BB288AA20999B750043B530 /* UpdateSpecTests.swift */,
+				027D451A244DE7C000375BB5 /* EffectRouterSpecTests.swift */,
 			);
 			path = Test;
 			sourceTree = "<group>";
@@ -1269,6 +1276,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027D451D244DE7CD00375BB5 /* EffectRouterSpec.swift in Sources */,
 				2DF4C53A20DBE04B00A4B6DE /* UpdateSpec.swift in Sources */,
 				5B5F11BA213805C000911A57 /* FirstMatchers.swift in Sources */,
 				5B5F11BC213805C000911A57 /* MatcherUtils.swift in Sources */,
@@ -1403,6 +1411,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027D4519244DE4D100375BB5 /* EffectRouterSpec.swift in Sources */,
 				DDA64A6820A0AD5000150355 /* UpdateSpec.swift in Sources */,
 				5B5F11B9213805C000911A57 /* FirstMatchers.swift in Sources */,
 				5B5F11BB213805C000911A57 /* MatcherUtils.swift in Sources */,
@@ -1415,6 +1424,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				027D451C244DE7C600375BB5 /* EffectRouterSpecTests.swift in Sources */,
 				DDA64A6920A0AD5200150355 /* UpdateSpecTests.swift in Sources */,
 				5B19F71E21255F9600074AD7 /* NextMatchersTests.swift in Sources */,
 				5B9CE814211C5BCD00DB79A7 /* InitSpecTests.swift in Sources */,
