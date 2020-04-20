@@ -20,22 +20,18 @@
 import MobiusCore
 
 public extension Connectable {
-    func contramap<NewInput>(_ map: @escaping (NewInput) -> Input) -> AnyConnectable<NewInput, Output> {
-        let newConnectClosure = { (consumer: @escaping Consumer<Output>) -> Connection<NewInput> in
-            let connection = self.connect(consumer)
-            let mappedAcceptFunction = { (newTypeInput: NewInput) in
-                let oldTypeInput = map(newTypeInput)
-                connection.accept(oldTypeInput)
-            }
+    /// Transform the input type of this `Connectable` by applying the `transform` function to each input.
+    ///
+    /// - Parameter transform: The function which should be used to transform the input to this `Connectable`
+    /// - Returns: A `Connectable` which applies `transform` to each input value before handling it.
+    func contramap<NewInput>(_ transform: @escaping (NewInput) -> Input) -> AnyConnectable<NewInput, Output> {
+        return AnyConnectable { dispatch in
+            let connection = self.connect(dispatch)
 
-            return Connection<NewInput>(
-                acceptClosure: mappedAcceptFunction,
+            return Connection(
+                acceptClosure: { connection.accept(transform($0)) },
                 disposeClosure: connection.dispose
             )
         }
-
-        let contramapped = AnyConnectable(newConnectClosure)
-
-        return contramapped
     }
 }
