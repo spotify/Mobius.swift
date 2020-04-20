@@ -26,7 +26,7 @@ import Foundation
 ///
 /// Use `Mobius.loop(update:effectHandler:)` to create an instance.
 public final class MobiusLoop<Model, Event, Effect>: Disposable {
-    private var access = ConcurrentAccessDetector()
+    private let access = ConcurrentAccessDetector()
     private var workBag: WorkBag
 
     private var effectConnection: Connection<Effect>! = nil
@@ -64,7 +64,12 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
             // Note: captures self strongly until the block is serviced by the workBag
             let processNext = self.processNext
             workBag.submit {
-                processNext(loggingUpdate.update(model: self.model, event: event))
+                // Note: we must read self.model inside the submit block, since other queued blocks may have executed
+                // between submitting and getting here.
+                // This is an unowned read of `self`, but at this point `self` is being kept alive by the local
+                // `processNext`.
+                let model = self.model
+                processNext(loggingUpdate.update(model: model, event: event))
             }
             workBag.service()
         }
@@ -77,7 +82,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
         self.disposable = CompositeDisposable(disposables: [
             effectConnection,
             modelPublisher,
-            eventSourceDisposable
+            eventSourceDisposable,
         ])
 
         // Prime the modelPublisher, and queue up any initial effects.
