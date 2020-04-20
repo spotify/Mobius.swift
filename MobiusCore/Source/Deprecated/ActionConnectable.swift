@@ -19,17 +19,21 @@
 
 import Foundation
 
-/// Base class for creating a function based `connectable`.
+/// Base class for creating an action based `connectable`.
 ///
 /// Invoking the `connection` functions will block the current thread until done.
-open class BlockingFunctionConnectable<Input, Output>: Connectable {
+// swiftlint:disable:next line_length
+@available(*, deprecated, message: "ActionConnectable will be removed before Mobius 1.0. If you’re using it with EffectRouter, you probably don’t need an explicit connectable, just route to your action function.")
+open class ActionConnectable<Input, Output>: Connectable {
     private var innerConnectable: ClosureConnectable<Input, Output>
 
-    /// Initialise with a function (input, output).
+    /// Initialise with an action (no input, no output).
     ///
-    /// - Parameter function: Called when the `connection`’s `accept` function is called.
-    public init(_ function: @escaping (Input) -> Output) {
-        innerConnectable = ClosureConnectable(function)
+    /// - Parameter action: Called when the `connection`’s `accept` function is called.
+    public init(_ action: @escaping () -> Void) {
+        innerConnectable = ClosureConnectable({ _ in
+            action()
+        })
     }
 
     public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {

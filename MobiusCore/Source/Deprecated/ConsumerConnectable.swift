@@ -22,6 +22,8 @@ import Foundation
 /// Base class for creating a consumer based `connectable`.
 ///
 /// Invoking the `connection` functions will block the current thread until done.
+// swiftlint:disable:next line_length
+@available(*, deprecated, message: "ConsumerConnectable will be removed before Mobius 1.0. If you’re using it with EffectRouter, you probably don’t need an explicit connectable, just route to your consumer function.")
 open class ConsumerConnectable<Input, Output>: Connectable {
     private var innerConnectable: ClosureConnectable<Input, Output>
 
