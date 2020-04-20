@@ -117,7 +117,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable, CustomDebugStri
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) -> MobiusLoop where EffectHandler.Input == Effect, EffectHandler.Output == Event {
         let accessGuard = ConcurrentAccessDetector()
-        let loggingUpdate = update.logging(logger)
+        let loggingUpdate = logger.wrap(update: update)
         let workBag = WorkBag(accessGuard: accessGuard)
 
         // create somewhere for the event processor to push nexts to; later, we'll observe these nexts and

@@ -29,7 +29,7 @@ class LoggingUpdateTests: QuickSpec {
 
             beforeEach {
                 logger = TestMobiusLogger()
-                loggingUpdate = Update { model, event in Next(model: model, effects: [event]) }.logging(logger)
+                loggingUpdate = logger.wrap(update: Update { model, event in Next(model: model, effects: [event]) })
             }
 
             it("should log willUpdate and didUpdate for each update attempt") {
