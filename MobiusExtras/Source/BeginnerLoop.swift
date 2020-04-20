@@ -31,15 +31,12 @@ public extension Mobius {
         update: @escaping (Model, Event) -> Model
     ) -> Builder<Model, Event, Never> {
         let realUpdate = Update<Model, Event, Never> { model, event in
-            return .next(update(model, event))
+            .next(update(model, event))
         }
 
-        let effectHandler = AnyConnectable<Never, Event> { _ in
-            return Connection(
-                acceptClosure: { _ in },
-                disposeClosure: {}
-            )
-        }
+        let effectHandler = EffectRouter<Never, Event>()
+            .asConnectable
+
         return loop(update: realUpdate, effectHandler: effectHandler)
     }
 }
