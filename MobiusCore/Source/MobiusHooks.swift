@@ -40,9 +40,6 @@ public enum MobiusHooks {
     }
 
     public static func defaultErrorHandler(_ message: String = "", file: StaticString, line: UInt) -> Never {
-        Thread.callStackSymbols.forEach { (symbol: String) in
-            print(symbol)
-        }
         fatalError(message, file: file, line: line)
     }
 }
