@@ -17,22 +17,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import Foundation
+import MobiusCore
 
-/// Base class for creating a consumer based `connectable`.
-///
-/// Invoking the `connection` functions will block the current thread until done.
-open class ConsumerConnectable<Input, Output>: Connectable {
-    private var innerConnectable: ClosureConnectable<Input, Output>
+public extension Mobius {
 
-    /// Initialise with a consumer (input, no output).
+    /// A simplified version of `Mobius.loop` for use in tutorials.
     ///
-    /// - Parameter consumer: Called when the `connection`’s `accept` function is called.
-    public init(_ consumer: @escaping Consumer<Input>) {
-        innerConnectable = ClosureConnectable(consumer)
-    }
+    /// This helper simplifies setting up a loop with no effects.
+    ///
+    /// - Parameter update: A function taking a model and event and returning a new model.
+    @inlinable
+    static func beginnerLoop<Model, Event>(
+        update: @escaping (Model, Event) -> Model
+    ) -> Builder<Model, Event, Never> {
+        let realUpdate = Update<Model, Event, Never> { model, event in
+            return .next(update(model, event))
+        }
 
-    public func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {
-        return innerConnectable.connect(consumer)
+        let effectHandler = AnyConnectable<Never, Event> { _ in
+            return Connection(
+                acceptClosure: { _ in },
+                disposeClosure: {}
+            )
+        }
+        return loop(update: realUpdate, effectHandler: effectHandler)
     }
 }
