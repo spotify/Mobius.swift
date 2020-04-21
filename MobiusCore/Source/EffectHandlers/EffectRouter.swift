@@ -109,7 +109,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ///
     /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
     public func on(_ queue: DispatchQueue) -> Self {
-        return Self.init(routes: routes, path: path, queue: queue)
+        return Self(routes: routes, path: path, queue: queue)
     }
 }
 
