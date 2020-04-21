@@ -320,7 +320,7 @@
 		2D3A6972235737430053C95E /* WorkBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBag.swift; sourceTree = "<group>"; };
 		2D3A69752359EAA00053C95E /* WorkBagTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkBagTests.swift; sourceTree = "<group>"; };
 		2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncStartStopStateMachine.swift; sourceTree = "<group>"; };
-		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AsyncDispatchQueueConnectable.swift; path = ConnectableConvenienceClasses/AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
+		2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncDispatchQueueConnectable.swift; sourceTree = "<group>"; };
 		2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventRouterDisposalLogicalRaceRegressionTest.swift; sourceTree = "<group>"; };
 		2DA1E89A2449EF6E00D240B7 /* BeginnerLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeginnerLoop.swift; sourceTree = "<group>"; };
 		2DA1E89D2449F1ED00D240B7 /* WikiTutorialTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiTutorialTest.swift; sourceTree = "<group>"; };
@@ -574,7 +574,7 @@
 			);
 			sourceTree = "<group>";
 		};
-		5B1F1038210F5E7D0067193C /* ConnectableConvenienceClasses */ = {
+		5B1F1038210F5E7D0067193C /* Deprecated */ = {
 			isa = PBXGroup;
 			children = (
 				5B1F103B210F5EBC0067193C /* ActionConnectable.swift */,
@@ -582,7 +582,7 @@
 				5B1F1042210F5F590067193C /* ClosureConnectable.swift */,
 				5B1F103E210F5EE40067193C /* ConsumerConnectable.swift */,
 			);
-			path = ConnectableConvenienceClasses;
+			path = Deprecated;
 			sourceTree = "<group>";
 		};
 		5B1F1045211036FC0067193C /* ConnectableConvenienceClassesTests */ = {
@@ -697,7 +697,7 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDBC2366EF8D00A1CE4C /* EffectHandlers */,
-				5B1F1038210F5E7D0067193C /* ConnectableConvenienceClasses */,
+				5B1F1038210F5E7D0067193C /* Deprecated */,
 				5BB287BC209995410043B530 /* Disposables */,
 				5B4A369821107D0E00279C7D /* EventSources */,
 				2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */,
