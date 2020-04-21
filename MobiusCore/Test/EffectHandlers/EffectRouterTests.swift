@@ -203,19 +203,54 @@ class EffectRouterTests: QuickSpec {
                 expect(wasDisposed).toEventually(beTrue())
             }
         }
+
+        context("Running on different queues") {
+            it("supports handling effects on a specified queue") {
+                let testQueue = DispatchQueue(label: "test")
+
+                var ranOnTestQueue = false
+                let connection = EffectRouter<Effect, Event>()
+                    .routeCase(.effect1)
+                    .on(testQueue)
+                    .to {
+                        dispatchPrecondition(condition: .onQueue(testQueue))
+                        ranOnTestQueue = true
+                    }
+                    .asConnectable
+                    .connect { _ in }
+
+                connection.accept(.effect1)
+                testQueue.waitForOutstandingTasks()
+
+                expect(ranOnTestQueue).to(beTrue())
+
+                connection.dispose()
+            }
+        }
     }
 }
 
 private class TestConnectable: Connectable {
     private let event: Event
     private let onDispose: () -> Void
-    init(dispatchEvent event: Event, onDispose: @escaping () -> Void) {
+    private let onEvent: () -> Void
+
+    init(
+        dispatchEvent event: Event = .eventForEffect1,
+        onDispose: @escaping () -> Void = {},
+        onEvent: @escaping () -> Void = {}
+    ) {
         self.event = event
         self.onDispose = onDispose
+        self.onEvent = onEvent
     }
+
     func connect(_ consumer: @escaping (Event) -> Void) -> Connection<Effect> {
         Connection(
-            acceptClosure: { _ in consumer(self.event) },
+            acceptClosure: { _ in
+                self.onEvent()
+                consumer(self.event)
+            },
             disposeClosure: onDispose
         )
     }

@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import Foundation
+
 final class ThreadSafeConnectable<Event, Effect>: Connectable {
     private let connectable: AnyConnectable<Effect, Event>
 
@@ -24,9 +26,7 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     private var output: Consumer<Event>?
     private var connection: Connection<Effect>?
 
-    init<Conn: Connectable>(
-        connectable: Conn
-    ) where Conn.Input == Effect, Conn.Output == Event {
+    init<Conn: Connectable>(connectable: Conn) where Conn.Input == Effect, Conn.Output == Event {
         self.connectable = AnyConnectable(connectable)
     }
 
