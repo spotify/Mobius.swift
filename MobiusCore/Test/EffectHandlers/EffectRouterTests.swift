@@ -17,6 +17,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import Foundation
 import MobiusCore
 import Nimble
 import Quick
