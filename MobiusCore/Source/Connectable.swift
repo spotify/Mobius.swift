@@ -45,20 +45,16 @@ public protocol Connectable {
 }
 
 /// Type-erased wrapper for `Connectable`s
-public final class AnyConnectable<Input, Output>: Connectable {
+public struct AnyConnectable<Input, Output>: Connectable {
     private let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
 
     /// Creates a type-erased `Connectable` that wraps the given instance.
-    public convenience init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
-        let connectClosure: (@escaping Consumer<Output>) -> Connection<Input>
-
+    public init<C: Connectable>(_ connectable: C) where C.Input == Input, C.Output == Output {
         if let anyConnectable = connectable as? AnyConnectable {
-            connectClosure = anyConnectable.connectClosure
+            self = anyConnectable
         } else {
-            connectClosure = connectable.connect
+            self.init(connectable.connect)
         }
-
-        self.init(connectClosure)
     }
 
     /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.
