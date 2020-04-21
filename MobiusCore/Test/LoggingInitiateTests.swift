@@ -25,21 +25,21 @@ class LoggingInitiateTests: QuickSpec {
     override func spec() {
         describe("LoggingInitiate") {
             var logger: TestMobiusLogger!
-            var loggingInitiate: LoggingInitiate<String, String>!
+            var loggingInitiate: Initiate<String, String>!
 
             beforeEach {
                 logger = TestMobiusLogger()
-                loggingInitiate = LoggingInitiate({ model in First(model: model) }, logger: logger)
+                loggingInitiate = logger.wrap { model in First(model: model) }
             }
 
             it("should log willInitiate and didInitiate for each initiate attempt") {
-                _ = loggingInitiate.initiate("from this")
+                _ = loggingInitiate("from this")
 
                 expect(logger.logMessages).to(equal(["willInitiate(from this)", "didInitiate(from this, First<String, String>(model: \"from this\", effects: []))"]))
             }
 
             it("should return init from delegate") {
-                let first = loggingInitiate.initiate("hey")
+                let first = loggingInitiate("hey")
 
                 expect(first.model).to(equal("hey"))
                 expect(first.effects).to(beEmpty())
