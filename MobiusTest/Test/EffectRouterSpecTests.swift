@@ -19,8 +19,8 @@
 
 import MobiusCore
 import MobiusTest
-import Quick
 import Nimble
+import Quick
 
 final class EffectRouterSpecTests: QuickSpec {
     private enum Effect {
