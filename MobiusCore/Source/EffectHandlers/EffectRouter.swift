@@ -105,6 +105,9 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
         return EffectRouter(routes: routes + [route])
     }
 
+    /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
+    ///
+    /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
     public func on(_ queue: DispatchQueue) -> Self {
         return Self.init(routes: routes, path: path, queue: queue)
     }
