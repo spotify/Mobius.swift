@@ -55,8 +55,6 @@ public struct AnyConnectable<Input, Output>: Connectable {
         } else {
             self.init(connectable.connect)
         }
-
-        self.init(connectClosure)
     }
 
     /// Creates an anonymous `Connectable` that implements `connect` with the provided closure.
