@@ -17,51 +17,55 @@
 // specific language governing permissions and limitations
 // under the License.
 
-/// Helper to wrap initator functions with log calls.
-///
-/// Also adds call stack annotation where we call into the client-provided initiator.
-final class LoggingInitiate<Model, Effect> {
-    typealias Initiate = MobiusCore.Initiate<Model, Effect>
-    typealias First = MobiusCore.First<Model, Effect>
+typealias UpdateClosure<Model, Event, Effect> = (Model, Event) -> Next<Model, Effect>
 
-    private let realInit: Initiate
-    private let willInit: (Model) -> Void
-    private let didInit: (Model, First) -> Void
-
-    init<Logger: MobiusLogger>(_ realInit: @escaping Initiate, logger: Logger)
-    where Logger.Model == Model, Logger.Effect == Effect {
-        self.realInit = realInit
-        willInit = logger.willInitiate
-        didInit = logger.didInitiate
+extension MobiusLogger {
+    /// Wraps an Initiate in logging calls and stack annotations
+    func wrap(initiate: @escaping Initiate<Model, Effect>) -> Initiate<Model, Effect> {
+        return { model in
+            self.willInitiate(model: model)
+            let result = invokeInitiate(initiate, model: model)
+            self.didInitiate(model: model, first: result)
+            return result
+        }
     }
 
-    func initiate(_ model: Model) -> First {
-        willInit(model)
-        let result = invokeInitiate(model: model)
-        didInit(model, result)
-
-        return result
+    /// Wraps an update closure in logging calls and stack annotations
+    func wrap(update: @escaping UpdateClosure<Model, Event, Effect>) -> UpdateClosure<Model, Event, Effect> {
+        return { model, event in
+            self.willUpdate(model: model, event: event)
+            let result = invokeUpdate(update, model: model, event: event)
+            self.didUpdate(model: model, event: event, next: result)
+            return result
+        }
     }
 
-    @inline(never)
-    @_silgen_name("__MOBIUS_IS_CALLING_AN_INITIATOR_FUNCTION__")
-    private func invokeInitiate(model: Model) -> First {
-        return realInit(model)
+    /// Wraps an Update in logging calls and stack annotations
+    func wrap(update: Update<Model, Event, Effect>) -> Update<Model, Event, Effect> {
+        return Update(wrap(update: update.updateClosure))
     }
 }
 
-extension Update {
-    /// Helper to wrap update functions with log calls.
-    ///
-    /// Also adds call stack annotation where we call into the client-provided update.
-    @inline(never)
-    @_silgen_name("__MOBIUS_IS_CALLING_AN_UPDATE_FUNCTION__")
-    func logging<L: MobiusLogger>(_ logger: L) -> Update where L.Model == Model, L.Event == Event, L.Effect == Effect {
-        return Update { model, event in
-            logger.willUpdate(model: model, event: event)
-            let next = self.update(model: model, event: event)
-            logger.didUpdate(model: model, event: event, next: next)
-            return next
-        }
-    }
+/// Invoke an initiate function, leaving a hint on the stack.
+///
+/// To work as intended, this function must be exactly like this. `@_silgen_name` can’t be used on a closure,
+/// for example.
+@inline(never)
+@_silgen_name("__MOBIUS_IS_CALLING_AN_INITIATOR_FUNCTION__")
+private func invokeInitiate<Model, Effect>(_ initiate: Initiate<Model, Effect>, model: Model) -> First<Model, Effect> {
+    return initiate(model)
+}
+
+/// Invoke an update function, leaving a hint on the stack.
+///
+/// To work as intended, this function must be exactly like this. `@_silgen_name` can’t be used on a closure,
+/// for example.
+@inline(never)
+@_silgen_name("__MOBIUS_IS_CALLING_AN_UPDATE_FUNCTION__")
+private func invokeUpdate<Model, Event, Effect>(
+    _ update: @escaping (Model, Event) -> Next<Model, Effect>,
+    model: Model,
+    event: Event
+) -> Next<Model, Effect> {
+    return update(model, event)
 }

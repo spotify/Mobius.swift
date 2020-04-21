@@ -34,16 +34,17 @@ import Foundation
 ///
 /// [update function]: https://github.com/spotify/Mobius.swift/wiki/Concepts#update-function
 public struct Update<Model, Event, Effect> {
-    private let update: (Model, Event) -> Next<Model, Effect>
+    @usableFromInline let updateClosure: (Model, Event) -> Next<Model, Effect>
 
     /// Creates an `Update` struct wrapping the provided function.
     public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
-        self.update = update
+        self.updateClosure = update
     }
 
     /// Invokes the update function.
+    @inlinable
     public func update(model: Model, event: Event) -> Next<Model, Effect> {
-        return self.update(model, event)
+        return updateClosure(model, event)
     }
 
     /// Invokes the update function.

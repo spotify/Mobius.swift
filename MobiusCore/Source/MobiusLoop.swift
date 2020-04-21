@@ -46,7 +46,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
         effects: [Effect],
         logger: AnyMobiusLogger<Model, Event, Effect>
     ) {
-        let loggingUpdate = update.logging(logger)
+        let loggingUpdate = logger.wrap(update: update.updateClosure)
 
         let workBag = WorkBag(accessGuard: access)
         self.workBag = workBag
@@ -69,7 +69,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
                 // This is an unowned read of `self`, but at this point `self` is being kept alive by the local
                 // `processNext`.
                 let model = self.model
-                processNext(loggingUpdate.update(model: model, event: event))
+                processNext(loggingUpdate(model, event))
             }
             workBag.service()
         }
