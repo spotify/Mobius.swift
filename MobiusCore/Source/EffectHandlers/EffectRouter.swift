@@ -107,8 +107,13 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
 
     /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
     ///
+    /// Warning: Dispatching events to a loop from a different queue is not a thread-safe operation and will require
+    /// manual synchronization unless the loop is run in a `MobiusController`.
+    /// See: [Using MobiusController](https://github.com/spotify/Mobius.swift/wiki/Using-MobiusController).
+    ///
+    ///
     /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
-    public func on(_ queue: DispatchQueue) -> Self {
+    public func on(queue: DispatchQueue) -> Self {
         return Self(routes: routes, path: path, queue: queue)
     }
 }
