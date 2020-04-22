@@ -212,7 +212,7 @@ class EffectRouterTests: QuickSpec {
                 var ranOnTestQueue = false
                 let connection = EffectRouter<Effect, Event>()
                     .routeCase(.effect1)
-                    .on(testQueue)
+                    .on(queue: testQueue)
                     .to {
                         dispatchPrecondition(condition: .onQueue(testQueue))
                         ranOnTestQueue = true
