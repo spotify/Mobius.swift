@@ -17,6 +17,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import Foundation
+
 /// An `EffectRouter` defines the relationship between the effects in your domain and the constructs which handle those
 /// effects.
 ///
@@ -62,7 +64,7 @@ public struct EffectRouter<Effect, Event> {
     public func routeEffects<EffectParameters>(
         withParameters extractParameters: @escaping (Effect) -> EffectParameters?
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        return _PartialEffectRouter(routes: routes, path: extractParameters)
+        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to
@@ -79,6 +81,7 @@ public struct EffectRouter<Effect, Event> {
 public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     fileprivate let routes: [Route<Effect, Event>]
     fileprivate let path: (Effect) -> EffectParameters?
+    fileprivate let queue: DispatchQueue?
 
     /// Route to an `EffectHandler`.
     ///
@@ -87,7 +90,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
         _ effectHandler: Handler
     ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
-        let route = Route<Effect, Event>(extractParameters: path, connectable: connectable)
+        let route = Route<Effect, Event>(extractParameters: path, connectable: connectable, queue: queue)
         return EffectRouter(routes: routes + [route])
     }
 
@@ -98,8 +101,15 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
         _ connectable: C
     ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
         let connectable = ThreadSafeConnectable(connectable: connectable)
-        let route = Route(extractParameters: path, connectable: connectable)
+        let route = Route(extractParameters: path, connectable: connectable, queue: queue)
         return EffectRouter(routes: routes + [route])
+    }
+
+    /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
+    ///
+    /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
+    public func on(_ queue: DispatchQueue) -> Self {
+        return Self(routes: routes, path: path, queue: queue)
     }
 }
 
@@ -108,14 +118,23 @@ private struct Route<Input, Output> {
 
     init<EffectParameters, Conn: Connectable>(
         extractParameters: @escaping (Input) -> EffectParameters?,
-        connectable: Conn
+        connectable: Conn,
+        queue: DispatchQueue?
     ) where Conn.Input == EffectParameters, Conn.Output == Output {
         connect = { output in
             let connection = connectable.connect(output)
             return ConnectedRoute(
                 tryToHandle: { input in
                     if let parameters = extractParameters(input) {
-                        return { connection.accept(parameters) }
+                        return {
+                            if let queue = queue {
+                                queue.async {
+                                    connection.accept(parameters)
+                                }
+                            } else {
+                                connection.accept(parameters)
+                            }
+                        }
                     } else {
                         return nil
                     }
