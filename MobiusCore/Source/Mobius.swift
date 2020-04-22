@@ -201,13 +201,13 @@ public enum Mobius {
         ///   - initialModel: The model the loop should start with.
         ///   - effects: Zero or more effects to execute immediately.
         public func start(from initialModel: Model, effects: [Effect] = []) -> MobiusLoop<Model, Event, Effect> {
-            return MobiusLoop.createLoop(
+            return MobiusLoop(
+                model: initialModel,
                 update: update,
-                effectHandler: effectHandler,
-                initialModel: initialModel,
-                effects: effects,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
+                effectHandler: effectHandler,
+                effects: effects,
                 logger: logger
             )
         }

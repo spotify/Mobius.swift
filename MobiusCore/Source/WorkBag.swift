@@ -32,12 +32,27 @@ import Foundation
 final class WorkBag {
     typealias WorkItem = () -> Void
 
+    private enum State {
+        case notStarted
+        case idle
+        case servicing
+    }
+
     private var queue = [WorkItem]()
-    private var servicing = false
+    private var state = State.notStarted
     private var access: ConcurrentAccessDetector
 
     init(accessGuard: ConcurrentAccessDetector = ConcurrentAccessDetector()) {
         access = accessGuard
+    }
+
+    /// Start the workbag. Must be called once and once only in order to process events.
+    func start() {
+        access.guard {
+            precondition(state == .notStarted)
+            state = .idle
+        }
+        service()
     }
 
     /// Submit an action to be executed.
@@ -53,9 +68,9 @@ final class WorkBag {
     /// call, until there is no more pending work.
     func service() {
         access.guard {
-            guard !servicing else { return }
-            servicing = true
-            defer { servicing = false }
+            guard state == .idle else { return }
+            state = .servicing
+            defer { state = .idle }
 
             while let action = next() {
                 action()
