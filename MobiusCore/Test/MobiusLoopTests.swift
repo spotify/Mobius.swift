@@ -100,7 +100,11 @@ class MobiusLoopTests: QuickSpec {
 
                     loop.addObserver(modelObserver)
 
-                    expect(receivedModels).to(equal(["the beginning-one-two-three"]))
+                    // receivedModels contains the concatenation of received events, but the order is randomized, so
+                    // we need to turn it into a collection
+                    let components = receivedModels.first!.split(separator: "-")
+                    expect(components.first).to(equal("the beginning"))
+                    expect(components.sorted()).to(equal(["one", "the beginning", "three", "two"]))
                 }
             }
 
@@ -135,35 +139,6 @@ class MobiusLoopTests: QuickSpec {
                 it("should disallow events post dispose") {
                     loop.dispose()
                     expect(loop.dispatchEvent("nnooooo!!!")).to(raiseError())
-                }
-            }
-
-            describe("dispose dependencies") {
-                var eventProcessor: TestEventProcessor<String, String, String>!
-                var modelPublisher: ConnectablePublisher<String>!
-                var disposable: ConnectablePublisher<String>!
-
-                beforeEach {
-                    eventProcessor = TestEventProcessor(
-                        update: Update { _, _ in .noChange },
-                        publisher: ConnectablePublisher()
-                    )
-                    modelPublisher = ConnectablePublisher()
-                    disposable = ConnectablePublisher()
-
-                    loop = MobiusLoop(
-                        eventProcessor: eventProcessor,
-                        modelPublisher: modelPublisher,
-                        disposable: disposable
-                    )
-                }
-
-                it("should dispose all of the dependencies") {
-                    loop.dispose()
-
-                    expect(eventProcessor.disposed).to(equal(true))
-                    expect(modelPublisher.disposed).to(equal(true))
-                    expect(disposable.disposed).to(equal(true))
                 }
             }
 
@@ -206,7 +181,7 @@ class MobiusLoopTests: QuickSpec {
                             Next<String, String>.noChange
                         }
 
-                        builder = Mobius.loop(update: update, effectHandler: TestConnectableProtocolImpl())
+                        builder = Mobius.loop(update: update, effectHandler: SimpleTestConnectable())
                     }
 
                     it("should produce a builder") {
@@ -216,22 +191,15 @@ class MobiusLoopTests: QuickSpec {
             }
 
             describe("debug description") {
-                let eventProcessorDebugDescription = "blah"
                 beforeEach {
-                    let publisher = ConnectablePublisher<String>()
-                    let eventProcessor = TestEventProcessor<String, String, String>(
-                        update: Update { _, _ in .noChange },
-                        publisher: ConnectablePublisher<Next<String, String>>()
-                    )
-                    eventProcessor.desiredDebugDescription = eventProcessorDebugDescription
-
-                    loop = MobiusLoop(eventProcessor: eventProcessor, modelPublisher: publisher, disposable: publisher)
+                    loop = Mobius.loop(update: { _, _ in .noChange }, effectHandler: SimpleTestConnectable())
+                        .start(from: "hello")
                 }
 
                 context("when not disposed") {
-                    it("should describe the loop and the event processor") {
+                    it("should describe the loop and the model") {
                         let description = String(describing: loop)
-                        expect(description).to(equal("Optional(MobiusLoop<String, String, String> \(eventProcessorDebugDescription))"))
+                        expect(description).to(equal(#"Optional(MobiusLoop<String, String, String>{ "hello" })"#))
                     }
                 }
 
@@ -304,23 +272,5 @@ private class EagerEffectHandler: Connectable {
         consumer("three")
 
         return RecordingTestConnectable().connect(consumer)
-    }
-}
-
-private class TestEventProcessor<Model, Event, Effect>: EventProcessor<Model, Event, Effect> {
-    var disposed = false
-    override func dispose() {
-        disposed = true
-    }
-
-    var desiredDebugDescription: String?
-    public override var debugDescription: String {
-        return desiredDebugDescription ?? ""
-    }
-}
-
-private class TestConnectableProtocolImpl: Connectable {
-    func connect(_: @escaping (String) -> Void) -> Connection<String> {
-        return Connection(acceptClosure: { _ in }, disposeClosure: {})
     }
 }

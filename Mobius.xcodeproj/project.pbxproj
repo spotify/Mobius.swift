@@ -63,7 +63,6 @@
 		2DF4C30620DBDD5C00A4B6DE /* AnonymousDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BF209995410043B530 /* AnonymousDisposable.swift */; };
 		2DF4C30720DBDD5C00A4B6DE /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C0209995410043B530 /* EventSource.swift */; };
 		2DF4C30920DBDD5C00A4B6DE /* Mobius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C3209995410043B530 /* Mobius.swift */; };
-		2DF4C30B20DBDD5C00A4B6DE /* EventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C6209995410043B530 /* EventProcessor.swift */; };
 		2DF4C30C20DBDD5C00A4B6DE /* MobiusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C8209995410043B530 /* MobiusController.swift */; };
 		2DF4C30D20DBDD5C00A4B6DE /* MobiusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C9209995410043B530 /* MobiusLogger.swift */; };
 		2DF4C30E20DBDD5C00A4B6DE /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
@@ -127,7 +126,6 @@
 		5BB2881D2099957D0043B530 /* First.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BB209995410043B530 /* First.swift */; };
 		5BB2881E209995810043B530 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C0209995410043B530 /* EventSource.swift */; };
 		5BB28821209995810043B530 /* Mobius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C3209995410043B530 /* Mobius.swift */; };
-		5BB28824209995810043B530 /* EventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C6209995410043B530 /* EventProcessor.swift */; };
 		5BB28826209995810043B530 /* MobiusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C8209995410043B530 /* MobiusController.swift */; };
 		5BB28827209995810043B530 /* MobiusLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287C9209995410043B530 /* MobiusLogger.swift */; };
 		5BB28828209995810043B530 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287CA209995410043B530 /* Lock.swift */; };
@@ -140,7 +138,6 @@
 		5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */; };
 		5BB2886F20999AD60043B530 /* TestingUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884D20999ACE0043B530 /* TestingUtil.swift */; };
 		5BB2887120999AD60043B530 /* LoggingInitiateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */; };
-		5BB2887220999AD60043B530 /* EventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885020999ACE0043B530 /* EventProcessorTests.swift */; };
 		5BB2887520999AD60043B530 /* AnyEventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */; };
 		5BB2887620999AD60043B530 /* NextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885420999ACE0043B530 /* NextTests.swift */; };
 		5BB2887720999AD60043B530 /* FirstTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885520999ACE0043B530 /* FirstTests.swift */; };
@@ -383,7 +380,6 @@
 		5BB287BF209995410043B530 /* AnonymousDisposable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnonymousDisposable.swift; sourceTree = "<group>"; };
 		5BB287C0209995410043B530 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		5BB287C3209995410043B530 /* Mobius.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mobius.swift; sourceTree = "<group>"; };
-		5BB287C6209995410043B530 /* EventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProcessor.swift; sourceTree = "<group>"; };
 		5BB287C8209995410043B530 /* MobiusController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusController.swift; sourceTree = "<group>"; };
 		5BB287C9209995410043B530 /* MobiusLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusLogger.swift; sourceTree = "<group>"; };
 		5BB287CA209995410043B530 /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
@@ -396,7 +392,6 @@
 		5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MobiusIntegrationTests.swift; sourceTree = "<group>"; };
 		5BB2884D20999ACE0043B530 /* TestingUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingUtil.swift; sourceTree = "<group>"; };
 		5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggingInitiateTests.swift; sourceTree = "<group>"; };
-		5BB2885020999ACE0043B530 /* EventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProcessorTests.swift; sourceTree = "<group>"; };
 		5BB2885320999ACE0043B530 /* AnyEventSourceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnyEventSourceTests.swift; sourceTree = "<group>"; };
 		5BB2885420999ACE0043B530 /* NextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextTests.swift; sourceTree = "<group>"; };
 		5BB2885520999ACE0043B530 /* FirstTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstTests.swift; sourceTree = "<group>"; };
@@ -706,7 +701,6 @@
 				5BB287B6209995410043B530 /* Connection.swift */,
 				5BB287B7209995410043B530 /* Consumer.swift */,
 				2D3F26EC237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift */,
-				5BB287C6209995410043B530 /* EventProcessor.swift */,
 				5BB287BB209995410043B530 /* First.swift */,
 				5BB287CA209995410043B530 /* Lock.swift */,
 				2D15DF72238EA4DD00E78B27 /* LoggingAdaptors.swift */,
@@ -784,7 +778,6 @@
 				5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */,
 				5BB2885720999ACE0043B530 /* CompositeDisposableTests.swift */,
 				5BB2885920999ACE0043B530 /* ConnectablePublisherTests.swift */,
-				5BB2885020999ACE0043B530 /* EventProcessorTests.swift */,
 				2D58735F238EC60F001F21ED /* EventRouterDisposalLogicalRaceRegressionTest.swift */,
 				5BB2885520999ACE0043B530 /* FirstTests.swift */,
 				5BB2884F20999ACE0043B530 /* LoggingInitiateTests.swift */,
@@ -1227,7 +1220,6 @@
 				5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */,
 				2DF4C30220DBDD5800A4B6DE /* ConnectablePublisher.swift in Sources */,
 				2DF4C2FF20DBDD5800A4B6DE /* Consumer.swift in Sources */,
-				2DF4C30B20DBDD5C00A4B6DE /* EventProcessor.swift in Sources */,
 				2DF4C2FC20DBDD5800A4B6DE /* Next.swift in Sources */,
 				2DF4C30D20DBDD5C00A4B6DE /* MobiusLogger.swift in Sources */,
 				2DF4C30020DBDD5800A4B6DE /* MobiusLoop.swift in Sources */,
@@ -1309,7 +1301,6 @@
 				02D6755323D1E822008200AF /* EnumRoute.swift in Sources */,
 				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
-				5BB28824209995810043B530 /* EventProcessor.swift in Sources */,
 				5BB2881C2099957D0043B530 /* ConnectablePublisher.swift in Sources */,
 				02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */,
 				5BB2881E209995810043B530 /* EventSource.swift in Sources */,
@@ -1323,7 +1314,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BB2887220999AD60043B530 /* EventProcessorTests.swift in Sources */,
 				2DB61AFD23A8F485009E55DB /* NonReentrancyTests.swift in Sources */,
 				5BB2886F20999AD60043B530 /* TestingUtil.swift in Sources */,
 				02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */,
