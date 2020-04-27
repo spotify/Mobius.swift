@@ -128,8 +128,6 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
 
     /// Send an event to the loop.
     ///
-    /// This method is discouraged; in general, it’s preferable to inject events from an `EventSource` or `EffectHandler`.
-    ///
     /// - Parameter event: The event to dispatch.
     public func dispatchEvent(_ event: Event) {
         return access.guard {
