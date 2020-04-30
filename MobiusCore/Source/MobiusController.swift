@@ -160,7 +160,9 @@ public final class MobiusController<Model, Event, Effect> {
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if the controller already is
     ///              connected
     public func connectView<ViewConnectable: Connectable>(
-        _ connectable: ViewConnectable
+        _ connectable: ViewConnectable,
+        file: StaticString = #file,
+        line: UInt = #line
     ) where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
         do {
             try state.mutate { stoppedState in
@@ -173,8 +175,8 @@ public final class MobiusController<Model, Event, Effect> {
         } catch {
            MobiusHooks.errorHandler(
                errorMessage(error, default: "\(Self.debugTag): cannot connect a view while running"),
-               #file,
-               #line
+               file,
+               line
            )
        }
     }
@@ -185,7 +187,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if there isn't anything to
     /// disconnect
-    public func disconnectView() {
+    public func disconnectView(file: StaticString = #file, line: UInt = #line) {
         do {
             try state.mutate { stoppedState in
                 guard stoppedState.viewConnectable != nil else {
@@ -197,8 +199,8 @@ public final class MobiusController<Model, Event, Effect> {
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot disconnect view while running; call stop first"),
-                #file,
-                #line
+                file,
+                line
             )
         }
     }
@@ -208,7 +210,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop already is running.
-    public func start() {
+    public func start(file: StaticString = #file, line: UInt = #line) {
         do {
             try state.transitionToRunning { stoppedState in
                 let loop = loopFactory(stoppedState.modelToStartFrom)
@@ -232,8 +234,8 @@ public final class MobiusController<Model, Event, Effect> {
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot start a while already running"),
-                #file,
-                #line
+                file,
+                line
             )
         }
     }
@@ -247,7 +249,7 @@ public final class MobiusController<Model, Event, Effect> {
     /// To stop the loop as an effect, dispatch to a different queue.
     ///
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop isn't running
-    public func stop() {
+    public func stop(file: StaticString = #file, line: UInt = #line) {
         do {
             try state.transitionToStopped { runningState in
                 let model = runningState.loop.latestModel
@@ -259,8 +261,8 @@ public final class MobiusController<Model, Event, Effect> {
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot stop a controller while not running"),
-                #file,
-                #line
+                file,
+                line
             )
         }
     }
@@ -271,7 +273,7 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// - Parameter model: the model with the state the controller should start from
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running
-    public func replaceModel(_ model: Model) {
+    public func replaceModel(_ model: Model, file: StaticString = #file, line: UInt = #line) {
         do {
             try state.mutate { stoppedState in
                 stoppedState.modelToStartFrom = model
@@ -279,8 +281,8 @@ public final class MobiusController<Model, Event, Effect> {
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot replace model while running"),
-                #file,
-                #line
+                file,
+                line
             )
         }
     }
