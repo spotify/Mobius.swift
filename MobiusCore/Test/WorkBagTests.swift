@@ -41,6 +41,8 @@ class WorkBagTests: QuickSpec {
             }
 
             it("executes enqueued blocks in order") {
+                workBag.start()
+
                 enqueue("item 1")
                 enqueue("item 2")
                 enqueue("item 3")
@@ -50,7 +52,21 @@ class WorkBagTests: QuickSpec {
                 expect(results).to(equal(["item 1", "item 2", "item 3"]))
             }
 
+            it("enqueues but does not execute blocks submitted before start()") {
+                enqueue("item 1")
+                enqueue("item 2")
+                enqueue("item 3")
+
+                expect(results).to(equal([]))
+
+                workBag.start()
+
+                expect(results).to(equal(["item 1", "item 2", "item 3"]))
+            }
+
             it("can be serviced multiple times") {
+                workBag.start()
+
                 enqueue("item 1")
                 enqueue("item 2")
                 enqueue("item 3")
@@ -66,6 +82,8 @@ class WorkBagTests: QuickSpec {
             }
 
             it("doesn’t perform tasks before service is called") {
+                workBag.start()
+
                 enqueue("item 1")
                 enqueue("item 2")
                 enqueue("item 3")
@@ -79,6 +97,8 @@ class WorkBagTests: QuickSpec {
             }
 
             it("executes blocks added within a work item during the current service cycle") {
+                workBag.start()
+
                 workBag.submit {
                     enqueue("item 1")
                 }
@@ -89,6 +109,8 @@ class WorkBagTests: QuickSpec {
             }
 
             it("performs nested work items strictly after ongoing ones") {
+                workBag.start()
+
                 // Note that here results is an array rather than a set
                 var results = [String]()
 
