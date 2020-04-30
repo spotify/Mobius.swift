@@ -34,16 +34,17 @@ import Foundation
 ///
 /// [update function]: https://github.com/spotify/Mobius.swift/wiki/Concepts#update-function
 public struct Update<Model, Event, Effect> {
-    private let update: (Model, Event) -> Next<Model, Effect>
+    @usableFromInline let updateClosure: (Model, Event) -> Next<Model, Effect>
 
     /// Creates an `Update` struct wrapping the provided function.
     public init(_ update: @escaping (Model, Event) -> Next<Model, Effect>) {
-        self.update = update
+        self.updateClosure = update
     }
 
     /// Invokes the update function.
+    @inlinable
     public func update(model: Model, event: Event) -> Next<Model, Effect> {
-        return self.update(model, event)
+        return updateClosure(model, event)
     }
 
     /// Invokes the update function.
@@ -56,11 +57,9 @@ public struct Update<Model, Event, Effect> {
 /// A function used to normalize the initial model of a loop and optionally issue effects when the loop is started.
 public typealias Initiate<Model, Effect> = (Model) -> First<Model, Effect>
 
-public enum Mobius {}
-
 // MARK: - Building a Mobius Loop
 
-public extension Mobius {
+public enum Mobius {
 
     /// Create a `Builder` to help you configure a `MobiusLoop` before starting it.
     ///
@@ -73,7 +72,7 @@ public extension Mobius {
     ///   - update: the `Update` function of the loop
     ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+    public static func loop<Model, Event, Effect, EffectHandler: Connectable>(
         update: Update<Model, Event, Effect>,
         effectHandler: EffectHandler
     ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
@@ -92,7 +91,7 @@ public extension Mobius {
     ///   - update: the update function of the loop
     ///   - effectHandler: an instance conforming to `Connectable`. Will be used to handle effects by the loop.
     /// - Returns: a `Builder` instance that you can further configure before starting the loop
-    static func loop<Model, Event, Effect, EffectHandler: Connectable>(
+    public static func loop<Model, Event, Effect, EffectHandler: Connectable>(
         update: @escaping (Model, Event) -> Next<Model, Effect>,
         effectHandler: EffectHandler
     ) -> Builder<Model, Event, Effect> where EffectHandler.Input == Effect, EffectHandler.Output == Event {
@@ -107,7 +106,7 @@ public extension Mobius {
     /// Create a builder using `Mobius.loop`, then optionally configure it with the various `with...` methods. Finally,
     /// call `start` to create a `MobiusLoop` (single-threaded), or `makeController` to create a `MobiusController`
     /// (runs on a background queue, can be stopped and resumed).
-    struct Builder<Model, Event, Effect> {
+    public struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
         private let eventSource: AnyEventSource<Event>
@@ -202,13 +201,13 @@ public extension Mobius {
         ///   - initialModel: The model the loop should start with.
         ///   - effects: Zero or more effects to execute immediately.
         public func start(from initialModel: Model, effects: [Effect] = []) -> MobiusLoop<Model, Event, Effect> {
-            return MobiusLoop.createLoop(
+            return MobiusLoop(
+                model: initialModel,
                 update: update,
-                effectHandler: effectHandler,
-                initialModel: initialModel,
-                effects: effects,
                 eventSource: eventSource,
                 eventConsumerTransformer: eventConsumerTransformer,
+                effectHandler: effectHandler,
+                effects: effects,
                 logger: logger
             )
         }

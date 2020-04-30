@@ -129,7 +129,7 @@ public final class MobiusController<Model, Event, Effect> {
         // Wrap initiator (if any) in a logger
         let actualInitiate: Initiate<Model, Effect>
         if let initiate = initiate {
-            actualInitiate = LoggingInitiate(initiate, logger: logger).initiate
+            actualInitiate = logger.wrap(initiate: initiate)
         } else {
             actualInitiate = { First(model: $0) }
         }
