@@ -19,6 +19,8 @@
 
 import Foundation
 
+private typealias EffectRouterMetaData = (createdInFile: StaticString, createdOnLine: UInt)
+
 /// An `EffectRouter` defines the relationship between the effects in your domain and the constructs which handle those
 /// effects.
 ///
@@ -44,12 +46,15 @@ import Foundation
 ///     it has been started.
 public struct EffectRouter<Effect, Event> {
     private let routes: [Route<Effect, Event>]
+    fileprivate let metaData: EffectRouterMetaData
 
-    public init() {
-        routes = []
+    public init(file: StaticString = #file, line: UInt = #line) {
+        self.metaData = (createdInFile: file, createdOnLine: line)
+        self.routes = []
     }
 
-    fileprivate init(routes: [Route<Effect, Event>]) {
+    fileprivate init(routes: [Route<Effect, Event>], metaData: EffectRouterMetaData) {
+        self.metaData = metaData
         self.routes = routes
     }
 
@@ -64,13 +69,13 @@ public struct EffectRouter<Effect, Event> {
     public func routeEffects<EffectParameters>(
         withParameters extractParameters: @escaping (Effect) -> EffectParameters?
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil)
+        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil, routerMetaData: metaData)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to
     /// handle effects.
     public var asConnectable: AnyConnectable<Effect, Event> {
-        return compose(routes: routes)
+        return compose(routes: routes, routerMetaData: metaData)
     }
 }
 
@@ -82,6 +87,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     fileprivate let routes: [Route<Effect, Event>]
     fileprivate let path: (Effect) -> EffectParameters?
     fileprivate let queue: DispatchQueue?
+    fileprivate let routerMetaData: EffectRouterMetaData
 
     /// Route to an `EffectHandler`.
     ///
@@ -91,7 +97,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
         let route = Route<Effect, Event>(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route])
+        return EffectRouter(routes: routes + [route], metaData: routerMetaData)
     }
 
     /// Route to a Connectable.
@@ -102,7 +108,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
         let connectable = ThreadSafeConnectable(connectable: connectable)
         let route = Route(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route])
+        return EffectRouter(routes: routes + [route], metaData: routerMetaData)
     }
 
     /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
@@ -114,7 +120,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ///
     /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
     public func on(queue: DispatchQueue) -> Self {
-        return Self(routes: routes, path: path, queue: queue)
+        return Self(routes: routes, path: path, queue: queue, routerMetaData: routerMetaData)
     }
 }
 
@@ -156,7 +162,8 @@ private struct ConnectedRoute<Input> {
 }
 
 private func compose<Input, Output>(
-    routes: [Route<Input, Output>]
+    routes: [Route<Input, Output>],
+    routerMetaData: EffectRouterMetaData
 ) -> AnyConnectable<Input, Output> {
     return AnyConnectable { output in
         let connectedRoutes = routes
@@ -173,8 +180,8 @@ private func compose<Input, Output>(
                     MobiusHooks.errorHandler(
                         "Error: \(handlers.count) EffectHandlers could be found for effect: \(effect). " +
                         "Exactly 1 is required.",
-                        #file,
-                        #line
+                        routerMetaData.createdInFile,
+                        routerMetaData.createdOnLine
                     )
                 }
             },
