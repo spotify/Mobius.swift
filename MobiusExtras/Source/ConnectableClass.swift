@@ -20,16 +20,19 @@
 import Foundation
 import MobiusCore
 
-/// Abstract superclass that allows for easy implementation of a Mobius loop `Connectable`
+/// Superclass that allows for easy implementation of a Mobius loop `Connectable`
 ///
-/// - Attention: Should not be used directly. Instead a subclass should be used which overrides the `handle` and
-/// `disposed` functions.
+/// - Attention: Should not be used directly. Instead a subclass should be used which overrides any of combination of
+/// the `handle`, `onConnect`, and `onDispose` functions.
 ///
-/// This class automatically handles creation of `Connection`. Any subclass should override the following functions:
+/// This class automatically handles creation of `Connection`. Any subclass can override any of the following functions:
 ///   - `handle`: this function handles any input (i.e. T.Effects). If a `T.Event` is should be sent to the loop,
 ///      it should be passed to the `send` function which will pass it to the Mobius loop
 ///
-///   - `disposed`: this function is called when the loop has disposed of the `Connectable`. Any resources used by the
+///   - `onConnect`: this function is called when the connection is being established. It can be used to allocate and
+///     initialize any resources used by the subclass.
+///
+///   - `onDispose`: this function is called when the loop has disposed of the `Connectable`. Any resources used by the
 ///     subclass should be freed here. When this function is called, the base class has already released all its
 ///     resources so no further functions should be run on the base class.
 open class ConnectableClass<Input, Output>: Connectable {
@@ -65,34 +68,14 @@ open class ConnectableClass<Input, Output>: Connectable {
     }
 
     /// Called when the `Connectable` receives input to allow the subclass to react to it.
-    ///
-    /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
-    /// error handler.
-    open func handle(_ input: Input) {
-        MobiusHooks.errorHandler(
-            "The function `\(#function)` must be overridden in subclass \(type(of: self))",
-            #file,
-            #line
-        )
-    }
+    open func handle(_ input: Input) {}
 
     /// Called when the connection is being established. This function can be used to allocate and initialize any
     /// resources used by the subclass.
-    ///
-    /// - Note: This function is optional to override by subclasses.
     open func onConnect() {}
 
     /// Called when the connection is being disposed. This function should release any resources used by the subclass.
-    ///
-    /// - Attention: This function has to be overridden by a subclass or an error will be thrown to the MobiusHooks
-    /// error handler.
-    open func onDispose() {
-        MobiusHooks.errorHandler(
-            "The function `\(#function)` must be overridden in subclass \(type(of: self))",
-            #file,
-            #line
-        )
-    }
+    open func onDispose() {}
 
     public final func connect(_ consumer: @escaping (Output) -> Void) -> Connection<Input> {
         lock.lock()
