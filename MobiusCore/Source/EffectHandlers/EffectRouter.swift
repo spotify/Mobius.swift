@@ -46,15 +46,15 @@ private typealias EffectRouterMetaData = (createdInFile: StaticString, createdOn
 ///     it has been started.
 public struct EffectRouter<Effect, Event> {
     private let routes: [Route<Effect, Event>]
-    fileprivate let metaData: EffectRouterMetaData
+    fileprivate let metadata: EffectRouterMetaData
 
     public init(file: StaticString = #file, line: UInt = #line) {
-        self.metaData = (createdInFile: file, createdOnLine: line)
+        self.metadata = (createdInFile: file, createdOnLine: line)
         self.routes = []
     }
 
-    fileprivate init(routes: [Route<Effect, Event>], metaData: EffectRouterMetaData) {
-        self.metaData = metaData
+    fileprivate init(routes: [Route<Effect, Event>], metadata: EffectRouterMetaData) {
+        self.metadata = metadata
         self.routes = routes
     }
 
@@ -69,13 +69,13 @@ public struct EffectRouter<Effect, Event> {
     public func routeEffects<EffectParameters>(
         withParameters extractParameters: @escaping (Effect) -> EffectParameters?
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil, routerMetaData: metaData)
+        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil, routerMetaData: metadata)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to
     /// handle effects.
     public var asConnectable: AnyConnectable<Effect, Event> {
-        return compose(routes: routes, routerMetaData: metaData)
+        return compose(routes: routes, routerMetaData: metadata)
     }
 }
 
@@ -97,7 +97,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
         let connectable = EffectExecutor(handleInput: effectHandler.handle)
         let route = Route<Effect, Event>(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route], metaData: routerMetaData)
+        return EffectRouter(routes: routes + [route], metadata: routerMetaData)
     }
 
     /// Route to a Connectable.
@@ -108,7 +108,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
         let connectable = ThreadSafeConnectable(connectable: connectable)
         let route = Route(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route], metaData: routerMetaData)
+        return EffectRouter(routes: routes + [route], metadata: routerMetaData)
     }
 
     /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
