@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Mobius",
+    name: "Mobius.swift",
     platforms: [
         .iOS(.v10),
         .macOS(.v10_12),
