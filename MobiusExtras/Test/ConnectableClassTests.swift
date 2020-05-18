@@ -43,32 +43,6 @@ class ConnectableTests: QuickSpec {
                 return exception != nil
             }
 
-            context("when attempting to use the base class directly") {
-                var sut: ConnectableClass<String, String>!
-
-                beforeEach {
-                    sut = ConnectableClass()
-                }
-
-                context("when attempting to use handle") {
-                    it("should cause a mobius error") {
-                        let errorThrown = catchError {
-                            sut.handle("something")
-                        }
-                        expect(errorThrown).to(beTrue())
-                    }
-                }
-
-                context("when attempting to use disposed") {
-                    it("should cause a mobius error") {
-                        let errorThrown = catchError {
-                            sut.onDispose()
-                        }
-                        expect(errorThrown).to(beTrue())
-                    }
-                }
-            }
-
             context("when creating a connection") {
                 var sut: SubclassedConnectableClass!
                 var connection: Connection<String>!
