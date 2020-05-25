@@ -21,9 +21,9 @@ func dumpDiff<T>(_ lhs: T, _ rhs: T) -> String {
     let lhsLines = dumpUnwrapped(lhs).split(separator: "\n")
     let rhsLines = dumpUnwrapped(rhs).split(separator: "\n")
 
-    let x = diff(lhs: ArraySlice(lhsLines), rhs: ArraySlice(rhsLines))
+    let diffList = diff(lhs: ArraySlice(lhsLines), rhs: ArraySlice(rhsLines))
 
-    return x.reduce(into: "") { (string, diff) in
+    return diffList.reduce(into: "") { string, diff in
         diff.string.forEach { substring in
             string.append("\(diff.prefix)\(substring)\n")
         }
@@ -81,17 +81,18 @@ private func diff(lhs: ArraySlice<Substring>, rhs: ArraySlice<Substring>) -> [Di
     var overlap = [Int: Int]()
 
     for (indexRhs, value) in zip(rhs.indices, rhs) {
-      var innerOverlap = [Int: Int]()
+        var innerOverlap = [Int: Int]()
 
-      for indexLhs in lhsIndexMap[value, default: []] {
-        innerOverlap[indexLhs] = (overlap[indexLhs - 1] ?? 0) + 1
-        if innerOverlap[indexLhs]! > subLength {
-          subLength = innerOverlap[indexLhs]!
-          lhsSubStart = indexLhs - subLength + 1
-          rhsSubStart = indexRhs - subLength + 1
+        for indexLhs in lhsIndexMap[value, default: []] {
+            let innerSubLength = (overlap[indexLhs - 1] ?? 0) + 1
+            innerOverlap[indexLhs] = innerSubLength
+            if innerSubLength > subLength {
+                subLength = innerSubLength
+                lhsSubStart = indexLhs - subLength + 1
+                rhsSubStart = indexRhs - subLength + 1
+            }
         }
-      }
-      overlap = innerOverlap
+        overlap = innerOverlap
     }
 
     var diffs = [Difference]()
@@ -105,7 +106,7 @@ private func diff(lhs: ArraySlice<Substring>, rhs: ArraySlice<Substring>) -> [Di
     } else {
         diffs.append(contentsOf: diff(lhs: lhs.prefix(upTo: lhsSubStart), rhs: rhs.prefix(upTo: rhsSubStart)))
         diffs.append(.same(rhs.suffix(from: rhsSubStart).prefix(subLength)))
-        diffs.append(contentsOf: diff(lhs: lhs.suffix(from: lhsSubStart+subLength), rhs: rhs.suffix(from: rhsSubStart+subLength)))
+        diffs.append(contentsOf: diff(lhs: lhs.suffix(from: lhsSubStart + subLength), rhs: rhs.suffix(from: rhsSubStart + subLength)))
     }
     return diffs
 }

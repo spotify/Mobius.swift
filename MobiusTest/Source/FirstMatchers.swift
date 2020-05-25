@@ -53,7 +53,7 @@ public func hasModel<Model: Equatable, Effect>(
     return { (first: First<Model, Effect>) in
         if first.model != expected {
             return .failure(
-                message: "Expected model to be different (-) than what got (+): \n" +
+                message: "Expected model to be different (−) than what got (+): \n" +
                     "\(dumpDiff(expected, first.model))",
                 file: file,
                 line: line
