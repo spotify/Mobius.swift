@@ -166,6 +166,7 @@
 		69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
+		DA00C7F12488147800B6A19A /* SimpleDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA00C7F02488147800B6A19A /* SimpleDiff.swift */; };
 		DA58047B247962F900F02463 /* DebugDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047A247962F900F02463 /* DebugDiff.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
@@ -413,6 +414,7 @@
 		69C12F77222F223700DC4F9E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Carthage/Checkouts/xcconfigs/Base/Configurations/Release.xcconfig; sourceTree = "<group>"; };
 		69C12F78222F225500DC4F9E /* iOS-Framework.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-Framework.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-Framework.xcconfig"; sourceTree = "<group>"; };
 		69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-StaticLibrary.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
+		DA00C7F02488147800B6A19A /* SimpleDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleDiff.swift; sourceTree = "<group>"; };
 		DA58047A247962F900F02463 /* DebugDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDiff.swift; sourceTree = "<group>"; };
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
@@ -817,6 +819,7 @@
 				5B19F71A21254CCD00074AD7 /* NextMatchers.swift */,
 				5BB288A420999B750043B530 /* UpdateSpec.swift */,
 				DA58047A247962F900F02463 /* DebugDiff.swift */,
+				DA00C7F02488147800B6A19A /* SimpleDiff.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -1401,6 +1404,7 @@
 				5B5F11B9213805C000911A57 /* FirstMatchers.swift in Sources */,
 				5B5F11BB213805C000911A57 /* MatcherUtils.swift in Sources */,
 				5B19F71B21254CCD00074AD7 /* NextMatchers.swift in Sources */,
+				DA00C7F12488147800B6A19A /* SimpleDiff.swift in Sources */,
 				5B9CE811211C5B9900DB79A7 /* InitSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
