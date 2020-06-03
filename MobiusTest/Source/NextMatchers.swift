@@ -94,7 +94,7 @@ public func hasModel<Model: Equatable, Effect>(
         let actual = next.model
         if actual != expected {
             return .failure(
-                message: "Expected final Next model to be different (−) than what got (+): \n" +
+                message: "Different final model than expected (−), got (+): \n" +
                     "\(dumpDiff(expected, actual))",
                 file: file,
                 line: line
