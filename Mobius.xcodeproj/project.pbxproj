@@ -168,6 +168,7 @@
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
 		DA00C7F12488147800B6A19A /* SimpleDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA00C7F02488147800B6A19A /* SimpleDiff.swift */; };
 		DA58047B247962F900F02463 /* DebugDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047A247962F900F02463 /* DebugDiff.swift */; };
+		DA58047D2479C25200F02463 /* DebugDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047C2479C25200F02463 /* DebugDiffTests.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
@@ -416,6 +417,7 @@
 		69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "iOS-StaticLibrary.xcconfig"; path = "Carthage/Checkouts/xcconfigs/iOS/iOS-StaticLibrary.xcconfig"; sourceTree = "<group>"; };
 		DA00C7F02488147800B6A19A /* SimpleDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleDiff.swift; sourceTree = "<group>"; };
 		DA58047A247962F900F02463 /* DebugDiff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDiff.swift; sourceTree = "<group>"; };
+		DA58047C2479C25200F02463 /* DebugDiffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugDiffTests.swift; sourceTree = "<group>"; };
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
@@ -837,6 +839,7 @@
 			isa = PBXGroup;
 			children = (
 				5B5F11BD213805D100911A57 /* FirstMatchersTests.swift */,
+				DA58047C2479C25200F02463 /* DebugDiffTests.swift */,
 				5B9CE813211C5BCD00DB79A7 /* InitSpecTests.swift */,
 				5B19F71D21255F9600074AD7 /* NextMatchersTests.swift */,
 				5B57E8BD2125AD09001AFC71 /* TestUtil.swift */,
@@ -1415,6 +1418,7 @@
 			files = (
 				DDA64A6920A0AD5200150355 /* UpdateSpecTests.swift in Sources */,
 				5B19F71E21255F9600074AD7 /* NextMatchersTests.swift in Sources */,
+				DA58047D2479C25200F02463 /* DebugDiffTests.swift in Sources */,
 				5B9CE814211C5BCD00DB79A7 /* InitSpecTests.swift in Sources */,
 				5B57E8BE2125AD09001AFC71 /* TestUtil.swift in Sources */,
 				5B5F11C0213805D600911A57 /* FirstMatchersTests.swift in Sources */,
