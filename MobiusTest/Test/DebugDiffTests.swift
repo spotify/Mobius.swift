@@ -28,6 +28,7 @@ struct Person {
 }
 
 class DebugDiffTests: QuickSpec {
+    // swiftlint:disable function_body_length
     override func spec() {
         describe("DumpDiff") {
             var diff: String?
@@ -85,11 +86,11 @@ class DebugDiffTests: QuickSpec {
                     diff = dumpDiff(
                         Person(name: "Joe", age: 40, children: [
                             Person(name: "Mat", age: 10, children: []),
-                            Person(name: "Pat", age: 8, children: [])
+                            Person(name: "Pat", age: 8, children: []),
                         ]),
                         Person(name: "Joe", age: 40, children: [
                             Person(name: "Pat", age: 8, children: []),
-                            Person(name: "Mat", age: 10, children: [])
+                            Person(name: "Mat", age: 10, children: []),
                         ])
                     )
                 }
@@ -177,11 +178,11 @@ class DebugDiffTests: QuickSpec {
 
             context("when value is optional none") {
                 beforeEach {
-                    result = dumpUnwrapped(Optional<String>.none)
+                    result = dumpUnwrapped(String?.none)
                 }
                 it("is printed as optional") {
                     var expectedResult: String = ""
-                    dump(Optional<String>.none, to: &expectedResult)
+                    dump(String?.none, to: &expectedResult)
 
                     expect(result).to(equal(expectedResult))
                 }

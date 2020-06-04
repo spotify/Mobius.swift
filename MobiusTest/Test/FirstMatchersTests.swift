@@ -17,9 +17,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-@testable import MobiusTest
 import MobiusCore
 import MobiusTest
+@testable import MobiusTest
 import Nimble
 import Quick
 
