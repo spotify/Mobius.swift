@@ -23,14 +23,12 @@ func dumpDiff<T>(_ lhs: T, _ rhs: T) -> String {
 
     let diffList = diff(lhs: ArraySlice(lhsLines), rhs: ArraySlice(rhsLines))
 
-    return diffList.reduce(into: "") { string, diff in
-        diff.string.forEach { substring in
-            string.append("\(diff.prefix)\(substring)\n")
-        }
-    }
+    return diffList.flatMap { diff in
+        diff.string.map { "\(diff.prefix)\($0)" }
+    }.joined(separator: "\n")
 }
 
-private func dumpUnwrapped<T>(_ value: T) -> String {
+func dumpUnwrapped<T>(_ value: T) -> String {
     var valueDump: String = ""
     let mirror = Mirror(reflecting: value)
 
