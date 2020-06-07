@@ -33,6 +33,26 @@ class DebugDiffTests: QuickSpec {
         describe("DumpDiff") {
             var diff: String?
 
+            context("with no change") {
+                beforeEach {
+                    diff = dumpDiff(
+                        Person(name: "Joe", age: 10, children: []),
+                        Person(name: "Joe", age: 10, children: [])
+                    )
+                }
+                it("returns correct diff output") {
+                    let expectedDiff =
+                    """
+                     ▿ MobiusTestTests.Person
+                       - name: "Joe"
+                       - age: 10
+                       - children: 0 elements
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
+                }
+            }
+
             context("with simple change") {
                 beforeEach {
                     diff = dumpDiff(
