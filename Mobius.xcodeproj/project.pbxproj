@@ -167,6 +167,8 @@
 		69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
 		69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
 		DA00C7F12488147800B6A19A /* SimpleDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA00C7F02488147800B6A19A /* SimpleDiff.swift */; };
+		DA1EFEEA248D764F0014C414 /* DebugDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047A247962F900F02463 /* DebugDiff.swift */; };
+		DA1EFEEB248D76560014C414 /* SimpleDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA00C7F02488147800B6A19A /* SimpleDiff.swift */; };
 		DA58047B247962F900F02463 /* DebugDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047A247962F900F02463 /* DebugDiff.swift */; };
 		DA58047D2479C25200F02463 /* DebugDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047C2479C25200F02463 /* DebugDiffTests.swift */; };
 		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
@@ -1270,10 +1272,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA1EFEEA248D764F0014C414 /* DebugDiff.swift in Sources */,
 				2DF4C53A20DBE04B00A4B6DE /* UpdateSpec.swift in Sources */,
 				5B5F11BA213805C000911A57 /* FirstMatchers.swift in Sources */,
 				5B5F11BC213805C000911A57 /* MatcherUtils.swift in Sources */,
 				5B19F71C21254CCD00074AD7 /* NextMatchers.swift in Sources */,
+				DA1EFEEB248D76560014C414 /* SimpleDiff.swift in Sources */,
 				5B9CE812211C5B9900DB79A7 /* InitSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
