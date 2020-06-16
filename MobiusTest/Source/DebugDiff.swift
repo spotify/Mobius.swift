@@ -28,7 +28,7 @@ func dumpDiff<T>(_ lhs: T, _ rhs: T) -> String {
     }.joined(separator: "\n")
 }
 
-func dumpUnwrapped<T>(_ value: T) -> String {
+private func dumpUnwrapped<T>(_ value: T) -> String {
     var valueDump: String = ""
     let mirror = Mirror(reflecting: value)
 

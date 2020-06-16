@@ -53,6 +53,26 @@ class DebugDiffTests: QuickSpec {
                 }
             }
 
+            context("with no change, second value as optional") {
+                beforeEach {
+                    diff = dumpDiff(
+                        Person(name: "Joe", age: 10, children: []),
+                        Optional.some(Person(name: "Joe", age: 10, children: []))
+                    )
+                }
+                it("returns correct diff output") {
+                    let expectedDiff =
+                    """
+                     ▿ MobiusTestTests.Person
+                       - name: "Joe"
+                       - age: 10
+                       - children: 0 elements
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
+                }
+            }
+
             context("with simple change") {
                 beforeEach {
                     diff = dumpDiff(
@@ -68,6 +88,27 @@ class DebugDiffTests: QuickSpec {
                     −  - age: 10
                     +  - age: 11
                        - children: 0 elements
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
+                }
+            }
+
+            context("with first value nil") {
+                beforeEach {
+                    diff = dumpDiff(
+                        nil,
+                        Person(name: "Joe", age: 10, children: [])
+                    )
+                }
+                it("returns correct diff output") {
+                    let expectedDiff =
+                    """
+                    −- nil
+                    +▿ MobiusTestTests.Person
+                    +  - name: "Joe"
+                    +  - age: 10
+                    +  - children: 0 elements
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -166,48 +207,6 @@ class DebugDiffTests: QuickSpec {
                     expect(diff).to(endWith(expectedDiff))
                 }
             }
-        }
-
-        describe("DumpUnwrapped") {
-            let value = "test value"
-            var result: String?
-
-            context("when value is unwrapped") {
-                beforeEach {
-                    result = dumpUnwrapped(value)
-                }
-                it("is printed as it was") {
-                    var expectedResult: String = ""
-                    dump(value, to: &expectedResult)
-
-                    expect(result).to(equal(expectedResult))
-                }
-            }
-
-            context("when value is optional some") {
-                beforeEach {
-                    result = dumpUnwrapped(Optional(value))
-                }
-                it("is printed as unwrapped") {
-                    var expectedResult: String = ""
-                    dump(value, to: &expectedResult)
-
-                    expect(result).to(equal(expectedResult))
-                }
-            }
-
-            context("when value is optional none") {
-                beforeEach {
-                    result = dumpUnwrapped(String?.none)
-                }
-                it("is printed as optional") {
-                    var expectedResult: String = ""
-                    dump(String?.none, to: &expectedResult)
-
-                    expect(result).to(equal(expectedResult))
-                }
-            }
-
         }
     }
 }
