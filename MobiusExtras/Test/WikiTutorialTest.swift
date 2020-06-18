@@ -26,7 +26,7 @@ class WikiTutorialTest: XCTestCase {
     // swiftlint:disable function_body_length
 
     func testWikiCreatingALoop() {
-        // Dummy implementation of print()
+        // Standin implementation of print()
         var printedValues: [String] = []
         func print(_ value: Any) {
             printedValues.append(String(describing: value))
@@ -68,7 +68,7 @@ class WikiTutorialTest: XCTestCase {
     }
 
     func testWikiCreatingALoop_addingEffects() {
-        // Dummy implementation of print()
+        // Standin implementation of print()
         var printedValues: [String] = []
         func print(_ value: Any) {
             printedValues.append(String(describing: value))
