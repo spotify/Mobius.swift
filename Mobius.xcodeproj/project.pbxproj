@@ -72,17 +72,6 @@
 		5B19F71B21254CCD00074AD7 /* NextMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B19F71A21254CCD00074AD7 /* NextMatchers.swift */; };
 		5B19F71C21254CCD00074AD7 /* NextMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B19F71A21254CCD00074AD7 /* NextMatchers.swift */; };
 		5B19F71E21255F9600074AD7 /* NextMatchersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B19F71D21255F9600074AD7 /* NextMatchersTests.swift */; };
-		5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1039210F5E9A0067193C /* BlockingFunctionConnectable.swift */; };
-		5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F103B210F5EBC0067193C /* ActionConnectable.swift */; };
-		5B1F103D210F5EBC0067193C /* ActionConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F103B210F5EBC0067193C /* ActionConnectable.swift */; };
-		5B1F103F210F5EE40067193C /* ConsumerConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F103E210F5EE40067193C /* ConsumerConnectable.swift */; };
-		5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F103E210F5EE40067193C /* ConsumerConnectable.swift */; };
-		5B1F1041210F5EEB0067193C /* BlockingFunctionConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1039210F5E9A0067193C /* BlockingFunctionConnectable.swift */; };
-		5B1F1043210F5F590067193C /* ClosureConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1042210F5F590067193C /* ClosureConnectable.swift */; };
-		5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1042210F5F590067193C /* ClosureConnectable.swift */; };
-		5B1F1047211037270067193C /* BlockingFunctionConnectableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1046211037270067193C /* BlockingFunctionConnectableTests.swift */; };
-		5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F1048211037380067193C /* ActionConnectableTest.swift */; };
-		5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F104A211037500067193C /* ConsumerConnectableTests.swift */; };
 		5B1F104D21105CAD0067193C /* EventSourceMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F104C21105CAD0067193C /* EventSourceMap.swift */; };
 		5B1F104E21105CB10067193C /* EventSourceMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F104C21105CAD0067193C /* EventSourceMap.swift */; };
 		5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */; };
@@ -331,13 +320,6 @@
 		5B19F71A21254CCD00074AD7 /* NextMatchers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextMatchers.swift; sourceTree = "<group>"; };
 		5B19F71D21255F9600074AD7 /* NextMatchersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextMatchersTests.swift; sourceTree = "<group>"; };
 		5B19F71F212591C900074AD7 /* MobiusTest.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MobiusTest.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		5B1F1039210F5E9A0067193C /* BlockingFunctionConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingFunctionConnectable.swift; sourceTree = "<group>"; };
-		5B1F103B210F5EBC0067193C /* ActionConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionConnectable.swift; sourceTree = "<group>"; };
-		5B1F103E210F5EE40067193C /* ConsumerConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumerConnectable.swift; sourceTree = "<group>"; };
-		5B1F1042210F5F590067193C /* ClosureConnectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClosureConnectable.swift; sourceTree = "<group>"; };
-		5B1F1046211037270067193C /* BlockingFunctionConnectableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingFunctionConnectableTests.swift; sourceTree = "<group>"; };
-		5B1F1048211037380067193C /* ActionConnectableTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionConnectableTest.swift; sourceTree = "<group>"; };
-		5B1F104A211037500067193C /* ConsumerConnectableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumerConnectableTests.swift; sourceTree = "<group>"; };
 		5B1F104C21105CAD0067193C /* EventSourceMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSourceMap.swift; sourceTree = "<group>"; };
 		5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventSource+ExtensionsTests.swift"; sourceTree = "<group>"; };
 		5B237EB9209C4F3C00764576 /* Connectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectable.swift; sourceTree = "<group>"; };
@@ -569,27 +551,6 @@
 			);
 			sourceTree = "<group>";
 		};
-		5B1F1038210F5E7D0067193C /* Deprecated */ = {
-			isa = PBXGroup;
-			children = (
-				5B1F103B210F5EBC0067193C /* ActionConnectable.swift */,
-				5B1F1039210F5E9A0067193C /* BlockingFunctionConnectable.swift */,
-				5B1F1042210F5F590067193C /* ClosureConnectable.swift */,
-				5B1F103E210F5EE40067193C /* ConsumerConnectable.swift */,
-			);
-			path = Deprecated;
-			sourceTree = "<group>";
-		};
-		5B1F1045211036FC0067193C /* ConnectableConvenienceClassesTests */ = {
-			isa = PBXGroup;
-			children = (
-				5B1F1048211037380067193C /* ActionConnectableTest.swift */,
-				5B1F1046211037270067193C /* BlockingFunctionConnectableTests.swift */,
-				5B1F104A211037500067193C /* ConsumerConnectableTests.swift */,
-			);
-			path = ConnectableConvenienceClassesTests;
-			sourceTree = "<group>";
-		};
 		5B3AA33320975248003F35C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -692,7 +653,6 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDBC2366EF8D00A1CE4C /* EffectHandlers */,
-				5B1F1038210F5E7D0067193C /* Deprecated */,
 				5BB287BC209995410043B530 /* Disposables */,
 				5B4A369821107D0E00279C7D /* EventSources */,
 				2D3EEB9523FADA9E006E478A /* AsyncStartStopStateMachine.swift */,
@@ -771,7 +731,6 @@
 			isa = PBXGroup;
 			children = (
 				02D0DDC12366F46600A1CE4C /* EffectHandlers */,
-				5B1F1045211036FC0067193C /* ConnectableConvenienceClassesTests */,
 				5B4A369C21107F0D00279C7D /* EventSources */,
 				2D24D15123FAE728005D175E /* AnonymousDisposableTests.swift */,
 				5BB2885620999ACE0043B530 /* AnyConnectionTests.swift */,
@@ -1227,13 +1186,9 @@
 				2DF4C2FD20DBDD5800A4B6DE /* Connection.swift in Sources */,
 				2DDF54C1229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
 				02D0DDC723672E6400A1CE4C /* EffectHandler.swift in Sources */,
-				5B1F1040210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
-				5B1F1044210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				2DF4C2FE20DBDD5800A4B6DE /* Connectable.swift in Sources */,
 				2DF4C30620DBDD5C00A4B6DE /* AnonymousDisposable.swift in Sources */,
-				5B1F103D210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				2DF4C30520DBDD5C00A4B6DE /* CompositeDisposable.swift in Sources */,
-				5B1F1041210F5EEB0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				2DF4C30420DBDD5C00A4B6DE /* Disposable.swift in Sources */,
 				2DF4C30920DBDD5C00A4B6DE /* Mobius.swift in Sources */,
 				2DF4C30320DBDD5800A4B6DE /* First.swift in Sources */,
@@ -1275,7 +1230,6 @@
 			files = (
 				02CEC48B2379614500BA1584 /* EffectRouterDSL.swift in Sources */,
 				5BB28821209995810043B530 /* Mobius.swift in Sources */,
-				5B1F103A210F5E9A0067193C /* BlockingFunctionConnectable.swift in Sources */,
 				2D3A6973235737430053C95E /* WorkBag.swift in Sources */,
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
 				02CAE47223C76F34009DFF9A /* EffectCallback.swift in Sources */,
@@ -1294,12 +1248,9 @@
 				5BB288172099957D0043B530 /* Next.swift in Sources */,
 				5BB28827209995810043B530 /* MobiusLogger.swift in Sources */,
 				2DDF54C0229BDB4800D05861 /* CompositeEventSourceBuilder.swift in Sources */,
-				5B1F103F210F5EE40067193C /* ConsumerConnectable.swift in Sources */,
 				2D15DF73238EA4DD00E78B27 /* LoggingAdaptors.swift in Sources */,
-				5B1F1043210F5F590067193C /* ClosureConnectable.swift in Sources */,
 				5BB288182099957D0043B530 /* Connection.swift in Sources */,
 				02D6755323D1E822008200AF /* EnumRoute.swift in Sources */,
-				5B1F103C210F5EBC0067193C /* ActionConnectable.swift in Sources */,
 				5BB2881B2099957D0043B530 /* MobiusHooks.swift in Sources */,
 				5BB2881C2099957D0043B530 /* ConnectablePublisher.swift in Sources */,
 				02D0DDC02366F08300A1CE4C /* EffectHandler.swift in Sources */,
@@ -1318,10 +1269,8 @@
 				5BB2886F20999AD60043B530 /* TestingUtil.swift in Sources */,
 				02C406242374260700BD7ED8 /* EffectRouterTests.swift in Sources */,
 				5BB2887520999AD60043B530 /* AnyEventSourceTests.swift in Sources */,
-				5B1F1047211037270067193C /* BlockingFunctionConnectableTests.swift in Sources */,
 				5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */,
 				5BB2887820999AD60043B530 /* AnyConnectionTests.swift in Sources */,
-				5B1F104B211037500067193C /* ConsumerConnectableTests.swift in Sources */,
 				5BB2887120999AD60043B530 /* LoggingInitiateTests.swift in Sources */,
 				2D3A69772359EAAA0053C95E /* WorkBagTests.swift in Sources */,
 				2DDF54C3229BEEC400D05861 /* CompositeEventSourceBuilderTests.swift in Sources */,
@@ -1333,7 +1282,6 @@
 				5BB2887620999AD60043B530 /* NextTests.swift in Sources */,
 				2D24D15323FAE746005D175E /* AnonymousDisposableTests.swift in Sources */,
 				5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */,
-				5B1F1049211037380067193C /* ActionConnectableTest.swift in Sources */,
 				5BB2887720999AD60043B530 /* FirstTests.swift in Sources */,
 				2DA9A41E23FAEA4800BF5534 /* AnyEffectHandlerTests.swift in Sources */,
 				5BB2887A20999AD60043B530 /* MobiusLoopTests.swift in Sources */,
