@@ -19,6 +19,7 @@
 
 import MobiusCore
 import MobiusTest
+@testable import MobiusTest
 import Nimble
 import Quick
 
@@ -89,7 +90,7 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected model to be <\(expectedModel)>, got <\(actualModel)>"))
+                        expect(result?.failureMessage).to(equal("Different model than expected (−), got (+): \n\(dumpDiff(expectedModel, actualModel))"))
                     }
                 }
             }

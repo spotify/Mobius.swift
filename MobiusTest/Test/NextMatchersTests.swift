@@ -150,8 +150,7 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        let optionalActual: String? = actualModel
-                        let expectedError = "Expected final Next to have model: <\(expectedModel)>. Got: <\(String(describing: optionalActual))>"
+                        let expectedError = "Different final model than expected (−), got (+): \n\(dumpDiff(expectedModel, actualModel))"
                         expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
@@ -163,7 +162,8 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected final Next to have model: <\(expectedModel)>. Got: <nil>"))
+                        let expectedError = "Different final model than expected (−), got (+): \n\(dumpDiff(expectedModel, nil))"
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
             }
