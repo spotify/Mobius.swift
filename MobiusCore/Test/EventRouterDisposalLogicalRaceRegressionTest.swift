@@ -71,7 +71,9 @@ class EventRouterDisposalLogicalRaceRegressionTest: QuickSpec {
                     .withEventSource(eventSource)
                     .makeController(from: Model())
 
-                controller.connectView(ActionConnectable {})
+                controller.connectView(AnyConnectable { _ in
+                    Connection(acceptClosure: { _ in }, disposeClosure: {})
+                })
             }
 
             it("allows stopping a loop immediately after dispatching an event") {
