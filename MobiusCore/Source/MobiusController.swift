@@ -216,9 +216,11 @@ public final class MobiusController<Model, Event, Effect> {
                 var disposables: [Disposable] = [loop]
 
                 if let viewConnectable = stoppedState.viewConnectable {
-                    // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the assertion
-                    // that “unguarded” refers to, and also (of course) flips to the loop queue.
-                    let viewConnection = viewConnectable.connect(loop.unguardedDispatchEvent)
+                    let viewConnection = viewConnectable.connect { [unowned loop] event in
+                        // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the
+                        //       assertion “unguarded” refers to, and also (of course) flips to the loop queue.
+                        loop.unguardedDispatchEvent(event)
+                    }
                     loop.addObserver(viewConnection.accept)
                     disposables.append(viewConnection)
                 }

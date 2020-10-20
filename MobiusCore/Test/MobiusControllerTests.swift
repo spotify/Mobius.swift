@@ -361,6 +361,32 @@ class MobiusControllerTests: QuickSpec {
                     expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
                 }
             }
+
+            describe("deallocating") {
+                var modelObserver: MockConsumerConnectable!
+                var effectObserver: MockConnectable!
+                var controller: MobiusController<NSObject, String, String>!
+                var consumerWrapper: MockConsumerConnectable.ConsumerWrapper!
+
+                beforeEach {
+                    consumerWrapper = MockConsumerConnectable.ConsumerWrapper()
+                    modelObserver = MockConsumerConnectable(consumerWrapper: consumerWrapper)
+                    effectObserver = MockConnectable()
+                    controller = Mobius
+                        .loop(update: Update { model, _ in .next(model) }, effectHandler: effectObserver)
+                        .makeController(from: NSObject(), loopQueue: self.loopQueue, viewQueue: self.viewQueue)
+                    controller.connectView(modelObserver)
+                    controller.start()
+                }
+
+                it("should release any references to the loop") {
+                    self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+                    controller.stop()
+                    controller.disconnectView()
+                    controller = nil
+                    expect(modelObserver.model).to(beNil())
+                }
+            }
         }
     }
 
@@ -380,5 +406,27 @@ class MockConnectable: Connectable {
 
     func connect(_ consumer: @escaping (String) -> Void) -> Connection<String> {
         return Connection(acceptClosure: { _ in }, disposeClosure: { self.disposed = true })
+    }
+}
+
+class MockConsumerConnectable: Connectable {
+    class ConsumerWrapper {
+        var consumer: ((String) -> Void)?
+    }
+
+    // reference to the loop.model without retaining it
+    // used to determine whether the loop is still alive
+    private(set) weak var model: NSObject?
+
+    // instance to retain the consumer passed to the connectable
+    private let consumerWrapper: ConsumerWrapper
+
+    init(consumerWrapper: ConsumerWrapper) {
+        self.consumerWrapper = consumerWrapper
+    }
+
+    func connect(_ consumer: @escaping (String) -> Void) -> Connection<NSObject> {
+        consumerWrapper.consumer = consumer
+        return Connection(acceptClosure: { self.model = $0 }, disposeClosure: {})
     }
 }
