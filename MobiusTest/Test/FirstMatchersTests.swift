@@ -18,7 +18,6 @@
 // under the License.
 
 import MobiusCore
-import MobiusTest
 @testable import MobiusTest
 import Nimble
 import Quick
