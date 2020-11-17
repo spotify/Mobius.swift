@@ -148,7 +148,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
         consumeEvent(event)
     }
 
-    // MARK: - Implemenation details
+    // MARK: - Implementation details
 
     /// Apply a `Next`:
     ///

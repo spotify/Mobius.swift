@@ -25,7 +25,7 @@ public final class CompositeDisposable {
     private var disposables: [Disposable]
     private let lock = DispatchQueue(label: "Mobius.CompositeDisposable")
 
-    /// Initialises a `CompositeDisposable`.
+    /// Initializes a `CompositeDisposable`.
     ///
     /// - Parameter disposables: an array of disposables.
     init(disposables: [Disposable]) {

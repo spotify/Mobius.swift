@@ -24,7 +24,7 @@ import Quick
 class ConnectionTests: QuickSpec {
     override func spec() {
         describe("Connection") {
-            context("when initialising with closures") {
+            context("when initializing with closures") {
                 var connection: Connection<Int>!
                 var acceptValue: Int?
                 var disposeCalled = false

@@ -19,7 +19,7 @@
 
 import Foundation
 
-/// Like a work queue, but agressively avoids doing things sequentially.
+/// Like a work queue, but aggressively avoids doing things sequentially.
 ///
 /// We don’t want to commit to any sequencing guarantees in Mobius loops. Since we’re cognizant of Hyrum’s Law, we don’t
 /// want to provide _unguaranteed_ sequencing either, so this implementation currently randomizes execution order. We
