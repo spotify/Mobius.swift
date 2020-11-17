@@ -90,20 +90,6 @@ class ConnectableTests: QuickSpec {
             }
 
             context("when attempting to send some data back to the loop") {
-                context("when the consumer is not set") {
-                    var sut: SubclassedConnectableClass!
-                    beforeEach {
-                        sut = SubclassedConnectableClass()
-                    }
-
-                    xit("should cause a mobius error") {
-                        let errorThrown = catchError {
-                            sut.send("Some string")
-                        }
-                        expect(errorThrown).to(beTrue())
-                    }
-                }
-
                 context("when the consumer is set") {
                     var sut: SubclassedConnectableClass!
                     var consumerReceivedData: String?
