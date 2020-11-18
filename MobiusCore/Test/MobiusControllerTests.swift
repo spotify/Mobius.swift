@@ -39,7 +39,7 @@ class MobiusControllerTests: QuickSpec {
             var activateInitiator: Bool!
 
             func clearViewRecorder() {
-                makeSureAllEffectsAndEventsHaveBeenProccessed()
+                makeSureAllEffectsAndEventsHaveBeenProcessed()
                 view.recorder.clear()
             }
 
@@ -107,13 +107,13 @@ class MobiusControllerTests: QuickSpec {
                             controller.start()
 
                             view.dispatch("restarted")
-                            self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             expect(view.recorder.items).toEventually(equal(["S", "S-restarted"]))
                         }
                         it("should retain updated state") {
                             view.dispatch("hi")
-                            self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             controller.stop()
 
@@ -318,7 +318,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
 
                         view.dispatch("the last event")
-                        self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+                        self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                         controller.stop()
 
@@ -380,7 +380,7 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 it("should release any references to the loop") {
-                    self.makeSureAllEffectsAndEventsHaveBeenProccessed()
+                    self.makeSureAllEffectsAndEventsHaveBeenProcessed()
                     controller.stop()
                     controller.disconnectView()
                     controller = nil
@@ -390,7 +390,7 @@ class MobiusControllerTests: QuickSpec {
         }
     }
 
-    func makeSureAllEffectsAndEventsHaveBeenProccessed() {
+    func makeSureAllEffectsAndEventsHaveBeenProcessed() {
         loopQueue.sync {
             // Waiting synchronously for effects to be completed
         }

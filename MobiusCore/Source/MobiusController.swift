@@ -82,7 +82,7 @@ public final class MobiusController<Model, Event, Effect> {
                            ┃ loopQueue ┃
                            ┗━━━━━━━━━━━┛
 
-         In order to construct this bottom-up and fulfil definitive initialization requirements, state and loopQueue are
+         In order to construct this bottom-up and fulfill definitive initialization requirements, state and loopQueue are
          duplicated in local variables.
          */
 
