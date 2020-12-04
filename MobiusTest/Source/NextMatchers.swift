@@ -133,9 +133,58 @@ public func hasEffects<Model, Effect: Equatable>(
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.effects
-        if !expected.allSatisfy(actual.contains) {
-            return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
+
+        let unhandled = expected.filter { !actual.contains($0) }
+        guard !unhandled.isEmpty else { return .success }
+
+        func countedEffects(_ effects: [Effect], label: String) -> String {
+            let count = effects.count
+            return count == 1 ? "1 \(label) effect" : "\(count) \(label) effects"
         }
-        return .success
+
+        // Find the effects that were produced but not expected - this is permitted, but there might be a close match
+        // there
+        let ignoredActual = actual.filter { !expected.contains($0) }
+
+        /// Given an effect, return an indented dump() of its contents. If there is at least one similar effect in
+        /// `ignoredActual`, show the difference to the best match as margin annotations.
+        ///
+        /// “Similar” is defined as starting with at least one matching line – in the common case of enums with
+        /// associated types, this means the same case. “Best match” is defined as the one with the smallest number of
+        /// line differences.
+        func formatEffect(effect: Effect) -> [String] {
+            if let diffList = closestDiff(
+                for: effect,
+                in: ignoredActual,
+                predicate: { $0.first?.isSame ?? false } // Only use diff if first line (typically case name) matches
+            ) {
+                return diffList.flatMap { diff in
+                    // Three-space indent with +/-/(space) for diff
+                    diff.string.map { "\n   \(diff.prefix)\($0)" }
+                }
+            } else {
+                return dumpUnwrapped(effect).split(separator: "\n").map {
+                    // Four-space indent
+                    "\n    \($0)"
+                }
+            }
+        }
+
+        return .failure(
+            message: "Missing \(countedEffects(unhandled, label: "expected"))," +
+                " with \(countedEffects(ignoredActual, label: "actual")) unmatched:" +
+                unhandled.flatMap(formatEffect).joined(),
+            file: file,
+            line: line
+        )
+    }
+}
+
+private extension Difference {
+    var isSame: Bool {
+        switch self {
+        case .same: return true
+        default: return false
+        }
     }
 }
