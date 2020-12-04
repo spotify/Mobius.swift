@@ -28,7 +28,7 @@ func dumpDiff<T>(_ lhs: T, _ rhs: T) -> String {
     }.joined(separator: "\n")
 }
 
-private func dumpUnwrapped<T>(_ value: T) -> String {
+func dumpUnwrapped<T>(_ value: T) -> String {
     var valueDump: String = ""
     let mirror = Mirror(reflecting: value)
 
@@ -39,4 +39,42 @@ private func dumpUnwrapped<T>(_ value: T) -> String {
     }
 
     return valueDump
+}
+
+func closestDiff<T, S: Sequence>(
+    for value: T,
+    in sequence: S,
+    predicate: ([Difference]) -> Bool = { _ in true }
+) -> [Difference]? where S.Element == T {
+    var closest: [Difference]?
+    var closestDistance = Int.max
+
+    let unwrappedValue = dumpUnwrapped(value).split(separator: "\n")[...]
+
+    sequence.forEach { candidate in
+        let unwrappedCandidate = dumpUnwrapped(candidate).split(separator: "\n")[...]
+        let diffList = diff(lhs: unwrappedValue, rhs: unwrappedCandidate)
+
+        let distance = diffList.diffCount
+        if distance < closestDistance && predicate(diffList) {
+            closest = diffList
+            closestDistance = distance
+        }
+    }
+
+    return closest
+}
+
+private extension Array where Element == Difference {
+    // Return the number of entries that are differences
+    var diffCount: Int {
+        reduce(0) { count, element in
+            switch element {
+            case .insert(let lines), .delete(let lines):
+                return count + lines.count
+            case .same:
+                return count
+            }
+        }
+    }
 }
