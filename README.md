@@ -17,7 +17,7 @@ This repository contains the core Mobius framework and add-ons for common develo
 | Environment | details     |
 | ----------- |-------------|
 | 📱 iOS      | 10.0+      |
-| 🛠 Xcode    | 11.0+       |
+| 🛠 Xcode    | 12.0+       |
 | 🐦 Language | Swift 5.0  |
 
 ## Installation
