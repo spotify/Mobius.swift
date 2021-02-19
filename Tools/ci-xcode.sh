@@ -11,7 +11,7 @@ cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodepro
 if [[ "$IS_CI" == "1" ]]; then
   heading "Installing Tools"
   brew install carthage
-  gem install xcpretty
+  gem install --no-document xcpretty
   export IS_CI=1
 fi
 
