@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -77,8 +77,6 @@
 		5B1F105121105CC50067193C /* EventSource+ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */; };
 		5B237EBA209C4F3C00764576 /* Connectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B237EB9209C4F3C00764576 /* Connectable.swift */; };
 		5B3AA33C20975248003F35C3 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
-		5B3AA3C120975635003F35C3 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
-		5B3AA3C5209757AC003F35C3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
 		5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
 		5B4A369B21107D2600279C7D /* AnyEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4A369921107D2600279C7D /* AnyEventSource.swift */; };
 		5B57E8BE2125AD09001AFC71 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E8BD2125AD09001AFC71 /* TestUtil.swift */; };
@@ -96,10 +94,7 @@
 		5B80EDFF2125A32F00F87129 /* NimbleFirstMatchers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B80EDF02125A2E000F87129 /* NimbleFirstMatchers.swift */; };
 		5B80EE002125A33600F87129 /* NimbleFirstMatchersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B80EDEB2125A2E000F87129 /* NimbleFirstMatchersTests.swift */; };
 		5B80EE022125A33B00F87129 /* NimbleNextMatchersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B80EDED2125A2E000F87129 /* NimbleNextMatchersTests.swift */; };
-		5B80EE032125A3CF00F87129 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
 		5B80EE072125A4D200F87129 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B80EE052125A4CC00F87129 /* TestUtil.swift */; };
-		5B80EE082125A50700F87129 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
-		5B80EE092125A50700F87129 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		5B85AD0220AAA8CA00C4FCD5 /* MobiusHooksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B85AD0020AAA87D00C4FCD5 /* MobiusHooksTests.swift */; };
 		5B9CE80521197FE000DB79A7 /* ConnectableContramap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80421197FE000DB79A7 /* ConnectableContramap.swift */; };
 		5B9CE80721199D4400DB79A7 /* ConnectableContramapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9CE80621199D4400DB79A7 /* ConnectableContramapTests.swift */; };
@@ -121,7 +116,6 @@
 		5BB28829209995860043B530 /* Disposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BD209995410043B530 /* Disposable.swift */; };
 		5BB2882A209995860043B530 /* CompositeDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BE209995410043B530 /* CompositeDisposable.swift */; };
 		5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287BF209995410043B530 /* AnonymousDisposable.swift */; };
-		5BB28845209997BF0043B530 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		5BB2886C20999AD60043B530 /* AnyMobiusLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884A20999ACE0043B530 /* AnyMobiusLoggerTests.swift */; };
 		5BB2886D20999AD60043B530 /* MobiusControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884B20999ACE0043B530 /* MobiusControllerTests.swift */; };
 		5BB2886E20999AD60043B530 /* MobiusIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2884C20999ACE0043B530 /* MobiusIntegrationTests.swift */; };
@@ -137,8 +131,6 @@
 		5BB2887C20999AD60043B530 /* LoggingUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB2885A20999ACE0043B530 /* LoggingUpdateTests.swift */; };
 		5BB2889320999B2E0043B530 /* MobiusTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BB2888A20999B2E0043B530 /* MobiusTest.framework */; };
 		5BB288B020999C3D0043B530 /* MobiusCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA33220975248003F35C3 /* MobiusCore.framework */; };
-		5BB288B120999D130043B530 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
-		5BB288B220999D1E0043B530 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
 		5BCF5F0120F3620700721C0D /* ConnectableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCF5F0020F3620700721C0D /* ConnectableClass.swift */; };
 		5BCF5F0420F3636800721C0D /* ConnectableClassTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BCF5F0220F3621900721C0D /* ConnectableClassTests.swift */; };
 		699F46422416D01700389BB3 /* EffectRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C40620237422EF00BD7ED8 /* EffectRouter.swift */; };
@@ -160,9 +152,6 @@
 		DA1EFEEB248D76560014C414 /* SimpleDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA00C7F02488147800B6A19A /* SimpleDiff.swift */; };
 		DA58047B247962F900F02463 /* DebugDiff.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047A247962F900F02463 /* DebugDiff.swift */; };
 		DA58047D2479C25200F02463 /* DebugDiffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA58047C2479C25200F02463 /* DebugDiffTests.swift */; };
-		DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3BB2097551D003F35C3 /* Quick.framework */; };
-		DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3B920975511003F35C3 /* Nimble.framework */; };
-		DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3C4209757AC003F35C3 /* Foundation.framework */; };
 		DD710DD520A0BD1E0047A7EC /* MobiusExtras.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B3AA3CF20975802003F35C3 /* MobiusExtras.framework */; };
 		DD748323212DB525008EEECD /* Copyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD748322212DB525008EEECD /* Copyable.swift */; };
 		DD748325212DEEC1008EEECD /* CopyableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD748324212DEEC1008EEECD /* CopyableTests.swift */; };
@@ -170,6 +159,17 @@
 		DDA64A6720A0AD2D00150355 /* SimpleLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB287E8209995420043B530 /* SimpleLogger.swift */; };
 		DDA64A6820A0AD5000150355 /* UpdateSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB288A420999B750043B530 /* UpdateSpec.swift */; };
 		DDA64A6920A0AD5200150355 /* UpdateSpecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB288AA20999B750043B530 /* UpdateSpecTests.swift */; };
+		F518C77225E0241A0051BB0C /* Quick.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C77125E0241A0051BB0C /* Quick.xcframework */; };
+		F518C78E25E0241E0051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F518C7C525E024E80051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F518C7D225E024EB0051BB0C /* Quick.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C77125E0241A0051BB0C /* Quick.xcframework */; };
+		F518C7DF25E025260051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F518C7ED25E025290051BB0C /* Quick.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C77125E0241A0051BB0C /* Quick.xcframework */; };
+		F518C7FB25E025410051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F518C80925E025440051BB0C /* Quick.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C77125E0241A0051BB0C /* Quick.xcframework */; };
+		F518CA0B25E04C0B0051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F518CA0C25E04C0B0051BB0C /* Nimble.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F518CA7B25E051840051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -274,13 +274,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2D25B99C24337BCC0077FB07 /* CopyFiles */ = {
+		F518CA0D25E04C0B0051BB0C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
+			dstPath = "";
+			dstSubfolderSpec = 10;
 			files = (
+				F518CA0C25E04C0B0051BB0C /* Nimble.xcframework in Embed Frameworks */,
 			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -330,9 +332,6 @@
 		5B237EB9209C4F3C00764576 /* Connectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectable.swift; sourceTree = "<group>"; };
 		5B3AA33220975248003F35C3 /* MobiusCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MobiusCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B3AA33B20975248003F35C3 /* MobiusCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3AA3B920975511003F35C3 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
-		5B3AA3BB2097551D003F35C3 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
-		5B3AA3C4209757AC003F35C3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		5B3AA3CF20975802003F35C3 /* MobiusExtras.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MobiusExtras.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B4A369921107D2600279C7D /* AnyEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEventSource.swift; sourceTree = "<group>"; };
 		5B57E8BD2125AD09001AFC71 /* TestUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtil.swift; sourceTree = "<group>"; };
@@ -405,25 +404,19 @@
 		DD710DD320A0BCEC0047A7EC /* MobiusExtrasTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobiusExtrasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD748322212DB525008EEECD /* Copyable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Copyable.swift; sourceTree = "<group>"; };
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
+		F518C77125E0241A0051BB0C /* Quick.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Quick.xcframework; path = Carthage/Build/Quick.xcframework; sourceTree = "<group>"; };
+		F518C78D25E0241E0051BB0C /* Nimble.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Nimble.xcframework; path = Carthage/Build/Nimble.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2D25B99B24337BCC0077FB07 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5B3AA33820975248003F35C3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				2D25B9AE24337C690077FB07 /* libMobiusThrowableAssertion.a in Frameworks */,
-				5BB28845209997BF0043B530 /* Quick.framework in Frameworks */,
-				5B3AA3C120975635003F35C3 /* Nimble.framework in Frameworks */,
-				5B3AA3C5209757AC003F35C3 /* Foundation.framework in Frameworks */,
 				5B3AA33C20975248003F35C3 /* MobiusCore.framework in Frameworks */,
+				F518C7FB25E025410051BB0C /* Nimble.xcframework in Frameworks */,
+				F518C80925E025440051BB0C /* Quick.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,9 +432,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B57E8CA21270025001AFC71 /* MobiusTest.framework in Frameworks */,
+				F518CA0B25E04C0B0051BB0C /* Nimble.xcframework in Frameworks */,
 				5B57E8C72126FFDD001AFC71 /* MobiusCore.framework in Frameworks */,
-				5B80EE032125A3CF00F87129 /* Nimble.framework in Frameworks */,
+				5B57E8CA21270025001AFC71 /* MobiusTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,11 +442,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */,
 				69C12F7E222F25F700DC4F9E /* MobiusCore.framework in Frameworks */,
-				5B80EE082125A50700F87129 /* Nimble.framework in Frameworks */,
-				5B80EE092125A50700F87129 /* Quick.framework in Frameworks */,
+				69C12F7F222F260100DC4F9E /* MobiusTest.framework in Frameworks */,
 				5B80EDD82125A18900F87129 /* MobiusNimble.framework in Frameworks */,
+				F518C7C525E024E80051BB0C /* Nimble.xcframework in Frameworks */,
+				F518C7D225E024EB0051BB0C /* Quick.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,9 +463,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				69C12F7D222F25DB00DC4F9E /* MobiusCore.framework in Frameworks */,
-				5BB288B220999D1E0043B530 /* Quick.framework in Frameworks */,
-				5BB288B120999D130043B530 /* Nimble.framework in Frameworks */,
 				5BB2889320999B2E0043B530 /* MobiusTest.framework in Frameworks */,
+				F518C78E25E0241E0051BB0C /* Nimble.xcframework in Frameworks */,
+				F518C77225E0241A0051BB0C /* Quick.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,10 +475,17 @@
 			files = (
 				2D25B9B124337C720077FB07 /* libMobiusThrowableAssertion.a in Frameworks */,
 				69C12F7C222F25B400DC4F9E /* MobiusCore.framework in Frameworks */,
-				DD710DCA20A0BCEC0047A7EC /* Quick.framework in Frameworks */,
-				DD710DCB20A0BCEC0047A7EC /* Nimble.framework in Frameworks */,
-				DD710DCC20A0BCEC0047A7EC /* Foundation.framework in Frameworks */,
 				DD710DD520A0BD1E0047A7EC /* MobiusExtras.framework in Frameworks */,
+				F518C7DF25E025260051BB0C /* Nimble.xcframework in Frameworks */,
+				F518C7ED25E025290051BB0C /* Quick.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F518CA7A25E0517C0051BB0C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F518CA7B25E051840051BB0C /* Nimble.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,10 +582,9 @@
 		5B3AA3B820975510003F35C3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F518C78D25E0241E0051BB0C /* Nimble.xcframework */,
+				F518C77125E0241A0051BB0C /* Quick.xcframework */,
 				5B80EE0A2125A88D00F87129 /* XCTest.framework */,
-				5B3AA3C4209757AC003F35C3 /* Foundation.framework */,
-				5B3AA3BB2097551D003F35C3 /* Quick.framework */,
-				5B3AA3B920975511003F35C3 /* Nimble.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -854,8 +853,6 @@
 			buildPhases = (
 				2D405B7724337E9A00A39BD4 /* Headers */,
 				2D25B99A24337BCC0077FB07 /* Sources */,
-				2D25B99B24337BCC0077FB07 /* Frameworks */,
-				2D25B99C24337BCC0077FB07 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -969,6 +966,7 @@
 			buildPhases = (
 				5B80EDCA2125A18800F87129 /* Sources */,
 				5B80EDCB2125A18800F87129 /* Frameworks */,
+				F518CA0D25E04C0B0051BB0C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1003,6 +1001,7 @@
 			buildConfigurationList = 5B80EDF92125A32200F87129 /* Build configuration list for PBXNativeTarget "MobiusNimble-static-ios" */;
 			buildPhases = (
 				5B80EDF12125A32200F87129 /* Sources */,
+				F518CA7A25E0517C0051BB0C /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1721,13 +1720,13 @@
 		5B3AA34820975248003F35C3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusCore/BuildSystem/MobiusCoreTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -1737,13 +1736,13 @@
 		5B3AA34920975248003F35C3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusCore/BuildSystem/MobiusCoreTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -1795,12 +1794,12 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusNimble/BuildSystem/MobiusNimble-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusNimble;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1819,12 +1818,12 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusNimble/BuildSystem/MobiusNimble-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusNimble;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1835,12 +1834,12 @@
 		5B80EDE42125A18900F87129 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "MobiusNimble/BuildSystem/MobiusNimbleTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusNimbleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1849,12 +1848,12 @@
 		5B80EDE52125A18900F87129 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "MobiusNimble/BuildSystem/MobiusNimbleTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusNimbleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1864,10 +1863,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				PRODUCT_NAME = MobiusNimble;
 			};
 			name = Debug;
@@ -1876,10 +1871,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				PRODUCT_NAME = MobiusNimble;
 			};
 			name = Release;
@@ -1897,11 +1888,14 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusTest/BuildSystem/MobiusTest-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTest;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1922,11 +1916,14 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusTest/BuildSystem/MobiusTest-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTest;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1937,12 +1934,12 @@
 		5BB2889F20999B2E0043B530 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "MobiusTest/BuildSystem/MobiusTestTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1951,12 +1948,12 @@
 		5BB288A020999B2E0043B530 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				INFOPLIST_FILE = "MobiusTest/BuildSystem/MobiusTestTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusTestTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1965,13 +1962,13 @@
 		DD710DD120A0BCEC0047A7EC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusExtras/BuildSystem/MobiusExtrasTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusExtrasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -1981,13 +1978,13 @@
 		DD710DD220A0BCEC0047A7EC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "MobiusExtras/BuildSystem/MobiusExtrasTests-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(PROJECT_DIR)/Carthage/Build/iOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.spotify.MobiusExtrasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = NO;

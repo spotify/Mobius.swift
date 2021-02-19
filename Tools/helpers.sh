@@ -49,7 +49,8 @@ do_carthage_bootstrap() {
 
   carthage build --platform iOS \
     --cache-builds --no-use-binaries \
-    --log-path build/carthage.log
+    --log-path build/carthage.log \
+    --use-xcframeworks
 
   if [ $? -ne 0 ]; then
     [[ "$IS_CI" == "1" ]] && dump_log "build/carthage.log"
