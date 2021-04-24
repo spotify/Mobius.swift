@@ -40,13 +40,6 @@ do_carthage_bootstrap() {
   mkdir -p build
   carthage checkout
 
-  # h4x: patch nimble to legacy build system to work around issue
-  # https://github.com/Quick/Nimble/issues/702
-  if [[ "$IS_CI" == "1" ]]; then
-    patch_to_legacy_build_system "Carthage/Checkouts/Nimble/Nimble.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings"
-    patch_to_legacy_build_system "Carthage/Checkouts/Quick/Quick.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings"
-  fi
-
   carthage build --platform iOS \
     --cache-builds --no-use-binaries \
     --log-path build/carthage.log \

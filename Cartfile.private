@@ -1,2 +1,2 @@
-github "Quick/Quick" ~> 2.0
-github "jspahrsummers/xcconfigs" == 1.0
+github "Quick/Quick" ~> 3.1.2
+github "jspahrsummers/xcconfigs" ~> 1.1

@@ -543,7 +543,7 @@
 			repositoryURL = "https://github.com/Quick/Nimble";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.7;
+				minimumVersion = 9.0.1;
 			};
 		};
 		2D35A2CD241F8FE400C344AC /* XCRemoteSwiftPackageReference "Mobius.swift" */ = {
@@ -559,7 +559,7 @@
 			repositoryURL = "https://github.com/Quick/Nimble";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.7;
+				minimumVersion = 9.0.1;
 			};
 		};
 		2D35A2E2241F910200C344AC /* XCRemoteSwiftPackageReference "Mobius.swift" */ = {
@@ -575,7 +575,7 @@
 			repositoryURL = "https://github.com/Quick/Nimble";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.7;
+				minimumVersion = 9.0.1;
 			};
 		};
 		2D35A2F7241F911700C344AC /* XCRemoteSwiftPackageReference "Mobius.swift" */ = {

@@ -5,5 +5,5 @@ target 'MobiusCocoaPodsTest' do
     pod 'MobiusExtras', :path => '../../../'
     pod 'MobiusNimble', :path => '../../../'
     pod 'MobiusTest', :path => '../../../'
-    pod 'Nimble', '~> 8.0.7'
+    pod 'Nimble', '~> 9.0.1'
 end
