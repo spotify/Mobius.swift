@@ -53,7 +53,7 @@ public func haveModel<Model: Equatable, Effect>(_ expected: Model) -> Nimble.Pre
         let actualDescription = String(describing: first.model)
         return PredicateResult(
             bool: first.model == expected,
-            message: .expectedCustomValueTo("be <\(expectedDescription)>", "<\(actualDescription)>")
+            message: .expectedCustomValueTo("be <\(expectedDescription)>", actual: "<\(actualDescription)>")
         )
     })
 }
@@ -70,7 +70,7 @@ public func haveNoEffects<Model, Effect>() -> Nimble.Predicate<First<Model, Effe
         let actualDescription = String(describing: first.effects)
         return PredicateResult(
             bool: first.effects.isEmpty,
-            message: .expectedCustomValueTo("have no effect", "<\(actualDescription)>")
+            message: .expectedCustomValueTo("have no effect", actual: "<\(actualDescription)>")
         )
     })
 }
@@ -92,7 +92,7 @@ public func haveEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble
             bool: effects.allSatisfy(first.effects.contains),
             message: .expectedCustomValueTo(
                 "contain <\(expectedDescription)>",
-                "<\(actualDescription)> (order doesn't matter)"
+                actual: "<\(actualDescription)> (order doesn't matter)"
             )
         )
     })

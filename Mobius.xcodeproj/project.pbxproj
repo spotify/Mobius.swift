@@ -1659,6 +1659,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -1671,6 +1672,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -1794,6 +1796,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusNimble/BuildSystem/MobiusNimble-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1818,6 +1821,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/MobiusNimble/BuildSystem/MobiusNimble-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1863,6 +1867,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				PRODUCT_NAME = MobiusNimble;
 			};
 			name = Debug;
@@ -1871,6 +1876,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 69C12F79222F225500DC4F9E /* iOS-StaticLibrary.xcconfig */;
 			buildSettings = {
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				PRODUCT_NAME = MobiusNimble;
 			};
 			name = Release;
@@ -1886,6 +1892,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -1914,6 +1921,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
