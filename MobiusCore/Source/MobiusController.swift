@@ -159,7 +159,7 @@ public final class MobiusController<Model, Event, Effect> {
     @discardableResult
     public func connect<LoopConnectable: Connectable>(
         _ connectable: LoopConnectable,
-        acceptQueue: DispatchQueue
+        acceptQueue: DispatchQueue = .main
     ) -> Disposable where LoopConnectable.Input == Model, LoopConnectable.Output == Event {
         do {
             let uuid = UUID()
