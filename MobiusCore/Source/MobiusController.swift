@@ -25,18 +25,16 @@ import Foundation
 /// left off.
 public final class MobiusController<Model, Event, Effect> {
     typealias Loop = MobiusLoop<Model, Event, Effect>
-    typealias ViewConnectable = AsyncDispatchQueueConnectable<Model, Event>
-    typealias ViewConnection = Connection<Model>
+    typealias LoopConnectable = AsyncDispatchQueueConnectable<Model, Event>
 
     private struct StoppedState {
         var modelToStartFrom: Model
-        var viewConnectable: ViewConnectable?
-
+        var connectables: [UUID: LoopConnectable]
     }
 
     private struct RunningState {
         var loop: Loop
-        var viewConnectable: ViewConnectable?
+        var connectables: [UUID: LoopConnectable]
         var disposables: CompositeDisposable
     }
 
@@ -94,7 +92,7 @@ public final class MobiusController<Model, Event, Effect> {
         self.viewQueue = viewQueue
 
         let state = State(
-            state: StoppedState(modelToStartFrom: initialModel, viewConnectable: nil),
+            state: StoppedState(modelToStartFrom: initialModel, connectables: [:]),
             queue: loopQueue
         )
         self.state = state
@@ -149,6 +147,38 @@ public final class MobiusController<Model, Event, Effect> {
         }
     }
 
+    /// Add a `Connectable` to this controller.
+    ///
+    /// The `Connectable` will be given an event consumer, which it can use to send events to the `MobiusLoop`.
+    /// Model updates will be sent to the connection on the provided `DispatchQueue`.
+    ///
+    /// - Parameter connectable: The `Connectable` to connect upon loop start.
+    /// - Parameter acceptQueue: The `DispatchQueue` on which the connection will receive input.
+    /// - Returns: A `Disposable` that can be used to remove the `Connectable`.
+    /// - Attention: Fails via `MobiusHooks.errorHandler` if the loop is running.
+    @discardableResult
+    public func connect<LoopConnectable: Connectable>(
+        _ connectable: LoopConnectable,
+        acceptQueue: DispatchQueue
+    ) -> Disposable where LoopConnectable.Input == Model, LoopConnectable.Output == Event {
+        do {
+            let uuid = UUID()
+            try state.mutate { stoppedState in
+                stoppedState.connectables[uuid] = AsyncDispatchQueueConnectable(connectable, acceptQueue: acceptQueue)
+            }
+
+            return AnonymousDisposable { [weak self] in
+                self?.disconnect(uuid: uuid)
+            }
+        } catch {
+           MobiusHooks.errorHandler(
+               errorMessage(error, default: "\(Self.debugTag): cannot connect while running"),
+               #file,
+               #line
+           )
+       }
+    }
+
     /// Connect a view to this controller.
     ///
     /// May not be called while the loop is running.
@@ -163,12 +193,13 @@ public final class MobiusController<Model, Event, Effect> {
         _ connectable: ViewConnectable
     ) where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
         do {
+            let uuid = Self.viewConnectableID
             try state.mutate { stoppedState in
-                guard stoppedState.viewConnectable == nil else {
+                guard stoppedState.connectables[uuid] == nil else {
                     throw ErrorMessage(message: "\(Self.debugTag): only one view may be connected at a time")
                 }
 
-                stoppedState.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
+                stoppedState.connectables[uuid] = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
             }
         } catch {
            MobiusHooks.errorHandler(
@@ -187,12 +218,13 @@ public final class MobiusController<Model, Event, Effect> {
     /// disconnect
     public func disconnectView() {
         do {
+            let uuid = Self.viewConnectableID
             try state.mutate { stoppedState in
-                guard stoppedState.viewConnectable != nil else {
+                guard stoppedState.connectables[uuid] != nil else {
                     throw ErrorMessage(message: "\(Self.debugTag): no view connected, cannot disconnect")
                 }
 
-                stoppedState.viewConnectable = nil
+                stoppedState.connectables[uuid] = nil
             }
         } catch {
             MobiusHooks.errorHandler(
@@ -212,22 +244,20 @@ public final class MobiusController<Model, Event, Effect> {
         do {
             try state.transitionToRunning { stoppedState in
                 let loop = loopFactory(stoppedState.modelToStartFrom)
-
-                var disposables: [Disposable] = [loop]
-
-                if let viewConnectable = stoppedState.viewConnectable {
-                    let viewConnection = viewConnectable.connect { [unowned loop] event in
+                let disposables: [Disposable] = [loop] + stoppedState.connectables.values.map { connectable in
+                    let connection = connectable.connect { [unowned loop] event in
                         // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the
                         //       assertion “unguarded” refers to, and also (of course) flips to the loop queue.
                         loop.unguardedDispatchEvent(event)
                     }
-                    loop.addObserver(viewConnection.accept)
-                    disposables.append(viewConnection)
+                    loop.addObserver(connection.accept)
+
+                    return connection
                 }
 
                 return RunningState(
                     loop: loop,
-                    viewConnectable: stoppedState.viewConnectable,
+                    connectables: stoppedState.connectables,
                     disposables: CompositeDisposable(disposables: disposables)
                 )
             }
@@ -252,11 +282,12 @@ public final class MobiusController<Model, Event, Effect> {
     public func stop() {
         do {
             try state.transitionToStopped { runningState in
-                let model = runningState.loop.latestModel
-
                 runningState.disposables.dispose()
 
-                return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
+                return StoppedState(
+                    modelToStartFrom: runningState.loop.latestModel,
+                    connectables: runningState.connectables
+                )
             }
         } catch {
             MobiusHooks.errorHandler(
@@ -301,6 +332,29 @@ public final class MobiusController<Model, Event, Effect> {
                 return state.loop.latestModel
             }
         }
+    }
+
+    private func disconnect(uuid: UUID) {
+        do {
+            try state.mutate { stoppedState in
+                guard stoppedState.connectables[uuid] != nil else {
+                    throw ErrorMessage(message: "\(Self.debugTag): not connected, cannot disconnect")
+                }
+
+                stoppedState.connectables[uuid] = nil
+            }
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot disconnect while running; call stop first"),
+                #file,
+                #line
+            )
+        }
+    }
+
+    private static var viewConnectableID: UUID {
+        // Reserve 'nil' to prevent collision with generated connection ids
+        return UUID(uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     }
 
     /// Simple error that just carries an error message out of a closure for us

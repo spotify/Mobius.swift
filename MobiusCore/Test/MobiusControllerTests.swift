@@ -27,16 +27,23 @@ import Quick
 
 class MobiusControllerTests: QuickSpec {
     let loopQueue = DispatchQueue(label: "loop queue")
+    let connectableQueue = DispatchQueue(label: "connectable queue")
     let viewQueue = DispatchQueue(label: "view queue")
 
     // swiftlint:disable function_body_length
     override func spec() {
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
+            var connectable: RecordingTestConnectable!
             var view: RecordingTestConnectable!
             var eventSource: TestEventSource<String>!
             var effectHandler: RecordingTestConnectable!
             var activateInitiator: Bool!
+
+            func clearConnectableRecorder() {
+                makeSureAllEffectsAndEventsHaveBeenProcessed()
+                connectable.recorder.clear()
+            }
 
             func clearViewRecorder() {
                 makeSureAllEffectsAndEventsHaveBeenProcessed()
@@ -44,6 +51,7 @@ class MobiusControllerTests: QuickSpec {
             }
 
             beforeEach {
+                connectable = RecordingTestConnectable(expectedQueue: self.connectableQueue)
                 view = RecordingTestConnectable(expectedQueue: self.viewQueue)
                 let loopQueue = self.loopQueue
 
@@ -77,53 +85,66 @@ class MobiusControllerTests: QuickSpec {
             describe("connecting") {
                 describe("happy cases") {
                     it("should allow connecting before starting") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        expect(connectable.recorder.items).toEventually(equal(["S"]))
                         expect(view.recorder.items).toEventually(equal(["S"]))
                     }
-                    it("should hook up the view's events to the loop") {
+                    it("should hook up the connectable's events to the loop") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        connectable.dispatch("hey")
                         view.dispatch("hey")
 
-                        expect(view.recorder.items).toEventually(equal(["S", "S-hey"]))
+                        expect(connectable.recorder.items).toEventually(equal(["S", "S-hey", "S-hey-hey"]))
+                        expect(view.recorder.items).toEventually(equal(["S", "S-hey", "S-hey-hey"]))
                     }
 
                     context("given a connected and started loop") {
                         beforeEach {
+                            controller.connect(connectable, acceptQueue: self.connectableQueue)
                             controller.connectView(view)
                             controller.start()
 
+                            clearConnectableRecorder()
                             clearViewRecorder()
                         }
                         it("should allow stopping and starting again") {
                             controller.stop()
                             controller.start()
                         }
-                        it("should send new models to the view") {
+                        it("should send new models to the connectable") {
                             controller.stop()
                             controller.start()
 
+                            connectable.dispatch("restarted")
                             view.dispatch("restarted")
                             self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
-                            expect(view.recorder.items).toEventually(equal(["S", "S-restarted"]))
+                            expect(connectable.recorder.items).toEventually(equal(["S", "S-restarted", "S-restarted-restarted"]))
+                            expect(view.recorder.items).toEventually(equal(["S", "S-restarted", "S-restarted-restarted"]))
                         }
                         it("should retain updated state") {
+                            connectable.dispatch("hi")
                             view.dispatch("hi")
                             self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             controller.stop()
 
+                            clearConnectableRecorder()
                             clearViewRecorder()
 
                             controller.start()
 
+                            connectable.dispatch("restarted")
                             view.dispatch("restarted")
 
-                            expect(view.recorder.items).toEventually(equal(["S-hi", "S-hi-restarted"]))
+                            expect(connectable.recorder.items).toEventually(equal(["S-hi-hi", "S-hi-hi-restarted", "S-hi-hi-restarted-restarted"]))
+                            expect(view.recorder.items).toEventually(equal(["S-hi-hi", "S-hi-hi-restarted", "S-hi-hi-restarted-restarted"]))
                         }
                         it("should indicate the running status") {
                             controller.stop()
@@ -131,6 +152,13 @@ class MobiusControllerTests: QuickSpec {
 
                             controller.start()
                             expect(controller.running).to(beTrue())
+                        }
+                        it("should ignore events sent while connectable disposal is pending") {
+                            self.connectableQueue.sync {
+                                controller.stop()
+                                connectable.dispatchSameQueue("late event")
+                            }
+                            expect(connectable.recorder.items).toNotEventually(equal(["S-late event"]))
                         }
                         it("should ignore events sent while view disposal is pending") {
                             self.viewQueue.sync {
@@ -140,6 +168,7 @@ class MobiusControllerTests: QuickSpec {
                                 // AsyncDispatchQueueConnectable’s asynchronous disposal block
                                 view.dispatchSameQueue("late event")
                             }
+                            expect(view.recorder.items).toNotEventually(equal(["S-late event"]))
                         }
                     }
                 }
@@ -170,14 +199,14 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 describe("error handling") {
-                    it("should not allow connecting twice") {
+                    it("should not allow connecting the view twice") {
                         expect(controller.connectView(view)).toNot(raiseError())
                         expect(controller.connectView(view)).to(raiseError())
                     }
                     it("should not allow connecting after starting") {
-                        controller.connectView(view)
                         controller.start()
 
+                        expect(controller.connect(connectable, acceptQueue: self.connectableQueue)).to(raiseError())
                         expect(controller.connectView(view)).to(raiseError())
                     }
                 }
@@ -186,51 +215,76 @@ class MobiusControllerTests: QuickSpec {
             describe("disconnecting") {
                 describe("happy cases") {
                     it("should allow disconnecting before starting") {
+                        let disposable = controller.connect(connectable, acceptQueue: self.connectableQueue)
+                        disposable.dispose()
+
                         controller.connectView(view)
                         controller.disconnectView()
                     }
                     it("should allow disconnecting after stopping") {
+                        let disposable = controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
+
                         controller.start()
                         controller.stop()
+
+                        disposable.dispose()
                         controller.disconnectView()
                     }
                     it("should allow reconnecting after disconnecting") {
+                        let disposable = controller.connect(connectable, acceptQueue: self.connectableQueue)
+                        disposable.dispose()
+
                         controller.connectView(view)
                         controller.disconnectView()
+
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
+
                         controller.start()
 
+                        expect(connectable.recorder.items).toEventually(equal(["S"]))
                         expect(view.recorder.items).toEventually(equal(["S"]))
                     }
-                    it("should not send events to a disconnected view") {
+                    it("should not send events to a disconnected connectable") {
+                        let disconnectedConnectable = RecordingTestConnectable(expectedQueue: self.connectableQueue)
+                        let disposable = controller.connect(disconnectedConnectable, acceptQueue: self.connectableQueue)
+                        disposable.dispose()
+
                         let disconnectedView = RecordingTestConnectable(expectedQueue: self.viewQueue)
                         controller.connectView(disconnectedView)
                         controller.disconnectView()
 
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
+
+                        expect(connectable.recorder.items).toEventually(equal(["S"]))
+                        expect(disconnectedConnectable.recorder.items).to(beEmpty())
 
                         expect(view.recorder.items).toEventually(equal(["S"]))
                         expect(disconnectedView.recorder.items).to(beEmpty())
                     }
                     it("should not allow disconnecting before stopping") {
+                        let disposable = controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        expect(disposable.dispose()).to(raiseError())
                         expect(controller.disconnectView()).to(raiseError())
                     }
                 }
 
                 #if arch(x86_64) || arch(arm64)
                 describe("error handling") {
-                    it("should not allow disconnecting while running") {
+                    it("should not allow disconnecting view while running") {
                         controller.start()
                         expect(controller.disconnectView()).to(raiseError())
                     }
-                    it("should not allow disconnecting without a connection") {
+                    it("should not allow disconnecting view without a connection") {
                         controller.connectView(view)
                         controller.disconnectView()
+
                         expect(controller.disconnectView()).to(raiseError())
                     }
                 }
@@ -239,6 +293,7 @@ class MobiusControllerTests: QuickSpec {
             describe("starting and stopping") {
                 describe("happy cases") {
                     it("should allow starting a stopping a connected controller") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
                         controller.stop()
@@ -248,15 +303,18 @@ class MobiusControllerTests: QuickSpec {
                         controller.stop()
                     }
                     it("should allow dispatching an event from the event source immediately") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         eventSource.dispatchOnSubscribe("startup")
                         controller.start()
                         controller.stop()
 
+                        expect(connectable.recorder.items).toEventually(equal(["S", "S-startup"]))
                         expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
                     }
                     it("should execute the initiator on each start") {
                         activateInitiator = true
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
                         controller.stop()
@@ -264,6 +322,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.stop()
 
                         // Note that there’s no "S" – the initiator takes effect before the model is ever published.
+                        expect(connectable.recorder.items).toEventually(equal(["S-init", "S-init-init"]))
                         expect(view.recorder.items).toEventually(equal(["S-init", "S-init-init"]))
                         expect(effectHandler.recorder.items).toEventually(equal(["initEffect", "initEffect"]))
                     }
@@ -293,48 +352,59 @@ class MobiusControllerTests: QuickSpec {
                         expect(controller.model).to(equal("S"))
                     }
                     it("should read the model from a running loop") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        connectable.dispatch("an event")
                         view.dispatch("an event")
 
-                        expect(controller.model).toEventually(equal("S-an event"))
+                        expect(controller.model).toEventually(equal("S-an event-an event"))
                     }
                     it("should read the last loop model after stopping") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        connectable.dispatch("the last event")
                         view.dispatch("the last event")
 
                         // wait for event to be processed
-                        expect(view.recorder.items).toEventually(equal(["S", "S-the last event"]))
+                        expect(connectable.recorder.items).toEventually(equal(["S", "S-the last event", "S-the last event-the last event"]))
+                        expect(view.recorder.items).toEventually(equal(["S", "S-the last event", "S-the last event-the last event"]))
 
                         controller.stop()
 
-                        expect(controller.model).to(equal("S-the last event"))
+                        expect(controller.model).to(equal("S-the last event-the last event"))
                     }
                     it("should start from the last loop model on restart") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
                         controller.start()
 
+                        connectable.dispatch("the last event")
                         view.dispatch("the last event")
                         self.makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                         controller.stop()
 
+                        clearConnectableRecorder()
                         clearViewRecorder()
 
                         controller.start()
 
-                        expect(view.recorder.items).toEventually(equal(["S-the last event"]))
+                        expect(connectable.recorder.items).toEventually(equal(["S-the last event-the last event"]))
+                        expect(view.recorder.items).toEventually(equal(["S-the last event-the last event"]))
                     }
                     it("should support replacing the model when stopped") {
+                        controller.connect(connectable, acceptQueue: self.connectableQueue)
                         controller.connectView(view)
 
                         controller.replaceModel("R")
 
                         controller.start()
 
+                        expect(connectable.recorder.items).toEventually(equal(["R"]))
                         expect(view.recorder.items).toEventually(equal(["R"]))
                     }
                 }
@@ -351,6 +421,7 @@ class MobiusControllerTests: QuickSpec {
 
             describe("dispatching events") {
                 beforeEach {
+                    controller.connect(connectable, acceptQueue: self.connectableQueue)
                     controller.connectView(view)
                     controller.start()
                 }
@@ -358,6 +429,7 @@ class MobiusControllerTests: QuickSpec {
                 it("should dispatch events from the event source") {
                     eventSource.dispatch("event source event")
 
+                    expect(connectable.recorder.items).toEventually(equal(["S", "S-event source event"]))
                     expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
                 }
             }
@@ -393,6 +465,10 @@ class MobiusControllerTests: QuickSpec {
     func makeSureAllEffectsAndEventsHaveBeenProcessed() {
         loopQueue.sync {
             // Waiting synchronously for effects to be completed
+        }
+
+        connectableQueue.sync {
+            // Waiting synchronously for view observations to be completed
         }
 
         viewQueue.sync {
