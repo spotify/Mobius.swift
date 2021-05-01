@@ -218,7 +218,7 @@ class DebugDiffTests: QuickSpec {
                 }
                 return false
             }
-            
+
             context("with no matching predicate") {
                 beforeEach {
                     diffOutput = closestDiff(for: 1, in: [2], predicate: { isSame($0.first) })
