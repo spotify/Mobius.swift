@@ -266,7 +266,7 @@ class XCTestNextMatchersTests: QuickSpec {
                 var sut: NextPredicate<String, Int>!
 
                 func formatDump(_ text: String) -> String {
-                    text.split(separator: "\n").map { "\n    \($0)" }.joined()
+                    text.split(separator: "\n").map { "\n   −\($0)" }.joined()
                 }
 
                 beforeEach {

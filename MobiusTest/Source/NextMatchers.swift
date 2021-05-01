@@ -164,8 +164,8 @@ public func hasEffects<Model, Effect: Equatable>(
                 }
             } else {
                 return dumpUnwrapped(effect).split(separator: "\n").map {
-                    // Four-space indent
-                    "\n    \($0)"
+                    // Three-space indent with "-" to represent missing effect
+                    "\n   −\($0)"
                 }
             }
         }
