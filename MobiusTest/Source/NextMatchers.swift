@@ -171,8 +171,8 @@ public func hasEffects<Model, Effect: Equatable>(
         }
 
         return .failure(
-            message: "Missing \(countedEffects(unhandled, label: "expected"))," +
-                " with \(countedEffects(ignoredActual, label: "actual")) unmatched:" +
+            message: "Missing \(countedEffects(unhandled, label: "expected")) (-), got (+)" +
+                " (with \(countedEffects(ignoredActual, label: "actual")) unmatched):" +
                 unhandled.flatMap(formatEffect).joined(),
             file: file,
             line: line
