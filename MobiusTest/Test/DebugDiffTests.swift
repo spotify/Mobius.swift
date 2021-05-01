@@ -208,5 +208,41 @@ class DebugDiffTests: QuickSpec {
                 }
             }
         }
+
+        describe("ClosestDiff") {
+            var diffOutput: [Difference]?
+
+            func isSame(_ difference: Difference?) -> Bool {
+                if case .some(Difference.same) = difference {
+                    return true
+                }
+                return false
+            }
+            
+            context("with no matching predicate") {
+                beforeEach {
+                    diffOutput = closestDiff(for: 1, in: [2], predicate: { isSame($0.first) })
+                }
+
+                it("returns no closest difference") {
+                    expect(diffOutput).to(beNil())
+                }
+            }
+
+            context("with matching predicate") {
+                beforeEach {
+                    diffOutput = closestDiff(for: ["g", "p", "u"], in: [["g", "c", "c"], ["g", "n", "u"]], predicate: {
+                        isSame($0.first)
+                    })
+                }
+
+                it("returns closest difference") {
+                    let lhs = dumpUnwrapped(["g", "p", "u"]).split(separator: "\n")[...]
+                    let rhs = dumpUnwrapped(["g", "n", "u"]).split(separator: "\n")[...]
+                    let closestDiff = diff(lhs: lhs, rhs: rhs)
+                    expect(diffOutput).to(equal(closestDiff))
+                }
+            }
+        }
     }
 }

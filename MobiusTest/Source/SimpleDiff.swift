@@ -20,7 +20,7 @@
 //
 // 3. This notice may not be removed or altered from any source distribution.
 
-enum Difference {
+enum Difference: Equatable {
     case insert(ArraySlice<Substring>)
     case delete(ArraySlice<Substring>)
     case same(ArraySlice<Substring>)
