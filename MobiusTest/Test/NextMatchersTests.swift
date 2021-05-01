@@ -265,6 +265,10 @@ class XCTestNextMatchersTests: QuickSpec {
                 let expected = [1, 2, 3, 4]
                 var sut: NextPredicate<String, Int>!
 
+                func formatDump(_ text: String) -> String {
+                    text.split(separator: "\n").map { "\n    \($0)" }.joined()
+                }
+
                 beforeEach {
                     sut = hasEffects(expected)
                 }
@@ -307,7 +311,7 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
                 }
 
-                context("when the Next does not contain one or more of the expected effects") {
+                context("when the Next does not contain one or more of the expected effects and no closest diff is found") {
                     let actual = [1]
                     let expected = [3]
                     beforeEach {
@@ -317,7 +321,10 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain <\(expected)>"))
+                        let diff = formatDump(dumpUnwrapped(expected.first))
+                        let expectedError = "Missing 1 expected effect (-), got (+) (with 1 actual effect unmatched):"
+                            + diff
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -343,8 +350,43 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <[]> to contain <\(expected)>"))
+                            let diff = formatDump(dumpUnwrapped(expected.first))
+                            let expectedError = "Missing 1 expected effect (-), got (+) (with 0 actual effects unmatched):"
+                                + diff
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects and closest diff is found") {
+                    let actual = [[1, 2, 3], [1, 2, 4]]
+                    let expected = [[1, 2, 3], [1, 2, 5], [1, 2, 6]]
+                    var sut: NextPredicate<String, [Int]>!
+
+                    func formatDiff(_ value: Difference) -> [String] {
+                        value.string.map { "\n   \(value.prefix)\($0)" }
+                    }
+
+                    beforeEach {
+                        let next = Next<String, [Int]>.dispatchEffects(actual)
+                        sut = hasEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        // Ignore [1, 2, 3] that has been successfully matched
+                        let actualUnmatched = [[1, 2, 4]]
+                        let expectedUnmatched = [[1, 2, 5], [1, 2, 6]]
+
+                        let diffString = expectedUnmatched.compactMap {
+                            closestDiff(for: $0, in: actualUnmatched)?
+                                .flatMap { formatDiff($0) }
+                                .joined()
+                        }.joined()
+
+                        let expectedError = "Missing 2 expected effects (-), got (+) (with 1 actual effect unmatched):"
+                            + diffString
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
             }
