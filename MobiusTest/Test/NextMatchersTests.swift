@@ -269,6 +269,10 @@ class XCTestNextMatchersTests: QuickSpec {
                     text.split(separator: "\n").map { "\n   −\($0)" }.joined()
                 }
 
+                func formatDiff(_ value: Difference) -> [String] {
+                    value.string.map { "\n   \(value.prefix)\($0)" }
+                }
+
                 beforeEach {
                     sut = hasEffects(expected)
                 }
@@ -363,10 +367,6 @@ class XCTestNextMatchersTests: QuickSpec {
                     let expected = [[1, 2, 3], [1, 2, 5], [1, 2, 6]]
                     var sut: NextPredicate<String, [Int]>!
 
-                    func formatDiff(_ value: Difference) -> [String] {
-                        value.string.map { "\n   \(value.prefix)\($0)" }
-                    }
-
                     beforeEach {
                         let next = Next<String, [Int]>.dispatchEffects(actual)
                         sut = hasEffects(expected)
@@ -374,15 +374,10 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        // Ignore [1, 2, 3] that has been successfully matched
-                        let actualUnmatched = [[1, 2, 4]]
-                        let expectedUnmatched = [[1, 2, 5], [1, 2, 6]]
-
-                        let diffString = expectedUnmatched.compactMap {
-                            closestDiff(for: $0, in: actualUnmatched)?
-                                .flatMap { formatDiff($0) }
-                                .joined()
-                        }.joined()
+                        let diffString = (closestDiff(for: [1, 2, 5], in: [[1, 2, 4]]).0 ?? [])
+                            .flatMap { formatDiff($0) }
+                            .joined()
+                            .appending(formatDump(dumpUnwrapped([1, 2, 6])))
 
                         let expectedError = "Missing 2 expected effects (-), got (+) (with 1 actual effect unmatched):"
                             + diffString

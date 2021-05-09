@@ -220,18 +220,23 @@ class DebugDiffTests: QuickSpec {
             }
 
             context("with no matching predicate") {
+                var diffCandidate: Int?
+
                 beforeEach {
-                    diffOutput = closestDiff(for: 1, in: [2], predicate: { isSame($0.first) })
+                    (diffOutput, diffCandidate) = closestDiff(for: 1, in: [2], predicate: { isSame($0.first) })
                 }
 
                 it("returns no closest difference") {
                     expect(diffOutput).to(beNil())
+                    expect(diffCandidate).to(beNil())
                 }
             }
 
             context("with matching predicate") {
+                var diffCandidate: [String]?
+
                 beforeEach {
-                    diffOutput = closestDiff(for: ["g", "p", "u"], in: [["g", "c", "c"], ["g", "n", "u"]], predicate: {
+                    (diffOutput, diffCandidate) = closestDiff(for: ["g", "p", "u"], in: [["g", "c", "c"], ["g", "n", "u"]], predicate: {
                         isSame($0.first)
                     })
                 }
@@ -241,6 +246,7 @@ class DebugDiffTests: QuickSpec {
                     let rhs = dumpUnwrapped(["g", "n", "u"]).split(separator: "\n")[...]
                     let closestDiff = diff(lhs: lhs, rhs: rhs)
                     expect(diffOutput).to(equal(closestDiff))
+                    expect(diffCandidate).to(equal(["g", "n", "u"]))
                 }
             }
         }

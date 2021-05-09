@@ -45,9 +45,10 @@ func closestDiff<T, S: Sequence>(
     for value: T,
     in sequence: S,
     predicate: ([Difference]) -> Bool = { _ in true }
-) -> [Difference]? where S.Element == T {
-    var closest: [Difference]?
+) -> ([Difference]?, T?) where S.Element == T {
+    var closestDiff: [Difference]?
     var closestDistance = Int.max
+    var closestCandidate: T?
 
     let unwrappedValue = dumpUnwrapped(value).split(separator: "\n")[...]
 
@@ -57,12 +58,13 @@ func closestDiff<T, S: Sequence>(
 
         let distance = diffList.diffCount
         if distance < closestDistance && predicate(diffList) {
-            closest = diffList
+            closestDiff = diffList
             closestDistance = distance
+            closestCandidate = candidate
         }
     }
 
-    return closest
+    return (closestDiff, closestCandidate)
 }
 
 private extension Array where Element == Difference {

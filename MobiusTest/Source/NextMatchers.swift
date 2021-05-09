@@ -144,7 +144,7 @@ public func hasEffects<Model, Effect: Equatable>(
 
         // Find the effects that were produced but not expected - this is permitted, but there might be a close match
         // there
-        let ignoredActual = actual.filter { !expected.contains($0) }
+        var ignoredActual = actual.filter { !expected.contains($0) }
 
         /// Given an effect, return an indented dump() of its contents. If there is at least one similar effect in
         /// `ignoredActual`, show the difference to the best match as margin annotations.
@@ -153,11 +153,18 @@ public func hasEffects<Model, Effect: Equatable>(
         /// associated types, this means the same case. “Best match” is defined as the one with the smallest number of
         /// line differences.
         func formatEffect(effect: Effect) -> [String] {
-            if let diffList = closestDiff(
+            let closestResult = closestDiff(
                 for: effect,
                 in: ignoredActual,
                 predicate: { $0.first?.isSame ?? false } // Only use diff if first line (typically case name) matches
-            ) {
+            )
+
+            if let diffList = closestResult.0,
+               let matchedCandidate = closestResult.1,
+               let matchedIndex = ignoredActual.firstIndex(of: matchedCandidate) {
+
+                ignoredActual.remove(at: matchedIndex)
+
                 return diffList.flatMap { diff in
                     // Three-space indent with +/-/(space) for diff
                     diff.string.map { "\n   \(diff.prefix)\($0)" }
