@@ -348,6 +348,188 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
                 }
             }
+
+            context("when creating a matcher verifying that a Next has only specific effects") {
+                let expected = [1, 2, 3, 4]
+                var sut: NextPredicate<String, Int>!
+
+                beforeEach {
+                    sut = hasOnlyEffects(expected)
+                }
+
+                context("when the effects are the same") {
+                    context("when the effects are in order") {
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when the effects are out of order") {
+                        beforeEach {
+                            var actual = expected
+                            actual.append(actual.removeFirst())
+                            let next = Next<String, Int>.dispatchEffects(actual)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain only <\(expected)>"))
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1]
+                    let expected = [3]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        sut = hasOnlyEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain only <\(expected)>"))
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, String>.noChange
+                            let sut: NextPredicate<String, String> = hasOnlyEffects([])
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        let expected = [88]
+
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            sut = hasOnlyEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            expect(result.failureMessage).to(equal("Expected <[]> to contain only <\(expected)>"))
+                        }
+                    }
+                }
+            }
+
+            context("when creating a matcher verifying that a Next has exact effects") {
+                let expected = [1, 2, 3, 4]
+                var sut: NextPredicate<String, Int>!
+
+                beforeEach {
+                    sut = hasExactEffects(expected)
+                }
+
+                context("when the effects are the same") {
+                    context("when the effects are in order") {
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when the effects are out of order") {
+                        let actual = [4, 3, 2, 1]
+
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(actual)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                        }
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1]
+                    let expected = [3]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        sut = hasExactEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, String>.noChange
+                            let sut: NextPredicate<String, String> = hasExactEffects([])
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        let expected = [88]
+
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            sut = hasExactEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            expect(result.failureMessage).to(equal("Expected <[]> to equal <\(expected)>"))
+                        }
+                    }
+                }
+            }
         }
     }
 }

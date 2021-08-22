@@ -94,11 +94,47 @@ public func hasEffects<Model, Effect: Equatable>(
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
         if !expected.allSatisfy(first.effects.contains) {
-            return .failure(
-                message: "Expected effects <\(first.effects)> to contain <\(expected)>",
-                file: file,
-                line: line
-            )
+            return .failure(message: "Expected <\(first.effects)> to contain <\(expected)>", file: file, line: line)
+        }
+        return .success
+    }
+}
+
+/// Constructs a matcher that matches if only the supplied effects are present in the supplied `First`, in any order.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func hasOnlyEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
+        var unmatchedActual = first.effects
+        var unmatchedExpected = expected
+        zip(first.effects, expected).forEach {
+            _ = unmatchedActual.firstIndex(of: $1).map { unmatchedActual.remove(at: $0) }
+            _ = unmatchedExpected.firstIndex(of: $0).map { unmatchedExpected.remove(at: $0) }
+        }
+        if !unmatchedActual.isEmpty || !unmatchedExpected.isEmpty {
+            return .failure(message: "Expected <\(first.effects)> to contain only <\(expected)>", file: file, line: line)
+        }
+        return .success
+    }
+}
+
+/// Constructs a matcher that matches if the supplied effects are equal to the supplied `First`.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func hasExactEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
+        if first.effects != expected {
+            return .failure(message: "Expected <\(first.effects)> to equal <\(expected)>", file: file, line: line)
         }
         return .success
     }

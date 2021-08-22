@@ -127,3 +127,54 @@ public func haveEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimbl
         )
     })
 }
+
+/// Constructs a matcher that matches if only the supplied effects are present in the supplied `Next`, in any order.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
+public func haveOnlyEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimble.Predicate<Next<Model, Effect>> {
+    return Nimble.Predicate<Next<Model, Effect>>.define(matcher: { actualExpression in
+        guard let next = try actualExpression.evaluate() else {
+            return unexpectedNilParameterPredicate
+        }
+
+        var unmatchedActual = next.effects
+        var unmatchedExpected = expected
+        zip(next.effects, expected).forEach {
+            _ = unmatchedActual.firstIndex(of: $1).map { unmatchedActual.remove(at: $0) }
+            _ = unmatchedExpected.firstIndex(of: $0).map { unmatchedExpected.remove(at: $0) }
+        }
+
+        let expectedDescription = String(describing: expected)
+        let actualDescription = String(describing: next.effects)
+        return Nimble.PredicateResult(
+            bool: unmatchedActual.isEmpty && unmatchedExpected.isEmpty,
+            message: .expectedCustomValueTo(
+                "contain only <\(expectedDescription)>",
+                actual: "<\(actualDescription)> (order doesn't matter)"
+            )
+        )
+    })
+}
+
+/// Constructs a matcher that matches if the supplied effects are equal to the supplied `Next`.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
+public func haveExactEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimble.Predicate<Next<Model, Effect>> {
+    return Nimble.Predicate<Next<Model, Effect>>.define(matcher: { actualExpression in
+        guard let next = try actualExpression.evaluate() else {
+            return unexpectedNilParameterPredicate
+        }
+
+        let expectedDescription = String(describing: expected)
+        let actualDescription = String(describing: next.effects)
+        return Nimble.PredicateResult(
+            bool: expected == next.effects,
+            message: .expectedCustomValueTo(
+                "equal <\(expectedDescription)>",
+                actual: "<\(actualDescription)>"
+            )
+        )
+    })
+}
