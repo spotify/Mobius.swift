@@ -297,7 +297,7 @@ class NimbleFirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: expectedEffects)
-                        expect(first).to(haveExactEffects(expectedEffects))
+                        expect(first).to(haveExactlyEffects(expectedEffects))
                     }
 
                     it("should match") {
@@ -311,7 +311,7 @@ class NimbleFirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        expect(first).to(haveExactEffects(expectedEffects))
+                        expect(first).to(haveExactlyEffects(expectedEffects))
                     }
 
                     it("should produce an appropriate error message") {
@@ -325,7 +325,7 @@ class NimbleFirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        expect(first).to(haveExactEffects(expectedEffects))
+                        expect(first).to(haveExactlyEffects(expectedEffects))
                     }
 
                     it("should produce an appropriate error message") {
@@ -339,7 +339,7 @@ class NimbleFirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        expect(first).to(haveExactEffects(expectedEffects))
+                        expect(first).to(haveExactlyEffects(expectedEffects))
                     }
 
                     it("should produce an appropriate error message") {
@@ -350,7 +350,7 @@ class NimbleFirstMatchersTests: QuickSpec {
                 context("when matching nil") {
                     beforeEach {
                         let first: First<Int, Int>? = nil
-                        expect(first).to(haveExactEffects([1]))
+                        expect(first).to(haveExactlyEffects([1]))
                     }
 
                     it("should not match") {

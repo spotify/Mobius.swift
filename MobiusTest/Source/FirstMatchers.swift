@@ -127,7 +127,7 @@ public func hasOnlyEffects<Model, Effect: Equatable>(
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
-public func hasExactEffects<Model, Effect: Equatable>(
+public func hasExactlyEffects<Model, Effect: Equatable>(
     _ expected: [Effect],
     file: StaticString = #file,
     line: UInt = #line

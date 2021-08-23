@@ -131,7 +131,7 @@ public func haveOnlyEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Ni
 ///
 /// - Parameter effects: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
-public func haveExactEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble.Predicate<First<Model, Effect>> {
+public func haveExactlyEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble.Predicate<First<Model, Effect>> {
     return Nimble.Predicate<First<Model, Effect>>.define(matcher: { actualExpression -> Nimble.PredicateResult in
         guard let first = try actualExpression.evaluate() else {
             return unexpectedNilParameterPredicateResult

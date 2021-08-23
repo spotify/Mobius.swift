@@ -521,7 +521,7 @@ class NimbleNextMatchersTests: QuickSpec {
                 context("when the effects are the same") {
                     beforeEach {
                         let next = Next<String, Int>.dispatchEffects(expected)
-                        expect(next).to(haveExactEffects(expected))
+                        expect(next).to(haveExactlyEffects(expected))
                     }
 
                     it("should match") {
@@ -534,7 +534,7 @@ class NimbleNextMatchersTests: QuickSpec {
 
                     beforeEach {
                         let next = Next<String, Int>.dispatchEffects(actual)
-                        expect(next).to(haveExactEffects(expected))
+                        expect(next).to(haveExactlyEffects(expected))
                     }
 
                     it("should produce an appropriate error message") {
@@ -547,7 +547,7 @@ class NimbleNextMatchersTests: QuickSpec {
 
                     beforeEach {
                         let next = Next<String, Int>.dispatchEffects(actual)
-                        expect(next).to(haveExactEffects(expected))
+                        expect(next).to(haveExactlyEffects(expected))
                     }
 
                     it("should produce an appropriate error message") {
@@ -560,7 +560,7 @@ class NimbleNextMatchersTests: QuickSpec {
 
                     beforeEach {
                         let next = Next<String, Int>.dispatchEffects(actual)
-                        expect(next).to(haveExactEffects(expected))
+                        expect(next).to(haveExactlyEffects(expected))
                     }
 
                     it("should produce an appropriate error message") {
@@ -572,7 +572,7 @@ class NimbleNextMatchersTests: QuickSpec {
                     context("when not expecting effects") {
                         beforeEach {
                             let next = Next<String, Int>.noChange
-                            expect(next).to(haveExactEffects([]))
+                            expect(next).to(haveExactlyEffects([]))
                         }
 
                         it("should match") {
@@ -583,7 +583,7 @@ class NimbleNextMatchersTests: QuickSpec {
                     context("when expecting effects") {
                         beforeEach {
                             let next = Next<String, Int>.noChange
-                            expect(next).to(haveExactEffects(expected))
+                            expect(next).to(haveExactlyEffects(expected))
                         }
 
                         it("should produce an appropriate error message") {
@@ -595,7 +595,7 @@ class NimbleNextMatchersTests: QuickSpec {
                 context("when matching nil") {
                     beforeEach {
                         let next: Next<String, Int>? = nil
-                        expect(next).to(haveExactEffects(expected))
+                        expect(next).to(haveExactlyEffects(expected))
                     }
 
                     it("should produce an appropriate error message") {

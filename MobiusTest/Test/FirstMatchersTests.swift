@@ -231,7 +231,7 @@ class FirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: expectedEffects)
-                        let sut: FirstPredicate<Int, Int> = hasExactEffects(expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
                         result = sut(first)
                     }
 
@@ -246,7 +246,7 @@ class FirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        let sut: FirstPredicate<Int, Int> = hasExactEffects(expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
                         result = sut(first)
                     }
 
@@ -261,7 +261,7 @@ class FirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        let sut: FirstPredicate<Int, Int> = hasExactEffects(expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
                         result = sut(first)
                     }
 
@@ -276,7 +276,7 @@ class FirstMatchersTests: QuickSpec {
 
                     beforeEach {
                         let first = First<Int, Int>(model: 3, effects: actualEffects)
-                        let sut: FirstPredicate<Int, Int> = hasExactEffects(expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
                         result = sut(first)
                     }
 

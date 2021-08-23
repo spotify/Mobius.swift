@@ -161,7 +161,7 @@ public func haveOnlyEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> N
 ///
 /// - Parameter expected: the effects to match (possibly empty)
 /// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
-public func haveExactEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimble.Predicate<Next<Model, Effect>> {
+public func haveExactlyEffects<Model, Effect: Equatable>(_ expected: [Effect]) -> Nimble.Predicate<Next<Model, Effect>> {
     return Nimble.Predicate<Next<Model, Effect>>.define(matcher: { actualExpression in
         guard let next = try actualExpression.evaluate() else {
             return unexpectedNilParameterPredicate
