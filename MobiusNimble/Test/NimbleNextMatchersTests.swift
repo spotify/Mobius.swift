@@ -425,6 +425,184 @@ class NimbleNextMatchersTests: QuickSpec {
                     }
                 }
             }
+
+            context("when creating a matcher verifying that a Next has only specific effects") {
+                let expected = [1, 2, 3]
+
+                context("when the effects are the same") {
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(expected)
+                        expect(next).to(haveOnlyEffects(expected))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the effects are the same in different order") {
+                    let actual = [3, 2, 1]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveOnlyEffects(expected))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveOnlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("contain only <\(expected)>, got <\(actual)>")
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1, 2]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveOnlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("contain only <\(expected)>, got <\(actual)>")
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            expect(next).to(haveOnlyEffects([]))
+                        }
+
+                        it("should match") {
+                            assertionHandler.assertExpectationSucceeded()
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            expect(next).to(haveOnlyEffects(expected))
+                        }
+
+                        it("should produce an appropriate error message") {
+                            assertionHandler.assertLastErrorMessageContains("contain only <\(expected)>, got <[]>")
+                        }
+                    }
+                }
+
+                context("when matching nil") {
+                    beforeEach {
+                        let next: Next<String, Int>? = nil
+                        expect(next).to(haveOnlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains(haveNonNilNext)
+                    }
+                }
+            }
+
+            context("when creating a matcher verifying that a Next has exact effects") {
+                let expected = [1, 2, 3]
+
+                context("when the effects are the same") {
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(expected)
+                        expect(next).to(haveExactlyEffects(expected))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the effects are the same in different order") {
+                    let actual = [3, 2, 1]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveExactlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expected)>, got <\(actual)>")
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveExactlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expected)>, got <\(actual)>")
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1, 2]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        expect(next).to(haveExactlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expected)>, got <\(actual)>")
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            expect(next).to(haveExactlyEffects([]))
+                        }
+
+                        it("should match") {
+                            assertionHandler.assertExpectationSucceeded()
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            expect(next).to(haveExactlyEffects(expected))
+                        }
+
+                        it("should produce an appropriate error message") {
+                            assertionHandler.assertLastErrorMessageContains("equal <\(expected)>, got <[]>")
+                        }
+                    }
+                }
+
+                context("when matching nil") {
+                    beforeEach {
+                        let next: Next<String, Int>? = nil
+                        expect(next).to(haveExactlyEffects(expected))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains(haveNonNilNext)
+                    }
+                }
+            }
         }
     }
 }

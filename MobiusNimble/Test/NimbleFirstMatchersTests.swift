@@ -218,6 +218,150 @@ class NimbleFirstMatchersTests: QuickSpec {
                     }
                 }
             }
+
+            context("when creating a matcher to check that a First has only specific effects") {
+                context("when the First has those effects") {
+                    let expectedEffects = [4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
+                        expect(first).to(haveOnlyEffects(expectedEffects))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the First has those effects out of order") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [0, 7, 4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveOnlyEffects(expectedEffects))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the First contains the expected effects and a few more") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [1, 4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveOnlyEffects(expectedEffects))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("contain only <\(expectedEffects)>, got <\(actualEffects)> (order doesn't matter)")
+                    }
+                }
+
+                context("when the First does not contain all the expected effects") {
+                    let expectedEffects = [4, 1]
+                    let actualEffects = [1]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveOnlyEffects(expectedEffects))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("contain only <\(expectedEffects)>, got <\(actualEffects)> (order doesn't matter)")
+                    }
+                }
+
+                context("when matching nil") {
+                    beforeEach {
+                        let first: First<Int, Int>? = nil
+                        expect(first).to(haveOnlyEffects([1]))
+                    }
+
+                    it("should not match") {
+                        assertionHandler.assertExpectationFailed()
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains(nextBeingNilNotAllowed)
+                    }
+                }
+            }
+
+            context("when creating a matcher to check that a First has exact effects") {
+                context("when the First has those effects") {
+                    let expectedEffects = [4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
+                        expect(first).to(haveExactlyEffects(expectedEffects))
+                    }
+
+                    it("should match") {
+                        assertionHandler.assertExpectationSucceeded()
+                    }
+                }
+
+                context("when the First has those effects out of order") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [0, 7, 4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveExactlyEffects(expectedEffects))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expectedEffects)>, got <\(actualEffects)>")
+                    }
+                }
+
+                context("when the First contains the expected effects and a few more") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [1, 4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveExactlyEffects(expectedEffects))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expectedEffects)>, got <\(actualEffects)>")
+                    }
+                }
+
+                context("when the First does not contain all the expected effects") {
+                    let expectedEffects = [4, 1]
+                    let actualEffects = [1]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        expect(first).to(haveExactlyEffects(expectedEffects))
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains("equal <\(expectedEffects)>, got <\(actualEffects)>")
+                    }
+                }
+
+                context("when matching nil") {
+                    beforeEach {
+                        let first: First<Int, Int>? = nil
+                        expect(first).to(haveExactlyEffects([1]))
+                    }
+
+                    it("should not match") {
+                        assertionHandler.assertExpectationFailed()
+                    }
+
+                    it("should produce an appropriate error message") {
+                        assertionHandler.assertLastErrorMessageContains(nextBeingNilNotAllowed)
+                    }
+                }
+            }
         }
     }
 }

@@ -132,9 +132,48 @@ public func hasEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
-        let actual = next.effects
-        if !expected.allSatisfy(actual.contains) {
-            return .failure(message: "Expected <\(actual)> to contain <\(expected)>", file: file, line: line)
+        if !expected.allSatisfy(next.effects.contains) {
+            return .failure(message: "Expected <\(next.effects)> to contain <\(expected)>", file: file, line: line)
+        }
+        return .success
+    }
+}
+
+/// Constructs a matcher that matches if only the supplied effects are present in the supplied `Next`, in any order.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
+public func hasOnlyEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
+        var unmatchedActual = next.effects
+        var unmatchedExpected = expected
+        zip(next.effects, expected).forEach {
+            _ = unmatchedActual.firstIndex(of: $1).map { unmatchedActual.remove(at: $0) }
+            _ = unmatchedExpected.firstIndex(of: $0).map { unmatchedExpected.remove(at: $0) }
+        }
+        if !unmatchedActual.isEmpty || !unmatchedExpected.isEmpty {
+            return .failure(message: "Expected <\(next.effects)> to contain only <\(expected)>", file: file, line: line)
+        }
+        return .success
+    }
+}
+
+/// Constructs a matcher that matches if the supplied effects are equal to the supplied `Next`.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `Next` instances that include all the supplied effects
+public func hasExactlyEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> NextPredicate<Model, Effect> {
+    return { (next: Next<Model, Effect>) in
+        if next.effects != expected {
+            return .failure(message: "Expected <\(next.effects)> to equal <\(expected)>", file: file, line: line)
         }
         return .success
     }
