@@ -101,7 +101,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     /// the observer will immediately be notified of the most recent model. The observer will be
     /// notified of future changes to the model until the loop or the returned `Disposable` is
     /// disposed.
-
+    ///
     /// - Parameter consumer: an observer of model changes
     /// - Returns: a `Disposable` that can be used to stop further notifications to the observer
     @discardableResult
