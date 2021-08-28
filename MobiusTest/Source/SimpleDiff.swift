@@ -33,6 +33,13 @@ enum Difference: Equatable {
         }
     }
 
+    var isSame: Bool {
+        switch self {
+        case .same: return true
+        default: return false
+        }
+    }
+
     var prefix: String {
         switch self {
         case .insert:

@@ -133,54 +133,17 @@ public func hasEffects<Model, Effect: Equatable>(
 ) -> NextPredicate<Model, Effect> {
     return { (next: Next<Model, Effect>) in
         let actual = next.effects
-
-        let unhandled = expected.filter { !actual.contains($0) }
-        guard !unhandled.isEmpty else { return .success }
-
-        func countedEffects(_ effects: [Effect], label: String) -> String {
-            let count = effects.count
-            return count == 1 ? "1 \(label) effect" : "\(count) \(label) effects"
-        }
+        let unmatchedExpected = expected.filter { !actual.contains($0) }
+        guard !unmatchedExpected.isEmpty else { return .success }
 
         // Find the effects that were produced but not expected - this is permitted, but there might be a close match
         // there
-        var ignoredActual = actual.filter { !expected.contains($0) }
-
-        /// Given an effect, return an indented dump() of its contents. If there is at least one similar effect in
-        /// `ignoredActual`, show the difference to the best match as margin annotations.
-        ///
-        /// “Similar” is defined as starting with at least one matching line – in the common case of enums with
-        /// associated types, this means the same case. “Best match” is defined as the one with the smallest number of
-        /// line differences.
-        func formatEffect(effect: Effect) -> [String] {
-            let closestResult = closestDiff(
-                for: effect,
-                in: ignoredActual,
-                predicate: { $0.first?.isSame ?? false } // Only use diff if first line (typically case name) matches
-            )
-
-            if let diffList = closestResult.0,
-               let matchedCandidate = closestResult.1,
-               let matchedIndex = ignoredActual.firstIndex(of: matchedCandidate) {
-
-                ignoredActual.remove(at: matchedIndex)
-
-                return diffList.flatMap { diff in
-                    // Three-space indent with +/-/(space) for diff
-                    diff.string.map { "\n   \(diff.prefix)\($0)" }
-                }
-            } else {
-                return dumpUnwrapped(effect).split(separator: "\n").map {
-                    // Three-space indent with "-" to represent missing effect
-                    "\n   −\($0)"
-                }
-            }
-        }
+        let unmatchedActual = actual.filter { !expected.contains($0) }
 
         return .failure(
-            message: "Missing \(countedEffects(unhandled, label: "expected")) (-), got (+)" +
-                " (with \(countedEffects(ignoredActual, label: "actual")) unmatched):" +
-                unhandled.flatMap(formatEffect).joined(),
+            message: "Missing \(countedEffects(unmatchedExpected, label: "expected")) (−), got (+)" +
+                " (with \(countedEffects(unmatchedActual, label: "actual")) unmatched):\n" +
+                dumpDiffFuzzy(expected: unmatchedExpected, actual: unmatchedActual, withUnmatchedActual: false),
             file: file,
             line: line
         )
@@ -227,11 +190,7 @@ public func hasExactlyEffects<Model, Effect: Equatable>(
     }
 }
 
-private extension Difference {
-    var isSame: Bool {
-        switch self {
-        case .same: return true
-        default: return false
-        }
-    }
+private func countedEffects<T>(_ effects: [T], label: String) -> String {
+    let count = effects.count
+    return count == 1 ? "1 \(label) effect" : "\(count) \(label) effects"
 }

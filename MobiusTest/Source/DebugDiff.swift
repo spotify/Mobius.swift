@@ -17,15 +17,56 @@
 // specific language governing permissions and limitations
 // under the License.
 
+/// Diff two values by comparing their dumps by line by line.
+/// - Parameters:
+///   - lhs: Old value
+///   - rhs: New value
+/// - Returns: formatted diff string
 func dumpDiff<T>(_ lhs: T, _ rhs: T) -> String {
-    let lhsLines = dumpUnwrapped(lhs).split(separator: "\n")
-    let rhsLines = dumpUnwrapped(rhs).split(separator: "\n")
+    let lhsLines = dumpUnwrapped(lhs).lines
+    let rhsLines = dumpUnwrapped(rhs).lines
 
-    let diffList = diff(lhs: ArraySlice(lhsLines), rhs: ArraySlice(rhsLines))
+    let diffList = diff(lhs: lhsLines, rhs: rhsLines)
 
-    return diffList.flatMap { diff in
-        diff.string.map { "\(diff.prefix)\($0)" }
-    }.joined(separator: "\n")
+    return diffList.diffString
+}
+
+/// Diff two collections of items by picking the most similar value from `actual` for each of the items
+/// in `expected`. Matched values are diffed by comparing their dumps line by line.
+///
+/// “Similar” is defined as starting with at least one matching line – in the common case of enums with
+/// associated types, this means the same case. “Best match” is defined as the one with the smallest number of
+/// line differences.
+///
+/// - Parameters:
+///     - expected: Values that are expected to be found in `actual`
+///     - actual: Values that the `expected` values are diffed against
+///     - withUnmatchedActual: Whether the unmatched values from `actual` should be included in the diff
+/// - Returns: formatted diff string
+func dumpDiffFuzzy<T>(expected: [T], actual: [T], withUnmatchedActual: Bool) -> String where T: Equatable {
+    var actual = actual
+
+    let diffItem = { (item: T) -> [Difference] in
+        let closestResult = closestDiff(
+            for: item,
+            in: actual,
+            predicate: { $0.first?.isSame ?? false } // Only use diff if first line (typically case name) matches
+        )
+
+        if let diffList = closestResult.0,
+           let matchedCandidate = closestResult.1,
+           let matchedIndex = actual.firstIndex(of: matchedCandidate) {
+            actual.remove(at: matchedIndex)
+            return diffList
+        } else {
+            return [Difference.delete(dumpUnwrapped(item).lines)]
+        }
+    }
+
+    let expectedDifference = expected.flatMap(diffItem)
+    let unmatchedActualDifference = withUnmatchedActual ? actual.map { Difference.insert(dumpUnwrapped($0).lines) } : []
+
+    return (expectedDifference + unmatchedActualDifference).diffString
 }
 
 func dumpUnwrapped<T>(_ value: T) -> String {
@@ -50,10 +91,10 @@ func closestDiff<T, S: Sequence>(
     var closestDistance = Int.max
     var closestCandidate: T?
 
-    let unwrappedValue = dumpUnwrapped(value).split(separator: "\n")[...]
+    let unwrappedValue = dumpUnwrapped(value).lines
 
     sequence.forEach { candidate in
-        let unwrappedCandidate = dumpUnwrapped(candidate).split(separator: "\n")[...]
+        let unwrappedCandidate = dumpUnwrapped(candidate).lines
         let diffList = diff(lhs: unwrappedValue, rhs: unwrappedCandidate)
 
         let distance = diffList.diffCount
@@ -67,6 +108,12 @@ func closestDiff<T, S: Sequence>(
     return (closestDiff, closestCandidate)
 }
 
+private extension String {
+    var lines: ArraySlice<Substring> {
+        split(separator: "\n")[...]
+    }
+}
+
 private extension Array where Element == Difference {
     // Return the number of entries that are differences
     var diffCount: Int {
@@ -78,5 +125,12 @@ private extension Array where Element == Difference {
                 return count
             }
         }
+    }
+
+    var diffString: String {
+        flatMap { diff in
+            diff.string.map { "\(diff.prefix)\($0)" }
+        }
+        .joined(separator: "\n")
     }
 }

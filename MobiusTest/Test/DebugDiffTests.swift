@@ -27,6 +27,10 @@ struct Person {
     let children: [Person]
 }
 
+enum TestEnum: Equatable {
+    case first, second(String), third(Int)
+}
+
 class DebugDiffTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
@@ -247,6 +251,70 @@ class DebugDiffTests: QuickSpec {
                     let closestDiff = diff(lhs: lhs, rhs: rhs)
                     expect(diffOutput).to(equal(closestDiff))
                     expect(diffCandidate).to(equal(["g", "n", "u"]))
+                }
+            }
+        }
+        
+        describe("DumpDiffFuzzy") {
+            var diff: String?
+
+            context("with matched enum cases") {
+                beforeEach {
+                    let expected = [TestEnum.first, TestEnum.second("a")]
+                    let actual = [TestEnum.first, TestEnum.second("b")]
+                    diff = dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: false)
+                }
+
+                it("prints diff of the associated values") {
+                    let expectedDiff =
+                    """
+                     - MobiusTestTests.TestEnum.first
+                     ▿ MobiusTestTests.TestEnum.second
+                    −  - second: "a"
+                    +  - second: "b"
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
+                }
+            }
+
+            context("with unmatched expected effect") {
+                beforeEach {
+                    let expected = [TestEnum.first, TestEnum.second("a")]
+                    let actual = [TestEnum.first, TestEnum.third(0)]
+                    diff = dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: false)
+                }
+
+                it("prints unmatched expected effect as deleted") {
+                    let expectedDiff =
+                    """
+                     - MobiusTestTests.TestEnum.first
+                    −▿ MobiusTestTests.TestEnum.second
+                    −  - second: "a"
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
+                }
+            }
+
+            context("with unmatched expected effect and unmatched actual set to true") {
+                beforeEach {
+                    let expected = [TestEnum.first, TestEnum.second("a")]
+                    let actual = [TestEnum.first, TestEnum.third(0)]
+                    diff = dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: true)
+                }
+
+                it("prints unmatched expected effect as deleted and unmatched actual effect as inserted") {
+                    let expectedDiff =
+                    """
+                     - MobiusTestTests.TestEnum.first
+                    −▿ MobiusTestTests.TestEnum.second
+                    −  - second: "a"
+                    +▿ MobiusTestTests.TestEnum.third
+                    +  - third: 0
+                    """
+
+                    expect(diff).to(equal(expectedDiff))
                 }
             }
         }
