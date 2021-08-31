@@ -129,7 +129,7 @@ private extension Array where Element == Difference {
 
     var diffString: String {
         flatMap { diff in
-            diff.string.map { "\(diff.prefix)\($0)" }
+            diff.string.map { "\(diff.prefix)   \($0)" }
         }
         .joined(separator: "\n")
     }

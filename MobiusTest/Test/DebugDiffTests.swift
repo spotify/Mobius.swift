@@ -47,10 +47,10 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                       - name: "Joe"
-                       - age: 10
-                       - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                          - name: "Joe"
+                          - age: 10
+                          - children: 0 elements
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -67,10 +67,10 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                       - name: "Joe"
-                       - age: 10
-                       - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                          - name: "Joe"
+                          - age: 10
+                          - children: 0 elements
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -87,11 +87,11 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                       - name: "Joe"
-                    −  - age: 10
-                    +  - age: 11
-                       - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                          - name: "Joe"
+                    −     - age: 10
+                    +     - age: 11
+                          - children: 0 elements
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -108,11 +108,11 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                    −- nil
-                    +▿ MobiusTestTests.Person
-                    +  - name: "Joe"
-                    +  - age: 10
-                    +  - children: 0 elements
+                    −   - nil
+                    +   ▿ MobiusTestTests.Person
+                    +     - name: "Joe"
+                    +     - age: 10
+                    +     - children: 0 elements
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -129,17 +129,17 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                    −  - name: "Joe"
-                    −  - age: 10
-                    −  - children: 0 elements
-                    +  - name: "Mat"
-                    +  - age: 40
-                    +  ▿ children: 1 element
-                    +    ▿ MobiusTestTests.Person
-                    +      - name: "Pat"
-                    +      - age: 8
-                    +      - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                    −     - name: "Joe"
+                    −     - age: 10
+                    −     - children: 0 elements
+                    +     - name: "Mat"
+                    +     - age: 40
+                    +     ▿ children: 1 element
+                    +       ▿ MobiusTestTests.Person
+                    +         - name: "Pat"
+                    +         - age: 8
+                    +         - children: 0 elements
                     """
 
                     expect(diff).to(endWith(expectedDiff))
@@ -162,22 +162,22 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                       - name: "Joe"
-                       - age: 40
-                       ▿ children: 2 elements
-                         ▿ MobiusTestTests.Person
-                    −      - name: "Mat"
-                    −      - age: 10
-                    −      - children: 0 elements
-                    −    ▿ MobiusTestTests.Person
-                           - name: "Pat"
-                           - age: 8
-                           - children: 0 elements
-                    +    ▿ MobiusTestTests.Person
-                    +      - name: "Mat"
-                    +      - age: 10
-                    +      - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                          - name: "Joe"
+                          - age: 40
+                          ▿ children: 2 elements
+                            ▿ MobiusTestTests.Person
+                    −         - name: "Mat"
+                    −         - age: 10
+                    −         - children: 0 elements
+                    −       ▿ MobiusTestTests.Person
+                              - name: "Pat"
+                              - age: 8
+                              - children: 0 elements
+                    +       ▿ MobiusTestTests.Person
+                    +         - name: "Mat"
+                    +         - age: 10
+                    +         - children: 0 elements
                     """
 
                     expect(diff).to(endWith(expectedDiff))
@@ -195,17 +195,17 @@ class DebugDiffTests: QuickSpec {
                 it("returns correct diff output") {
                     let expectedDiff =
                     """
-                     ▿ MobiusTestTests.Person
-                    −  - name: "Joe"
-                    −  - age: 10
-                    −  - children: 0 elements
-                    +  - name: "Mat"
-                    +  - age: 40
-                    +  ▿ children: 1 element
-                    +    ▿ MobiusTestTests.Person
-                    +      - name: "Pat"
-                    +      - age: 8
-                    +      - children: 0 elements
+                        ▿ MobiusTestTests.Person
+                    −     - name: "Joe"
+                    −     - age: 10
+                    −     - children: 0 elements
+                    +     - name: "Mat"
+                    +     - age: 40
+                    +     ▿ children: 1 element
+                    +       ▿ MobiusTestTests.Person
+                    +         - name: "Pat"
+                    +         - age: 8
+                    +         - children: 0 elements
                     """
 
                     expect(diff).to(endWith(expectedDiff))
@@ -268,10 +268,10 @@ class DebugDiffTests: QuickSpec {
                 it("prints diff of the associated values") {
                     let expectedDiff =
                     """
-                     - MobiusTestTests.TestEnum.first
-                     ▿ MobiusTestTests.TestEnum.second
-                    −  - second: "a"
-                    +  - second: "b"
+                        - MobiusTestTests.TestEnum.first
+                        ▿ MobiusTestTests.TestEnum.second
+                    −     - second: "a"
+                    +     - second: "b"
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -288,9 +288,9 @@ class DebugDiffTests: QuickSpec {
                 it("prints unmatched expected effect as deleted") {
                     let expectedDiff =
                     """
-                     - MobiusTestTests.TestEnum.first
-                    −▿ MobiusTestTests.TestEnum.second
-                    −  - second: "a"
+                        - MobiusTestTests.TestEnum.first
+                    −   ▿ MobiusTestTests.TestEnum.second
+                    −     - second: "a"
                     """
 
                     expect(diff).to(equal(expectedDiff))
@@ -307,11 +307,11 @@ class DebugDiffTests: QuickSpec {
                 it("prints unmatched expected effect as deleted and unmatched actual effect as inserted") {
                     let expectedDiff =
                     """
-                     - MobiusTestTests.TestEnum.first
-                    −▿ MobiusTestTests.TestEnum.second
-                    −  - second: "a"
-                    +▿ MobiusTestTests.TestEnum.third
-                    +  - third: 0
+                        - MobiusTestTests.TestEnum.first
+                    −   ▿ MobiusTestTests.TestEnum.second
+                    −     - second: "a"
+                    +   ▿ MobiusTestTests.TestEnum.third
+                    +     - third: 0
                     """
 
                     expect(diff).to(equal(expectedDiff))
