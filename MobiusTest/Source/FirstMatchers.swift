@@ -127,7 +127,7 @@ public func hasOnlyEffects<Model, Effect: Equatable>(
 
         var errorString = [
             !unmatchedExpected.isEmpty ? "missing \(countedEffects(unmatchedExpected, label: "expected")) (−)" : nil,
-            !unmatchedActual.isEmpty ? "got \(countedEffects(unmatchedActual, label: "actual unmatched")) (+)" : nil
+            !unmatchedActual.isEmpty ? "got \(countedEffects(unmatchedActual, label: "actual unmatched")) (+)" : nil,
         ].compactMap { $0 }.joined(separator: ", ")
         errorString = errorString.prefix(1).capitalized + errorString.dropFirst()
 

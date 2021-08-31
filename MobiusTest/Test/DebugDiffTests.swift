@@ -31,6 +31,7 @@ enum TestEnum: Equatable {
     case first, second(String), third(Int)
 }
 
+// swiftlint:disable type_body_length
 class DebugDiffTests: QuickSpec {
     // swiftlint:disable function_body_length
     override func spec() {
@@ -254,7 +255,7 @@ class DebugDiffTests: QuickSpec {
                 }
             }
         }
-        
+
         describe("DumpDiffFuzzy") {
             var diff: String?
 
