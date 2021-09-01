@@ -53,14 +53,6 @@ open class ConnectableClass<Input, Output>: Connectable {
             lock.unlock()
         }
         guard let consumer = consumer else {
-            #if false // Disabled because of flakiness and because public use of this class is being phased out.
-            MobiusHooks.errorHandler(
-                "\(type(of: self)) is unable to send \(type(of: output)) before any consumer has been set." +
-                "Send should only be used once the Connectable has been properly connected.",
-                #file,
-                #line
-            )
-            #endif
             return
         }
 
