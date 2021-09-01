@@ -93,10 +93,21 @@ public func hasEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        if !expected.allSatisfy(first.effects.contains) {
-            return .failure(message: "Expected <\(first.effects)> to contain <\(expected)>", file: file, line: line)
-        }
-        return .success
+        let actual = first.effects
+        let unmatchedExpected = expected.filter { !actual.contains($0) }
+        guard !unmatchedExpected.isEmpty else { return .success }
+
+        // Find the effects that were produced but not expected - this is permitted, but there might be a close match
+        // there
+        let unmatchedActual = actual.filter { !expected.contains($0) }
+
+        return .failure(
+            message: "Missing \(countedEffects(unmatchedExpected, label: "expected")) (−), got (+)" +
+                " (with \(countedEffects(unmatchedActual, label: "actual")) unmatched):\n" +
+                dumpDiffFuzzy(expected: unmatchedExpected, actual: unmatchedActual, withUnmatchedActual: false),
+            file: file,
+            line: line
+        )
     }
 }
 
@@ -110,15 +121,25 @@ public func hasOnlyEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        var unmatchedActual = first.effects
-        var unmatchedExpected = expected
-        zip(first.effects, expected).forEach {
-            _ = unmatchedActual.firstIndex(of: $1).map { unmatchedActual.remove(at: $0) }
-            _ = unmatchedExpected.firstIndex(of: $0).map { unmatchedExpected.remove(at: $0) }
+        let actual = first.effects
+        let unmatchedExpected = expected.filter { !actual.contains($0) }
+        let unmatchedActual = actual.filter { !expected.contains($0) }
+
+        var errorString = [
+            !unmatchedExpected.isEmpty ? "missing \(countedEffects(unmatchedExpected, label: "expected")) (−)" : nil,
+            !unmatchedActual.isEmpty ? "got \(countedEffects(unmatchedActual, label: "actual unmatched")) (+)" : nil,
+        ].compactMap { $0 }.joined(separator: ", ")
+        errorString = errorString.prefix(1).capitalized + errorString.dropFirst()
+
+        if !errorString.isEmpty {
+            return .failure(
+                message: "\(errorString):\n" +
+                    dumpDiffFuzzy(expected: unmatchedExpected, actual: unmatchedActual, withUnmatchedActual: true),
+                file: file,
+                line: line
+            )
         }
-        if !unmatchedActual.isEmpty || !unmatchedExpected.isEmpty {
-            return .failure(message: "Expected <\(first.effects)> to contain only <\(expected)>", file: file, line: line)
-        }
+
         return .success
     }
 }
@@ -134,8 +155,18 @@ public func hasExactlyEffects<Model, Effect: Equatable>(
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
         if first.effects != expected {
-            return .failure(message: "Expected <\(first.effects)> to equal <\(expected)>", file: file, line: line)
+            return .failure(
+                message: "Different effects than expected (−), got (+): \n" +
+                    "\(dumpDiff(expected, first.effects))",
+                file: file,
+                line: line
+            )
         }
         return .success
     }
+}
+
+private func countedEffects<T>(_ effects: [T], label: String) -> String {
+    let count = effects.count
+    return count == 1 ? "1 \(label) effect" : "\(count) \(label) effects"
 }

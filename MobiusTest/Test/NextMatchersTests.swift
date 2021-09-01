@@ -307,7 +307,7 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
                 }
 
-                context("when the Next does not contain one or more of the expected effects") {
+                context("when the Next does not contain one or more of the expected effects and no closest diff is found") {
                     let actual = [1]
                     let expected = [3]
                     beforeEach {
@@ -317,7 +317,9 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain <\(expected)>"))
+                        let expectedError = "Missing 1 expected effect (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: false)
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -343,8 +345,28 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <[]> to contain <\(expected)>"))
+                            let expectedError = "Missing 1 expected effect (−), got (+) (with 0 actual effects unmatched):\n"
+                                + dumpDiffFuzzy(expected: expected, actual: [], withUnmatchedActual: false)
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects and closest diff is found") {
+                    let actual = [[1, 2, 3], [1, 2, 4]]
+                    let expected = [[1, 2, 3], [1, 2, 5], [1, 2, 6]]
+                    var sut: NextPredicate<String, [Int]>!
+
+                    beforeEach {
+                        let next = Next<String, [Int]>.dispatchEffects(actual)
+                        sut = hasEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Missing 2 expected effects (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: [[1, 2, 5], [1, 2, 6]], actual: [[1, 2, 4]], withUnmatchedActual: false)
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
             }
@@ -392,7 +414,9 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain only <\(expected)>"))
+                        let expectedError = "Got 2 actual unmatched effects (+):\n" +
+                            dumpDiffFuzzy(expected: [], actual: [5, 0], withUnmatchedActual: true)
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -407,7 +431,9 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain only <\(expected)>"))
+                        let expectedError = "Missing 1 expected effect (−), got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: true)
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -434,7 +460,9 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <[]> to contain only <\(expected)>"))
+                            let expectedError = "Missing 1 expected effect (−):\n" +
+                                dumpDiffFuzzy(expected: expected, actual: [], withUnmatchedActual: true)
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
                     }
                 }
@@ -469,7 +497,8 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                            let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
                     }
                 }
@@ -483,7 +512,8 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -498,7 +528,8 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to equal <\(expected)>"))
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -525,7 +556,8 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <[]> to equal <\(expected)>"))
+                            let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, []))"
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
                     }
                 }

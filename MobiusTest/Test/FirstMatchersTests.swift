@@ -159,7 +159,9 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to contain <\(expectedEffects)>"))
+                        let expectedError = "Missing 1 expected effect (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: expectedEffects, actual: actualEffects, withUnmatchedActual: false)
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
             }
@@ -205,7 +207,9 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to contain only <\(expectedEffects)>"))
+                        let expectedError = "Got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: [], actual: [1], withUnmatchedActual: true)
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -220,7 +224,9 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to contain only <\(expectedEffects)>"))
+                        let expectedError = "Missing 1 expected effect (−), got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: expectedEffects, actual: actualEffects, withUnmatchedActual: true)
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
             }
@@ -251,7 +257,8 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to equal <\(expectedEffects)>"))
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -266,7 +273,8 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to equal <\(expectedEffects)>"))
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -281,7 +289,8 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected <\(actualEffects)> to equal <\(expectedEffects)>"))
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
             }
