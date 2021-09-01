@@ -94,7 +94,7 @@ class MobiusLoopTests: QuickSpec {
                     expect(receivedModels).to(equal(["the beginning", "one", "two", "three"]))
                 }
 
-                it("should queue up events dispatched before start to support racy initialisations") {
+                it("should queue up events dispatched before start to support racy initializations") {
                     loop = Mobius.loop(update: Update { model, event in .next(model + "-" + event) }, effectHandler: EagerEffectHandler())
                         .start(from: "the beginning")
 
@@ -175,7 +175,7 @@ class MobiusLoopTests: QuickSpec {
             }
 
             describe("when creating a builder") {
-                context("when a class corresponding to the ConnectableProtocol is used as effecthandler") {
+                context("when a class corresponding to the ConnectableProtocol is used as effect handler") {
                     beforeEach {
                         let update = Update { (_: String, _: String) -> Next<String, String> in
                             Next<String, String>.noChange

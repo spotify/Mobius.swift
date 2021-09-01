@@ -307,7 +307,7 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
                 }
 
-                context("when the Next does not contain one or more of the expected effects") {
+                context("when the Next does not contain one or more of the expected effects and no closest diff is found") {
                     let actual = [1]
                     let expected = [3]
                     beforeEach {
@@ -317,7 +317,9 @@ class XCTestNextMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result.failureMessage).to(equal("Expected <\(actual)> to contain <\(expected)>"))
+                        let expectedError = "Missing 1 expected effect (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: false)
+                        expect(result.failureMessage).to(equal(expectedError))
                     }
                 }
 
@@ -343,7 +345,219 @@ class XCTestNextMatchersTests: QuickSpec {
                         }
 
                         it("should fail with an appropriate error message") {
-                            expect(result.failureMessage).to(equal("Expected <[]> to contain <\(expected)>"))
+                            let expectedError = "Missing 1 expected effect (−), got (+) (with 0 actual effects unmatched):\n"
+                                + dumpDiffFuzzy(expected: expected, actual: [], withUnmatchedActual: false)
+                            expect(result.failureMessage).to(equal(expectedError))
+                        }
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects and closest diff is found") {
+                    let actual = [[1, 2, 3], [1, 2, 4]]
+                    let expected = [[1, 2, 3], [1, 2, 5], [1, 2, 6]]
+                    var sut: NextPredicate<String, [Int]>!
+
+                    beforeEach {
+                        let next = Next<String, [Int]>.dispatchEffects(actual)
+                        sut = hasEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Missing 2 expected effects (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: [[1, 2, 5], [1, 2, 6]], actual: [[1, 2, 4]], withUnmatchedActual: false)
+                        expect(result.failureMessage).to(equal(expectedError))
+                    }
+                }
+            }
+
+            context("when creating a matcher verifying that a Next has only specific effects") {
+                let expected = [1, 2, 3, 4]
+                var sut: NextPredicate<String, Int>!
+
+                beforeEach {
+                    sut = hasOnlyEffects(expected)
+                }
+
+                context("when the effects are the same") {
+                    context("when the effects are in order") {
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when the effects are out of order") {
+                        beforeEach {
+                            var actual = expected
+                            actual.append(actual.removeFirst())
+                            let next = Next<String, Int>.dispatchEffects(actual)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Got 2 actual unmatched effects (+):\n" +
+                            dumpDiffFuzzy(expected: [], actual: [5, 0], withUnmatchedActual: true)
+                        expect(result.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1]
+                    let expected = [3]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        sut = hasOnlyEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Missing 1 expected effect (−), got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: expected, actual: actual, withUnmatchedActual: true)
+                        expect(result.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, String>.noChange
+                            let sut: NextPredicate<String, String> = hasOnlyEffects([])
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        let expected = [88]
+
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            sut = hasOnlyEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            let expectedError = "Missing 1 expected effect (−):\n" +
+                                dumpDiffFuzzy(expected: expected, actual: [], withUnmatchedActual: true)
+                            expect(result.failureMessage).to(equal(expectedError))
+                        }
+                    }
+                }
+            }
+
+            context("when creating a matcher verifying that a Next has exact effects") {
+                let expected = [1, 2, 3, 4]
+                var sut: NextPredicate<String, Int>!
+
+                beforeEach {
+                    sut = hasExactlyEffects(expected)
+                }
+
+                context("when the effects are the same") {
+                    context("when the effects are in order") {
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when the effects are out of order") {
+                        let actual = [4, 3, 2, 1]
+
+                        beforeEach {
+                            let next = Next<String, Int>.dispatchEffects(actual)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                            expect(result.failureMessage).to(equal(expectedError))
+                        }
+                    }
+                }
+
+                context("when the Next contains the expected effects and a few more") {
+                    let actual = [1, 2, 3, 4, 5, 0]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                        expect(result.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when the Next does not contain one or more of the expected effects") {
+                    let actual = [1]
+                    let expected = [3]
+
+                    beforeEach {
+                        let next = Next<String, Int>.dispatchEffects(actual)
+                        sut = hasExactlyEffects(expected)
+                        result = sut(next)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, actual))"
+                        expect(result.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when there are no effects") {
+                    context("when not expecting effects") {
+                        beforeEach {
+                            let next = Next<String, String>.noChange
+                            let sut: NextPredicate<String, String> = hasExactlyEffects([])
+                            result = sut(next)
+                        }
+
+                        it("should match") {
+                            expect(result.wasSuccessful).to(beTrue())
+                        }
+                    }
+
+                    context("when expecting effects") {
+                        let expected = [88]
+
+                        beforeEach {
+                            let next = Next<String, Int>.noChange
+                            sut = hasExactlyEffects(expected)
+                            result = sut(next)
+                        }
+
+                        it("should fail with an appropriate error message") {
+                            let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expected, []))"
+                            expect(result.failureMessage).to(equal(expectedError))
                         }
                     }
                 }

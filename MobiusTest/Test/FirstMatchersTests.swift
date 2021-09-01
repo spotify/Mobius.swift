@@ -18,7 +18,6 @@
 // under the License.
 
 import MobiusCore
-import MobiusTest
 @testable import MobiusTest
 import Nimble
 import Quick
@@ -160,7 +159,138 @@ class FirstMatchersTests: QuickSpec {
                     }
 
                     it("should fail with an appropriate error message") {
-                        expect(result?.failureMessage).to(equal("Expected effects <\(actualEffects)> to contain <\(expectedEffects)>"))
+                        let expectedError = "Missing 1 expected effect (−), got (+) (with 1 actual effect unmatched):\n"
+                            + dumpDiffFuzzy(expected: expectedEffects, actual: actualEffects, withUnmatchedActual: false)
+                        expect(result?.failureMessage).to(equal(expectedError))
+                    }
+                }
+            }
+
+            context("when creating a matcher to check that a First has only specific effects") {
+                context("when the First has those effects") {
+                    let expectedEffects = [4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasOnlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should match") {
+                        expect(result?.wasSuccessful).to(beTrue())
+                    }
+                }
+
+                context("when the First has those effects in different order") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [0, 7, 4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasOnlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should match") {
+                        expect(result?.wasSuccessful).to(beTrue())
+                    }
+                }
+
+                context("when the First contains the expected effects and a few more") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [1, 4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasOnlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: [], actual: [1], withUnmatchedActual: true)
+                        expect(result?.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when the First does not contain all the expected effects") {
+                    let expectedEffects = [10]
+                    let actualEffects = [4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasOnlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Missing 1 expected effect (−), got 1 actual unmatched effect (+):\n" +
+                            dumpDiffFuzzy(expected: expectedEffects, actual: actualEffects, withUnmatchedActual: true)
+                        expect(result?.failureMessage).to(equal(expectedError))
+                    }
+                }
+            }
+
+            context("when creating a matcher to check that a First has exact effects") {
+                context("when the First has those effects") {
+                    let expectedEffects = [4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: expectedEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should match") {
+                        expect(result?.wasSuccessful).to(beTrue())
+                    }
+                }
+
+                context("when the First has those effects in different order") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [0, 7, 4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when the First contains the expected effects and a few more") {
+                    let expectedEffects = [4, 7, 0]
+                    let actualEffects = [1, 4, 7, 0]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
+                    }
+                }
+
+                context("when the First does not contain all the expected effects") {
+                    let expectedEffects = [10]
+                    let actualEffects = [4]
+
+                    beforeEach {
+                        let first = First<Int, Int>(model: 3, effects: actualEffects)
+                        let sut: FirstPredicate<Int, Int> = hasExactlyEffects(expectedEffects)
+                        result = sut(first)
+                    }
+
+                    it("should fail with an appropriate error message") {
+                        let expectedError = "Different effects than expected (−), got (+): \n\(dumpDiff(expectedEffects, actualEffects))"
+                        expect(result?.failureMessage).to(equal(expectedError))
                     }
                 }
             }

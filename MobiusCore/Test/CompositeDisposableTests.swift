@@ -64,7 +64,7 @@ class CompositeDisposableTests: QuickSpec {
                     disposables[1] = five
                     disposables[2] = six
                 }
-                it("doesnt dispose last") {
+                it("doesn’t dispose last") {
                     composite.dispose()
                     expect(one.disposed).to(beTrue())
                     expect(two.disposed).to(beTrue())

@@ -53,7 +53,7 @@ public func haveModel<Model: Equatable, Effect>(_ expected: Model) -> Nimble.Pre
         let actualDescription = String(describing: first.model)
         return PredicateResult(
             bool: first.model == expected,
-            message: .expectedCustomValueTo("be <\(expectedDescription)>", "<\(actualDescription)>")
+            message: .expectedCustomValueTo("be <\(expectedDescription)>", actual: "<\(actualDescription)>")
         )
     })
 }
@@ -70,7 +70,7 @@ public func haveNoEffects<Model, Effect>() -> Nimble.Predicate<First<Model, Effe
         let actualDescription = String(describing: first.effects)
         return PredicateResult(
             bool: first.effects.isEmpty,
-            message: .expectedCustomValueTo("have no effect", "<\(actualDescription)>")
+            message: .expectedCustomValueTo("have no effect", actual: "<\(actualDescription)>")
         )
     })
 }
@@ -92,7 +92,58 @@ public func haveEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble
             bool: effects.allSatisfy(first.effects.contains),
             message: .expectedCustomValueTo(
                 "contain <\(expectedDescription)>",
-                "<\(actualDescription)> (order doesn't matter)"
+                actual: "<\(actualDescription)> (order doesn't matter)"
+            )
+        )
+    })
+}
+
+/// Returns a `Predicate` that matches if only the supplied effects are present in the supplied `First`, in any order.
+///
+/// - Parameter effects: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func haveOnlyEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble.Predicate<First<Model, Effect>> {
+    return Nimble.Predicate<First<Model, Effect>>.define(matcher: { actualExpression -> Nimble.PredicateResult in
+        guard let first = try actualExpression.evaluate() else {
+            return unexpectedNilParameterPredicateResult
+        }
+
+        var unmatchedActual = first.effects
+        var unmatchedExpected = effects
+        zip(first.effects, effects).forEach {
+            _ = unmatchedActual.firstIndex(of: $1).map { unmatchedActual.remove(at: $0) }
+            _ = unmatchedExpected.firstIndex(of: $0).map { unmatchedExpected.remove(at: $0) }
+        }
+
+        let expectedDescription = String(describing: effects)
+        let actualDescription = String(describing: first.effects)
+        return PredicateResult(
+            bool: unmatchedActual.isEmpty && unmatchedExpected.isEmpty,
+            message: .expectedCustomValueTo(
+                "contain only <\(expectedDescription)>",
+                actual: "<\(actualDescription)> (order doesn't matter)"
+            )
+        )
+    })
+}
+
+/// Returns a `Predicate` that matches if the supplied effects are equal to the supplied `First`.
+///
+/// - Parameter effects: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func haveExactlyEffects<Model, Effect: Equatable>(_ effects: [Effect]) -> Nimble.Predicate<First<Model, Effect>> {
+    return Nimble.Predicate<First<Model, Effect>>.define(matcher: { actualExpression -> Nimble.PredicateResult in
+        guard let first = try actualExpression.evaluate() else {
+            return unexpectedNilParameterPredicateResult
+        }
+
+        let expectedDescription = String(describing: effects)
+        let actualDescription = String(describing: first.effects)
+        return PredicateResult(
+            bool: effects == first.effects,
+            message: .expectedCustomValueTo(
+                "equal <\(expectedDescription)>",
+                actual: "<\(actualDescription)>"
             )
         )
     })

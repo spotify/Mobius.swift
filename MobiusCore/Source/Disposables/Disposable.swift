@@ -19,7 +19,7 @@
 
 /// Types adopting the `Disposable` protocol can be disposed, cleaning up the resources referenced.
 ///
-/// The resouces can be anything; ranging from a network request, task on the CPU or an observation of another resource.
+/// The resources can be anything; ranging from a network request, task on the CPU or an observation of another resource.
 ///
 /// See also `AnonymousDisposable` for a concrete anonymous implementation.
 public protocol Disposable: AnyObject {

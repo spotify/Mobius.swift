@@ -20,7 +20,7 @@
 //
 // 3. This notice may not be removed or altered from any source distribution.
 
-enum Difference {
+enum Difference: Equatable {
     case insert(ArraySlice<Substring>)
     case delete(ArraySlice<Substring>)
     case same(ArraySlice<Substring>)
@@ -30,6 +30,13 @@ enum Difference {
         case .insert(let string): return string
         case .delete(let string): return string
         case .same(let string): return string
+        }
+    }
+
+    var isSame: Bool {
+        switch self {
+        case .same: return true
+        default: return false
         }
     }
 

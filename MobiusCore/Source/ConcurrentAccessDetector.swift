@@ -22,7 +22,7 @@ import Foundation
 /// Utility to catch invalid concurrent access to non-thread-safe code.
 ///
 /// Like a mutex, `ConcurrentAccessDetector` guards a critical region. However, instead of blocking if two threads
-/// attemt to enter the critical region at once, it crashes in debug builds. In release builds, it has no effect (and
+/// attempt to enter the critical region at once, it crashes in debug builds. In release builds, it has no effect (and
 /// also no overhead, as long as it’s only used within one module).
 ///
 /// Copies of a `ConcurrentAccessDetector` share the same underlying mutex, and hence their critical region is the union

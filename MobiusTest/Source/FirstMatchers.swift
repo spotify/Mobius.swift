@@ -93,13 +93,80 @@ public func hasEffects<Model, Effect: Equatable>(
     line: UInt = #line
 ) -> FirstPredicate<Model, Effect> {
     return { (first: First<Model, Effect>) in
-        if !expected.allSatisfy(first.effects.contains) {
+        let actual = first.effects
+        let unmatchedExpected = expected.filter { !actual.contains($0) }
+        guard !unmatchedExpected.isEmpty else { return .success }
+
+        // Find the effects that were produced but not expected - this is permitted, but there might be a close match
+        // there
+        let unmatchedActual = actual.filter { !expected.contains($0) }
+
+        return .failure(
+            message: "Missing \(countedEffects(unmatchedExpected, label: "expected")) (−), got (+)" +
+                " (with \(countedEffects(unmatchedActual, label: "actual")) unmatched):\n" +
+                dumpDiffFuzzy(expected: unmatchedExpected, actual: unmatchedActual, withUnmatchedActual: false),
+            file: file,
+            line: line
+        )
+    }
+}
+
+/// Constructs a matcher that matches if only the supplied effects are present in the supplied `First`, in any order.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func hasOnlyEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
+        let actual = first.effects
+        let unmatchedExpected = expected.filter { !actual.contains($0) }
+        let unmatchedActual = actual.filter { !expected.contains($0) }
+
+        var errorString = [
+            !unmatchedExpected.isEmpty ? "missing \(countedEffects(unmatchedExpected, label: "expected")) (−)" : nil,
+            !unmatchedActual.isEmpty ? "got \(countedEffects(unmatchedActual, label: "actual unmatched")) (+)" : nil,
+        ].compactMap { $0 }.joined(separator: ", ")
+        errorString = errorString.prefix(1).capitalized + errorString.dropFirst()
+
+        if !errorString.isEmpty {
             return .failure(
-                message: "Expected effects <\(first.effects)> to contain <\(expected)>",
+                message: "\(errorString):\n" +
+                    dumpDiffFuzzy(expected: unmatchedExpected, actual: unmatchedActual, withUnmatchedActual: true),
+                file: file,
+                line: line
+            )
+        }
+
+        return .success
+    }
+}
+
+/// Constructs a matcher that matches if the supplied effects are equal to the supplied `First`.
+///
+/// - Parameter expected: the effects to match (possibly empty)
+/// - Returns: a `Predicate` that matches `First` instances that include all the supplied effects
+public func hasExactlyEffects<Model, Effect: Equatable>(
+    _ expected: [Effect],
+    file: StaticString = #file,
+    line: UInt = #line
+) -> FirstPredicate<Model, Effect> {
+    return { (first: First<Model, Effect>) in
+        if first.effects != expected {
+            return .failure(
+                message: "Different effects than expected (−), got (+): \n" +
+                    "\(dumpDiff(expected, first.effects))",
                 file: file,
                 line: line
             )
         }
         return .success
     }
+}
+
+private func countedEffects<T>(_ effects: [T], label: String) -> String {
+    let count = effects.count
+    return count == 1 ? "1 \(label) effect" : "\(count) \(label) effects"
 }

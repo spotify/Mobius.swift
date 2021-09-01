@@ -91,7 +91,7 @@ open class ConnectableClass<Input, Output>: Connectable {
 
     private func accept(_ input: Input) {
         // The construct of consumerSet is there to release the lock asap.
-        // We dont know what goes on in the overriden `handle` function...
+        // We don’t know what goes on in the overridden `handle` function...
         var consumerSet: Bool = false
         lock.lock()
         consumerSet = consumer != nil
