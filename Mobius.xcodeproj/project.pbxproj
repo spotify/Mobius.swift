@@ -326,7 +326,6 @@
 		2DF4C53320DBE03900A4B6DE /* libMobiusTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMobiusTest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B19F71A21254CCD00074AD7 /* NextMatchers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextMatchers.swift; sourceTree = "<group>"; };
 		5B19F71D21255F9600074AD7 /* NextMatchersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextMatchersTests.swift; sourceTree = "<group>"; };
-		5B19F71F212591C900074AD7 /* MobiusTest.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MobiusTest.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		5B1F104C21105CAD0067193C /* EventSourceMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSourceMap.swift; sourceTree = "<group>"; };
 		5B1F104F21105CC00067193C /* EventSource+ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventSource+ExtensionsTests.swift"; sourceTree = "<group>"; };
 		5B237EB9209C4F3C00764576 /* Connectable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectable.swift; sourceTree = "<group>"; };
@@ -764,7 +763,6 @@
 		5BB2888B20999B2E0043B530 /* MobiusTest */ = {
 			isa = PBXGroup;
 			children = (
-				5B19F71F212591C900074AD7 /* MobiusTest.playground */,
 				5BB288A320999B750043B530 /* Source */,
 				5BB288A920999B750043B530 /* Test */,
 				5BB288A520999B750043B530 /* BuildSystem */,
