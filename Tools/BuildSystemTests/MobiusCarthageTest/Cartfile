@@ -1,2 +1,2 @@
 github "spotify/Mobius.swift" "master"
-github "Quick/Nimble" ~> 9.0.1
+github "Quick/Nimble" ~> 9.2.1

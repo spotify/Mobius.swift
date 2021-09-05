@@ -1,2 +1,2 @@
-github "Quick/Quick" ~> 3.1.2
+github "Quick/Quick" ~> 4.0.0
 github "jspahrsummers/xcconfigs" ~> 1.1
