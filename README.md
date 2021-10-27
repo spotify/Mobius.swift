@@ -1,9 +1,8 @@
-![Mobius.swift](https://github.com/spotify/mobius.swift/wiki/mobius-logo.png)
+![Mobius.swift](https://github.com/spotify/Mobius.swift/wiki/mobius-logo.svg)
 
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MobiusCore.svg)](https://cocoapods.org/pods/MobiusCore)
-[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![codecov](https://codecov.io/gh/spotify/Mobius.swift/branch/master/graph/badge.svg)](https://codecov.io/gh/spotify/Mobius.swift)
 [![License](https://img.shields.io/github/license/spotify/Mobius.swift.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/spotify/Mobius.swift?display_name=tag)](https://github.com/spotify/Mobius.swift/releases)
 
 Mobius is a functional reactive framework for managing state evolution and side-effects. It
 emphasizes separation of concerns, testability, and isolating stateful parts of the code.
@@ -22,47 +21,12 @@ This repository contains the core Mobius framework and add-ons for common develo
 
 ## Installation
 
-Mobius.swift supports most popular dependency managers. Choose your preferred method to see the instructions:
-
-<details><summary>Swift Package Manager</summary>
-
 Mobius can be built for all Apple platforms using the Swift Package Manager.
 
 Add the following entry to your `Package.swift`:
 ```swift
-.package(url: "https://github.com/spotify/Mobius.swift.git", .upToNextMajor(from: "0.4.0"))
+.package(url: "https://github.com/spotify/Mobius.swift", from: "0.4.0")
 ```
-</details>
-
-<details><summary>CocoaPods</summary>
-
-Mobius can only be built for iOS using CocoaPods. For other platforms, please use Swift Package Manager.
-
-Add the following entry in your `Podfile`:
-```ruby
-pod 'MobiusCore', '0.4.0'
-```
-
-Optionally, you can also choose to integrate `MobiusExtras`, `MobiusNimble` or `MobiusTest`:
-```ruby
-pod 'MobiusExtras', '0.4.0'
-pod 'MobiusNimble', '0.4.0'
-pod 'MobiusTest', '0.4.0'
-```
-</details>
-
-<details><summary>Carthage</summary>
-
-Mobius can only be built for iOS using Carthage. For other platforms, please use Swift Package Manager.
-
-Add the following entry in your `Cartfile`:
-```
-github "spotify/Mobius.swift" "0.4.0"
-```
-
-There are some additional steps to take as explained in the [Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
->NOTE: At this moment Carthage doesn’t have a way to specify subspecs in a single repo. For this reason, Carthage will automatically pull our dependencies used to provide test helpers in `MobiusNimble`. You can simply choose not to link this library in your project if you don’t plan to use it.
-</details>
 
 ## Mobius in Action - Building a Counter
 
@@ -150,16 +114,6 @@ This covers the fundamentals of Mobius. To learn more, head on over to our [wiki
 ## Status
 
 Mobius.swift is nearing a 1.0 release. We use the framework internally in deployed features, but have recently made a number of breaking changes. Release 0.3.0 breaks compatibility with the previous 0.2.0 release and contains deprecated backwards-compatbility wrappers for some of the smaller changes. These deprecated versions have been removed in the 0.4.0 release. Other additive changes will be made to form Mobius 1.0.
-
-## Development
-1. Clone
-1. Bootstrap the project
-   ```shell
-   ./Tools/bootstrap.sh
-   ```
-1. Open Mobius.xcodeproj using Xcode.
-1. ????
-1. Create a PR
 
 ## Code of Conduct
 

@@ -1,13 +1,5 @@
 #!/bin/bash
 
-heading() {
-  MAG='\033[0;35m'
-  CLR='\033[0m'
-  echo ""
-  echo -e "${MAG}** $@ **${CLR}"
-  echo ""
-}
-
 fail() {
   >&2 echo "error: $@"
   exit 1
@@ -15,40 +7,6 @@ fail() {
 
 has_command() {
   command -v "$1" >/dev/null 2>&1
-}
-
-xcb() {
-  export NSUnbufferedIO=YES
-  set -o pipefail && xcodebuild \
-    -UseSanitizedBuildSystemEnvironment=YES \
-    CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
-    "$@" | xcpretty
-}
-
-dump_log() {
-  heading "Dumping $1"
-  cat "$1"
-  echo ""
-}
-
-patch_to_legacy_build_system() {
-  /usr/libexec/PlistBuddy -c "Delete :BuildSystemType" "$1" 2>/dev/null
-  /usr/libexec/PlistBuddy -c "Add :BuildSystemType string \"Original\"" "$1"
-}
-
-do_carthage_bootstrap() {
-  mkdir -p build
-  carthage checkout
-
-  carthage build --platform iOS \
-    --cache-builds --no-use-binaries \
-    --log-path build/carthage.log \
-    --use-xcframeworks
-
-  if [ $? -ne 0 ]; then
-    [[ "$IS_CI" == "1" ]] && dump_log "build/carthage.log"
-    fail "Carthage bootstrap failed"
-  fi
 }
 
 process_coverage() {

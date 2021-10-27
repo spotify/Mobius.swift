@@ -14,7 +14,6 @@ export -f run_formatters
 
 if [ $# -eq 0 ]; then
   run_formatters \
-    Mobius.playground \
     MobiusCore \
     MobiusExtras \
     MobiusNimble \
