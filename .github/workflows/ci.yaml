@@ -13,21 +13,6 @@ jobs:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/cache@v1
-      with:
-        path: Carthage
-        key: ${{ runner.os }}-carthage-${{ hashFiles('Cartfile.resolved') }}
-        restore-keys: |
-          ${{ runner.os }}-carthage-
-    - name: Build and Test
-      run: Tools/ci-xcode.sh
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  spm:
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v2
     - name: Build and Test
       run: Tools/ci-spm.sh
       env:
