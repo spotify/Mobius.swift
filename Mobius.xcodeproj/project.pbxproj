@@ -170,6 +170,8 @@
 		F518CA0B25E04C0B0051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
 		F518CA0C25E04C0B0051BB0C /* Nimble.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F518CA7B25E051840051BB0C /* Nimble.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F518C78D25E0241E0051BB0C /* Nimble.xcframework */; };
+		F59DE0DA273095EB002F26FE /* CasePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59DE0D9273095EB002F26FE /* CasePath.swift */; };
+		F59DE0DB273098E0002F26FE /* CasePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59DE0D9273095EB002F26FE /* CasePath.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -405,6 +407,7 @@
 		DD748324212DEEC1008EEECD /* CopyableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CopyableTests.swift; sourceTree = "<group>"; };
 		F518C77125E0241A0051BB0C /* Quick.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Quick.xcframework; path = Carthage/Build/Quick.xcframework; sourceTree = "<group>"; };
 		F518C78D25E0241E0051BB0C /* Nimble.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Nimble.xcframework; path = Carthage/Build/Nimble.xcframework; sourceTree = "<group>"; };
+		F59DE0D9273095EB002F26FE /* CasePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasePath.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -494,13 +497,14 @@
 		02D0DDBC2366EF8D00A1CE4C /* EffectHandlers */ = {
 			isa = PBXGroup;
 			children = (
+				F59DE0D9273095EB002F26FE /* CasePath.swift */,
+				02CAE47123C76F34009DFF9A /* EffectCallback.swift */,
+				02C4061C2373078400BD7ED8 /* EffectExecutor.swift */,
 				02D0DDBF2366F08300A1CE4C /* EffectHandler.swift */,
 				02C40620237422EF00BD7ED8 /* EffectRouter.swift */,
 				02CEC48A2379614500BA1584 /* EffectRouterDSL.swift */,
-				02C4061C2373078400BD7ED8 /* EffectExecutor.swift */,
-				02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */,
-				02CAE47123C76F34009DFF9A /* EffectCallback.swift */,
 				02D6755223D1E822008200AF /* EnumRoute.swift */,
+				02CAE46F23C75E99009DFF9A /* ThreadSafeConnectable.swift */,
 			);
 			path = EffectHandlers;
 			sourceTree = "<group>";
@@ -1178,6 +1182,7 @@
 				699F46452416D01700389BB3 /* ThreadSafeConnectable.swift in Sources */,
 				699F46462416D01700389BB3 /* EffectCallback.swift in Sources */,
 				699F46472416D01700389BB3 /* EnumRoute.swift in Sources */,
+				F59DE0DB273098E0002F26FE /* CasePath.swift in Sources */,
 				699F46482416D01700389BB3 /* AsyncStartStopStateMachine.swift in Sources */,
 				699F46492416D01700389BB3 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				699F464A2416D01700389BB3 /* LoggingAdaptors.swift in Sources */,
@@ -1244,6 +1249,7 @@
 				5BB2882B209995860043B530 /* AnonymousDisposable.swift in Sources */,
 				02CAE47223C76F34009DFF9A /* EffectCallback.swift in Sources */,
 				5B4A369A21107D2600279C7D /* AnyEventSource.swift in Sources */,
+				F59DE0DA273095EB002F26FE /* CasePath.swift in Sources */,
 				2D3EEB9623FADA9E006E478A /* AsyncStartStopStateMachine.swift in Sources */,
 				2D3F26ED237B02B8004C2B75 /* AsyncDispatchQueueConnectable.swift in Sources */,
 				5BB2881A2099957D0043B530 /* MobiusLoop.swift in Sources */,

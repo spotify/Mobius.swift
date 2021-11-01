@@ -23,8 +23,9 @@ public extension EffectRouter {
     func routeCase<EffectParameters>(
         _ enumCase: @escaping (EffectParameters) -> Effect
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
+        let casePath = CasePath(embed: enumCase)
         return routeEffects(withParameters: { effect in
-            UnwrapEnum<Effect, EffectParameters>.extract(case: enumCase, from: effect)
+            casePath.extract(from: effect)
         })
     }
 }
@@ -40,42 +41,5 @@ public extension EffectRouter where Effect: Equatable {
                 return nil
             }
         })
-    }
-}
-
-private enum UnwrapEnum<Payload, Enum> {
-    static func extract<Enum, Payload>(case: (Payload) -> Enum, from root: Enum) -> Payload? {
-        func extractHelp(from root: Enum) -> ([String], Payload)? {
-            if let value = root as? Payload {
-                var otherRoot = `case`(value)
-                var root = root
-                if memcmp(&root, &otherRoot, MemoryLayout<Enum>.size) == 0 {
-                    return ([], value)
-                }
-            }
-            var path: [String] = []
-            var any: Any = root
-            while case let (label?, anyChild)? = Mirror(reflecting: any).children.first {
-                path.append(label)
-                path.append(String(describing: type(of: anyChild)))
-                if let child = anyChild as? Payload {
-                    return (path, child)
-                }
-                any = anyChild
-            }
-            if MemoryLayout<Payload>.size == 0 {
-                return (["\(root)"], unsafeBitCast((), to: Payload.self))
-            }
-            if Payload.self == Void.self {
-                return (path, ()) as? ([String], Payload)
-            }
-            return nil
-        }
-        guard
-            let (rootPath, child) = extractHelp(from: root),
-            let (otherPath, _) = extractHelp(from: `case`(child)),
-            rootPath == otherPath
-            else { return nil }
-        return child
     }
 }
