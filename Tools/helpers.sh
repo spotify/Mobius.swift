@@ -22,7 +22,7 @@ xcb() {
   set -o pipefail && xcodebuild \
     -UseSanitizedBuildSystemEnvironment=YES \
     CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
-    "$@" | xcpretty
+    "$@" | xcbeautify
 }
 
 dump_log() {

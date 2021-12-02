@@ -10,13 +10,12 @@ cp "$(dirname "$0")/ZZZ_MOBIUS_ALL.xcscheme" "$(dirname "$0")/../Mobius.xcodepro
 # Only install tools when running in CI
 if [[ "$IS_CI" == "1" ]]; then
   heading "Installing Tools"
-  brew install carthage
-  gem install --no-document xcpretty
+  brew install carthage xcbeautify
   export IS_CI=1
 fi
 
 has_command carthage || fail "Carthage must be installed"
-has_command xcpretty || fail "xcpretty must be installed"
+has_command xcbeautify || fail "xcbeautify must be installed"
 
 #
 # Bootstrap with Carthage
@@ -38,7 +37,7 @@ xcb build \
 heading "Building for Simulator (Release)"
 xcb build \
   -scheme ZZZ_MOBIUS_ALL \
-  -sdk iphonesimulator \
+  -destination "generic/platform=iOS Simulator" \
   -configuration Release \
   -derivedDataPath build/DD/Build || \
   fail "Build for Simulator Failed"
