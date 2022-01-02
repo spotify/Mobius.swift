@@ -123,8 +123,8 @@ extension Strategy {
             }
             self.init(tag: tag, assumedAssociatedValueType: Value.self)
 
-        } else if ExistentialMetadata(avType) != nil {
-            if avType == Error.self {
+        } else if let avMetadata = ExistentialMetadata(avType) {
+            if avType == Error.self || avMetadata.isClassConstrained {
                 // For Objective-C interop, the Error existential is a pointer to an NSError-compatible
                 // (and thus AnyObject-compatible) object.
                 let strategy = Strategy<Enum, AnyObject>(nonExistentialTag: tag)
@@ -381,6 +381,8 @@ private struct ExistentialMetadata: Metadata {
         self.ptr = unsafeBitCast(type, to: UnsafeRawPointer.self)
         guard self.kind == .existential else { return nil }
     }
+
+    var isClassConstrained: Bool { self.ptr.advanced(by: pointerSize).load(as: UInt32.self) & 0x8000_0000 == 0 }
 }
 
 private struct FieldDescriptor {
