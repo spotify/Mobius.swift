@@ -16,11 +16,12 @@ let package = Package(
         .library(name: "MobiusTest", targets: ["MobiusTest"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.8.0"),
         .package(url: "https://github.com/Quick/Nimble", from: "9.2.1"),
         .package(url: "https://github.com/Quick/Quick", from: "4.0.0"),
     ],
     targets: [
-        .target(name: "MobiusCore", path: "MobiusCore/Source"),
+        .target(name: "MobiusCore", dependencies: ["CasePaths"], path: "MobiusCore/Source"),
         .target(name: "MobiusExtras", dependencies: ["MobiusCore"], path: "MobiusExtras/Source"),
         .target(name: "MobiusNimble", dependencies: ["MobiusCore", "MobiusTest", "Nimble"], path: "MobiusNimble/Source"),
         .target(name: "MobiusTest", dependencies: ["MobiusCore"], path: "MobiusTest/Source"),

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Darwin
+import CasePaths
 
 public extension EffectRouter {
     func routeCase<EffectParameters>(
         _ enumCase: @escaping (EffectParameters) -> Effect
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        let casePath = CasePath(embed: enumCase)
+        let casePath = /enumCase
         return routeEffects(withParameters: { effect in
             casePath.extract(from: effect)
         })

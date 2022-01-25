@@ -3,5 +3,4 @@ codecov:
 
 coverage:
   ignore:
-  - "**/CasePath.swift"
   - "*/Test/**"
