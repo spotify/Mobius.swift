@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.8.0"),
-        .package(url: "https://github.com/Quick/Nimble", from: "9.2.1"),
+        .package(url: "https://github.com/Quick/Nimble", .revision("0bf627cd68085345ac52c165ba02d1f73c584eed")),
         .package(url: "https://github.com/Quick/Quick", from: "4.0.0"),
     ],
     targets: [
