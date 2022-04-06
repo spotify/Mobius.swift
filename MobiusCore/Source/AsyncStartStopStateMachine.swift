@@ -93,7 +93,7 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
     /// provided error message.
     ///
     /// If the `transition` closure throws an error, the state remains unchanged.
-    func transitionToRunning(by transition: (StoppedState) throws -> RunningState) throws {
+    func transitionToRunning(by transition: (StoppedState) throws -> RunningState, completion: (() -> Void)? = nil) throws {
         dispatchPrecondition(condition: .notOnQueue(queue))
         try queue.sync {
             switch snapshot() {
@@ -103,7 +103,7 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
                 rawState.value = .transitioningToRunning
                 do {
                     let runningState = try transition(stoppedState)
-                    become(running: runningState)
+                    become(running: runningState, completion: completion)
                 } catch {
                     rawState.value = .stopped
                     throw error
@@ -116,7 +116,7 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
     /// provided error message.
     ///
     /// If the `transition` closure throws an error, the state remains unchanged.
-    func transitionToStopped(by transition: (RunningState) throws -> StoppedState) throws {
+    func transitionToStopped(by transition: (RunningState) throws -> StoppedState, completion: (() -> Void)? = nil) throws {
         dispatchPrecondition(condition: .notOnQueue(queue))
         try queue.sync {
             switch snapshot() {
@@ -126,7 +126,7 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
                 rawState.value = .transitioningToStopped
                 do {
                     let stoppedState = try transition(runningState)
-                    become(stopped: stoppedState)
+                    become(stopped: stoppedState, completion: completion)
                 } catch {
                     rawState.value = .running
                     throw error
@@ -150,19 +150,21 @@ final class AsyncStartStopStateMachine<StoppedState, RunningState> {
         }
     }
 
-    private func become(running state: RunningState) {
+    private func become(running state: RunningState, completion: (() -> Void)? = nil) {
         dispatchPrecondition(condition: .onQueue(queue))
 
         self.runningState = state
         rawState.value = .running
         self.stoppedState = nil
+        completion?()
     }
 
-    private func become(stopped state: StoppedState) {
+    private func become(stopped state: StoppedState, completion: (() -> Void)? = nil) {
         dispatchPrecondition(condition: .onQueue(queue))
 
         self.stoppedState = state
         rawState.value = .stopped
         self.runningState = nil
+        completion?()
     }
 }

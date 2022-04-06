@@ -140,7 +140,7 @@ public final class MobiusController<Model, Event, Effect> {
 
     deinit {
         if running {
-           stop()
+            stop()
         }
     }
 
@@ -166,12 +166,12 @@ public final class MobiusController<Model, Event, Effect> {
                 stoppedState.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
             }
         } catch {
-           MobiusHooks.errorHandler(
-               errorMessage(error, default: "\(Self.debugTag): cannot connect a view while running"),
-               #file,
-               #line
-           )
-       }
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot connect a view while running"),
+                #file,
+                #line
+            )
+        }
     }
 
     /// Disconnect the connected view from this controller.
@@ -203,9 +203,9 @@ public final class MobiusController<Model, Event, Effect> {
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop already is running.
-    public func start() {
+    public func start(completionHandler: (() -> Void)? = nil) {
         do {
-            try state.transitionToRunning { stoppedState in
+            try state.transitionToRunning(by: { stoppedState in
                 let loop = loopFactory(stoppedState.modelToStartFrom)
 
                 var disposables: [Disposable] = [loop]
@@ -225,7 +225,9 @@ public final class MobiusController<Model, Event, Effect> {
                     viewConnectable: stoppedState.viewConnectable,
                     disposables: CompositeDisposable(disposables: disposables)
                 )
-            }
+            }, completion: {
+                completionHandler?()
+            })
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot start a while already running"),
@@ -244,15 +246,17 @@ public final class MobiusController<Model, Event, Effect> {
     /// To stop the loop as an effect, dispatch to a different queue.
     ///
     /// - Attention: fails via `MobiusHooks.errorHandler` if the loop isn't running
-    public func stop() {
+    public func stop(completionHandler: (() -> Void)? = nil) {
         do {
-            try state.transitionToStopped { runningState in
+            try state.transitionToStopped(by: { runningState in
                 let model = runningState.loop.latestModel
 
                 runningState.disposables.dispose()
-
+                
                 return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
-            }
+            }, completion: {
+                completionHandler?()
+            })
         } catch {
             MobiusHooks.errorHandler(
                 errorMessage(error, default: "\(Self.debugTag): cannot stop a controller while not running"),
