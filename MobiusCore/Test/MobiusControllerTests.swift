@@ -127,15 +127,6 @@ class MobiusControllerTests: QuickSpec {
                             controller.start()
                             expect(controller.running).to(beTrue())
                         }
-                        it("should ignore events sent while view disposal is pending") {
-                            self.viewQueue.sync {
-                                controller.stop()
-                                // Sending an event via the view connection here is valid, because the view connection has
-                                // not yet been disposed; that disposal is pending in a block enqueued on the view queue by
-                                // AsyncDispatchQueueConnectable’s asynchronous disposal block
-                                view.dispatchSameQueue("late event")
-                            }
-                        }
                     }
                 }
 
@@ -153,12 +144,12 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
                     }
 
-                    it("Should dispose any listeners of the model") {
+                    it("should dispose any listeners of the model") {
                         controller.stop()
                         expect(modelObserver.disposed).toEventually(beTrue())
                     }
 
-                    it("Should dispose any effect handlers") {
+                    it("should dispose any effect handlers") {
                         controller.stop()
                         expect(effectObserver.disposed).to(beTrue())
                     }

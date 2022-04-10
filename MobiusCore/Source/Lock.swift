@@ -56,16 +56,3 @@ final class Synchronized<Value> {
         }
     }
 }
-
-extension Synchronized where Value: Equatable {
-    func compareAndSwap(expected: Value, with newValue: Value) -> Bool {
-        var success = false
-        self.mutate { value in
-            if value == expected {
-                value = newValue
-                success = true
-            }
-        }
-        return success
-    }
-}

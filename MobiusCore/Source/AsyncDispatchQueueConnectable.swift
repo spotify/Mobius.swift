@@ -14,23 +14,14 @@
 
 import Foundation
 
-/// A connectable adapter which imposes asynchronous dispatch blocks around calls to `accept` and `dispose`.
+/// A connectable adapter which imposes asynchronous dispatch blocks around calls to `accept`.
 ///
-/// Creates `Connection`s that forward invocations to `accept` and `dispose` to a connection returned by the underlying
-/// connectable, first switching to the provided `acceptQueue`. In other words, the real `accept` and `dispose` methods
-/// will always be executed asynchronously on the provided queue.
-///
-/// If the connection’s consumer is invoked between the Connectable’s `dispose` and the underlying asynchronous
-/// `dispose`, the call will not be forwarded.
+/// Creates `Connection`s that forward invocations to `accept` to a connection returned by the underlying connectable,
+/// first switching to the provided `acceptQueue`. In other words, the real `accept` method will always be executed
+/// asynchronously on the provided queue.
 final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
     private let underlyingConnectable: AnyConnectable<Input, Output>
     private let acceptQueue: DispatchQueue
-
-    private enum DisposalStatus: Equatable {
-        case notDisposed
-        case pendingDispose
-        case disposed
-    }
 
     init(
         _ underlyingConnectable: AnyConnectable<Input, Output>,
@@ -47,21 +38,16 @@ final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
         self.init(AnyConnectable(underlyingConnectable), acceptQueue: acceptQueue)
     }
 
-    func connect(_ consumer: @escaping (Output) -> Void) -> Connection<Input> {
-        let disposalStatus = Synchronized(value: DisposalStatus.notDisposed)
+    func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {
+        // A synchronized optional consumer allows for clearing the reference when it is no longer valid, which serves
+        // as the signal for the disposal status and also protects against state changes within critical regions.
+        let protectedConsumer = Synchronized<Consumer<Output>?>(value: consumer)
 
         let connection = underlyingConnectable.connect { value in
-            // Don’t forward if we’re currently waiting to dispose the connection.
-            //
-            // NOTE: the underlying consumer must be called inside the critical region accessing disposalStatus, or we
-            // could potentially enter the .pendingDispose state before or during the consumer call. This means that the
-            // underlying consumer must not call our connection’s acceptClosure or disposeClosure, or it will deadlock.
-            //
-            // This is OK in our existing use case because the underlying consumer is always flipEventsToLoopQueue from
-            // MobiusController’s initializer, which enters the actual Mobius loop asynchronously. If we exposed this
-            // class, it would be a scary edge case.
-            disposalStatus.read { status in
-                guard status != .pendingDispose else { return }
+            protectedConsumer.read { consumer in
+                guard let consumer = consumer else {
+                    MobiusHooks.errorHandler("cannot consume value after dispose", #file, #line)
+                }
                 consumer(value)
             }
         }
@@ -72,14 +58,13 @@ final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
                     connection.accept(input)
                 }
             },
-            disposeClosure: { [acceptQueue] in
-                guard disposalStatus.compareAndSwap(expected: .notDisposed, with: .pendingDispose) else {
-                    MobiusHooks.errorHandler("cannot dispose more than once", #file, #line)
-                }
-
-                acceptQueue.async {
+            disposeClosure: {
+                protectedConsumer.mutate { consumer in
+                    guard consumer != nil else {
+                        MobiusHooks.errorHandler("cannot dispose more than once", #file, #line)
+                    }
                     connection.dispose()
-                    disposalStatus.value = .disposed
+                    consumer = nil
                 }
             }
         )
