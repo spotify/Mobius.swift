@@ -53,9 +53,9 @@ enum Difference: Equatable {
 }
 
 func diff(lhs: ArraySlice<Substring>, rhs: ArraySlice<Substring>) -> [Difference] {
-    var lhsIndexMap = [Substring: [Int]]()
+    var lhsIndexMap = [String: [Int]]()
     for (index, value) in zip(lhs.indices, lhs) {
-        lhsIndexMap[value, default: []].append(index)
+        lhsIndexMap[String(value), default: []].append(index)
     }
 
     var lhsSubStart = lhs.startIndex
@@ -66,7 +66,7 @@ func diff(lhs: ArraySlice<Substring>, rhs: ArraySlice<Substring>) -> [Difference
     for (indexRhs, value) in zip(rhs.indices, rhs) {
         var innerOverlap = [Int: Int]()
 
-        for indexLhs in lhsIndexMap[value, default: []] {
+        for indexLhs in lhsIndexMap[String(value), default: []] {
             let innerSubLength = (overlap[indexLhs - 1] ?? 0) + 1
             innerOverlap[indexLhs] = innerSubLength
             if innerSubLength > subLength {
