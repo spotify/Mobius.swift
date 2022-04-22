@@ -94,18 +94,13 @@ public final class MobiusController<Model, Event, Effect> {
         )
         self.state = state
 
-        // Maps an event consumer to a new event consumer that invokes the original one on the loop queue,
-        // asynchronously.
+        // Maps an event consumer to a new event consumer that asynchronously invokes the original on the loop queue.
         //
         // The input will be the core `MobiusLoop`’s event dispatcher, which asserts that it isn’t invoked after the
-        // loop is disposed. This doesn’t play nicely with asynchrony, so here we assert when the transformed event
-        // consumer is invoked, but fail silently if the controller is stopped before the asynchronous block executes.
+        // loop is disposed. This doesn’t play nicely with asynchrony, so here we fail silently if the controller is
+        // stopped before the asynchronous block executes.
         func flipEventsToLoopQueue(consumer: @escaping Consumer<Event>) -> Consumer<Event> {
             return { event in
-                guard state.running else {
-                    MobiusHooks.errorHandler("\(Self.debugTag): cannot accept events when stopped", #file, #line)
-                }
-
                 loopQueue.async {
                     guard state.running else {
                         // If we got here, the controller was stopped while this async block was queued. Callers can’t
@@ -211,9 +206,14 @@ public final class MobiusController<Model, Event, Effect> {
                 var disposables: [Disposable] = [loop]
 
                 if let viewConnectable = stoppedState.viewConnectable {
-                    let viewConnection = viewConnectable.connect { [unowned loop] event in
-                        // Note: loop.unguardedDispatchEvent will call our flipEventsToLoopQueue, which implements the
-                        //       assertion “unguarded” refers to, and also (of course) flips to the loop queue.
+                    let viewConnection = viewConnectable.connect { [weak loop] event in
+                        guard let loop = loop else {
+                            // This failure should not be reached under normal circumstances because it is handled by
+                            // AsyncDispatchQueueConnectable. Stopping here means that the viewConnectable called its
+                            // consumer reference after stop() has disposed the connection and deallocated the loop.
+                            MobiusHooks.errorHandler("\(Self.debugTag): cannot use invalid consumer", #file, #line)
+                        }
+
                         loop.unguardedDispatchEvent(event)
                     }
                     loop.addObserver(viewConnection.accept)
@@ -228,7 +228,7 @@ public final class MobiusController<Model, Event, Effect> {
             }
         } catch {
             MobiusHooks.errorHandler(
-                errorMessage(error, default: "\(Self.debugTag): cannot start a while already running"),
+                errorMessage(error, default: "\(Self.debugTag): cannot start a controller while already running"),
                 #file,
                 #line
             )

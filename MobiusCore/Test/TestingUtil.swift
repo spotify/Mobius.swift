@@ -64,8 +64,6 @@ class RecordingTestConnectable: Connectable {
     }
 
     func dispose() {
-        verifyQueue()
-
         disposed = true
     }
 
