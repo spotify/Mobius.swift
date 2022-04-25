@@ -39,8 +39,10 @@ final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
     }
 
     func connect(_ consumer: @escaping Consumer<Output>) -> Connection<Input> {
-        // A synchronized optional consumer allows for clearing the reference when it is no longer valid, which serves
-        // as the signal for the disposal status and also protects against state changes within critical regions.
+        // Synchronized values protect against state changes within the critical regions that are accessed on both the
+        // loop queue and the accept queue. An optional consumer allows for clearing the reference when it is no longer
+        // valid.
+        let disposalStatus = Synchronized(value: false)
         let protectedConsumer = Synchronized<Consumer<Output>?>(value: consumer)
 
         let connection = underlyingConnectable.connect { value in
@@ -55,17 +57,20 @@ final class AsyncDispatchQueueConnectable<Input, Output>: Connectable {
         return Connection(
             acceptClosure: { [acceptQueue] input in
                 acceptQueue.async {
-                    connection.accept(input)
+                    // Prevents forwarding if the connection has since been disposed.
+                    disposalStatus.read { disposed in
+                        guard !disposed else { return }
+                        connection.accept(input)
+                    }
                 }
             },
             disposeClosure: {
-                protectedConsumer.mutate { consumer in
-                    guard consumer != nil else {
-                        MobiusHooks.errorHandler("cannot dispose more than once", #file, #line)
-                    }
-                    connection.dispose()
-                    consumer = nil
+                guard disposalStatus.compareAndSwap(expected: false, with: true) else {
+                    MobiusHooks.errorHandler("cannot dispose more than once", #file, #line)
                 }
+
+                connection.dispose()
+                protectedConsumer.value = nil
             }
         )
     }
