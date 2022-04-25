@@ -52,6 +52,11 @@ class AsyncDispatchQueueConnectableTests: QuickSpec {
                     underlyingConnectable.dispatch("S")
                     expect(dispatchedValue).to(equal("S"))
                 }
+
+                it("should not allow disposing twice") {
+                    expect(connection.dispose()).toNot(raiseError())
+                    expect(connection.dispose()).to(raiseError())
+                }
             }
         }
     }
