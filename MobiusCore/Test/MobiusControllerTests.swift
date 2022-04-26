@@ -237,21 +237,29 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         eventSource.dispatchOnSubscribe("startup")
                         controller.start()
-                        controller.stop()
 
+                        // wait for event to be processed
                         expect(view.recorder.items).toEventually(equal(["S", "S-startup"]))
+
+                        controller.stop()
                     }
                     it("should execute the initiator on each start") {
                         activateInitiator = true
                         controller.connectView(view)
                         controller.start()
+
+                        // wait for event to be processed
+                        expect(view.recorder.items).toEventually(equal(["S-init"]))
+                        expect(effectHandler.recorder.items).toEventually(equal(["initEffect"]))
+
                         controller.stop()
                         controller.start()
-                        controller.stop()
 
-                        // Note that there’s no "S" – the initiator takes effect before the model is ever published.
+                        // wait for event to be processed
                         expect(view.recorder.items).toEventually(equal(["S-init", "S-init-init"]))
                         expect(effectHandler.recorder.items).toEventually(equal(["initEffect", "initEffect"]))
+
+                        controller.stop()
                     }
                 }
                 #if arch(x86_64) || arch(arm64)
