@@ -20,7 +20,7 @@ import Quick
 
 private typealias Event = ()
 
-private enum Effect: Equatable {
+private enum Effect {
     case justEffect
     case effectWithString(String)
     case effectWithTuple(left: String, right: Int)

@@ -19,9 +19,14 @@ public extension EffectRouter {
         _ enumCase: @escaping (EffectParameters) -> Effect
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
         let casePath = /enumCase
-        return routeEffects(withParameters: { effect in
-            casePath.extract(from: effect)
-        })
+        return routeEffects(withParameters: casePath.extract)
+    }
+
+    func routeCase(
+        _ enumCase: Effect
+    ) -> _PartialEffectRouter<Effect, Void, Event> {
+        let casePath = /enumCase
+        return routeEffects(withParameters: casePath.extract)
     }
 }
 
@@ -29,12 +34,6 @@ public extension EffectRouter where Effect: Equatable {
     func routeCase(
         _ enumCase: Effect
     ) -> _PartialEffectRouter<Effect, Void, Event> {
-        return routeEffects(withParameters: { effect in
-            if enumCase == effect {
-                return ()
-            } else {
-                return nil
-            }
-        })
+        return routeEffects(withParameters: { effect in effect == enumCase ? () : nil })
     }
 }
