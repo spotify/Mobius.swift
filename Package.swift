@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.8.0"),
         .package(url: "https://github.com/Quick/Nimble", from: "10.0.0"),
-        .package(url: "https://github.com/Quick/Quick", from: "4.0.0"),
+        .package(url: "https://github.com/Quick/Quick", from: "5.0.1"),
     ],
     targets: [
         .target(name: "MobiusCore", dependencies: ["CasePaths"], path: "MobiusCore/Source"),
