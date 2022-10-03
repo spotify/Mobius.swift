@@ -45,7 +45,7 @@ public func raiseError<Out>(capture: ((String, String, UInt) -> Void)? = nil) ->
 private class ErrorHandlerConfiguration: QuickConfiguration {
     /// This is run before any Quick tests and registers `beforeEach`/`afterEach` handlers that run “outside” those
     /// set up by the tests.
-    override class func configure(_ configuration: Configuration) {
+    override class func configure(_ configuration: QCKConfiguration) {
         configuration.beforeEach {
             MobiusHooks.setErrorHandler { message, file, line in
                 MobiusThrowableAssertion(message: message, file: String(file), line: line).throw()
