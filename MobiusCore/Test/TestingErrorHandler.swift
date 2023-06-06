@@ -10,7 +10,7 @@ import Quick
 /// for example in `beforeEach`, that will take precedence and this predicate won’t work.
 ///
 /// - Parameter capture: An optional block which is invoked with the message, file and line of the error invocation.
-public func raiseError<Out>(capture: ((String, String, UInt) -> Void)? = nil) -> Predicate<Out> {
+public func raiseError<Out>(capture: ((String, String, UInt) -> Void)? = nil) -> Nimble.Predicate<Out> {
     // This is a simplified version of Nimble’s throwAssertion() that piggybacks on Objective-C exceptions.
     return Predicate { actualExpression in
         let message = ExpectationMessage.expectedTo("throw an assertion")
