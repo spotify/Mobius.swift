@@ -26,11 +26,22 @@ class MobiusLoopTests: QuickSpec {
             var receivedModels: [String]!
             var effectHandler: RecordingTestConnectable!
             var modelObserver: Consumer<String>!
+            var modelConnectable: AnyConnectable<String, String>!
+            var modelConnectableConsumer: ((String) -> Void)?
 
             beforeEach {
                 receivedModels = []
 
                 modelObserver = { receivedModels.append($0) }
+
+                modelConnectableConsumer = nil
+                modelConnectable = AnyConnectable({ consumer in
+                    modelConnectableConsumer = consumer
+                    return Connection(
+                        acceptClosure: { receivedModels.append($0) },
+                        disposeClosure: {}
+                    )
+                })
 
                 let update = Update<String, String, String> { _, event in Next.next(event) }
 
@@ -74,6 +85,71 @@ class MobiusLoopTests: QuickSpec {
 
                     expect(receivedModels).to(equal(["the first model", "floopity", "floopity floop"]))
                     expect(secondModelSet).to(equal(["the first model", "floopity"]))
+                }
+            }
+
+            describe("connect") {
+                beforeEach {
+                    loop = builder.start(from: "the first model")
+                }
+
+                it("should emit the first model if you connect after start") {
+                    _ = loop.connect(modelConnectable)
+
+                    expect(receivedModels).to(equal(["the first model"]))
+                }
+
+                it("should be possible to unsubscribe a connection") {
+                    let subscription = loop.connect(modelConnectable)
+
+                    loop.dispatchEvent("pre unsubscribe")
+
+                    subscription.dispose()
+                    loop.dispatchEvent("post unsubscribe")
+
+                    expect(receivedModels).to(equal(["the first model", "pre unsubscribe"]))
+                }
+
+                it("should be possible to add multiple connections") {
+                    var secondModelSet = [String]()
+
+                    _ = loop.connect(modelConnectable)
+                    let subscription = loop.connect(
+                        AnyConnectable({ consumer in
+                            Connection(
+                                acceptClosure: { model in secondModelSet.append(model) },
+                                disposeClosure: {}
+                            )
+                        })
+                    )
+
+                    loop.dispatchEvent("floopity")
+
+                    subscription.dispose()
+                    loop.dispatchEvent("floopity floop")
+
+                    expect(receivedModels).to(equal(["the first model", "floopity", "floopity floop"]))
+                    expect(secondModelSet).to(equal(["the first model", "floopity"]))
+                }
+
+                it("should be possible to dispatch events after start") {
+                    _ = loop.connect(modelConnectable)
+
+                    modelConnectableConsumer?("one")
+                    modelConnectableConsumer?("two")
+                    modelConnectableConsumer?("three")
+
+                    expect(receivedModels).to(equal(["the first model", "one", "two", "three"]))
+                }
+
+                it("does not retain loop") {
+                    _ = loop.connect(modelConnectable)
+
+                    modelConnectableConsumer?("one")
+                    loop = nil
+                    modelConnectableConsumer?("two")
+
+                    expect(receivedModels).to(equal(["the first model", "one"]))
                 }
             }
 

@@ -106,6 +106,30 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
         }
     }
 
+    /// Connects a `Connectable` to the Mobius loop.
+    ///
+    /// The `Connectable` will be given an event consumer, which should be used to send events to the loop.
+    /// The `Connectable` should also return a `Connection` that accepts models and renders them.
+    /// Disposing of the `Disposable` returned by this function will dispose of the connect and should
+    /// make the `Connectable` stop emitting events.
+    ///
+    /// - Parameter connectable: The `Connectable` to connect to the loop.
+    /// - Returns: A `Disposable` that can be used to stop further notifications to the `Connectable`.
+    func connect<T>(_ connectable: T) -> Disposable where T: Connectable, T.Input == Model, T.Output == Event {
+        let connection = connectable.connect { [weak self] event in
+            guard let self else { return }
+
+            self.dispatchEvent(event)
+        }
+
+        let observer = addObserver(connection.accept)
+
+        return AnonymousDisposable {
+            observer.dispose()
+            connection.dispose()
+        }
+    }
+
     public func dispose() {
         access.guard {
             let disposable = self.disposable
