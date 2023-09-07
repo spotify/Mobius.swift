@@ -115,7 +115,7 @@ class MobiusLoopTests: QuickSpec {
 
                     _ = loop.connect(modelConnectable)
                     let subscription = loop.connect(
-                        AnyConnectable({ consumer in
+                        AnyConnectable({ _ in
                             Connection(
                                 acceptClosure: { model in secondModelSet.append(model) },
                                 disposeClosure: {}
