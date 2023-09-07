@@ -42,6 +42,7 @@ class ConnectableMapTests: QuickSpec {
                 expect(testConnectable.isDisposed).to(beFalse())
 
                 testConnectable
+                    .map { Int($0) }
                     .connect { _ in }
                     .dispose()
 
