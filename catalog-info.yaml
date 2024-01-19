@@ -4,4 +4,4 @@ metadata:
   name: mobius.swift
 spec:
   type: resource
-  owner: zenith
+  owner: blink
