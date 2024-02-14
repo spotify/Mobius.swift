@@ -23,7 +23,7 @@ public extension Task {
     ///         }
     ///        .asDisposable
     ///     }
-    var asDisposable: any Disposable {
+    var asDisposable: some Disposable {
         AnonymousDisposable { cancel() }
     }
 }
