@@ -20,7 +20,7 @@ private typealias Effect = String
 private typealias Event = String
 
 class AnyEffectHandlerTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("AnyEffectHandler") {
             var effectHandler: AnyEffectHandler<Effect, Event>!

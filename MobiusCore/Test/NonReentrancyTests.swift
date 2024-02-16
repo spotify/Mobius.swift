@@ -37,7 +37,7 @@ private enum Effect: String, CustomStringConvertible, Equatable {
 }
 
 class NonReentrancyTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("MobiusLoop") {
             var loop: MobiusLoop<Model, Event, Effect>!

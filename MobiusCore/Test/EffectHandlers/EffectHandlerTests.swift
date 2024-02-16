@@ -27,10 +27,7 @@ private enum Event {
     case eventForEffect1
 }
 
-// swiftlint:disable type_body_length file_length
-
 class EffectHandlerTests: QuickSpec {
-    // swiftlint:disable function_body_length
     override func spec() {
         describe("Handling effects with EffectHandler") {
             var effectHandler: AnyEffectHandler<Effect, Event>!
@@ -63,6 +60,7 @@ class EffectHandlerTests: QuickSpec {
                 }
             }
         }
+
         describe("Disposing EffectHandler") {
             it("calls the returned disposable when disposing") {
                 var disposed = false

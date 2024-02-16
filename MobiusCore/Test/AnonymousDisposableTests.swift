@@ -17,7 +17,7 @@ import Nimble
 import Quick
 
 class AnonymousDisposableTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("AnonymousDisposable") {
             var disposable: AnonymousDisposable!

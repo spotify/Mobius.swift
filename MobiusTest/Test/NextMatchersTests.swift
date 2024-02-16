@@ -22,9 +22,9 @@ import XCTest
 // is replaced in order to be inspected
 
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
+// swiftlint:disable:next type_body_length
 class XCTestNextMatchersTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("AssertThatNext") {
             var failMessages: [String] = []

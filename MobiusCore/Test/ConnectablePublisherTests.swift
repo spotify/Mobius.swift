@@ -18,7 +18,7 @@ import Nimble
 import Quick
 
 class ConnectablePublisherTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("ConnectablePublisher") {
             var publisher: ConnectablePublisher<String>!

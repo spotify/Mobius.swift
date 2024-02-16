@@ -19,7 +19,7 @@ import Quick
 
 // Should only test public APIs
 class MobiusIntegrationTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("Mobius integration tests") {
             let update = Update<String, String, String> { _, event in

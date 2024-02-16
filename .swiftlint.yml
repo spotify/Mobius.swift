@@ -5,11 +5,9 @@ disabled_rules:
   - superfluous_disable_command # Disabled since we disable some rules pre-emptively to avoid issues in the future
   - todo                        # Disabled while we are filling out the framework; re-enable when we get closer to completion
   - nesting                     # Does not make sense anymore since Swift 4 uses nested `CodingKeys` enums for example
-
   - implicit_return             # Suddenly started firing for existing code on PRs, should investigate later
 
 opt_in_rules:
-  - anyobject_protocol
   - attributes
   - closure_end_indentation
   - closure_spacing
@@ -29,7 +27,6 @@ opt_in_rules:
   - first_where
   - identical_operands
   - implicit_return
-  - inert_defer
   - joined_default_parameter
   - literal_expression_end_indentation
   - legacy_hashing
@@ -55,6 +52,7 @@ opt_in_rules:
   - trailing_whitespace
   - unneeded_parentheses_in_closure_argument
   - vertical_parameter_alignment_on_call
+  - weak_delegate
   - yoda_condition
 
 excluded:
@@ -71,8 +69,8 @@ attributes:
     - "@NSManaged"
     - "@objc"
 closure_spacing: warning
-empty_count: warning
-explicit_init: warning
+empty_count:
+  severity: warning
 fatal_error_message: warning
 file_header:
   severity: warning
