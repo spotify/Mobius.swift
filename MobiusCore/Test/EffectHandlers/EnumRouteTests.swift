@@ -16,8 +16,6 @@ import MobiusCore
 import Nimble
 import Quick
 
-// swiftlint:disable type_body_length file_length
-
 private typealias Event = ()
 
 private enum Effect {
@@ -48,7 +46,6 @@ private func unwrap<Input, Parameters, Output>(
 }
 
 class ParameterExtractionRouteTests: QuickSpec {
-    // swiftlint:disable function_body_length
     override func spec() {
         context("Different types of enums being unwrapped") {
             it("supports routing to an effect with nothing to unwrap") {

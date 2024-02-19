@@ -36,7 +36,7 @@ enum MyEffect {
 }
 
 class UpdateSpecTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         let updateSpec = UpdateSpec(myUpdate)
 
