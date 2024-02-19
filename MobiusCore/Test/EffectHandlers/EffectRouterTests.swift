@@ -17,8 +17,6 @@ import MobiusCore
 import Nimble
 import Quick
 
-// swiftlint:disable type_body_length file_length
-
 private enum Effect {
     case effect1
     case effect2
@@ -32,7 +30,7 @@ private enum Event {
 }
 
 class EffectRouterTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         context("Router happy paths") {
             var receivedEvents: [Event]!

@@ -18,7 +18,7 @@ import Nimble
 import Quick
 
 class MobiusLoopTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("MobiusLoop") {
             var builder: Mobius.Builder<String, String, String>!

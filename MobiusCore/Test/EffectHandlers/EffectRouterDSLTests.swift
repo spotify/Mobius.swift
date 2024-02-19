@@ -16,8 +16,6 @@ import MobiusCore
 import Nimble
 import Quick
 
-// swiftlint:disable type_body_length file_length
-
 private enum Effect: Equatable {
     case effect1
     case effect2
@@ -29,7 +27,7 @@ private enum Event: Equatable {
 }
 
 class EffectRouterDSLTests: QuickSpec {
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         context("An EffectHandler which always ends as soon as it is called") {
             var wasDisposed: Bool!

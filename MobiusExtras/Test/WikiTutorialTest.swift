@@ -18,8 +18,7 @@ import XCTest
 
 /// Test cases that reproduce the Getting Started section of the GitHub wiki
 class WikiTutorialTest: XCTestCase {
-    // swiftlint:disable function_body_length
-
+    // swiftlint:disable:next function_body_length
     func testWikiCreatingALoop() {
         // Standin implementation of print()
         var printedValues: [String] = []
@@ -62,6 +61,7 @@ class WikiTutorialTest: XCTestCase {
         XCTAssertEqual(printedValues, ["2", "1", "0", "0", "1", "2", "1"])
     }
 
+    // swiftlint:disable:next function_body_length
     func testWikiCreatingALoop_addingEffects() {
         // Standin implementation of print()
         var printedValues: [String] = []

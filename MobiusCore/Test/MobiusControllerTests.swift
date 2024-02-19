@@ -18,13 +18,13 @@ import Foundation
 import Nimble
 import Quick
 
-// swiftlint:disable type_body_length file_length
-
+// swiftlint:disable file_length
+// swiftlint:disable:next type_body_length
 class MobiusControllerTests: QuickSpec {
     let loopQueue = DispatchQueue(label: "loop queue")
     let viewQueue = DispatchQueue(label: "view queue")
 
-    // swiftlint:disable function_body_length
+    // swiftlint:disable:next function_body_length
     override func spec() {
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
