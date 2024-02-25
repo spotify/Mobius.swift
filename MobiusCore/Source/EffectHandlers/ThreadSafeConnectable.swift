@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Foundation
+
 final class ThreadSafeConnectable<Event, Effect>: Connectable {
     private let connectable: AnyConnectable<Effect, Event>
+    private let outputQueue: DispatchQueue?
 
     private let lock = Lock()
     private var output: Consumer<Event>?
     private var connection: Connection<Effect>?
 
     init<Conn: Connectable>(
-        connectable: Conn
+        connectable: Conn,
+        outputQueue: DispatchQueue? = nil
     ) where Conn.Input == Effect, Conn.Output == Event {
         self.connectable = AnyConnectable(connectable)
+        self.outputQueue = outputQueue
     }
 
     func connect(_ output: @escaping (Event) -> Void) -> Connection<Effect> {
@@ -52,6 +57,14 @@ final class ThreadSafeConnectable<Event, Effect>: Connectable {
     }
 
     private func dispatch(event: Event) {
+        if let outputQueue = outputQueue {
+            outputQueue.async { [weak self] in self?.synchronizedDispatch(event: event) }
+        } else {
+            synchronizedDispatch(event: event)
+        }
+    }
+
+    private func synchronizedDispatch(event: Event) {
         if let output = lock.synchronized(closure: { output }) {
             output(event)
         }
