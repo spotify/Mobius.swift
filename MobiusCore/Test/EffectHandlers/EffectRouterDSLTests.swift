@@ -167,7 +167,7 @@ class EffectRouterDSLTests: QuickSpec {
                         expect(effect).to(equal(.effect1))
                         callback.send(.eventForEffect1)
                         callback.end()
-                        return AnonymousDisposable {}
+                        return EmptyDisposable()
                     }
                     .asConnectable
                     .connect { events.append($0) }
