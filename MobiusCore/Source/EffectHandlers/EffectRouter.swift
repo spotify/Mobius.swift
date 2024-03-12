@@ -59,7 +59,7 @@ public struct EffectRouter<Effect, Event> {
     public func routeEffects<EffectParameters>(
         withParameters extractParameters: @escaping (Effect) -> EffectParameters?
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil)
+        return _PartialEffectRouter(routes: routes, path: extractParameters, queue: nil, receiveQueue: nil)
     }
 
     /// Convert this `EffectRouter` into `Connectable` which can be attached to a Mobius Loop, or called on its own to
@@ -77,6 +77,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     fileprivate let routes: [Route<Effect, Event>]
     fileprivate let path: (Effect) -> EffectParameters?
     fileprivate let queue: DispatchQueue?
+    fileprivate let receiveQueue: DispatchQueue?
 
     /// Route to an `EffectHandler`.
     ///
@@ -84,7 +85,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
     ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
-        let connectable = EffectExecutor(handleInput: effectHandler.handle)
+        let connectable = EffectExecutor(handleInput: effectHandler.handle, outputQueue: receiveQueue)
         let route = Route<Effect, Event>(extractParameters: path, connectable: connectable, queue: queue)
         return EffectRouter(routes: routes + [route])
     }
@@ -95,12 +96,12 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     public func to<C: Connectable>(
         _ connectable: C
     ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
-        let connectable = ThreadSafeConnectable(connectable: connectable)
+        let connectable = ThreadSafeConnectable(connectable: connectable, outputQueue: receiveQueue)
         let route = Route(extractParameters: path, connectable: connectable, queue: queue)
         return EffectRouter(routes: routes + [route])
     }
 
-    /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
+    /// Handle the current `Effect` asynchronously on the provided `DispatchQueue`
     ///
     /// Warning: Dispatching events to a loop from a different queue is not a thread-safe operation and will require
     /// manual synchronization unless the loop is run in a `MobiusController`.
@@ -109,7 +110,14 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     ///
     /// - Parameter queue: The `DispatchQueue` that the current `Effect` should be handled on.
     public func on(queue: DispatchQueue) -> Self {
-        return Self(routes: routes, path: path, queue: queue)
+        return Self(routes: routes, path: path, queue: queue, receiveQueue: receiveQueue)
+    }
+
+    /// Receive an `Event` asynchronously on the provided `DispatchQueue`
+    ///
+    /// - Parameter queue: The `DispatchQueue` that any `Event` should be received on.
+    public func receiveOn(queue receiveQueue: DispatchQueue) -> Self {
+        return Self(routes: routes, path: path, queue: queue, receiveQueue: receiveQueue)
     }
 }
 
