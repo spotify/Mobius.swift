@@ -88,8 +88,8 @@ private class EffectCollaborator {
 }
 
 extension EffectCollaborator {
-    func makeEffectHandler<Effect, Event>(replyEvent: Event) -> AnyEffectHandler<Effect, Event> {
-        return AnyEffectHandler<Effect, Event> { _, callback in
+    func makeEffectHandler<Effect, Event>(replyEvent: Event) -> TestEffectHandler<Effect, Event> {
+        return { _, callback in
             let cancellationToken = self.asyncDoStuff {
                 callback.send(replyEvent)
                 callback.end()

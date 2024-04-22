@@ -5,6 +5,8 @@ import Foundation
 @testable import MobiusCore
 import Nimble
 
+typealias TestEffectHandler<EffectParameters, Event> = (EffectParameters, EffectCallback<Event>) -> Disposable
+
 class SimpleTestConnectable: Connectable {
     var disposed = false
 
