@@ -193,3 +193,64 @@ class TestEventSource<Event>: EventSource {
         }
     }
 }
+
+class TestConnectableEventSource<Model, Event>: Connectable {
+    typealias Input = Model
+    typealias Output = Event
+
+    enum Connection {
+        case disposed
+        case active(Consumer<Event>)
+    }
+    private(set) var connections: [Connection] = []
+    private(set) var models: [Model] = []
+    private var pendingEvent: Event?
+    var modelSwitch: ((Model) -> Bool)?
+
+    var activeConnections: [Consumer<Event>] {
+        return connections.compactMap {
+            switch $0 {
+            case .disposed:
+                return nil
+            case .active(let consumer):
+                return consumer
+            }
+        }
+    }
+
+    var allDisposed: Bool {
+        return activeConnections.isEmpty
+    }
+
+    func connect(_ consumer: @escaping MobiusCore.Consumer<Event>) -> MobiusCore.Connection<Model> {
+        let index = connections.count
+        connections.append(.active(consumer))
+
+        if let event = pendingEvent {
+            consumer(event)
+            pendingEvent = nil
+        }
+
+        return .init(
+            acceptClosure: { [weak self] model in
+                let shouldProcessModel = self?.modelSwitch?(model) ?? false
+                if shouldProcessModel {
+                    self?.models.append(model)
+                }
+            }, disposeClosure: { [weak self] in
+                self?.connections[index] = .disposed
+            }
+        )
+    }
+
+    // Set an event to dispatch immediately when subscribed
+    func dispatchOnSubscribe(_ event: Event) {
+        pendingEvent = event
+    }
+
+    func dispatch(_ event: Event) {
+        activeConnections.forEach {
+            $0(event)
+        }
+    }
+}

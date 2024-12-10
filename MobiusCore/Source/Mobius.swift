@@ -74,7 +74,7 @@ public enum Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
+            eventSource: AnyConnectable { _ in .init(acceptClosure: { _ in }, disposeClosure: {}) },
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
         )
@@ -104,14 +104,14 @@ public enum Mobius {
     public struct Builder<Model, Event, Effect> {
         private let update: Update<Model, Event, Effect>
         private let effectHandler: AnyConnectable<Effect, Event>
-        private let eventSource: AnyEventSource<Event>
+        private let eventSource: AnyConnectable<Model, Event>
         private let logger: AnyMobiusLogger<Model, Event, Effect>
         private let eventConsumerTransformer: ConsumerTransformer<Event>
 
         fileprivate init<EffectHandler: Connectable>(
             update: Update<Model, Event, Effect>,
             effectHandler: EffectHandler,
-            eventSource: AnyEventSource<Event>,
+            eventSource: AnyConnectable<Model, Event>,
             eventConsumerTransformer: @escaping ConsumerTransformer<Event>,
             logger: AnyMobiusLogger<Model, Event, Effect>
         ) where EffectHandler.Input == Effect, EffectHandler.Output == Event {
@@ -140,7 +140,43 @@ public enum Mobius {
             return Builder(
                 update: update,
                 effectHandler: effectHandler,
-                eventSource: AnyEventSource(eventSource),
+                eventSource: AnyConnectable { consumer in
+                    var disposable: Disposable? = eventSource.subscribe(consumer: consumer)
+                    return .init(
+                        acceptClosure: { _ in },
+                        disposeClosure: {
+                            disposable?.dispose()
+                            disposable = nil
+                        }
+                    )
+                },
+                eventConsumerTransformer: eventConsumerTransformer,
+                logger: logger
+            )
+        }
+
+        /// Return a copy of this builder with a new [event source] using a `Connectable<Model, Event>`.
+        ///
+        /// If a `MobiusLoop` is created from the builder by calling `start`, the event source will be subscribed to
+        /// immediately, and the subscription will be disposed when the loop is disposed.
+        ///
+        /// If a `MobiusController` is created by calling `makeController`, the controller will subscribe to the event
+        /// source each time `start` is called on the controller, and dispose the subscription when `stop` is called.
+        ///
+        /// The loop will use the `Connectable<Model, Event>` event source,  to invoke the `Connection<Model>`
+        /// accept method every time the model changes. This allows to conditionally subscribe to different sources based
+        /// on the current state
+        ///
+        /// - Note: The event source will replace any existing event source.
+        ///
+        /// - Parameter eventSource: The event source to set on the new builder.
+        /// - Returns: An updated Builder.
+        ///
+        public func withEventSource<Source: Connectable>(_ eventSource: Source) -> Builder where Source.Input == Model, Source.Output == Event {
+            return Builder(
+                update: update,
+                effectHandler: effectHandler,
+                eventSource: AnyConnectable(eventSource),
                 eventConsumerTransformer: eventConsumerTransformer,
                 logger: logger
             )

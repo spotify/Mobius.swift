@@ -25,6 +25,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     private var workBag: WorkBag
 
     private var effectConnection: Connection<Effect>! = nil
+    private var eventSourceConnection: Connection<Model>! = nil
     private var consumeEvent: Consumer<Event>! = nil
     private let modelPublisher: ConnectablePublisher<Model>
 
@@ -35,7 +36,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     init(
         model: Model,
         update: Update<Model, Event, Effect>,
-        eventSource: AnyEventSource<Event>,
+        eventSource: AnyConnectable<Model, Event>,
         eventConsumerTransformer: ConsumerTransformer<Event>,
         effectHandler: AnyConnectable<Effect, Event>,
         effects: [Effect],
@@ -72,12 +73,14 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
 
         // These must be set up after consumeEvent, which refers to self; that’s why they need to be IUOs.
         self.effectConnection = effectHandler.connect(consumeEvent)
-        let eventSourceDisposable = eventSource.subscribe(consumer: consumeEvent)
+        self.eventSourceConnection = eventSource.connect { event in
+            consumeEvent(event)
+        }
 
         self.disposable = CompositeDisposable(disposables: [
             effectConnection,
             modelPublisher,
-            eventSourceDisposable,
+            eventSourceConnection,
         ])
 
         // Prime the modelPublisher, and queue up any initial effects.
@@ -154,6 +157,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     private func processNext(_ next: Next<Model, Effect>) {
         if let newModel = next.model {
             model = newModel
+            eventSourceConnection.accept(model)
             modelPublisher.post(model)
         }
 

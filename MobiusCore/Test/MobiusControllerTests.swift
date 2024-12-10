@@ -28,8 +28,11 @@ class MobiusControllerTests: QuickSpec {
     override func spec() {
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
+            var updateFunction: Update<String, String, String>!
+            var initiate: Initiate<String, String>!
             var view: RecordingTestConnectable!
             var eventSource: TestEventSource<String>!
+            var connectableEventSource: TestConnectableEventSource<String, String>!
             var effectHandler: RecordingTestConnectable!
             var activateInitiator: Bool!
 
@@ -42,13 +45,13 @@ class MobiusControllerTests: QuickSpec {
                 view = RecordingTestConnectable(expectedQueue: self.viewQueue)
                 let loopQueue = self.loopQueue
 
-                let updateFunction = Update<String, String, String> { model, event in
+                updateFunction = .init { model, event in
                     dispatchPrecondition(condition: .onQueue(loopQueue))
                     return .next("\(model)-\(event)")
                 }
 
                 activateInitiator = false
-                let initiate: Initiate<String, String> = { model in
+                initiate = .init { model in
                     if activateInitiator {
                         return First(model: "\(model)-init", effects: ["initEffect"])
                     } else {
@@ -57,6 +60,7 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 eventSource = TestEventSource()
+
                 effectHandler = RecordingTestConnectable()
 
                 controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
@@ -354,6 +358,46 @@ class MobiusControllerTests: QuickSpec {
 
                     expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
                 }
+            }
+
+            describe("dispatching events using a connectable") {
+                beforeEach {
+                    // Rebuild the controller but use the Connectable instead of plain EventSource
+                    connectableEventSource = .init()
+
+                    controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
+                        .withEventSource(connectableEventSource)
+                        .makeController(
+                            from: "S",
+                            initiate: initiate,
+                            loopQueue: self.loopQueue,
+                            viewQueue: self.viewQueue
+                        )
+                    controller.connectView(view)
+                    controller.start()
+                }
+
+                it("should dispatch events from the event source") {
+                    connectableEventSource.dispatch("event source event")
+
+                    expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
+                }
+
+                it("should receive models from the event source") {
+                    view.dispatch("new model")
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-new model"]))
+                }
+
+                it("should allow the event source to change with model updates") {
+                    connectableEventSource.modelSwitch = { model in
+                        model != "S-stop"
+                    }
+
+                    view.dispatch("stop")
+                    view.dispatch("new model 2")
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-new model 2"]))
+                }
+
             }
 
             describe("deallocating") {
