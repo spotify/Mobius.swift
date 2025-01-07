@@ -389,15 +389,36 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 it("should allow the event source to change with model updates") {
-                    connectableEventSource.modelSwitch = { model in
-                        model != "S-stop"
+                    connectableEventSource.shouldProcessModel = { model in
+                        model != "S-ignore"
                     }
 
-                    view.dispatch("stop")
+                    view.dispatch("ignore")
                     view.dispatch("new model 2")
-                    expect(connectableEventSource.models).toEventually(equal(["S", "S-new model 2"]))
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-ignore-new model 2"]))
                 }
 
+                it("should replace the event source") {
+                    connectableEventSource = .init()
+
+                    controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
+                        .withEventSource(eventSource)
+                        .withEventSource(connectableEventSource)
+                        .makeController(
+                            from: "S",
+                            initiate: initiate,
+                            loopQueue: self.loopQueue,
+                            viewQueue: self.viewQueue
+                        )
+                    controller.connectView(view)
+                    controller.start()
+
+                    eventSource.dispatch("event source event")
+                    connectableEventSource.dispatch("connectable event source event")
+
+                    // The connectable event source should have replaced the original normal event source
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-connectable event source event"]))
+                }
             }
 
             describe("deallocating") {

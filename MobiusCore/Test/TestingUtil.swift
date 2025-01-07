@@ -205,7 +205,7 @@ class TestConnectableEventSource<Model, Event>: Connectable {
     private(set) var connections: [Connection] = []
     private(set) var models: [Model] = []
     private var pendingEvent: Event?
-    var modelSwitch: ((Model) -> Bool)?
+    var shouldProcessModel: ((Model) -> Bool) = { _ in true }
 
     var activeConnections: [Consumer<Event>] {
         return connections.compactMap {
@@ -233,9 +233,9 @@ class TestConnectableEventSource<Model, Event>: Connectable {
 
         return .init(
             acceptClosure: { [weak self] model in
-                let shouldProcessModel = self?.modelSwitch?(model) ?? false
-                if shouldProcessModel {
-                    self?.models.append(model)
+                guard let self else { return }
+                if shouldProcessModel(model) {
+                    models.append(model)
                 }
             }, disposeClosure: { [weak self] in
                 self?.connections[index] = .disposed
