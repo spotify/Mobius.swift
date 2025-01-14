@@ -29,7 +29,7 @@ public struct CompositeEventSourceBuilder<Event> {
     public func build() -> AnyEventSource<Event> {
         switch eventSources.count {
         case 0:
-            return AnyEventSource { _ in AnonymousDisposable {} }
+            return AnyEventSource { _ in EmptyDisposable() }
         case 1:
             return eventSources[0]
         default:

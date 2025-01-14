@@ -72,5 +72,5 @@ private func handleEffect(effect: Effect, callback: EffectCallback<Event>) -> Di
         callback.send(.eventForEffect1)
     }
     callback.end()
-    return AnonymousDisposable {}
+    return EmptyDisposable()
 }

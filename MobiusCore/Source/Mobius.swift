@@ -63,7 +63,7 @@ public enum Mobius {
         return Builder(
             update: update,
             effectHandler: effectHandler,
-            eventSource: AnyEventSource({ _ in AnonymousDisposable(disposer: {}) }),
+            eventSource: AnyEventSource({ _ in EmptyDisposable() }),
             eventConsumerTransformer: { $0 },
             logger: AnyMobiusLogger(NoopLogger())
         )
