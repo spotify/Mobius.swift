@@ -192,8 +192,10 @@ class TestConnectableEventSource<Model, Event>: Connectable {
         case active(Consumer<Event>)
     }
     private(set) var connections: [Connection] = []
-    private(set) var models: [Model] = []
+    private let queue = DispatchQueue(label: "modelsQueue", attributes: .concurrent)
     private var pendingEvent: Event?
+    private var _models: [Model] = []
+    var models: [Model] { queue.sync { _models } }
     var shouldProcessModel: ((Model) -> Bool) = { _ in true }
 
     var activeConnections: [Consumer<Event>] {
@@ -224,7 +226,9 @@ class TestConnectableEventSource<Model, Event>: Connectable {
             acceptClosure: { [weak self] model in
                 guard let self else { return }
                 if shouldProcessModel(model) {
-                    models.append(model)
+                    queue.async(flags: .barrier) { [weak self] in
+                        self?._models.append(model)
+                    }
                 }
             }, disposeClosure: { [weak self] in
                 self?.connections[index] = .disposed
