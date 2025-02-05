@@ -57,11 +57,10 @@ opt_in_rules:
 
 excluded:
   - .build
-  - build
-  - Carthage
-  - Other
   - Tools
   - Templates
+  - Package.swift
+  - MobiusTest/Source/SimpleDiff.swift
 
 attributes:
   always_on_same_line:
@@ -73,15 +72,9 @@ empty_count:
   severity: warning
 fatal_error_message: warning
 file_header:
-  severity: warning
-  forbidden_pattern: |
-                     \/\/
-                     \/\/  .*?\..*
-                     \/\/  .*
-                     \/\/
-                     \/\/  Created by .*? on .*\.
-                     \/\/  Copyright © \d{4} .*\. All rights reserved\.
-                     \/\/
+  required_pattern: |
+    \/\/ Copyright Spotify AB.
+    \/\/ SPDX-License-Identifier: Apache-2.0
 force_cast: warning
 force_try: warning
 implicit_getter: warning
