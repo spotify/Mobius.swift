@@ -5,6 +5,7 @@ import Foundation
 
 final class EffectExecutor<Effect, Event>: Connectable {
     private let handleEffect: (Effect, EffectCallback<Event>) -> Disposable
+    private let outputQueue: DispatchQueue?
     private var output: Consumer<Event>?
 
     private let lock = Lock()
@@ -15,8 +16,9 @@ final class EffectExecutor<Effect, Event>: Connectable {
     private var handlingEffects: [Int64: EffectHandlingState<Event>] = [:]
     private var nextID = Int64(0)
 
-    init(handleInput: @escaping (Effect, EffectCallback<Event>) -> Disposable) {
+    init(handleInput: @escaping (Effect, EffectCallback<Event>) -> Disposable, outputQueue: DispatchQueue? = nil) {
         self.handleEffect = handleInput
+        self.outputQueue = outputQueue
     }
 
     func connect(_ consumer: @escaping Consumer<Event>) -> Connection<Effect> {
@@ -47,7 +49,13 @@ final class EffectExecutor<Effect, Event>: Connectable {
         let callback = EffectCallback(
             // Any events produced as a result of handling the effect will be sent to this class's `output` consumer,
             // unless it has already been disposed.
-            onSend: { [weak self] event in self?.output?(event) },
+            onSend: { [weak self] event in
+                if let outputQueue = self?.outputQueue {
+                    outputQueue.async { self?.output?(event) }
+                } else {
+                    self?.output?(event)
+                }
+            },
             // Once an effect has been handled, remove the reference to its callback and disposable.
             onEnd: { [weak self] in self?.delete(id: id) }
         )
