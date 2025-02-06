@@ -9,6 +9,7 @@
 /// call `callback.end()`.
 ///
 /// Note: `EffectHandler` should be used in conjunction with an `EffectRouter`.
+@available(*, deprecated)
 public protocol EffectHandler {
     associatedtype EffectParameters
     associatedtype Event
@@ -33,6 +34,7 @@ public protocol EffectHandler {
 }
 
 /// A type-erased wrapper of the `EffectHandler` protocol.
+@available(*, deprecated)
 public struct AnyEffectHandler<EffectParameters, Event>: EffectHandler {
     private let handleClosure: (EffectParameters, EffectCallback<Event>) -> Disposable
 

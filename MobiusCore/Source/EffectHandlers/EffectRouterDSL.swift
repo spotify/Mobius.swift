@@ -19,7 +19,7 @@ public extension _PartialEffectRouter {
     func to(
         _ handle: @escaping (EffectParameters, EffectCallback<Event>) -> Disposable
     ) -> EffectRouter<Effect, Event> {
-        return to(AnyEffectHandler(handle: handle))
+        return routed(EffectExecutor(operation: .eventEmitting(handle)))
     }
 
     /// Route to a side-effecting closure.
@@ -28,11 +28,7 @@ public extension _PartialEffectRouter {
     func to(
         _ fireAndForget: @escaping (EffectParameters) -> Void
     ) -> EffectRouter<Effect, Event> {
-        return to { parameters, callback in
-            fireAndForget(parameters)
-            callback.end()
-            return AnonymousDisposable {}
-        }
+        return routed(EffectExecutor(operation: .sideEffecting(fireAndForget)))
     }
 
     /// Route to a closure which returns an optional event when given the parameters as input.
@@ -42,12 +38,6 @@ public extension _PartialEffectRouter {
     func toEvent(
         _ eventClosure: @escaping (EffectParameters) -> Event?
     ) -> EffectRouter<Effect, Event> {
-        return to { parameters, callback in
-            if let event = eventClosure(parameters) {
-                callback.send(event)
-            }
-            callback.end()
-            return AnonymousDisposable {}
-        }
+        return routed(EffectExecutor(operation: .eventReturning(eventClosure)))
     }
 }
