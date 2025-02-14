@@ -78,6 +78,16 @@ class MobiusControllerTests: QuickSpec {
 
                         expect(view.recorder.items).toEventually(equal(["S", "S-hey"]))
                     }
+                    it("should allow multiple connections") {
+                        let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+
+                        controller.connectView(view)
+                        controller.connectView(secondaryView)
+                        controller.start()
+
+                        expect(view.recorder.items).toEventually(equal(["S"]))
+                        expect(secondaryView.recorder.items).toEventually(equal(["S"]))
+                    }
 
                     context("given a connected and started loop") {
                         beforeEach {
@@ -149,10 +159,6 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 describe("error handling") {
-                    it("should not allow connecting twice") {
-                        expect(controller.connectView(view)).toNot(raiseError())
-                        expect(controller.connectView(view)).to(raiseError())
-                    }
                     it("should not allow connecting after starting") {
                         controller.connectView(view)
                         controller.start()
@@ -181,6 +187,15 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
 
                         expect(view.recorder.items).toEventually(equal(["S"]))
+                    }
+                    it("should allow disconnecting by id") {
+                        let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+
+                        let connectionID = controller.connectView(view)
+                        let secondaryConnectionID = controller.connectView(secondaryView)
+
+                        controller.disconnectView(id: connectionID)
+                        controller.disconnectView(id: secondaryConnectionID)
                     }
                     it("should not send events to a disconnected view") {
                         let disconnectedView = RecordingTestConnectable(expectedQueue: self.viewQueue)
@@ -211,6 +226,25 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.disconnectView()
                         expect(controller.disconnectView()).to(raiseError())
+                    }
+
+                    describe("multiple view connections") {
+                        it("should not allow disconnecting without a connection id") {
+                            let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+
+                            controller.connectView(view)
+                            controller.connectView(secondaryView)
+
+                            expect(controller.disconnectView()).to(raiseError())
+                        }
+                        it("should not allow disconnecting an invalid connection id") {
+                            let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+
+                            controller.connectView(view)
+                            controller.connectView(secondaryView)
+
+                            expect(controller.disconnectView(id: UUID())).to(raiseError())
+                        }
                     }
                 }
                 #endif
