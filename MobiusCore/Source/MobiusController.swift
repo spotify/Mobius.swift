@@ -10,17 +10,15 @@ import Foundation
 public final class MobiusController<Model, Event, Effect> {
     typealias Loop = MobiusLoop<Model, Event, Effect>
     typealias ViewConnectable = AsyncDispatchQueueConnectable<Model, Event>
-    typealias ViewConnection = Connection<Model>
 
     private struct StoppedState {
         var modelToStartFrom: Model
-        var viewConnectable: ViewConnectable?
-
+        var viewConnectables: [UUID: ViewConnectable]
     }
 
     private struct RunningState {
         var loop: Loop
-        var viewConnectable: ViewConnectable?
+        var viewConnectables: [UUID: ViewConnectable]
         var disposables: CompositeDisposable
     }
 
@@ -78,7 +76,7 @@ public final class MobiusController<Model, Event, Effect> {
         self.viewQueue = viewQueue
 
         let state = State(
-            state: StoppedState(modelToStartFrom: initialModel, viewConnectable: nil),
+            state: StoppedState(modelToStartFrom: initialModel, viewConnectables: [:]),
             queue: loopQueue
         )
         self.state = state
@@ -130,25 +128,24 @@ public final class MobiusController<Model, Event, Effect> {
 
     /// Connect a view to this controller.
     ///
-    /// May not be called while the loop is running.
-    ///
     /// The `Connectable` will be given an event consumer, which the view should use to send events to the `MobiusLoop`.
     /// The view should also return a `Connection` that accepts models and renders them. Disposing the connection should
     /// make the view stop emitting events.
     ///
-    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if the controller already is
-    ///              connected
+    /// - Parameter connectable: the view to connect
+    /// - Returns: an identifier that can be used to disconnect the view
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running
+    @discardableResult
     public func connectView<ViewConnectable: Connectable>(
         _ connectable: ViewConnectable
-    ) where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
+    ) -> UUID where ViewConnectable.Input == Model, ViewConnectable.Output == Event {
         do {
+            let id = UUID()
             try state.mutate { stoppedState in
-                guard stoppedState.viewConnectable == nil else {
-                    throw ErrorMessage(message: "\(Self.debugTag): only one view may be connected at a time")
-                }
-
-                stoppedState.viewConnectable = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
+                stoppedState.viewConnectables[id] = AsyncDispatchQueueConnectable(connectable, acceptQueue: viewQueue)
             }
+
+            return id
         } catch {
            MobiusHooks.errorHandler(
                errorMessage(error, default: "\(Self.debugTag): cannot connect a view while running"),
@@ -162,16 +159,44 @@ public final class MobiusController<Model, Event, Effect> {
     ///
     /// May not be called directly from an effect handler running on the controller’s loop queue.
     ///
-    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if there isn't anything to
-    /// disconnect
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running, if there is more than 1 connection,
+    /// or if there isn't anything to disconnect
     public func disconnectView() {
         do {
             try state.mutate { stoppedState in
-                guard stoppedState.viewConnectable != nil else {
+                guard stoppedState.viewConnectables.count <= 1 else {
+                    throw ErrorMessage(message: "\(Self.debugTag): missing view connection id, cannot disconnect")
+                }
+
+                guard let id = stoppedState.viewConnectables.keys.first else {
                     throw ErrorMessage(message: "\(Self.debugTag): no view connected, cannot disconnect")
                 }
 
-                stoppedState.viewConnectable = nil
+                stoppedState.viewConnectables[id] = nil
+            }
+        } catch {
+            MobiusHooks.errorHandler(
+                errorMessage(error, default: "\(Self.debugTag): cannot disconnect view while running; call stop first"),
+                #file,
+                #line
+            )
+        }
+    }
+
+    /// Disconnect a connected view from this controller.
+    ///
+    /// May not be called directly from an effect handler running on the controller’s loop queue.
+    ///
+    /// - Parameter id: the identifier received from calling `connectView(_:)`
+    /// - Attention: fails via `MobiusHooks.errorHandler` if the loop is running or if the id is not connected
+    public func disconnectView(id: UUID) {
+        do {
+            try state.mutate { stoppedState in
+                guard stoppedState.viewConnectables[id] != nil else {
+                    throw ErrorMessage(message: "\(Self.debugTag): invalid view connection, cannot disconnect")
+                }
+
+                stoppedState.viewConnectables[id] = nil
             }
         } catch {
             MobiusHooks.errorHandler(
@@ -191,11 +216,8 @@ public final class MobiusController<Model, Event, Effect> {
         do {
             try state.transitionToRunning { stoppedState in
                 let loop = loopFactory(stoppedState.modelToStartFrom)
-
-                var disposables: [Disposable] = [loop]
-
-                if let viewConnectable = stoppedState.viewConnectable {
-                    let viewConnection = viewConnectable.connect { [weak loop] event in
+                let disposables: [Disposable] = [loop] + stoppedState.viewConnectables.values.map { connectable in
+                    let connection = connectable.connect { [weak loop] event in
                         guard let loop = loop else {
                             // This failure should not be reached under normal circumstances because it is handled by
                             // AsyncDispatchQueueConnectable. Stopping here means that the viewConnectable called its
@@ -205,13 +227,14 @@ public final class MobiusController<Model, Event, Effect> {
 
                         loop.unguardedDispatchEvent(event)
                     }
-                    loop.addObserver(viewConnection.accept)
-                    disposables.append(viewConnection)
+                    loop.addObserver(connection.accept)
+
+                    return connection
                 }
 
                 return RunningState(
                     loop: loop,
-                    viewConnectable: stoppedState.viewConnectable,
+                    viewConnectables: stoppedState.viewConnectables,
                     disposables: CompositeDisposable(disposables: disposables)
                 )
             }
@@ -236,11 +259,12 @@ public final class MobiusController<Model, Event, Effect> {
     public func stop() {
         do {
             try state.transitionToStopped { runningState in
-                let model = runningState.loop.latestModel
-
                 runningState.disposables.dispose()
 
-                return StoppedState(modelToStartFrom: model, viewConnectable: runningState.viewConnectable)
+                return StoppedState(
+                    modelToStartFrom: runningState.loop.latestModel,
+                    viewConnectables: runningState.viewConnectables
+                )
             }
         } catch {
             MobiusHooks.errorHandler(
