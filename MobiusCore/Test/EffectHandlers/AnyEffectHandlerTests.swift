@@ -8,6 +8,7 @@ import Quick
 private typealias Effect = String
 private typealias Event = String
 
+@available(*, deprecated)
 class AnyEffectHandlerTests: QuickSpec {
     // swiftlint:disable:next function_body_length
     override func spec() {
@@ -48,7 +49,7 @@ class AnyEffectHandlerTests: QuickSpec {
 
             context("when initialized with wrapped effect handler") {
                 beforeEach {
-                    let wrapped = TestEffectHandler()
+                    let wrapped = WrappedEffectHandler()
                     effectHandler = AnyEffectHandler(handler: wrapped)
                 }
 
@@ -57,7 +58,7 @@ class AnyEffectHandlerTests: QuickSpec {
 
             context("when initialized with doubly wrapped effect handler") {
                 beforeEach {
-                    let wrapped = TestEffectHandler()
+                    let wrapped = WrappedEffectHandler()
                     let inner = AnyEffectHandler(handler: wrapped)
                     effectHandler = AnyEffectHandler(handler: inner)
                 }
@@ -68,7 +69,8 @@ class AnyEffectHandlerTests: QuickSpec {
     }
 }
 
-private struct TestEffectHandler: EffectHandler {
+@available(*, deprecated)
+private struct WrappedEffectHandler: EffectHandler {
     func handle(_ effect: Effect, _ callback: EffectCallback<Event>) -> Disposable {
         callback.send(effect)
         return AnonymousDisposable {

@@ -67,15 +67,21 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     fileprivate let path: (Effect) -> EffectParameters?
     fileprivate let queue: DispatchQueue?
 
+    func routed<C: Connectable>(
+        _ connectable: C
+    ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
+        let route = Route(extractParameters: path, connectable: connectable, queue: queue)
+        return EffectRouter(routes: routes + [route])
+    }
+
     /// Route to an `EffectHandler`.
     ///
     /// - Parameter effectHandler: the `EffectHandler` for the route in question.
+    @available(*, deprecated, message: "prefer routing directly to the handling closure, eg: .to(myEffectHandler.handle)")
     public func to<Handler: EffectHandler>(
         _ effectHandler: Handler
     ) -> EffectRouter<Effect, Event> where Handler.EffectParameters == EffectParameters, Handler.Event == Event {
-        let connectable = EffectExecutor(handleInput: effectHandler.handle)
-        let route = Route<Effect, Event>(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route])
+        return routed(EffectExecutor(operation: .eventEmitting(effectHandler.handle)))
     }
 
     /// Route to a Connectable.
@@ -84,9 +90,7 @@ public struct _PartialEffectRouter<Effect, EffectParameters, Event> {
     public func to<C: Connectable>(
         _ connectable: C
     ) -> EffectRouter<Effect, Event> where C.Input == EffectParameters, C.Output == Event {
-        let connectable = ThreadSafeConnectable(connectable: connectable)
-        let route = Route(extractParameters: path, connectable: connectable, queue: queue)
-        return EffectRouter(routes: routes + [route])
+        return routed(ThreadSafeConnectable(connectable: connectable))
     }
 
     /// Handle an the current `Effect` asynchronously on the provided `DispatchQueue`
