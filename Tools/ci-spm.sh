@@ -12,4 +12,4 @@ for bundle in .build/debug/*.xctest ; do
   ln -sf "$PWD/$bundle" "${parent}/codecov"
 done
 
-process_coverage -D ".build/x86_64-apple-macosx/debug" -F "macspm"
+process_coverage -D ".build/debug" -F "macspm"
