@@ -7,7 +7,7 @@ source "$(dirname "$0")/helpers.sh"
 swift test --enable-code-coverage --sanitize=thread || fail "SPM Test Failed"
 
 # h4x to trick codecov
-for bundle in .build/x86_64-apple-macosx/debug/*.xctest ; do
+for bundle in .build/debug/*.xctest ; do
   parent="$(dirname "$bundle")"
   ln -sf "$PWD/$bundle" "${parent}/codecov"
 done
