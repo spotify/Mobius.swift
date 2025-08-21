@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.7
 import PackageDescription
 
 let depCasePaths: PackageDescription.Target.Dependency = .product(name: "CasePaths", package: "swift-case-paths")
@@ -8,10 +8,10 @@ let depNimble: PackageDescription.Target.Dependency = .product(name: "Nimble", p
 let package = Package(
     name: "Mobius",
     platforms: [
-        .iOS(.v10),
-        .macOS(.v10_12),
-        .tvOS(.v10),
-        .watchOS(.v3),
+        .iOS(.v13),
+        .macOS(.v10_15),
+        .tvOS(.v13),
+        .watchOS(.v6),
     ],
     products: [
         .library(name: "MobiusCore", targets: ["MobiusCore"]),
@@ -21,7 +21,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-case-paths", .upToNextMinor(from: "0.10.1")),
-        .package(url: "https://github.com/Quick/Nimble", from: "10.0.0"),
+        .package(url: "https://github.com/Quick/Nimble", from: "11.0.0"),
         .package(url: "https://github.com/Quick/Quick", from: "7.0.0"),
     ],
     targets: [
