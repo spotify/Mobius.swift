@@ -1,5 +1,9 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.2
 import PackageDescription
+
+let depCasePaths: PackageDescription.Target.Dependency = .product(name: "CasePaths", package: "swift-case-paths")
+let depQuick: PackageDescription.Target.Dependency = .product(name: "Quick", package: "Quick")
+let depNimble: PackageDescription.Target.Dependency = .product(name: "Nimble", package: "Nimble")
 
 let package = Package(
     name: "Mobius",
@@ -21,24 +25,24 @@ let package = Package(
         .package(url: "https://github.com/Quick/Quick", from: "7.0.0"),
     ],
     targets: [
-        .target(name: "MobiusCore", dependencies: ["CasePaths"], path: "MobiusCore/Source"),
+        .target(name: "MobiusCore", dependencies: [depCasePaths], path: "MobiusCore/Source"),
         .target(name: "MobiusExtras", dependencies: ["MobiusCore"], path: "MobiusExtras/Source"),
-        .target(name: "MobiusNimble", dependencies: ["MobiusCore", "MobiusTest", "Nimble"], path: "MobiusNimble/Source"),
+        .target(name: "MobiusNimble", dependencies: ["MobiusCore", "MobiusTest", depNimble], path: "MobiusNimble/Source"),
         .target(name: "MobiusTest", dependencies: ["MobiusCore"], path: "MobiusTest/Source"),
         .target(name: "MobiusThrowableAssertion", path: "MobiusThrowableAssertion/Source"),
 
         .testTarget(
             name: "MobiusCoreTests",
-            dependencies: ["MobiusCore", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            dependencies: ["MobiusCore", "MobiusThrowableAssertion", depNimble, depQuick],
             path: "MobiusCore/Test"
         ),
         .testTarget(
             name: "MobiusExtrasTests",
-            dependencies: ["MobiusCore", "MobiusExtras", "Nimble", "Quick", "MobiusThrowableAssertion"],
+            dependencies: ["MobiusCore", "MobiusExtras", "MobiusThrowableAssertion", depNimble, depQuick],
             path: "MobiusExtras/Test"
         ),
-        .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", "Quick"], path: "MobiusNimble/Test"),
-        .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", "Quick", "Nimble"], path: "MobiusTest/Test"),
+        .testTarget(name: "MobiusNimbleTests", dependencies: ["MobiusNimble", depQuick], path: "MobiusNimble/Test"),
+        .testTarget(name: "MobiusTestTests", dependencies: ["MobiusTest", depNimble, depQuick], path: "MobiusTest/Test"),
     ],
     swiftLanguageVersions: [.v5]
 )
