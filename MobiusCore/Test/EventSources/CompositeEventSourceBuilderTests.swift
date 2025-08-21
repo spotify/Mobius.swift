@@ -7,7 +7,7 @@ import Quick
 
 class CompositeEventSourceBuilderTest: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         var eventsReceived: [Int]!
         var compositeEventSource: AnyEventSource<Int>!
         var disposable: Disposable!

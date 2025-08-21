@@ -7,7 +7,7 @@ import Quick
 
 class CallbackTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("Callbacks") {
             context("Ending a Callback") {
                 var onEndCalledTimes: Int!

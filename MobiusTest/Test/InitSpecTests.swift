@@ -8,7 +8,7 @@ import Nimble
 import Quick
 
 class InitSpecTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("InitSpec") {
             context("when setting up a test scenario") {
                 var initiate: Initiate<String, String>!

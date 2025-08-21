@@ -6,7 +6,7 @@ import Nimble
 import Quick
 
 class LoggingUpdateTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("LoggingUpdate") {
             var logger: TestMobiusLogger!
             var loggingUpdate: Update<String, String, String>!

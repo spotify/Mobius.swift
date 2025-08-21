@@ -17,7 +17,7 @@ private enum Event: Equatable {
 
 class EffectRouterDSLTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         context("An EffectHandler which always ends as soon as it is called") {
             var wasDisposed: Bool!
             var connection: Connection<Int>!

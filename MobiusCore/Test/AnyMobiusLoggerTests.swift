@@ -6,7 +6,7 @@ import Nimble
 import Quick
 
 class AnyMobiusLoggerTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnyMobiusLogger") {
             var delegate: TestMobiusLogger!
             var logger: AnyMobiusLogger<String, String, String>!

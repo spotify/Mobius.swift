@@ -18,7 +18,7 @@ enum TestEnum: Equatable {
 // swiftlint:disable:next type_body_length
 class DebugDiffTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("DumpDiff") {
             var diff: String?
 

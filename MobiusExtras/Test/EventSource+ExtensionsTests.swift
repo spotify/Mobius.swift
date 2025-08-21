@@ -8,7 +8,7 @@ import Quick
 
 class EventSourceExtensionsTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("EventSource") {
             var subscribedIntConsumer: ((Int) -> Void)?
             var intEventSource: AnyEventSource<Int>!

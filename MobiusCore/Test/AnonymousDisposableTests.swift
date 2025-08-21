@@ -7,7 +7,7 @@ import Quick
 
 class AnonymousDisposableTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("AnonymousDisposable") {
             var disposable: AnonymousDisposable!
             var invocationCount: Int!

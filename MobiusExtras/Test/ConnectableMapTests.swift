@@ -7,7 +7,7 @@ import Nimble
 import Quick
 
 class ConnectableMapTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         context("Connectable Map") {
             it("applies the `transform` function to the output") {
                 var output: [Int?] = []

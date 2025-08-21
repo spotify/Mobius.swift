@@ -8,16 +8,15 @@ import Nimble
 import Quick
 
 class AsyncDispatchQueueConnectableTests: QuickSpec {
-    private let acceptQueue = DispatchQueue(label: "accept queue")
-
-    override func spec() {
+    override class func spec() {
         describe("AsyncDispatchQueueConnectable") {
             var connectable: AsyncDispatchQueueConnectable<String, String>!
             var underlyingConnectable: RecordingTestConnectable!
+            let acceptQueue = DispatchQueue(label: "accept queue")
 
             beforeEach {
-                underlyingConnectable = RecordingTestConnectable(expectedQueue: self.acceptQueue)
-                connectable = AsyncDispatchQueueConnectable(underlyingConnectable, acceptQueue: self.acceptQueue)
+                underlyingConnectable = RecordingTestConnectable(expectedQueue: acceptQueue)
+                connectable = AsyncDispatchQueueConnectable(underlyingConnectable, acceptQueue: acceptQueue)
             }
 
             context("when connected") {

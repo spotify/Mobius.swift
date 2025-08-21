@@ -20,7 +20,7 @@ private enum Event {
 
 class EffectRouterTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         context("Router happy paths") {
             var receivedEvents: [Event]!
             var disposed1: Bool!

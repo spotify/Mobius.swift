@@ -7,7 +7,7 @@ import Quick
 
 class WorkBagTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("WorkBag") {
             var workBag: WorkBag!
             var results: Set<String>!

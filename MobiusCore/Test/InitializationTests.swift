@@ -8,7 +8,7 @@ import Quick
 
 class InitializationTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("Initialization") {
             var builder: Mobius.Builder<String, String, String>!
             var updateFunction: Update<String, String, String>!
