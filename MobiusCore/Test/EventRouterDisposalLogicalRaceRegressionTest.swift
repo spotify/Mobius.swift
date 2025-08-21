@@ -31,7 +31,7 @@ private enum Effect: Equatable {
 /// We had seen small volumes of this second issue in production. (Spotify internal: IOS-42623)
 class EventRouterDisposalLogicalRaceRegressionTest: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("Effect Handler connection") {
             var controller: MobiusController<Model, Event, Effect>!
             var collaborator: EffectCollaborator!

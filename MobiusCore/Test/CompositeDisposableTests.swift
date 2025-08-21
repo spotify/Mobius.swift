@@ -6,7 +6,7 @@ import Nimble
 import Quick
 
 class CompositeDisposableTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("CompositeDisposable") {
             var one: TestDisposable!
             var two: TestDisposable!

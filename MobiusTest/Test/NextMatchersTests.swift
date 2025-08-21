@@ -14,7 +14,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 class XCTestNextMatchersTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("AssertThatNext") {
             var failMessages: [String] = []
 

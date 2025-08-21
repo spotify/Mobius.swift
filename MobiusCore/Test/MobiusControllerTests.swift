@@ -10,11 +10,21 @@ import Quick
 // swiftlint:disable file_length
 // swiftlint:disable:next type_body_length
 class MobiusControllerTests: QuickSpec {
-    let loopQueue = DispatchQueue(label: "loop queue")
-    let viewQueue = DispatchQueue(label: "view queue")
-
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
+        let loopQueue = DispatchQueue(label: "loop queue")
+        let viewQueue = DispatchQueue(label: "view queue")
+
+        let makeSureAllEffectsAndEventsHaveBeenProcessed: () -> Void = {
+            loopQueue.sync {
+                // Waiting synchronously for effects to be completed
+            }
+
+            viewQueue.sync {
+                // Waiting synchronously for view observations to be completed
+            }
+        }
+
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
             var updateFunction: Update<String, String, String>!
@@ -31,8 +41,7 @@ class MobiusControllerTests: QuickSpec {
             }
 
             beforeEach {
-                view = RecordingTestConnectable(expectedQueue: self.viewQueue)
-                let loopQueue = self.loopQueue
+                view = RecordingTestConnectable(expectedQueue: viewQueue)
 
                 updateFunction = .init { model, event in
                     dispatchPrecondition(condition: .onQueue(loopQueue))
@@ -57,8 +66,8 @@ class MobiusControllerTests: QuickSpec {
                     .makeController(
                         from: "S",
                         initiate: initiate,
-                        loopQueue: self.loopQueue,
-                        viewQueue: self.viewQueue
+                        loopQueue: loopQueue,
+                        viewQueue: viewQueue
                     )
             }
 
@@ -79,7 +88,7 @@ class MobiusControllerTests: QuickSpec {
                         expect(view.recorder.items).toEventually(equal(["S", "S-hey"]))
                     }
                     it("should allow multiple connections") {
-                        let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                        let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
 
                         controller.connectView(view)
                         controller.connectView(secondaryView)
@@ -105,13 +114,13 @@ class MobiusControllerTests: QuickSpec {
                             controller.start()
 
                             view.dispatch("restarted")
-                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                            makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             expect(view.recorder.items).toEventually(equal(["S", "S-restarted"]))
                         }
                         it("should retain updated state") {
                             view.dispatch("hi")
-                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                            makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             controller.stop()
 
@@ -189,7 +198,7 @@ class MobiusControllerTests: QuickSpec {
                         expect(view.recorder.items).toEventually(equal(["S"]))
                     }
                     it("should allow disconnecting by id") {
-                        let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                        let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
 
                         let connectionID = controller.connectView(view)
                         let secondaryConnectionID = controller.connectView(secondaryView)
@@ -198,7 +207,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.disconnectView(id: secondaryConnectionID)
                     }
                     it("should not send events to a disconnected view") {
-                        let disconnectedView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                        let disconnectedView = RecordingTestConnectable(expectedQueue: viewQueue)
                         controller.connectView(disconnectedView)
                         controller.disconnectView()
 
@@ -230,7 +239,7 @@ class MobiusControllerTests: QuickSpec {
 
                     describe("multiple view connections") {
                         it("should not allow disconnecting without a connection id") {
-                            let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                            let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
 
                             controller.connectView(view)
                             controller.connectView(secondaryView)
@@ -238,7 +247,7 @@ class MobiusControllerTests: QuickSpec {
                             expect(controller.disconnectView()).to(raiseError())
                         }
                         it("should not allow disconnecting an invalid connection id") {
-                            let secondaryView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                            let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
 
                             controller.connectView(view)
                             controller.connectView(secondaryView)
@@ -339,7 +348,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
 
                         view.dispatch("the last event")
-                        self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                        makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                         controller.stop()
 
@@ -393,8 +402,8 @@ class MobiusControllerTests: QuickSpec {
                         .makeController(
                             from: "S",
                             initiate: initiate,
-                            loopQueue: self.loopQueue,
-                            viewQueue: self.viewQueue
+                            loopQueue: loopQueue,
+                            viewQueue: viewQueue
                         )
                     controller.connectView(view)
                     controller.start()
@@ -430,8 +439,8 @@ class MobiusControllerTests: QuickSpec {
                         .makeController(
                             from: "S",
                             initiate: initiate,
-                            loopQueue: self.loopQueue,
-                            viewQueue: self.viewQueue
+                            loopQueue: loopQueue,
+                            viewQueue: viewQueue
                         )
                     controller.connectView(view)
                     controller.start()
@@ -456,29 +465,19 @@ class MobiusControllerTests: QuickSpec {
                     effectObserver = MockConnectable()
                     controller = Mobius
                         .loop(update: Update { model, _ in .next(model) }, effectHandler: effectObserver)
-                        .makeController(from: NSObject(), loopQueue: self.loopQueue, viewQueue: self.viewQueue)
+                        .makeController(from: NSObject(), loopQueue: loopQueue, viewQueue: viewQueue)
                     controller.connectView(modelObserver)
                     controller.start()
                 }
 
                 it("should release any references to the loop") {
-                    self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                    makeSureAllEffectsAndEventsHaveBeenProcessed()
                     controller.stop()
                     controller.disconnectView()
                     controller = nil
                     expect(modelObserver.model).to(beNil())
                 }
             }
-        }
-    }
-
-    func makeSureAllEffectsAndEventsHaveBeenProcessed() {
-        loopQueue.sync {
-            // Waiting synchronously for effects to be completed
-        }
-
-        viewQueue.sync {
-            // Waiting synchronously for view observations to be completed
         }
     }
 }

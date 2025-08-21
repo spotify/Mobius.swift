@@ -35,7 +35,7 @@ private func unwrap<Input, Parameters, Output>(
 }
 
 class ParameterExtractionRouteTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         context("Different types of enums being unwrapped") {
             it("supports routing to an effect with nothing to unwrap") {
                 let route = EffectRouter<Effect, Never>()

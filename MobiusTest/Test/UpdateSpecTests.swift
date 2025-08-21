@@ -26,7 +26,7 @@ enum MyEffect {
 
 class UpdateSpecTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         let updateSpec = UpdateSpec(myUpdate)
 
         describe("UpdateSpec") {
@@ -95,7 +95,7 @@ class UpdateSpecTests: QuickSpec {
         }
     }
 
-    let myUpdate = Update<MyModel, MyEvent, MyEffect> { model, event in
+    static let myUpdate = Update<MyModel, MyEvent, MyEffect> { model, event in
         switch event {
         case .didTapButton:
             return Next.next(MyModel(buttonClicked: !model.buttonClicked, count: model.count + 1))
@@ -106,7 +106,7 @@ class UpdateSpecTests: QuickSpec {
 }
 
 // stolen from Nimble's internal test helper util.swift
-private func failsWithErrorMessage(_ messages: [String], file: FileString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () throws -> Void) {
+private func failsWithErrorMessage(_ messages: [String], file: StaticString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () throws -> Void) {
     var filePath = file
     var lineNumber = line
 
@@ -147,7 +147,7 @@ private func failsWithErrorMessage(_ messages: [String], file: FileString = #fil
     }
 }
 
-private func failsWithErrorMessage(_ message: String, file: FileString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () -> Void) {
+private func failsWithErrorMessage(_ message: String, file: StaticString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () -> Void) {
     return failsWithErrorMessage(
         [message],
         file: file,

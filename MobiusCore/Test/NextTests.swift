@@ -14,7 +14,7 @@ class NextTests: QuickSpec {
     private struct UnexpectedCase: Error {}
 
     // swiftlint:disable function_body_length
-    override func spec() {
+    override class func spec() {
         describe("Next") {
             var sut: Next<String, Effect>!
 

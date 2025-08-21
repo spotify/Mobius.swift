@@ -10,7 +10,7 @@ import Quick
 
 class ConnectableTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         describe("ConnectableClass") {
             beforeEach {
                 MobiusHooks.setErrorHandler { message, file, line in

@@ -11,7 +11,7 @@ import XCTest
 // swiftlint:disable:next type_body_length
 class NimbleFirstMatchersTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         let assertionHandler = AssertionRecorder()
         var defaultHandler: AssertionHandler?
 

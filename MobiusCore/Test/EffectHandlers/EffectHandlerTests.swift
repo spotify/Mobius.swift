@@ -17,7 +17,7 @@ private enum Event {
 }
 
 class EffectHandlerTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("Handling effects with EffectHandler") {
             var effectHandler: AnyEffectHandler<Effect, Event>!
             var executeEffect: ((Effect) -> Void)!

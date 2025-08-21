@@ -7,7 +7,7 @@ import Nimble
 import Quick
 
 class ConnectableContramapTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("ConnectableContramap") {
             var connectable: AnyConnectable<String, String>!
             var contramapped: AnyConnectable<Int, String>!
