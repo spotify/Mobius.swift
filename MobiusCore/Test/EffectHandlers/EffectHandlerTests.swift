@@ -19,12 +19,12 @@ private enum Event {
 class EffectHandlerTests: QuickSpec {
     override class func spec() {
         describe("Handling effects with EffectHandler") {
-            var effectHandler: AnyEffectHandler<Effect, Event>!
+            var effectHandler: TestEffectHandler<Effect, Event>!
             var executeEffect: ((Effect) -> Void)!
             var receivedEvents: [Event]!
 
             beforeEach {
-                effectHandler = AnyEffectHandler(handle: handleEffect)
+                effectHandler = handleEffect
                 receivedEvents = []
                 let callback = EffectCallback(
                     onSend: { event in
@@ -33,7 +33,7 @@ class EffectHandlerTests: QuickSpec {
                     onEnd: {}
                 )
                 executeEffect = { effect in
-                    _ = effectHandler.handle(effect, callback)
+                    _ = effectHandler(effect, callback)
                 }
             }
 
@@ -53,13 +53,13 @@ class EffectHandlerTests: QuickSpec {
         describe("Disposing EffectHandler") {
             it("calls the returned disposable when disposing") {
                 var disposed = false
-                let effectHandler = AnyEffectHandler<Effect, Event> { _, _ in
+                let effectHandler: TestEffectHandler<Effect, Event> = { _, _ in
                     AnonymousDisposable {
                         disposed = true
                     }
                 }
                 let callback = EffectCallback<Event>(onSend: { _ in }, onEnd: {})
-                effectHandler.handle(.effect1, callback).dispose()
+                effectHandler(.effect1, callback).dispose()
 
                 expect(disposed).to(beTrue())
             }

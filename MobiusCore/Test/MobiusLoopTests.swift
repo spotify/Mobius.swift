@@ -216,7 +216,7 @@ class MobiusLoopTests: QuickSpec {
             beforeEach {
                 disposed.value = false
                 didReceiveEffect.value = false
-                let effectHandler = AnyEffectHandler<Int, Int> { _, _ in
+                let effectHandler: TestEffectHandler<Int, Int> = { _, _ in
                     didReceiveEffect.value = true
                     return AnonymousDisposable {
                         disposed.value = true
