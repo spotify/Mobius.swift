@@ -1,6 +1,8 @@
 // Copyright Spotify AB.
 // SPDX-License-Identifier: Apache-2.0
 
+import Foundation
+
 public extension EffectRouter where Effect: Equatable {
     /// Add a route for effects which are equal to `constant`.
     ///
@@ -35,6 +37,23 @@ public extension _PartialEffectRouter {
         }
     }
 
+    /// Route to a `@MainActor` side-effecting closure.
+    ///
+    /// This is equivalent to `.on(queue: .main).to { ... }`, but keeps the closure explicitly main-actor-isolated.
+    ///
+    /// This route still executes through the queue-routing path and then assumes actor isolation once scheduled on
+    /// the main queue.
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func onMainActor(
+        _ fireAndForget: @MainActor @Sendable @escaping (EffectParameters) -> Void
+    ) -> EffectRouter<Effect, Event> {
+        return on(queue: .main).to { parameters in
+            MainActor.assumeIsolated {
+                fireAndForget(parameters)
+            }
+        }
+    }
+
     /// Route to a closure which returns an optional event when given the parameters as input.
     ///
     /// - Parameter eventClosure: a function which returns an optional event given some input. No events will be
@@ -48,6 +67,22 @@ public extension _PartialEffectRouter {
             }
             callback.end()
             return AnonymousDisposable {}
+        }
+    }
+}
+
+public extension _PartialEffectRouter where EffectParameters == Void {
+    /// Route to a `@MainActor` side-effecting closure with no input parameters.
+    ///
+    /// This is equivalent to `.on(queue: .main).to { ... }`, but keeps the closure explicitly main-actor-isolated.
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func onMainActor(
+        _ fireAndForget: @MainActor @Sendable @escaping () -> Void
+    ) -> EffectRouter<Effect, Event> {
+        return on(queue: .main).to { _ in
+            MainActor.assumeIsolated {
+                fireAndForget()
+            }
         }
     }
 }
