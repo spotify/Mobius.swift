@@ -18,7 +18,7 @@ import Foundation
 ///
 /// These two routing criteria can be matched with one of five types of targets:
 ///  - `.to { effect in ... }`: A fire-and-forget style function of type `(EffectParameters) -> Void`.
-///  - `.onMainActor { effect in ... }`: A fire-and-forget style function of type
+///  - `.onMainActor().to { effect in ... }`: A fire-and-forget style function of type
 ///    `@MainActor @Sendable (EffectParameters) -> Void`. This is equivalent to
 ///    `.on(queue: .main).to { ... }` but keeps the closure explicitly main-actor-isolated.
 ///  - `.toEvent { effect in ... }`: A function which returns an optional event to send back into the loop:

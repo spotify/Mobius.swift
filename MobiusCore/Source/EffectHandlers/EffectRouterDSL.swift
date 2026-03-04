@@ -37,30 +37,12 @@ public extension _PartialEffectRouter {
         }
     }
 
-    /// Route to a `@MainActor` side-effecting closure.
+    /// Route main-isolated effects through the same queue path as `.on(queue: .main)`.
     ///
-    /// This is equivalent to `.on(queue: .main).to { ... }`, but keeps the closure explicitly main-actor-isolated.
-    ///
-    /// This route still executes through the queue-routing path and then assumes actor isolation once scheduled on
-    /// the main queue.
+    /// This returns a dedicated builder exposing `to(...)` for `@MainActor` closures.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func onMainActor(
-        _ fireAndForget: @MainActor @escaping (EffectParameters) -> Void
-    ) -> EffectRouter<Effect, Event> {
-        return on(queue: .main).to { parameters, callback in
-            #if compiler(>=5.10)
-                MainActor.assumeIsolated {
-                    fireAndForget(parameters)
-                }
-                callback.end()
-            #else
-                Task { @MainActor in
-                    fireAndForget(parameters)
-                    callback.end()
-                }
-            #endif
-            return AnonymousDisposable {}
-        }
+    func onMainActor() -> _MainActorPartialEffectRouter<Effect, EffectParameters, Event> {
+        return _MainActorPartialEffectRouter(partialRouter: on(queue: .main))
     }
 
     /// Route to a closure which returns an optional event when given the parameters as input.
@@ -80,15 +62,47 @@ public extension _PartialEffectRouter {
     }
 }
 
-public extension _PartialEffectRouter where EffectParameters == Void {
+/// A `_MainActorPartialEffectRouter` represents the state between an `onMainActor` call and a `to`.
+///
+/// Client code should not refer to this type directly.
+public struct _MainActorPartialEffectRouter<Effect, EffectParameters, Event> {
+    fileprivate let partialRouter: _PartialEffectRouter<Effect, EffectParameters, Event>
+}
+
+public extension _MainActorPartialEffectRouter {
+    /// Route to a `@MainActor` side-effecting closure.
+    ///
+    /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func to(
+        _ fireAndForget: @MainActor @Sendable @escaping (EffectParameters) -> Void
+    ) -> EffectRouter<Effect, Event> {
+        return partialRouter.to { parameters, callback in
+            #if compiler(>=5.10)
+                MainActor.assumeIsolated {
+                    fireAndForget(parameters)
+                }
+                callback.end()
+            #else
+                Task { @MainActor in
+                    fireAndForget(parameters)
+                    callback.end()
+                }
+            #endif
+            return AnonymousDisposable {}
+        }
+    }
+}
+
+public extension _MainActorPartialEffectRouter where EffectParameters == Void {
     /// Route to a `@MainActor` side-effecting closure with no input parameters.
     ///
-    /// This is equivalent to `.on(queue: .main).to { ... }`, but keeps the closure explicitly main-actor-isolated.
+    /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
-    func onMainActor(
-        _ fireAndForget: @MainActor @escaping () -> Void
+    func to(
+        _ fireAndForget: @MainActor @Sendable @escaping () -> Void
     ) -> EffectRouter<Effect, Event> {
-        return on(queue: .main).to { _, callback in
+        return partialRouter.to { _, callback in
             #if compiler(>=5.10)
                 MainActor.assumeIsolated {
                     fireAndForget()

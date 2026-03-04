@@ -211,7 +211,7 @@ class EffectRouterDSLTests: QuickSpec {
                 var didDispatchEvents = false
                 let parameterExtractor: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(withParameters: parameterExtractor).onMainActor { effect in
+                    .routeEffects(withParameters: parameterExtractor).onMainActor().to { effect in
                         performedEffects.append(effect)
                     }
                     .asConnectable
@@ -233,7 +233,7 @@ class EffectRouterDSLTests: QuickSpec {
                 var didDispatchEvents = false
                 let parameterExtractor: (Effect) -> Void? = { $0 == .effect1 ? () : nil }
                 let dslHandler = EffectRouter<Effect, Event>()
-                    .routeEffects(withParameters: parameterExtractor).onMainActor {
+                    .routeEffects(withParameters: parameterExtractor).onMainActor().to {
                         effectPerformedCount.append(1)
                     }
                     .asConnectable
