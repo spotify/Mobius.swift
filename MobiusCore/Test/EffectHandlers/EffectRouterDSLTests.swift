@@ -202,6 +202,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(didDispatchEvents).to(beFalse())
             }
 
+            #if compiler(>=5.10)
             it("Supports routing to an onMainActor side-effecting function") {
                 guard #available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *) else {
                     return
@@ -245,6 +246,7 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(effectPerformedCount.items).toEventually(equal([1]))
                 expect(didDispatchEvents).to(beFalse())
             }
+            #endif
 
             it("Supports routing to an event-returning function") {
                 var events: [Event] = []
