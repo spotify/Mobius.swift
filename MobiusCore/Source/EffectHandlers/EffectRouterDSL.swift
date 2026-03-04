@@ -1,7 +1,7 @@
 // Copyright Spotify AB.
 // SPDX-License-Identifier: Apache-2.0
 
-import Foundation
+import Dispatch
 
 public extension EffectRouter where Effect: Equatable {
     /// Add a route for effects which are equal to `constant`.
@@ -78,7 +78,7 @@ public extension _MainActorPartialEffectRouter {
     /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func to(
-        _ fireAndForget: @MainActor @Sendable @escaping (EffectParameters) -> Void
+        _ fireAndForget: @MainActor @escaping (EffectParameters) -> Void
     ) -> EffectRouter<Effect, Event> {
         return partialRouter.to { parameters, callback in
             MainActor.assumeIsolated {
@@ -96,7 +96,7 @@ public extension _MainActorPartialEffectRouter where EffectParameters == Void {
     /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func to(
-        _ fireAndForget: @MainActor @Sendable @escaping () -> Void
+        _ fireAndForget: @MainActor @escaping () -> Void
     ) -> EffectRouter<Effect, Event> {
         return partialRouter.to { _, callback in
             MainActor.assumeIsolated {
