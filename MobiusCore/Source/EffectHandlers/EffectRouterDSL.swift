@@ -82,13 +82,11 @@ public extension _MainActorPartialEffectRouter {
                 MainActor.assumeIsolated {
                     fireAndForget(parameters)
                 }
-                callback.end()
             #else
-                Task { @MainActor in
-                    fireAndForget(parameters)
-                    callback.end()
-                }
+                dispatchPrecondition(condition: .onQueue(.main))
+                fireAndForget(parameters)
             #endif
+            callback.end()
             return AnonymousDisposable {}
         }
     }
@@ -107,13 +105,11 @@ public extension _MainActorPartialEffectRouter where EffectParameters == Void {
                 MainActor.assumeIsolated {
                     fireAndForget()
                 }
-                callback.end()
             #else
-                Task { @MainActor in
-                    fireAndForget()
-                    callback.end()
-                }
+                dispatchPrecondition(condition: .onQueue(.main))
+                fireAndForget()
             #endif
+            callback.end()
             return AnonymousDisposable {}
         }
     }
