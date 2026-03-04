@@ -45,12 +45,21 @@ public extension _PartialEffectRouter {
     /// the main queue.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func onMainActor(
-        _ fireAndForget: @MainActor @Sendable @escaping (EffectParameters) -> Void
+        _ fireAndForget: @MainActor @escaping (EffectParameters) -> Void
     ) -> EffectRouter<Effect, Event> {
-        return on(queue: .main).to { parameters in
-            MainActor.assumeIsolated {
-                fireAndForget(parameters)
-            }
+        return on(queue: .main).to { parameters, callback in
+            #if compiler(>=5.10)
+                MainActor.assumeIsolated {
+                    fireAndForget(parameters)
+                }
+                callback.end()
+            #else
+                Task { @MainActor in
+                    fireAndForget(parameters)
+                    callback.end()
+                }
+            #endif
+            return AnonymousDisposable {}
         }
     }
 
@@ -77,12 +86,21 @@ public extension _PartialEffectRouter where EffectParameters == Void {
     /// This is equivalent to `.on(queue: .main).to { ... }`, but keeps the closure explicitly main-actor-isolated.
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func onMainActor(
-        _ fireAndForget: @MainActor @Sendable @escaping () -> Void
+        _ fireAndForget: @MainActor @escaping () -> Void
     ) -> EffectRouter<Effect, Event> {
-        return on(queue: .main).to { _ in
-            MainActor.assumeIsolated {
-                fireAndForget()
-            }
+        return on(queue: .main).to { _, callback in
+            #if compiler(>=5.10)
+                MainActor.assumeIsolated {
+                    fireAndForget()
+                }
+                callback.end()
+            #else
+                Task { @MainActor in
+                    fireAndForget()
+                    callback.end()
+                }
+            #endif
+            return AnonymousDisposable {}
         }
     }
 }
