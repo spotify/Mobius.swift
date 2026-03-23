@@ -7,14 +7,14 @@ public extension EffectRouter {
     func routeCase<EffectParameters>(
         _ enumCase: @escaping (EffectParameters) -> Effect
     ) -> _PartialEffectRouter<Effect, EffectParameters, Event> {
-        let casePath = /enumCase
+        let casePath: CasePath<Effect, EffectParameters> = /enumCase
         return routeEffects(withParameters: casePath.extract)
     }
 
     func routeCase(
         _ enumCase: Effect
     ) -> _PartialEffectRouter<Effect, Void, Event> {
-        let casePath = /enumCase
+        let casePath: CasePath<Effect, Void> = /enumCase
         return routeEffects(withParameters: casePath.extract)
     }
 }
