@@ -32,13 +32,13 @@ class EffectRouterTests: QuickSpec {
                 receivedEvents = []
                 disposed1 = false
                 disposed2 = false
-                let effectHandler1 = AnyEffectHandler<Effect, Event> { _, callback in
+                let effectHandler1: TestEffectHandler<Effect, Event> = { _, callback in
                     callback.send(.eventForEffect1)
                     return AnonymousDisposable {
                         disposed1 = true
                     }
                 }
-                let effectHandler2 = AnyEffectHandler<Effect, Event> { _, callback in
+                let effectHandler2: TestEffectHandler<Effect, Event> = { _, callback in
                     callback.send(.eventForEffect2)
                     return AnonymousDisposable {
                         disposed2 = true
@@ -107,7 +107,7 @@ class EffectRouterTests: QuickSpec {
             var dispose: (() -> Void)!
 
             beforeEach {
-                let handler = AnyEffectHandler<Effect, Event> { _, _ in
+                let handler: TestEffectHandler<Effect, Event> = { _, _ in
                     AnonymousDisposable {}
                 }
                 let invalidRouter = EffectRouter<Effect, Event>()
