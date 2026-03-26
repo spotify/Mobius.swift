@@ -16,7 +16,7 @@ class EventSourceExtensionsTests: QuickSpec {
             beforeEach {
                 intEventSource = AnyEventSource { (consumer: @escaping (Int) -> Void) in
                     subscribedIntConsumer = consumer
-                    return AnonymousDisposable {}
+                    return EmptyDisposable()
                 }
             }
 
