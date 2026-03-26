@@ -209,6 +209,31 @@ class EffectRouterTests: QuickSpec {
 
                 connection.dispose()
             }
+
+            it("supports handling events on a specified queue") {
+                let testQueue = DispatchQueue(label: "test")
+
+                var receivedOnTestQueue = false
+                let connection = EffectRouter<Effect, Event>()
+                    .routeCase(.effect1)
+                    .receiveOn(queue: testQueue)
+                    .to { (_: Void, callback: EffectCallback<Event>) in
+                        callback.end(with: .eventForEffect1)
+                        return AnonymousDisposable {}
+                    }
+                    .asConnectable
+                    .connect { _ in
+                        dispatchPrecondition(condition: .onQueue(testQueue))
+                        receivedOnTestQueue = true
+                    }
+
+                connection.accept(.effect1)
+                testQueue.waitForOutstandingTasks()
+
+                expect(receivedOnTestQueue).to(beTrue())
+
+                connection.dispose()
+            }
         }
     }
 }
