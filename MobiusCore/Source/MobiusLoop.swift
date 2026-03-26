@@ -1,16 +1,5 @@
-// Copyright 2019-2022 Spotify AB.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
 
 import Foundation
 
@@ -25,6 +14,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     private var workBag: WorkBag
 
     private var effectConnection: Connection<Effect>! = nil
+    private var eventSourceConnection: Connection<Model>! = nil
     private var consumeEvent: Consumer<Event>! = nil
     private let modelPublisher: ConnectablePublisher<Model>
 
@@ -35,7 +25,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     init(
         model: Model,
         update: Update<Model, Event, Effect>,
-        eventSource: AnyEventSource<Event>,
+        eventSource: AnyConnectable<Model, Event>,
         eventConsumerTransformer: ConsumerTransformer<Event>,
         effectHandler: AnyConnectable<Effect, Event>,
         effects: [Effect],
@@ -72,12 +62,14 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
 
         // These must be set up after consumeEvent, which refers to self; that’s why they need to be IUOs.
         self.effectConnection = effectHandler.connect(consumeEvent)
-        let eventSourceDisposable = eventSource.subscribe(consumer: consumeEvent)
+        self.eventSourceConnection = eventSource.connect { event in
+            consumeEvent(event)
+        }
 
         self.disposable = CompositeDisposable(disposables: [
             effectConnection,
             modelPublisher,
-            eventSourceDisposable,
+            eventSourceConnection,
         ])
 
         // Prime the modelPublisher, and queue up any initial effects.
@@ -154,6 +146,7 @@ public final class MobiusLoop<Model, Event, Effect>: Disposable {
     private func processNext(_ next: Next<Model, Effect>) {
         if let newModel = next.model {
             model = newModel
+            eventSourceConnection.accept(model)
             modelPublisher.post(model)
         }
 

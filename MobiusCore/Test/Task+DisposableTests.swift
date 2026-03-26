@@ -1,10 +1,13 @@
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
+
 import MobiusCore
 import Nimble
 import Quick
 
 @available(iOS 13.0, *)
 class TaskDisposableTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("Task+Disposable") {
             var task: Task<Void, any Error>!
             var disposable: Disposable!

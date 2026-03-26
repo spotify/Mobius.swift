@@ -1,16 +1,5 @@
-// Copyright 2019-2022 Spotify AB.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
 
 import Foundation
 import MobiusCore
@@ -18,7 +7,7 @@ import Nimble
 import Quick
 
 class AnyEventSourceTests: QuickSpec {
-    override func spec() {
+    override class func spec() {
         describe("AnyEventSource") {
             var eventConsumer: TestConsumer!
             var delegateEventSource: TestEventSource<String>!
@@ -29,18 +18,19 @@ class AnyEventSourceTests: QuickSpec {
             }
 
             it("should forward delegate consumer to closure") {
-                let consumerForwarded = self.expectation(description: "consumer forwarded")
+                var forwarded = false
 
                 let source = AnyEventSource<String>({ consumer in
                     let testString = UUID().uuidString
                     consumer(testString)
                     if eventConsumer.received == [testString] {
-                        consumerForwarded.fulfill()
+                        forwarded = true
                     }
                     return TestDisposable()
                 })
 
                 _ = source.subscribe(consumer: eventConsumer.accept)
+                expect(forwarded).toEventually(beTrue())
             }
 
             it("should forward events from delegate event source") {

@@ -1,16 +1,5 @@
-// Copyright 2019-2022 Spotify AB.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
 
 @testable import MobiusCore
 
@@ -21,15 +10,28 @@ import Quick
 // swiftlint:disable file_length
 // swiftlint:disable:next type_body_length
 class MobiusControllerTests: QuickSpec {
-    let loopQueue = DispatchQueue(label: "loop queue")
-    let viewQueue = DispatchQueue(label: "view queue")
-
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
+        let loopQueue = DispatchQueue(label: "loop queue")
+        let viewQueue = DispatchQueue(label: "view queue")
+
+        let makeSureAllEffectsAndEventsHaveBeenProcessed: () -> Void = {
+            loopQueue.sync {
+                // Waiting synchronously for effects to be completed
+            }
+
+            viewQueue.sync {
+                // Waiting synchronously for view observations to be completed
+            }
+        }
+
         describe("MobiusController") {
             var controller: MobiusController<String, String, String>!
+            var updateFunction: Update<String, String, String>!
+            var initiate: Initiate<String, String>!
             var view: RecordingTestConnectable!
             var eventSource: TestEventSource<String>!
+            var connectableEventSource: TestConnectableEventSource<String, String>!
             var effectHandler: RecordingTestConnectable!
             var activateInitiator: Bool!
 
@@ -39,16 +41,15 @@ class MobiusControllerTests: QuickSpec {
             }
 
             beforeEach {
-                view = RecordingTestConnectable(expectedQueue: self.viewQueue)
-                let loopQueue = self.loopQueue
+                view = RecordingTestConnectable(expectedQueue: viewQueue)
 
-                let updateFunction = Update<String, String, String> { model, event in
+                updateFunction = .init { model, event in
                     dispatchPrecondition(condition: .onQueue(loopQueue))
                     return .next("\(model)-\(event)")
                 }
 
                 activateInitiator = false
-                let initiate: Initiate<String, String> = { model in
+                initiate = .init { model in
                     if activateInitiator {
                         return First(model: "\(model)-init", effects: ["initEffect"])
                     } else {
@@ -57,6 +58,7 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 eventSource = TestEventSource()
+
                 effectHandler = RecordingTestConnectable()
 
                 controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
@@ -64,8 +66,8 @@ class MobiusControllerTests: QuickSpec {
                     .makeController(
                         from: "S",
                         initiate: initiate,
-                        loopQueue: self.loopQueue,
-                        viewQueue: self.viewQueue
+                        loopQueue: loopQueue,
+                        viewQueue: viewQueue
                     )
             }
 
@@ -85,6 +87,16 @@ class MobiusControllerTests: QuickSpec {
 
                         expect(view.recorder.items).toEventually(equal(["S", "S-hey"]))
                     }
+                    it("should allow multiple connections") {
+                        let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
+
+                        controller.connectView(view)
+                        controller.connectView(secondaryView)
+                        controller.start()
+
+                        expect(view.recorder.items).toEventually(equal(["S"]))
+                        expect(secondaryView.recorder.items).toEventually(equal(["S"]))
+                    }
 
                     context("given a connected and started loop") {
                         beforeEach {
@@ -102,13 +114,13 @@ class MobiusControllerTests: QuickSpec {
                             controller.start()
 
                             view.dispatch("restarted")
-                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                            makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             expect(view.recorder.items).toEventually(equal(["S", "S-restarted"]))
                         }
                         it("should retain updated state") {
                             view.dispatch("hi")
-                            self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                            makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                             controller.stop()
 
@@ -156,10 +168,6 @@ class MobiusControllerTests: QuickSpec {
                 }
 
                 describe("error handling") {
-                    it("should not allow connecting twice") {
-                        expect(controller.connectView(view)).toNot(raiseError())
-                        expect(controller.connectView(view)).to(raiseError())
-                    }
                     it("should not allow connecting after starting") {
                         controller.connectView(view)
                         controller.start()
@@ -189,8 +197,17 @@ class MobiusControllerTests: QuickSpec {
 
                         expect(view.recorder.items).toEventually(equal(["S"]))
                     }
+                    it("should allow disconnecting by id") {
+                        let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
+
+                        let connectionID = controller.connectView(view)
+                        let secondaryConnectionID = controller.connectView(secondaryView)
+
+                        controller.disconnectView(id: connectionID)
+                        controller.disconnectView(id: secondaryConnectionID)
+                    }
                     it("should not send events to a disconnected view") {
-                        let disconnectedView = RecordingTestConnectable(expectedQueue: self.viewQueue)
+                        let disconnectedView = RecordingTestConnectable(expectedQueue: viewQueue)
                         controller.connectView(disconnectedView)
                         controller.disconnectView()
 
@@ -218,6 +235,25 @@ class MobiusControllerTests: QuickSpec {
                         controller.connectView(view)
                         controller.disconnectView()
                         expect(controller.disconnectView()).to(raiseError())
+                    }
+
+                    describe("multiple view connections") {
+                        it("should not allow disconnecting without a connection id") {
+                            let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
+
+                            controller.connectView(view)
+                            controller.connectView(secondaryView)
+
+                            expect(controller.disconnectView()).to(raiseError())
+                        }
+                        it("should not allow disconnecting an invalid connection id") {
+                            let secondaryView = RecordingTestConnectable(expectedQueue: viewQueue)
+
+                            controller.connectView(view)
+                            controller.connectView(secondaryView)
+
+                            expect(controller.disconnectView(id: UUID())).to(raiseError())
+                        }
                     }
                 }
                 #endif
@@ -312,7 +348,7 @@ class MobiusControllerTests: QuickSpec {
                         controller.start()
 
                         view.dispatch("the last event")
-                        self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                        makeSureAllEffectsAndEventsHaveBeenProcessed()
 
                         controller.stop()
 
@@ -356,6 +392,67 @@ class MobiusControllerTests: QuickSpec {
                 }
             }
 
+            describe("dispatching events using a connectable") {
+                beforeEach {
+                    // Rebuild the controller but use the Connectable instead of plain EventSource
+                    connectableEventSource = .init()
+
+                    controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
+                        .withEventSource(connectableEventSource)
+                        .makeController(
+                            from: "S",
+                            initiate: initiate,
+                            loopQueue: loopQueue,
+                            viewQueue: viewQueue
+                        )
+                    controller.connectView(view)
+                    controller.start()
+                }
+
+                it("should dispatch events from the event source") {
+                    connectableEventSource.dispatch("event source event")
+
+                    expect(view.recorder.items).toEventually(equal(["S", "S-event source event"]))
+                }
+
+                it("should receive models from the event source") {
+                    view.dispatch("new model")
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-new model"]))
+                }
+
+                it("should allow the event source to change with model updates") {
+                    connectableEventSource.shouldProcessModel = { model in
+                        model != "S-ignore"
+                    }
+
+                    view.dispatch("ignore")
+                    view.dispatch("new model 2")
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-ignore-new model 2"]))
+                }
+
+                it("should replace the event source") {
+                    connectableEventSource = .init()
+
+                    controller = Mobius.loop(update: updateFunction, effectHandler: effectHandler)
+                        .withEventSource(eventSource)
+                        .withEventSource(connectableEventSource)
+                        .makeController(
+                            from: "S",
+                            initiate: initiate,
+                            loopQueue: loopQueue,
+                            viewQueue: viewQueue
+                        )
+                    controller.connectView(view)
+                    controller.start()
+
+                    eventSource.dispatch("event source event")
+                    connectableEventSource.dispatch("connectable event source event")
+
+                    // The connectable event source should have replaced the original normal event source
+                    expect(connectableEventSource.models).toEventually(equal(["S", "S-connectable event source event"]))
+                }
+            }
+
             describe("deallocating") {
                 var modelObserver: MockConsumerConnectable!
                 var effectObserver: MockConnectable!
@@ -368,29 +465,19 @@ class MobiusControllerTests: QuickSpec {
                     effectObserver = MockConnectable()
                     controller = Mobius
                         .loop(update: Update { model, _ in .next(model) }, effectHandler: effectObserver)
-                        .makeController(from: NSObject(), loopQueue: self.loopQueue, viewQueue: self.viewQueue)
+                        .makeController(from: NSObject(), loopQueue: loopQueue, viewQueue: viewQueue)
                     controller.connectView(modelObserver)
                     controller.start()
                 }
 
                 it("should release any references to the loop") {
-                    self.makeSureAllEffectsAndEventsHaveBeenProcessed()
+                    makeSureAllEffectsAndEventsHaveBeenProcessed()
                     controller.stop()
                     controller.disconnectView()
                     controller = nil
                     expect(modelObserver.model).to(beNil())
                 }
             }
-        }
-    }
-
-    func makeSureAllEffectsAndEventsHaveBeenProcessed() {
-        loopQueue.sync {
-            // Waiting synchronously for effects to be completed
-        }
-
-        viewQueue.sync {
-            // Waiting synchronously for view observations to be completed
         }
     }
 }

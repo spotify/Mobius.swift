@@ -1,16 +1,5 @@
-// Copyright 2019-2022 Spotify AB.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
 
 import Foundation
 @testable import MobiusCore
@@ -189,6 +178,71 @@ class TestEventSource<Event>: EventSource {
 
     func dispatch(_ event: Event) {
         activeSubscriptions.forEach {
+            $0(event)
+        }
+    }
+}
+
+class TestConnectableEventSource<Model, Event>: Connectable {
+    typealias Input = Model
+    typealias Output = Event
+
+    enum Connection {
+        case disposed
+        case active(Consumer<Event>)
+    }
+    private(set) var connections: [Connection] = []
+    private let queue = DispatchQueue(label: "modelsQueue", attributes: .concurrent)
+    private var pendingEvent: Event?
+    private var _models: [Model] = []
+    var models: [Model] { queue.sync { _models } }
+    var shouldProcessModel: ((Model) -> Bool) = { _ in true }
+
+    var activeConnections: [Consumer<Event>] {
+        return connections.compactMap {
+            switch $0 {
+            case .disposed:
+                return nil
+            case .active(let consumer):
+                return consumer
+            }
+        }
+    }
+
+    var allDisposed: Bool {
+        return activeConnections.isEmpty
+    }
+
+    func connect(_ consumer: @escaping MobiusCore.Consumer<Event>) -> MobiusCore.Connection<Model> {
+        let index = connections.count
+        connections.append(.active(consumer))
+
+        if let event = pendingEvent {
+            consumer(event)
+            pendingEvent = nil
+        }
+
+        return .init(
+            acceptClosure: { [weak self] model in
+                guard let self else { return }
+                if shouldProcessModel(model) {
+                    queue.async(flags: .barrier) { [weak self] in
+                        self?._models.append(model)
+                    }
+                }
+            }, disposeClosure: { [weak self] in
+                self?.connections[index] = .disposed
+            }
+        )
+    }
+
+    // Set an event to dispatch immediately when subscribed
+    func dispatchOnSubscribe(_ event: Event) {
+        pendingEvent = event
+    }
+
+    func dispatch(_ event: Event) {
+        activeConnections.forEach {
             $0(event)
         }
     }

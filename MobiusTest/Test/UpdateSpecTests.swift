@@ -1,16 +1,5 @@
-// Copyright 2019-2022 Spotify AB.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright Spotify AB.
+// SPDX-License-Identifier: Apache-2.0
 
 import MobiusCore
 import MobiusTest
@@ -37,7 +26,7 @@ enum MyEffect {
 
 class UpdateSpecTests: QuickSpec {
     // swiftlint:disable:next function_body_length
-    override func spec() {
+    override class func spec() {
         let updateSpec = UpdateSpec(myUpdate)
 
         describe("UpdateSpec") {
@@ -106,7 +95,7 @@ class UpdateSpecTests: QuickSpec {
         }
     }
 
-    let myUpdate = Update<MyModel, MyEvent, MyEffect> { model, event in
+    static let myUpdate = Update<MyModel, MyEvent, MyEffect> { model, event in
         switch event {
         case .didTapButton:
             return Next.next(MyModel(buttonClicked: !model.buttonClicked, count: model.count + 1))
@@ -117,7 +106,7 @@ class UpdateSpecTests: QuickSpec {
 }
 
 // stolen from Nimble's internal test helper util.swift
-private func failsWithErrorMessage(_ messages: [String], file: FileString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () throws -> Void) {
+private func failsWithErrorMessage(_ messages: [String], file: StaticString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () throws -> Void) {
     var filePath = file
     var lineNumber = line
 
@@ -158,7 +147,7 @@ private func failsWithErrorMessage(_ messages: [String], file: FileString = #fil
     }
 }
 
-private func failsWithErrorMessage(_ message: String, file: FileString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () -> Void) {
+private func failsWithErrorMessage(_ message: String, file: StaticString = #file, line: UInt = #line, preferOriginalSourceLocation: Bool = false, closure: @escaping () -> Void) {
     return failsWithErrorMessage(
         [message],
         file: file,
