@@ -1,6 +1,8 @@
 // Copyright Spotify AB.
 // SPDX-License-Identifier: Apache-2.0
 
+import Dispatch
+
 public extension EffectRouter where Effect: Equatable {
     /// Add a route for effects which are equal to `constant`.
     ///
@@ -35,6 +37,16 @@ public extension _PartialEffectRouter {
         }
     }
 
+    /// Route main-isolated effects through the same queue path as `.on(queue: .main)`.
+    ///
+    /// This returns a dedicated builder exposing `to(...)` for `@MainActor` closures.
+    #if compiler(>=5.10)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func onMainActor() -> _MainActorPartialEffectRouter<Effect, EffectParameters, Event> {
+        return _MainActorPartialEffectRouter(partialRouter: on(queue: .main))
+    }
+    #endif
+
     /// Route to a closure which returns an optional event when given the parameters as input.
     ///
     /// - Parameter eventClosure: a function which returns an optional event given some input. No events will be
@@ -51,3 +63,48 @@ public extension _PartialEffectRouter {
         }
     }
 }
+
+#if compiler(>=5.10)
+/// A `_MainActorPartialEffectRouter` represents the state between an `onMainActor` call and a `to`.
+///
+/// Client code should not refer to this type directly.
+public struct _MainActorPartialEffectRouter<Effect, EffectParameters, Event> {
+    fileprivate let partialRouter: _PartialEffectRouter<Effect, EffectParameters, Event>
+}
+
+public extension _MainActorPartialEffectRouter {
+    /// Route to a `@MainActor` side-effecting closure.
+    ///
+    /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func to(
+        _ fireAndForget: @MainActor @escaping (EffectParameters) -> Void
+    ) -> EffectRouter<Effect, Event> {
+        return partialRouter.to { parameters, callback in
+            MainActor.assumeIsolated {
+                fireAndForget(parameters)
+            }
+            callback.end()
+            return AnonymousDisposable {}
+        }
+    }
+}
+
+public extension _MainActorPartialEffectRouter where EffectParameters == Void {
+    /// Route to a `@MainActor` side-effecting closure with no input parameters.
+    ///
+    /// Dispatches through the `.on(queue: .main)` path and assumes actor isolation once scheduled on the main queue.
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func to(
+        _ fireAndForget: @MainActor @escaping () -> Void
+    ) -> EffectRouter<Effect, Event> {
+        return partialRouter.to { _, callback in
+            MainActor.assumeIsolated {
+                fireAndForget()
+            }
+            callback.end()
+            return AnonymousDisposable {}
+        }
+    }
+}
+#endif

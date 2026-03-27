@@ -202,6 +202,52 @@ class EffectRouterDSLTests: QuickSpec {
                 expect(didDispatchEvents).to(beFalse())
             }
 
+            #if compiler(>=5.10)
+            it("Supports routing to an onMainActor side-effecting function") {
+                guard #available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *) else {
+                    return
+                }
+
+                let performedEffects = Recorder<Effect>()
+                var didDispatchEvents = false
+                let parameterExtractor: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(withParameters: parameterExtractor).onMainActor().to { effect in
+                        performedEffects.append(effect)
+                    }
+                    .asConnectable
+                    .connect { _ in
+                        didDispatchEvents = true
+                    }
+
+                dslHandler.accept(.effect1)
+                expect(performedEffects.items).toEventually(equal([.effect1]))
+                expect(didDispatchEvents).to(beFalse())
+            }
+
+            it("Supports routing to an onMainActor side-effecting function with no input parameters") {
+                guard #available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *) else {
+                    return
+                }
+
+                let effectPerformedCount = Recorder<Int>()
+                var didDispatchEvents = false
+                let parameterExtractor: (Effect) -> Void? = { $0 == .effect1 ? () : nil }
+                let dslHandler = EffectRouter<Effect, Event>()
+                    .routeEffects(withParameters: parameterExtractor).onMainActor().to {
+                        effectPerformedCount.append(1)
+                    }
+                    .asConnectable
+                    .connect { _ in
+                        didDispatchEvents = true
+                    }
+
+                dslHandler.accept(.effect1)
+                expect(effectPerformedCount.items).toEventually(equal([1]))
+                expect(didDispatchEvents).to(beFalse())
+            }
+            #endif
+
             it("Supports routing to an event-returning function") {
                 var events: [Event] = []
                 let extractEffect1: (Effect) -> Effect? = { $0 == .effect1 ? .effect1 : nil }
