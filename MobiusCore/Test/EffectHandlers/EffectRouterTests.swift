@@ -87,7 +87,7 @@ class EffectRouterTests: QuickSpec {
                         .to { _, callback in
                             callback.send(.eventForEffect2)
                             callback.end()
-                            return EmptyDisposable()
+                            return AnonymousDisposable {}
                         }
                     .asConnectable
 
@@ -108,7 +108,7 @@ class EffectRouterTests: QuickSpec {
 
             beforeEach {
                 let handler = AnyEffectHandler<Effect, Event> { _, _ in
-                    EmptyDisposable()
+                    AnonymousDisposable {}
                 }
                 let invalidRouter = EffectRouter<Effect, Event>()
                     .routeEffects(equalTo: .multipleHandlersForThisEffect).to(handler)
@@ -152,7 +152,7 @@ class EffectRouterTests: QuickSpec {
                     .routeEffects(equalTo: .effect2)
                         .to { _, callback in
                             callback.end()
-                            return EmptyDisposable()
+                            return AnonymousDisposable {}
                         }
                     .asConnectable
 

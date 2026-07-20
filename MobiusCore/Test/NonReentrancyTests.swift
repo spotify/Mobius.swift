@@ -56,7 +56,7 @@ class NonReentrancyTests: QuickSpec {
 
                 let testEffectHandler = AnyEffectHandler<Effect, Event> {
                     handleEffect($0, $1)
-                    return EmptyDisposable()
+                    return AnonymousDisposable {}
                 }
 
                 let effectConnectable = EffectRouter<Effect, Event>()

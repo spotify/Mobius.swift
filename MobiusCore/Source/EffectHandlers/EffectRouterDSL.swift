@@ -33,7 +33,7 @@ public extension _PartialEffectRouter {
         return to { parameters, callback in
             fireAndForget(parameters)
             callback.end()
-            return EmptyDisposable()
+            return AnonymousDisposable {}
         }
     }
 
@@ -59,7 +59,7 @@ public extension _PartialEffectRouter {
                 callback.send(event)
             }
             callback.end()
-            return EmptyDisposable()
+            return AnonymousDisposable {}
         }
     }
 }
